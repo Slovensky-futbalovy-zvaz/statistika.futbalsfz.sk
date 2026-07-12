@@ -98,6 +98,10 @@ def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
             rules = p.get("rules") or {}
             cat = rules.get("category")
             gender = rules.get("gender") or None  # "" → None (NEURCENE)
+            # WUxx → Uxx: „W“ je len označenie ženskej súťaže v názve kategórie,
+            # veková úroveň je Uxx a pohlavie nesie rules.gender (13. 7. 2026).
+            if cat and cat.startswith("WU"):
+                cat = cat[1:]
             if cat or gender:
                 mapa[str(p["_id"])] = {"cat": cat, "gender": gender}
     return mapa
