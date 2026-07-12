@@ -63,6 +63,17 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 - Dorastenci sú na RFZ/SFZ úrovni nenulová kategória (na rozdiel od niektorých ObFZ) — nulu nikdy nepredpokladať, vždy overiť.
 - Na webe sa zobrazujú len vekové úrovne, ktoré mali v danom ročníku aspoň jeden uzavretý zápas.
 
+### Pohlavie (dimenzia O6, rozhodnutia 13. 7. 2026)
+
+- Zápas pohlavie priamo nenesie — **jediný zdroj je `competitions.parts[].rules.gender`** („M“/„F“), mapovanie cez `match.competitionPart._id` rovnakým mechanizmom ako fallback kategórií (mapa partId→{cat, gender} v ETL).
+- Vyplnenosť overená 13. 7. 2026: v riadnych súťažiach ~100 % (2013/2014: 339 M + 13 F; 2025/2026: 964 M + 29 F častí). Prázdny gender **neznamená mužské** — sú to testy, grassroots projekty a malý futbal (mimo ETL); jediná reálna výnimka je školský turnaj VsFZ s kategóriou „U15 mix“.
+- Zmiešané časti (M aj F v jednej súťaži) v riadnych súťažiach neexistujú.
+- **Výstupná schéma:** blok `pohlavie` vedľa `kategorie` — `{M: {súhrn + kategorie}, F: {…}, NEURCENE: {…}}`; skupina NEURCENE (časť bez gender) sa vykazuje samostatne a vždy loguje ako anomália.
+- **KPI a `kategorie` zväzu zostávajú súčtom všetkých pohlaví** — dimenzia pohlavie je doplnkový drill-down; existujúce čísla sa nemenia.
+- Súčty M+F+NEURCENE presne sedia na KPI (zápas patrí práve jednej časti); výnimka `druzstva` — organizácia s mužským aj ženským družstvom sa počíta v oboch pohlaviach (analógia dvojitého pôsobenia osôb, publikovať s poznámkou).
+- Ženský futbal 2025/2026: SFZ 6 súťaží (ADULTS 222, U19 351, U15 351, WU14 12 zápasov), SsFZ 5, BFZ 3, VsFZ 1, futsal 1; **ZsFZ a všetky ObFZ bez ženských súťaží** (reálny stav).
+- Pozor na kategóriu **WU14** (ženská U14, SFZ) — mimo číselníka Ux, validácia ju hlási ako anomáliu; zaradenie rozhodne PO.
+
 ### Osoby
 
 - **Hráči:** `nominations[].athletes[].sportnetUser._id`, väzba na tím (a kategóriu) cez `nominations[].teamId == teams[]._id`.

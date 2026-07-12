@@ -15,6 +15,10 @@ KATEGORIE_PORADIE = [
 #: Prah nízkeho pokrytia divákov — pod túto hodnotu ide anomália do logu.
 DIVACI_POKRYTIE_MIN = 0.80
 
+#: Poradie skupín pohlavia vo výstupe (O6, 12. 7. 2026). NEURCENE = časť
+#: súťaže bez rules.gender (v riadnych súťažiach nenastáva — vždy anomália).
+POHLAVIE_PORADIE = ["M", "F", "NEURCENE"]
+
 
 def zorad_kategorie(kategorie: dict) -> dict:
     """Zoradí kategórie podľa KATEGORIE_PORADIE; neznáme na koniec (a do anomálií)."""
@@ -69,6 +73,42 @@ def validuj(doc: dict) -> list[str]:
                 f"kategória {k}: podozrivý priemer divákov "
                 f"{data['divaci'] / data['divaciPokrytych']:.0f}/zápas — overiť protokoly"
             )
+
+    # 4b) Dimenzia pohlavie: súčty M+F+NEURCENE musia sedieť na KPI
+    #     (zápas patrí práve jednej časti → práve jednému pohlaviu);
+    #     výnimka: druzstva — organizácia s mužským aj ženským družstvom
+    #     sa počíta v oboch pohlaviach, súčet smie KPI prevýšiť.
+    pohlavie = doc.get("pohlavie", {})
+    if pohlavie:
+        for g in pohlavie:
+            if g not in POHLAVIE_PORADIE:
+                anomalie.append(f"pohlavie: neznáma skupina {g!r}")
+        if "NEURCENE" in pohlavie:
+            anomalie.append(
+                f"pohlavie: {pohlavie['NEURCENE']['zapasy']} zápasov bez vyplneného "
+                "rules.gender (NEURCENE) — overiť súťaže"
+            )
+        for kluc in ("zapasy", "goly", "divaci", "zlteKarty", "cerveneKarty"):
+            sucet = sum(b[kluc] for b in pohlavie.values())
+            if kpi.get(kluc) != sucet:
+                anomalie.append(f"pohlavie: súčet {kluc}={sucet} ≠ KPI {kpi.get(kluc)}")
+        sucet_druz = sum(b["druzstva"] for b in pohlavie.values())
+        if sucet_druz < kpi.get("druzstva", 0):
+            anomalie.append(
+                f"pohlavie: súčet druzstva={sucet_druz} < KPI {kpi.get('druzstva')}"
+            )
+        for g, blok in pohlavie.items():
+            for kluc, kat_kluc in (
+                ("zapasy", "zapasy"), ("druzstva", "druzstva"), ("goly", "goly"),
+                ("divaci", "divaci"), ("zlteKarty", "zlte"), ("cerveneKarty", "cervene"),
+            ):
+                sucet = sum(k[kat_kluc] for k in blok.get("kategorie", {}).values())
+                if blok.get(kluc) != sucet:
+                    anomalie.append(
+                        f"pohlavie.{g}: {kluc}={blok.get(kluc)} ≠ súčet kategórií {sucet}"
+                    )
+    elif kategorie:
+        anomalie.append("chýba blok pohlavie (dimenzia O6)")
 
     # 5) Osoby: súčet po kategóriách musí byť ≥ unikáty (dvojité pôsobenie)
     for rola, data in doc.get("osoby", {}).items():

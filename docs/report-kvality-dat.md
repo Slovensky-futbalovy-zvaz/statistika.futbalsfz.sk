@@ -102,3 +102,24 @@ Historické sezóny majú vekovú kategóriu v **`competitions.parts[].rules.cat
 
 CRM API (`/crm/{appSpace}/users`) vyžaduje autentifikáciu a vracia osobné záznamy, žiadny agregovaný endpoint. Overené priamo v DB: kolekcia **`sportnet.users`** má `birthdate` aj `sex`, `_id` = sportnetId (ObjectId). Join z `sutaze.matches.nominations[].athletes[].sportnetUser._id` (string) cez `$toObjectId` funguje (overené na vzorke). ETL demografiu spočíta ako agregáty rok narodenia × pohlavie × rola × zväz — žiadne osobné údaje sa nepublikujú (prah agregátov = O5, DPO).
 
+### 7d. Dimenzia pohlavie (O6) — merania 13. 7. 2026
+
+Vyplnenosť `competitions.parts[].rules.gender` (počty častí súťaží, celá DB):
+
+| Sezóna | M | F | prázdne/chýba |
+|---|---:|---:|---:|
+| 2013/2014 | 339 | 13 | 0 |
+| 2016/2017 | 696 | 19 | 0 |
+| 2019/2020 | 715 | 20 | 8 |
+| 2024/2025 | 932 | 41 | 6 |
+| 2025/2026 | 964 | 29 | 3 |
+
+Zistenia:
+
+1. **Prázdny gender ≠ muži** — výhradne testovacie súťaže, grassroots projekty (dajmespolugol, disney, kruzkymcd) a malý futbal (všetko mimo ETL); jediná reálna výnimka: „Futbalový turnaj základných škôl mesta Košice“ (VsFZ, kategória „U15 mix“). Preto skupina **NEURCENE** + anomália, nie tiché priradenie k mužom.
+2. **Zmiešané časti** (M aj F v jednej súťaži) v riadnych súťažiach neexistujú (jediný nález: testovacia súťaž VsFZ 2019/2020).
+3. **Ženské súťaže 2025/2026 po zväzoch:** futbalsfz.sk 6, SsFZ 5, BFZ 3, VsFZ 1, futsalslovakia.sk 1; **ZsFZ a všetky ObFZ 0** (reálny stav).
+4. **Presná ETL pipeline overená cez MCP na SFZ 2025/2026** (part mapa 89 častí, dva appSpace): 8 027 uzavretých zápasov, 0 × NEURCENE; F = 936 zápasov (ADULTS 222, U19 351, U15 351, WU14 12), M = 7 091. Fallback kategórií doriešil aj 71 zápasov bez `teams.ageCategory`.
+5. **Nová kategória `WU14`** (ženská U14, SFZ) — mimo číselníka Ux, validácia hlási anomáliu; zaradenie (samostatná položka vs. mapovanie na U14) rozhodne PO.
+6. **Regresia:** nový `cat_fallback_expr` (part mapa rozšírená o gender) generuje bajtovo identický `$switch` ako pôvodná verzia; ObFZ Nitra má výhradne M časti → existujúce výstupy sa pri pregenerovaní nemenia, pribudne len blok `pohlavie` a `methodologyFlags.pohlaviePoznamka`.
+

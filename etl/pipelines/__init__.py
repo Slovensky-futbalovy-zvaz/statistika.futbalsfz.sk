@@ -46,23 +46,45 @@ def cat_fallback_expr(part_map: dict | None):
     """Fallback vekovej kategórie z časti súťaže (competitions.parts[].rules.category).
 
     `teams.ageCategory` je vyplnené len od sezóny 2024/2025 — pre historické
-    sezóny sa kategória mapuje cez match.competitionPart._id → mapa partId→kategória
-    (načítaná z kolekcie competitions v run.py). Vracia $switch výraz alebo None.
+    sezóny sa kategória mapuje cez match.competitionPart._id → mapa
+    partId→{cat, gender} (načítaná z kolekcie competitions v run.py).
+    Vracia $switch výraz alebo None.
     """
     if not part_map:
         return None
-    return {
-        "$switch": {
-            "branches": [
-                {
-                    "case": {"$eq": [{"$toString": "$competitionPart._id"}, pid]},
-                    "then": cat,
-                }
-                for pid, cat in part_map.items()
-            ],
-            "default": None,
+    branches = [
+        {
+            "case": {"$eq": [{"$toString": "$competitionPart._id"}, pid]},
+            "then": v["cat"],
         }
-    }
+        for pid, v in part_map.items()
+        if v.get("cat")
+    ]
+    if not branches:
+        return None
+    return {"$switch": {"branches": branches, "default": None}}
+
+
+def gender_expr(part_map: dict | None):
+    """Pohlavie zápasu z časti súťaže (competitions.parts[].rules.gender).
+
+    Zápas pohlavie priamo nenesie — mapuje sa cez match.competitionPart._id
+    rovnakým mechanizmom ako fallback kategórií. Len hodnoty „M“/„F“;
+    prázdne/chýbajúce → None (v run.py sa vykáže ako skupina NEURCENE).
+    """
+    if not part_map:
+        return None
+    branches = [
+        {
+            "case": {"$eq": [{"$toString": "$competitionPart._id"}, pid]},
+            "then": v["gender"],
+        }
+        for pid, v in part_map.items()
+        if v.get("gender") in ("M", "F")
+    ]
+    if not branches:
+        return None
+    return {"$switch": {"branches": branches, "default": None}}
 
 
 def _cat_zapas(part_map: dict | None):
@@ -136,6 +158,77 @@ def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None)
             }
         },
         {"$sort": {"_id": 1}},
+    ]
+
+
+def kategorie_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_map=None):
+    """Zápasy, góly, karty a diváci po pohlaví × vekovej kategórii.
+
+    Pohlavie výhradne z časti súťaže (gender_expr); zápas patrí práve jednej
+    časti → súčty M+F+NEURCENE presne sedia na celkové KPI (regresná kotva).
+    """
+    g = gender_expr(part_map)
+    return [
+        _match_stage(app_spaces, season_variants, sport_sector),
+        {
+            "$project": {
+                "gender": g if g is not None else {"$literal": None},
+                "cat": _cat_zapas(part_map),
+                "goly": _event_count("goal"),
+                "zlte": _event_count("yellow_card"),
+                "cervene": _event_count("red_card"),
+                "audience": "$protocol.audience",
+            }
+        },
+        {
+            "$group": {
+                "_id": {"gender": "$gender", "cat": "$cat"},
+                "zapasy": {"$sum": 1},
+                "goly": {"$sum": "$goly"},
+                "zlte": {"$sum": "$zlte"},
+                "cervene": {"$sum": "$cervene"},
+                "divaci": {"$sum": {"$ifNull": ["$audience", 0]}},
+                "divaciPokrytych": {"$sum": {"$cond": [{"$gt": ["$audience", None]}, 1, 0]}},
+            }
+        },
+        {"$sort": {"_id.gender": 1, "_id.cat": 1}},
+    ]
+
+
+def druzstva_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_map=None):
+    """Unikátne družstvá (organization.name) po pohlaví × kategórii.
+
+    POZOR: organizácia s mužským aj ženským družstvom v tej istej kategórii
+    sa počíta v oboch pohlaviach → súčet po pohlaviach môže prevýšiť
+    celkové KPI druzstva (analógia dvojitého pôsobenia osôb).
+    """
+    g = gender_expr(part_map)
+    return [
+        _match_stage(app_spaces, season_variants, sport_sector),
+        {
+            "$project": {
+                "teams": 1,
+                "gender": g if g is not None else {"$literal": None},
+                "catFb": cat_fallback_expr(part_map) or {"$literal": None},
+            }
+        },
+        {"$unwind": "$teams"},
+        {
+            "$group": {
+                "_id": {
+                    "gender": "$gender",
+                    "cat": {"$ifNull": ["$teams.ageCategory", "$catFb"]},
+                    "org": "$teams.organization.name",
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": {"gender": "$_id.gender", "cat": "$_id.cat"},
+                "druzstva": {"$sum": 1},
+            }
+        },
+        {"$sort": {"_id.gender": 1, "_id.cat": 1}},
     ]
 
 

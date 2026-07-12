@@ -38,3 +38,4 @@ Výstup: `data/zvaz/{id}/{sezona}.json` + aktualizovaný `data/index.json`. Anom
 - Osoby: publikovať unikáty aj súčty po kategóriách s poznámkou (dvojité pôsobenie).
 - Diváci vždy s % pokrytia; nedostatočné pokrytie sa nezobrazí, neodhaduje.
 - Agregácie po JEDNEJ sezóne (viac sezón naraz timeoutuje); 1 retry na transportný timeout.
+- Pohlavie výhradne z `competitions.parts[].rules.gender` cez `competitionPart._id` (blok `pohlavie` = M/F/NEURCENE; KPI a `kategorie` zostávajú súčtom všetkých pohlaví — O6, 13. 7. 2026).

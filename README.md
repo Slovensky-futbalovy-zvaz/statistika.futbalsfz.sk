@@ -32,7 +32,7 @@ Verejný web nemá žiadny prístup k databáze ani interným API — publikujú
 | Fáza | Obsah | Stav |
 |---|---|---|
 | F0 | Príprava — schválenie konceptu, prístupy, GDPR, dizajn | ✅ rozhodnutia O1–O7 uzavreté (ADR-0002, ADR-0003) |
-| F1 | Dátový audit a ETL (normalizácia sezón, register appSpace, JSON) | 🔄 audit hotový, ETL v1 funkčné; zostáva dimenzia pohlavie + produkčný beh |
+| F1 | Dátový audit a ETL (normalizácia sezón, register appSpace, JSON) | 🔄 audit hotový, ETL v1 funkčné vrát. dimenzie pohlavie; zostáva produkčný beh |
 | F2 | Frontend — interaktívna mapa a profily zväzov | ⬜ |
 | F3 | Porovnania a radenie zväzov | ⬜ |
 | F4 | Demografia za 10 sezón | ⬜ |

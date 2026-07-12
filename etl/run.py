@@ -79,22 +79,27 @@ def pripoj_db(uri: str | None, db_name: str):
 
 
 def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
-    """Mapa partId(str) → veková kategória z competitions.parts[].rules.category.
+    """Mapa partId(str) → {"cat": veková kategória, "gender": pohlavie} z competitions.parts[].rules.
 
-    Fallback pre historické sezóny: teams.ageCategory je vyplnené len od
-    2024/2025; časti súťaží majú kategóriu od 2013/2014 (96,5–100 %).
+    Kategória: fallback pre historické sezóny (teams.ageCategory je vyplnené len
+    od 2024/2025; časti súťaží majú kategóriu od 2013/2014, 96,5–100 %).
+    Pohlavie: zápas ho priamo nenesie — JEDINÝ zdroj je časť súťaže
+    (rules.gender „M“/„F“; prázdne/chýbajúce → None → skupina NEURCENE).
+    Zmiešané časti v riadnych súťažiach neexistujú (overené 12. 7. 2026).
     """
     app = spaces[0] if len(spaces) == 1 else {"$in": spaces}
     cur = db.competitions.find(
         {"appSpace": app, "season.name": {"$in": varianty}},
-        {"parts._id": 1, "parts.rules.category": 1},
+        {"parts._id": 1, "parts.rules.category": 1, "parts.rules.gender": 1},
     )
     mapa = {}
     for c in cur:
         for p in c.get("parts", []):
-            cat = (p.get("rules") or {}).get("category")
-            if cat:
-                mapa[str(p["_id"])] = cat
+            rules = p.get("rules") or {}
+            cat = rules.get("category")
+            gender = rules.get("gender") or None  # "" → None (NEURCENE)
+            if cat or gender:
+                mapa[str(p["_id"])] = {"cat": cat, "gender": gender}
     return mapa
 
 
@@ -133,6 +138,48 @@ def _facet_osoby(vysledok: list[dict], rola_kluc: str | None = None) -> dict:
     return {"unikatni": unik, "poKategorii": validate.zorad_kategorie(po_kat)}
 
 
+def _gender_kluc(g) -> str:
+    """Kľúč skupiny pohlavia vo výstupe: M/F, všetko ostatné (None/„“) → NEURCENE."""
+    return g if g in ("M", "F") else "NEURCENE"
+
+
+def _zloz_pohlavie(kat_g_raw: list[dict], druz_g_raw: list[dict]) -> dict:
+    """Blok `pohlavie` — per pohlavie súhrn (ako KPI) + kategórie (rozhodnutie O6, 12. 7. 2026)."""
+    druz = {
+        (_gender_kluc(r["_id"].get("gender")), r["_id"].get("cat")): r["druzstva"]
+        for r in druz_g_raw
+    }
+    bloky: dict[str, dict] = {}
+    for r in kat_g_raw:
+        g = _gender_kluc(r["_id"].get("gender"))
+        cat = r["_id"].get("cat") or "NEZNAMA"
+        blok = bloky.setdefault(g, {})
+        blok[cat] = {
+            "zapasy": r["zapasy"],
+            "druzstva": druz.get((g, r["_id"].get("cat")), 0),
+            "goly": r["goly"],
+            "zlte": r["zlte"],
+            "cervene": r["cervene"],
+            "divaci": r["divaci"],
+            "divaciPokrytych": r["divaciPokrytych"],
+        }
+    vysledok = {}
+    for g in validate.POHLAVIE_PORADIE:
+        if g not in bloky:
+            continue
+        kat = validate.zorad_kategorie(bloky[g])
+        vysledok[g] = {
+            "zapasy": sum(k["zapasy"] for k in kat.values()),
+            "druzstva": sum(k["druzstva"] for k in kat.values()),
+            "goly": sum(k["goly"] for k in kat.values()),
+            "divaci": sum(k["divaci"] for k in kat.values()),
+            "zlteKarty": sum(k["zlte"] for k in kat.values()),
+            "cerveneKarty": sum(k["cervene"] for k in kat.values()),
+            "kategorie": kat,
+        }
+    return vysledok
+
+
 def vygeneruj(
     db, zvaz: dict, sezona: str, varianty: list[str], roly: dict, sport_sector: str = "futbal"
 ) -> dict | None:
@@ -163,6 +210,16 @@ def vygeneruj(
             sport_sector, part_map,
         ),
         "osoby-managers",
+    )
+    kat_g_raw = agreguj(
+        db,
+        pipelines.kategorie_pohlavie(spaces, varianty, sport_sector, part_map),
+        "kategorie-pohlavie",
+    )
+    druz_g_raw = agreguj(
+        db,
+        pipelines.druzstva_pohlavie(spaces, varianty, sport_sector, part_map),
+        "druzstva-pohlavie",
     )
 
     druz = {r["_id"]: r["druzstva"] for r in druz_raw}
@@ -195,6 +252,12 @@ def vygeneruj(
                 "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb "
                 "(viacnásobné pôsobenie)."
             ),
+            "pohlaviePoznamka": (
+                "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; "
+                "NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú "
+                "súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom "
+                "sa v družstvách počíta v oboch pohlaviach."
+            ),
         },
         "kpi": {
             "zapasy": zapasy,
@@ -205,6 +268,7 @@ def vygeneruj(
             "cerveneKarty": sum(k["cervene"] for k in kategorie.values()),
         },
         "kategorie": kategorie,
+        "pohlavie": _zloz_pohlavie(kat_g_raw, druz_g_raw),
         "osoby": {
             "hraci": _facet_osoby(hraci_raw),
             "treneri": _facet_osoby(treneri_raw),
