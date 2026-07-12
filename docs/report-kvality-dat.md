@@ -7,7 +7,8 @@
 Discovery cez `competitions` (sezóny 2024/2025 + 2025/2026) našla **51 appSpace hodnôt**, z toho:
 
 - **43 zväzov futbalovej pyramídy**: `futbalsfz.sk` (SFZ) + 4 RFZ (`BFZ`, `ZsFZ`, `SsFZ`, `VsFZ`) + presne **38 ObFZ** — kompletný register s priradením k RFZ a k polygónom mapy je v [`etl/config/zvazy.json`](../etl/config/zvazy.json).
-- **Mimo registra:** `ulk.futbalnet.sk` (Únia ligových klubov — Niké liga; rozhodnúť, či zaradiť pod SFZ pohľad), `futsalslovakia.sk` (futsal, otázka O6), testovacie a klubové priestory (vylúčené).
+- **`ulk.futbalnet.sk`** (Únia ligových klubov — Niké liga, najvyššia súťaž mužov): **zaradené pod SFZ pohľad** (rozhodnutie 12. 7. 2026).
+- **Mimo registra:** `futsalslovakia.sk` (futsal, otázka O6), testovacie a klubové priestory (vylúčené).
 
 Formáty appSpace sú **úplne nekonzistentné** (`ObFZ-Trnava`, `obfz-prievidza`, `obfz-nitra.futbalnet.sk`, `TFZ`, `BA-mesto`, `MFZ-Kosice`…) — potvrdzuje sa zásada *nikdy nehádať, len register*.
 

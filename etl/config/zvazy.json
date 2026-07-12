@@ -2,7 +2,7 @@
   "generatedAt": "2026-07-12",
   "note": "Register overený dotazom na competitions (sezóny 2024/2025 + 2025/2026). appSpace sa NIKDY nehádá — len z tohto registra. geoName odkazuje na názov polygónu vo web/assets/geo/mapa.json.",
   "sfz": [
-    { "id": "sfz", "nazov": "Slovenský futbalový zväz", "appSpace": "futbalsfz.sk", "uroven": "SFZ", "geoName": null }
+    { "id": "sfz", "nazov": "Slovenský futbalový zväz", "appSpaces": ["futbalsfz.sk", "ulk.futbalnet.sk"], "uroven": "SFZ", "geoName": null, "poznamka": "ulk.futbalnet.sk = Únia ligových klubov (Niké liga, najvyššia súťaž mužov). Rozhodnutie 12.7.2026 (Ján Letko): patrí pod SFZ pohľad. Ak má zväz jeden appSpace, je v poli appSpace; ak viac, v poli appSpaces." }
   ],
   "rfz": [
     { "id": "bfz",  "nazov": "Bratislavský futbalový zväz",   "appSpace": "BFZ",  "uroven": "RFZ", "geoName": "BA" },
@@ -54,7 +54,6 @@
     { "id": "obfz-roznava",            "nazov": "ObFZ Rožňava",            "appSpace": "obfz-roznava.futbalnet.sk",            "rfz": "vsfz", "geoName": "ObFZ Rožňava" }
   ],
   "mimoRegistra": {
-    "ulk.futbalnet.sk": "Únia ligových klubov — profesionálne súťaže (Niké liga). Vlastník SFZ, riadi ULK. Rozhodnúť, či zaradiť pod SFZ pohľad.",
     "futsalslovakia.sk": "Futsal — mimo rozsahu MVP (otvorená otázka O6).",
     "test / disney / kruzkymcd / dajmespolugol / issf_club_12878 / fk-trnavka.futbalnet.sk": "Testovacie a klubové priestory — vylúčené z ETL."
   }
