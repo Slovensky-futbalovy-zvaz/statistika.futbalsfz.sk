@@ -102,11 +102,12 @@ def _facet_osoby(vysledok: list[dict], rola_kluc: str | None = None) -> dict:
         po_kat = {r["_id"]: r["n"] for r in facet["poKategorii"] if r["_id"]}
         unik = facet["unikatni"][0]["n"] if facet["unikatni"] else 0
         return {"unikatni": unik, "poKategorii": validate.zorad_kategorie(po_kat)}
-    # rozhodcovia/delegáti: facet obsahuje obe roly naraz
+    # rozhodcovia/delegáti/personál: facet obsahuje všetky roly naraz;
+    # záznamy bez kategórie (null) sa do poKategorii nepočítajú, unikáty áno
     po_kat = {
         r["_id"]["cat"]: r["n"]
         for r in facet["poKategorii"]
-        if r["_id"]["rola"] == rola_kluc and r["_id"]["cat"]
+        if r["_id"]["rola"] == rola_kluc and r["_id"].get("cat")
     }
     unik = next((r["n"] for r in facet["unikatni"] if r["_id"] == rola_kluc), 0)
     return {"unikatni": unik, "poKategorii": validate.zorad_kategorie(po_kat)}
@@ -299,8 +300,11 @@ def main() -> int:
             doc["osoby"]["hraci"]["unikatni"],
         )
 
-    aktualizuj_index(out_dir, zvaz, zvazy)
-    log.info("index.json aktualizovaný.")
+    if args.sport_sector == "futbal":
+        aktualizuj_index(out_dir, zvaz, zvazy)
+        log.info("index.json aktualizovaný.")
+    else:
+        log.info("index.json bez zmeny (odvetvie %s sa eviduje samostatne).", args.sport_sector)
     return 1 if chyby else 0
 
 
