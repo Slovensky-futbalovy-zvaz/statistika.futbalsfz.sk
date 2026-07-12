@@ -61,7 +61,16 @@ def validuj(doc: dict) -> list[str]:
             f"nízke pokrytie divákov {pokrytie:.1%} (< {DIVACI_POKRYTIE_MIN:.0%}) — publikovať s upozornením"
         )
 
-    # 4) Osoby: súčet po kategóriách musí byť ≥ unikáty (dvojité pôsobenie)
+    # 4) Podozrivo vysoký priemer divákov (chybné záznamy v protokoloch,
+    #    napr. ObFZ Nitra 2019/2020 U13: 303 610 divákov / 107 zápasov)
+    for k, data in kategorie.items():
+        if data["divaciPokrytych"] and data["divaci"] / data["divaciPokrytych"] > 2000:
+            anomalie.append(
+                f"kategória {k}: podozrivý priemer divákov "
+                f"{data['divaci'] / data['divaciPokrytych']:.0f}/zápas — overiť protokoly"
+            )
+
+    # 5) Osoby: súčet po kategóriách musí byť ≥ unikáty (dvojité pôsobenie)
     for rola, data in doc.get("osoby", {}).items():
         sucet = sum(data.get("poKategorii", {}).values())
         if sucet < data.get("unikatni", 0):
@@ -69,7 +78,7 @@ def validuj(doc: dict) -> list[str]:
                 f"osoby.{rola}: súčet po kategóriách {sucet} < unikátni {data.get('unikatni')}"
             )
 
-    # 5) Osoby v kategóriách, ktoré nemajú zápasy
+    # 6) Osoby v kategóriách, ktoré nemajú zápasy
     for rola, data in doc.get("osoby", {}).items():
         for k in data.get("poKategorii", {}):
             if k not in kategorie:

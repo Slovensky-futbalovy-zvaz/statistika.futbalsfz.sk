@@ -94,7 +94,9 @@ Meranie na uzavretých zápasoch (`closed: true`) celej DB. „S udalosťami“ 
 | 2024/2025 | 99,6 % |
 | 2025/2026 | 99,6 % |
 
-Historické sezóny majú vekovú kategóriu v **`competitions.parts[].rules.category`** (vyplnenosť 96,5 – 100 % častí súťaží; 2013/2014 a 2016/2017 = 100 %). Zápas nesie `competitionPart._id` → join na súťaž. **ETL potrebuje fallback:** kategória primárne z `teams[].ageCategory`, pre staršie sezóny z časti súťaže. Bez toho sú profily zväzov generovateľné len od 2024/2025. (Tabuľka pokrytia v sekcii 3 merala kategóriu na úrovni súťaží, nie zápasov — preto ukazovala 100 %.)
+Historické sezóny majú vekovú kategóriu v **`competitions.parts[].rules.category`** (vyplnenosť 96,5 – 100 % častí súťaží; 2013/2014 a 2016/2017 = 100 %). Zápas nesie `competitionPart._id` → join na súťaž. (Tabuľka pokrytia v sekcii 3 merala kategóriu na úrovni súťaží, nie zápasov — preto ukazovala 100 %.)
+
+**Fallback implementovaný 12. 7. 2026** (rozhodnutie Ján Letko): ETL načíta mapu partId→kategória z `competitions` a vloží ju do pipelines ako `$switch`. Overené na ObFZ Nitra 2019/2020 — 100 % z 1 284 zápasov dostalo kategóriu (ADULTS 529, U19 143, U15 75, U13 107, U11 284, U09 146). Pri teste sa našiel chybný záznam divákov (U13: 303 610 divákov / 107 zápasov, ~2 837/zápas) → do validácií pridaná kontrola extrémneho priemeru divákov (> 2 000/zápas = anomália).
 
 ### 7c. Demografia (O7) — CRM API netreba
 

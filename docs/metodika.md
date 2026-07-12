@@ -57,7 +57,7 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 ### Vekové kategórie
 
 - Primárny zdroj: `teams[].ageCategory` — **ale vyplnené len od sezóny 2024/2025** (99,6 %; staršie sezóny ~0 % — overené 12. 7. 2026).
-- **Historické sezóny (≤ 2023/2024):** kategória z `competitions.parts[].rules.category` (vyplnenosť 96,5 – 100 %), join cez `match.competitionPart._id`. ETL musí mať fallback, inak sú profily generovateľné len od 2024/2025.
+- **Historické sezóny (≤ 2023/2024):** kategória z `competitions.parts[].rules.category` (vyplnenosť 96,5 – 100 %), join cez `match.competitionPart._id`. **Fallback je implementovaný v ETL** (mapa partId→kategória sa načíta z `competitions` a vkladá do pipelines ako `$switch`; overené na ObFZ Nitra 2019/2020 — 100 % zápasov s kategóriou, 12. 7. 2026).
 - Reálny číselník hodnôt je širší než metodika pôvodne uvádzala: `U06`–`U20` + `ADULTS` (U10 v ZsFZ, U08/U12/U14/U16 inde, U20 vo futsale).
 - Mapovanie do 4 hlavných kategórií: Dospelí (ADULTS), Dorastenci (U17, U19), Žiaci (U12–U15), Prípravky (U07–U11).
 - Dorastenci sú na RFZ/SFZ úrovni nenulová kategória (na rozdiel od niektorých ObFZ) — nulu nikdy nepredpokladať, vždy overiť.

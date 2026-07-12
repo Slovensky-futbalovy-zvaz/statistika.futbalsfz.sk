@@ -78,6 +78,26 @@ def pripoj_db(uri: str | None, db_name: str):
     return MongoClient(uri)[db_name]
 
 
+def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
+    """Mapa partId(str) → veková kategória z competitions.parts[].rules.category.
+
+    Fallback pre historické sezóny: teams.ageCategory je vyplnené len od
+    2024/2025; časti súťaží majú kategóriu od 2013/2014 (96,5–100 %).
+    """
+    app = spaces[0] if len(spaces) == 1 else {"$in": spaces}
+    cur = db.competitions.find(
+        {"appSpace": app, "season.name": {"$in": varianty}},
+        {"parts._id": 1, "parts.rules.category": 1},
+    )
+    mapa = {}
+    for c in cur:
+        for p in c.get("parts", []):
+            cat = (p.get("rules") or {}).get("category")
+            if cat:
+                mapa[str(p["_id"])] = cat
+    return mapa
+
+
 def agreguj(db, pipeline: list[dict], popis: str) -> list[dict]:
     """Agregácia s retry (MCP/Atlas občas timeoutne) a diskovým spillom."""
     for pokus in range(RETRIES + 1):
@@ -120,22 +140,27 @@ def vygeneruj(
     spaces = (
         [FUTSAL_APP_SPACE] if sport_sector == "futsal" else app_spaces(zvaz)
     )  # futsal patrí pod SFZ, ale žije na vlastnom appSpace
+    part_map = nacitaj_part_mapu(db, spaces, varianty)
 
-    kat_raw = agreguj(db, pipelines.kategorie(spaces, varianty, sport_sector), "kategorie")
+    kat_raw = agreguj(
+        db, pipelines.kategorie(spaces, varianty, sport_sector, part_map), "kategorie"
+    )
     if not kat_raw:
         return None
-    druz_raw = agreguj(db, pipelines.druzstva(spaces, varianty, sport_sector), "druzstva")
-    hraci_raw = agreguj(db, pipelines.hraci(spaces, varianty, sport_sector), "hraci")
+    druz_raw = agreguj(
+        db, pipelines.druzstva(spaces, varianty, sport_sector, part_map), "druzstva"
+    )
+    hraci_raw = agreguj(db, pipelines.hraci(spaces, varianty, sport_sector, part_map), "hraci")
     treneri_raw = agreguj(
         db,
-        pipelines.treneri(spaces, varianty, roly["treneriCrewPositions"], sport_sector),
+        pipelines.treneri(spaces, varianty, roly["treneriCrewPositions"], sport_sector, part_map),
         "treneri",
     )
     rd_raw = agreguj(
         db,
         pipelines.osoby_managers(
             spaces, varianty, roly["rozhodcovia"], roly["delegati"], roly["personal"],
-            sport_sector,
+            sport_sector, part_map,
         ),
         "osoby-managers",
     )

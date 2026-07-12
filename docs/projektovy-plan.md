@@ -206,4 +206,14 @@ Riadenie: týždenný 30-min status počas aktívnych fáz; každá fáza konč�
 | O6 | Rozsah športov: len futbal, alebo aj futsal/ženské súťaže samostatne? | PO | F1 |
 | O7 | Poskytne CRM API agregovateľné demografické atribúty bez osobných údajov? | Sportnet | F1 |
 
+**Stav otázok k 12. 7. 2026:**
+
+- **O1 — otvorené.** Prebieha výber modelu (interný tím SFZ / Sportnet / externý / kombinácia).
+- **O2 — ROZHODNUTÉ:** ETL číta priamo MongoDB read-only ([ADR-0002](adr/0002-etl-priamo-mongodb.md)).
+- **O3 — otvorené.** Pripraviť analýzu konkrétnych technických riešení hostingu/CDN (úloha na ďalšiu session).
+- **O4 — ROZHODNUTÉ (Ján Letko):** dizajn čo najviac podľa brand manuálu SFZ, s denným aj nočným režimom (light + dark mode). Detailný návrh sa dorieši v F2.
+- **O5 — otvorené.** PO si vyžiadal vysvetlenie prahu agregátov; rozhodne po ňom (finálne posúdenie DPO).
+- **O6 — ROZHODNUTÉ:** šport/športové odvetvie je systémová premenná ETL (futbal + futsal pod SFZ, `etl/config/sporty.json`); pohlavie (mužské/ženské súťaže) sa pridá ako ďalšia dimenzia ETL (naplánované, zdroj `parts[].rules.gender`); Projekty (disney, kruzkymcd, dajmespolugol) budú samostatná časť štatistík neskôr.
+- **O7 — ROZHODNUTÉ:** CRM API netreba; demografia priamo z DB `sportnet.users` ako agregáty (viď metodika a report kvality dát, sekcia 7c).
+
 **Najbližšie kroky:** pripomienkovanie dokumentu → prezentácia vedeniu SFZ/Sportnet (O1–O3) → klikateľný prototyp (mapa + 1 zväz + 2 sezóny) → štart F1.
