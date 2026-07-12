@@ -50,8 +50,16 @@ Meranie na uzavretých zápasoch (`closed: true`) celej DB. „S udalosťami“ 
 
 ## 5. Zostávajúce úlohy F1
 
-- [ ] Pokrytie udalostí po vekových kategóriách (overenie záveru č. 3)
-- [ ] Distinct roly `managers.type.label` po zväzoch (rozhodcovia/delegáti — presné texty)
+- [ ] Pokrytie udalostí po vekových kategóriách (overenie záveru č. 3) — čiastočná evidencia: prípravky ZsFZ (U09–U11, 2025/2026) majú 0 gólov v protokole, zatiaľ čo prípravky ObFZ Nitra góly evidujú → pokrytie protokolov sa medzi zväzmi líši, pred publikovaním mládežníckych metrík treba merať po zväzoch
+- [x] ~~Distinct roly `managers.type.label` po zväzoch~~ — vyriešené 12. 7. 2026: texty rolí sú **identické vo všetkých 43 zväzoch** (overené na sezóne 2025/2026); overený číselník v [`etl/config/roly.json`](../etl/config/roly.json). Nové otvorené otázky: O8 (VAR roly Videorozhodca/Asistent videorozhodcu na SFZ/ULK — zatiaľ nezapočítané medzi rozhodcov), O9 (Pozorovateľ rozhodcov — zatiaľ nezapočítaný medzi delegátov)
 - [x] ~~Kontrola premenovaných súťaží~~ — vyriešené: súťaže sa zlučujú cez `competitionGroupId` (stabilné naprieč sezónami aj premenovaniami); úroveň = `level`, pohlavie = `parts[].rules.gender`, veková úroveň = `parts[].rules.category` (overené v dokumentácii aj na dátach, 12. 7. 2026)
 - [ ] Overenie CRM API pre demografické atribúty (rok narodenia, pohlavie) — otázka O7
-- [ ] Prvá verzia ETL skriptu (pipelines → JSON podľa schémy v data/)
+- [x] ~~Prvá verzia ETL skriptu~~ — hotové 12. 7. 2026: `etl/run.py` + moduly `etl/pipelines/`, `etl/validate/`. Pipelines verifikované proti vzorkám ObFZ Nitra 2024/2025 aj 2025/2026 (100 % zhoda vo všetkých metrikách); všeobecnosť overená vygenerovaním ZsFZ 2025/2026 (8 kategórií vrát. U10 a dorasteneckých U17/U19, bez anomálií). Beh po jednej sezóne + 1 retry (timeouty potvrdené aj pri discovery rolí — agregácie nad viacerými zväzmi naraz treba deliť na chunky ≤ 4–5 appSpace)
+
+## 6. Doplnené zistenia z implementácie ETL (12. 7. 2026 večer)
+
+1. **Vekové kategórie v dátach presahujú číselník metodiky** — ZsFZ 2025/2026 má aj `U10`. ETL číselník rozšírený (U06–U19 + ADULTS); neznáme hodnoty hlási validácia ako anomáliu.
+2. **`divaciPokrytych`** = počet zápasov s vyplneným `protocol.audience` (vrátane 0); `divaciPokrytie` = pokrytých / všetkých zápasov — presne zodpovedá vzorkám.
+3. **Družstvo** je unikát `organization.name` v rámci vekovej kategórie; KPI `druzstva` = súčet po kategóriách (rovnaká organizácia vo viacerých kategóriách sa počíta v každej z nich).
+4. **VAR roly** (`Videorozhodca`, `Asistent videorozhodcu`, `Replay Operátor`) existujú len na `futbalsfz.sk`/`ulk.futbalnet.sk`; `Hlavný usporiadateľ`, `Hlásateľ`, `Videotechnik`, `Pozorovateľ rozhodcov` sa nezapočítavajú (viď roly.json).
+5. **Delegáti chýbajú v niektorých ObFZ úplne** (Topoľčany, Veľký Krtíš, OFZ Orava… 2025/2026) — reálny stav, nie chyba dát.

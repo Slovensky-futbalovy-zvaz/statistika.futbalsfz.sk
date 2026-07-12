@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-07-12",
+  "note": "Distinct managers.type.label overené dotazom na matches (closed:true, sezóna 2025/2026) naprieč všetkými 43 zväzmi registra. Texty rolí sú IDENTICKÉ vo všetkých zväzoch — žiadne per-zväz varianty. ETL číta roly výhradne z tohto configu.",
+  "rozhodcovia": [
+    "Rozhodca",
+    "1. asistent rozhodcu",
+    "2. asistent rozhodcu",
+    "Náhradný rozhodca"
+  ],
+  "delegati": [
+    "Delegát stretnutia"
+  ],
+  "treneriCrewPositions": [
+    "coach",
+    "assist_coach",
+    "coach_goalkeepers",
+    "conditioning_coach"
+  ],
+  "nezapocitane": {
+    "Hlavný usporiadateľ": "usporiadateľská služba — nie je rozhodca ani delegát",
+    "Hlásateľ": "technická rola",
+    "Videotechnik": "technická rola",
+    "Pozorovateľ rozhodcov": "hodnotí rozhodcov; vo vzorkách ObFZ Nitra nezapočítaný medzi delegátov — ponechané mimo",
+    "Replay Operátor": "VAR technická rola (len SFZ/ULK)"
+  },
+  "otvoreneOtazky": {
+    "O8-var-roly": "Videorozhodca a Asistent videorozhodcu (len futbalsfz.sk + ulk.futbalnet.sk, Niké liga) — započítať medzi rozhodcov na SFZ úrovni? Zatiaľ NEZAPOČÍTANÉ (konzistencia so vzorkami). Rozhodnutie: Ján Letko.",
+    "O9-pozorovatel": "Pozorovateľ rozhodcov sa vyskytuje takmer 1:1 s Delegátom stretnutia (často tá istá osoba). Zatiaľ nezapočítaný. Rozhodnutie: Ján Letko."
+  },
+  "vyskytPodlaUrovne": {
+    "vsetkyZvazy": ["Rozhodca", "1. asistent rozhodcu", "2. asistent rozhodcu", "Hlavný usporiadateľ", "Hlásateľ", "Videotechnik"],
+    "vacsinaZvazov": ["Delegát stretnutia", "Pozorovateľ rozhodcov", "Náhradný rozhodca (ojedinele)"],
+    "lenSfzUlk": ["Videorozhodca", "Asistent videorozhodcu", "Replay Operátor"],
+    "poznamka": "Niektoré ObFZ nemajú delegátov vôbec (napr. ObFZ Topoľčany, ObFZ Veľký Krtíš, OFZ Orava 2025/2026) — reálny stav, nie chyba."
+  }
+}
