@@ -52,6 +52,6 @@ Meranie na uzavretých zápasoch (`closed: true`) celej DB. „S udalosťami“ 
 
 - [ ] Pokrytie udalostí po vekových kategóriách (overenie záveru č. 3)
 - [ ] Distinct roly `managers.type.label` po zväzoch (rozhodcovia/delegáti — presné texty)
-- [ ] Kontrola premenovaných súťaží v historických sezónach (distinct competition.name per zväz × sezóna)
+- [x] ~~Kontrola premenovaných súťaží~~ — vyriešené: súťaže sa zlučujú cez `competitionGroupId` (stabilné naprieč sezónami aj premenovaniami); úroveň = `level`, pohlavie = `parts[].rules.gender`, veková úroveň = `parts[].rules.category` (overené v dokumentácii aj na dátach, 12. 7. 2026)
 - [ ] Overenie CRM API pre demografické atribúty (rok narodenia, pohlavie) — otázka O7
 - [ ] Prvá verzia ETL skriptu (pipelines → JSON podľa schémy v data/)

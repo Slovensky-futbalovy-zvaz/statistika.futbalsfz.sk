@@ -16,6 +16,17 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 - Súťaž obsahuje vždy minimálne jednu **Časť súťaže** (napr. Základná časť, Skupina o udržanie, Skupina o postup) — pri agregáciách zápasov pozor na dvojité započítanie, zápas patrí vždy práve jednej časti.
 - SFZ je **vlastník** všetkých súťaží (~400 na sezónu); riadenie deleguje na RFZ a ObFZ — tie sú „riadiaci zväz súťaže“ (v dátach appSpace).
 
+### Polia v kolekcii `competitions` (overené 12. 7. 2026, dokumentácia + reálne dáta)
+
+- **`level`** = úroveň súťaže / liga (číslo; nižšie = vyššia súťaž, napr. 4 = IV. liga); `sortvalue` radí v rámci úrovne.
+- **`competitionGroupId`** = **stabilná identita súťaže naprieč sezónami aj premenovaniami** (kolekcia `competitions_groups`). Overené: „VIII. liga A - TAJBI sport ObFZ NR“ (2025/2026) nesie groupId vytvorené ešte v r. 2020. **ETL zlučuje premenované súťaže cez `competitionGroupId`, nie cez názvy ani `$in` zoznamy.**
+- **`parts[]`** = časti súťaže; každá časť má:
+  - **`rules.gender`** = pohlavie („M“ / „F“ / prázdne),
+  - **`rules.category`** = veková úroveň („U15“, „ADULTS“…),
+  - **`rules.sport_sector`** (futbal/futsal…), `format` (`points`/`draw`), `dateFrom`/`dateTo`, `teams[]`, `rounds[]`.
+- Jedinečný identifikátor súťaže (úroveň + veková úroveň + pohlavie + sezóna) sa teda skladá z: `level` + `parts[].rules.category` + `parts[].rules.gender` + `season.name`.
+- Zápas patrí vždy práve jednej časti súťaže → agregácie zápasov cez súťaž sa nedvojia; pozor len pri odvodzovaní atribútov súťaže z častí (súťaž môže mať viac častí s rovnakými rules — napr. skupiny A/B).
+
 ### Identifikácia zväzu — appSpace
 
 - `appSpace` je kritický identifikátor riadiaceho zväzu; **nikdy sa nehádaj z názvu**, vždy sa overuje dotazom.
@@ -32,8 +43,8 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 ### Premenovávanie súťaží počas sezóny (rebranding pasca)
 
 - Súťaže sa vedia premenovať v priebehu ročníka (sponzorské názvy) — overený prípad v ObFZ Nitra („VIII. liga - A“ → „VIII. liga A - TAJBI sport“).
-- Pred zoskupovaním podľa `competition.name` vždy skontrolovať distinct názvy a varianty **explicitne zlúčiť** cez `$in`.
-- **Nikdy nepoužívať regex na názvy súťaží** — falošné zhody (regex „A“ matchuje „TAJBI“).
+- **Správne riešenie: zlučovať cez `competitionGroupId`** (stabilné naprieč sezónami aj premenovaniami — viď vyššie). Explicitný `$in` zoznam názvov je len núdzový fallback.
+- **Nikdy nepoužívať regex na názvy súťaží** — falošné zhody (regex „A“ matchuje „TAJBI“); názvy sa menia podľa partnerov a nie sú identifikátorom.
 
 ### Vekové kategórie
 
