@@ -78,6 +78,12 @@ def pripoj_db(uri: str | None, db_name: str):
     return MongoClient(uri)[db_name]
 
 
+#: Normalizácia nekanonických hodnôt parts.rules.category (rozhodnutie 13. 7. 2026):
+#: „Dospelí“ = ADULTS (futsal, Vysokoškolská liga), „U15 mix“ = U15 (školský
+#: turnaj VsFZ; zmiešané pohlavie rieši dimenzia pohlavie ako NEURCENE).
+KAT_NORMALIZACIA = {"Dospelí": "ADULTS", "U15 mix": "U15"}
+
+
 def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
     """Mapa partId(str) → {"cat": veková kategória, "gender": pohlavie} z competitions.parts[].rules.
 
@@ -102,6 +108,7 @@ def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
             # veková úroveň je Uxx a pohlavie nesie rules.gender (13. 7. 2026).
             if cat and cat.startswith("WU"):
                 cat = cat[1:]
+            cat = KAT_NORMALIZACIA.get(cat, cat)
             if cat or gender:
                 mapa[str(p["_id"])] = {"cat": cat, "gender": gender}
     return mapa

@@ -2,11 +2,12 @@
   "zvaz": "zsfz",
   "sezona": "2025/2026",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-12T20:17:59+02:00",
+  "generatedAt": "2026-07-13T00:55:23+02:00",
   "methodologyFlags": {
     "zapasy": "len closed:true",
     "divaciPokrytie": 0.967,
-    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie)."
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
   },
   "kpi": {
     "zapasy": 6340,
@@ -88,6 +89,90 @@
       "cervene": 0,
       "divaci": 9274,
       "divaciPokrytych": 208
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 6340,
+      "druzstva": 447,
+      "goly": 26493,
+      "divaci": 513755,
+      "zlteKarty": 10555,
+      "cerveneKarty": 375,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 1987,
+          "druzstva": 143,
+          "goly": 7171,
+          "zlte": 6200,
+          "cervene": 176,
+          "divaci": 321561,
+          "divaciPokrytych": 1955
+        },
+        "U19": {
+          "zapasy": 1622,
+          "druzstva": 115,
+          "goly": 8275,
+          "zlte": 2692,
+          "cervene": 124,
+          "divaci": 71548,
+          "divaciPokrytych": 1495
+        },
+        "U17": {
+          "zapasy": 364,
+          "druzstva": 28,
+          "goly": 1463,
+          "zlte": 537,
+          "cervene": 16,
+          "divaci": 16566,
+          "divaciPokrytych": 350
+        },
+        "U15": {
+          "zapasy": 891,
+          "druzstva": 50,
+          "goly": 4607,
+          "zlte": 807,
+          "cervene": 41,
+          "divaci": 40683,
+          "divaciPokrytych": 890
+        },
+        "U13": {
+          "zapasy": 891,
+          "druzstva": 50,
+          "goly": 4977,
+          "zlte": 319,
+          "cervene": 18,
+          "divaci": 39806,
+          "divaciPokrytych": 890
+        },
+        "U11": {
+          "zapasy": 219,
+          "druzstva": 23,
+          "goly": 0,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 8465,
+          "divaciPokrytych": 208
+        },
+        "U10": {
+          "zapasy": 147,
+          "druzstva": 15,
+          "goly": 0,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 5852,
+          "divaciPokrytych": 136
+        },
+        "U09": {
+          "zapasy": 219,
+          "druzstva": 23,
+          "goly": 0,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 9274,
+          "divaciPokrytych": 208
+        }
+      }
     }
   },
   "osoby": {

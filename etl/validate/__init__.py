@@ -8,7 +8,7 @@ Nedostatočné pokrytie sa NEODHADUJE — len sa označí (metodika, kap. Známe
 #: Reálne overené hodnoty: ADULTS, U19, U17, U15, U13, U11, U10 (ZsFZ), U09, U07;
 #: U18/U16/U14/U12/U08/U06 preventívne (číselník Ux sa v dátach vyskytuje širší).
 KATEGORIE_PORADIE = [
-    "ADULTS", "U20", "U19", "U18", "U17", "U16", "U15", "U14", "U13",
+    "ADULTS", "U21", "U20", "U19", "U18", "U17", "U16", "U15", "U14", "U13",
     "U12", "U11", "U10", "U09", "U08", "U07", "U06",
 ]
 

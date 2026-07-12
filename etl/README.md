@@ -19,12 +19,15 @@ etl/
 ## Použitie
 
 ```bash
-export MONGODB_URI="mongodb://…"          # prístup do DB sutaze (read-only postačuje)
+export MONGODB_URI="mongodb://…"          # prístup do DB sutaze + sportnet (read-only postačuje)
 python etl/run.py --zvaz obfz-nitra --sezona 2025/2026
 python etl/run.py --zvaz obfz-nitra --all-sezony      # všetky kanonické sezóny s dátami
 python etl/run.py --zvaz zsfz --sezona 2025/2026
 python etl/run.py --zvaz sfz --sezona 2025/2026 --sport-sector futsal   # futsal patrí pod SFZ
+python etl/demografia.py --zvaz obfz-nitra --all-sezony   # demografia → data/demografia/{zvaz}.json
 ```
+
+Lokálny beh (macOS, python.org build): `python3 -m venv .venv && ./.venv/bin/pip install pymongo certifi`; pred behom `export SSL_CERT_FILE=$(./.venv/bin/python -c 'import certifi; print(certifi.where())')` (Atlas TLS). URI patrí do `.env.local` (gitignorované).
 
 Výstup: `data/zvaz/{id}/{sezona}.json` + aktualizovaný `data/index.json`. Anomálie sa logujú (WARNING); nenulový exit kód pri nezrovnalostiach počtov.
 

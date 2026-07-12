@@ -73,6 +73,7 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 - Súčty M+F+NEURCENE presne sedia na KPI (zápas patrí práve jednej časti); výnimka `druzstva` — organizácia s mužským aj ženským družstvom sa počíta v oboch pohlaviach (analógia dvojitého pôsobenia osôb, publikovať s poznámkou).
 - Ženský futbal 2025/2026: SFZ 6 súťaží (ADULTS 222, U19 351, U15 351, WU14 12 zápasov), SsFZ 5, BFZ 3, VsFZ 1, futsal 1; **ZsFZ a všetky ObFZ bez ženských súťaží** (reálny stav).
 - **WUxx → Uxx** (rozhodnutie Ján Letko, 13. 7. 2026): „W“ v kategórii (napr. WU14 na futbalsfz.sk) je len označenie ženskej súťaže v názve kategórie — veková úroveň je Uxx, pohlavie nesie `rules.gender` („F“). ETL normalizuje v part mape; hodnoty WUxx sa vyskytujú výhradne v `parts.rules.category` (v `teams.ageCategory` nie).
+- **Normalizácia nekanonických kategórií** (rozhodnutie Ján Letko, 13. 7. 2026): „Dospelí“ → ADULTS (futsal, Vysokoškolská liga), „U15 mix“ → U15 (školský turnaj VsFZ; zmiešané pohlavie vykáže dimenzia pohlavie ako NEURCENE). **U21** (SsFZ 2015/2016) je regulárna veková úroveň — doplnená do číselníka medzi ADULTS a U20.
 
 ### Osoby
 
@@ -111,6 +112,7 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 - Zdroj: DB **`sportnet`**, kolekcia **`users`** — `_id` = sportnetId (ObjectId), polia `birthdate`, `sex` (overené 12. 7. 2026; uzatvára O7 — CRM API netreba).
 - Join: `sutaze.matches.nominations[].athletes[].sportnetUser._id` (string) → `$toObjectId` → `sportnet.users._id`.
 - Publikujú sa výhradne agregáty (rok narodenia × pohlavie × rola × zväz × sezóna); bez prahu minimálnej veľkosti (O5 rozhodnuté — publicistická licencia).
+- **Implementácia: `etl/demografia.py`** (13. 7. 2026) → `data/demografia/{zvaz}.json` — jeden súbor na zväz, vnútri `sezony` → roly (hraci/treneri/rozhodcovia/delegati/personal) → `{osoby, sUdajmi, bezUdajov, roky: {rok: {M/F/N}}}`; N = pohlavie v users nevyplnené. Join v Pythone (ObjectId), users sa čítajú dávkami $in po 5 000. Anomália: > 20 % osôb roly bez birthdate.
 
 ## GDPR zásady
 
