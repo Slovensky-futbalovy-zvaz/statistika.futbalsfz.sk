@@ -1,0 +1,28 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Node
+node_modules/
+dist/
+.next/
+out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# ETL — lokálne behy a citlivé konfigurácie
+etl/.env
+etl/output/
+*.local.json
+
+# Logy a dočasné súbory
+*.log
+tmp/
