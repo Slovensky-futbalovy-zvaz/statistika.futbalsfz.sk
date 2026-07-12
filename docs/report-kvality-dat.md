@@ -52,10 +52,10 @@ Meranie na uzavretých zápasoch (`closed: true`) celej DB. „S udalosťami“ 
 
 ## 5. Zostávajúce úlohy F1
 
-- [ ] Pokrytie udalostí po vekových kategóriách (overenie záveru č. 3) — čiastočná evidencia: prípravky ZsFZ (U09–U11, 2025/2026) majú 0 gólov v protokole, zatiaľ čo prípravky ObFZ Nitra góly evidujú → pokrytie protokolov sa medzi zväzmi líši, pred publikovaním mládežníckych metrík treba merať po zväzoch
+- [x] ~~Pokrytie udalostí po vekových kategóriách~~ — zmerané 12. 7. 2026 (viď sekcia 7): záver č. 3 potvrdený, pokles celkového % spôsobujú výhradne prípravky
 - [x] ~~Distinct roly `managers.type.label` po zväzoch~~ — vyriešené 12. 7. 2026: texty rolí sú **identické vo všetkých 43 zväzoch** (overené na sezóne 2025/2026); overený číselník v [`etl/config/roly.json`](../etl/config/roly.json). O8/O9 rozhodnuté 12. 7. 2026 (Ján Letko): VAR roly (Videorozhodca, Asistent videorozhodcu, Replay Operátor) patria medzi **rozhodcov**; Delegát stretnutia + Pozorovateľ rozhodcov tvoria skupinu **delegáti**; Hlavný usporiadateľ, Hlásateľ a Videotechnik tvoria skupinu **personál**
 - [x] ~~Kontrola premenovaných súťaží~~ — vyriešené: súťaže sa zlučujú cez `competitionGroupId` (stabilné naprieč sezónami aj premenovaniami); úroveň = `level`, pohlavie = `parts[].rules.gender`, veková úroveň = `parts[].rules.category` (overené v dokumentácii aj na dátach, 12. 7. 2026)
-- [ ] Overenie CRM API pre demografické atribúty (rok narodenia, pohlavie) — otázka O7
+- [x] ~~Overenie CRM API pre demografické atribúty~~ — vyriešené 12. 7. 2026 inou cestou (viď sekcia 7): CRM API nemá verejný agregovaný endpoint, ale demografia sa dá počítať priamo z DB `sportnet.users` (polia `birthdate`, `sex`; `_id` = sportnetId ako ObjectId — join na `nominations[].athletes[].sportnetUser._id` cez `$toObjectId`). Publikovať výhradne agregáty (GDPR prah — O5). CRM API netreba — uzatvára O7
 - [x] ~~Prvá verzia ETL skriptu~~ — hotové 12. 7. 2026: `etl/run.py` + moduly `etl/pipelines/`, `etl/validate/`. Pipelines verifikované proti vzorkám ObFZ Nitra 2024/2025 aj 2025/2026 (100 % zhoda vo všetkých metrikách); všeobecnosť overená vygenerovaním ZsFZ 2025/2026 (8 kategórií vrát. U10 a dorasteneckých U17/U19, bez anomálií). Beh po jednej sezóne + 1 retry (timeouty potvrdené aj pri discovery rolí — agregácie nad viacerými zväzmi naraz treba deliť na chunky ≤ 4–5 appSpace)
 
 ## 6. Doplnené zistenia z implementácie ETL (12. 7. 2026 večer)
@@ -66,3 +66,37 @@ Meranie na uzavretých zápasoch (`closed: true`) celej DB. „S udalosťami“ 
 4. **VAR roly** (`Videorozhodca`, `Asistent videorozhodcu`, `Replay Operátor`) existujú len na `futbalsfz.sk`/`ulk.futbalnet.sk` a započítavajú sa medzi **rozhodcov**; `Delegát stretnutia` + `Pozorovateľ rozhodcov` = skupina **delegáti** (v praxi často tá istá osoba — unikáty ObFZ Nitra aj ZsFZ sa po zlúčení nezmenili); `Hlavný usporiadateľ`, `Hlásateľ`, `Videotechnik` = skupina **personál** (rozhodnutie 12. 7. 2026, viď roly.json).
 5. **Delegáti chýbajú v niektorých ObFZ úplne** (Topoľčany, Veľký Krtíš, OFZ Orava… 2025/2026) — reálny stav, nie chyba dát (potvrdil Ján Letko, 12. 7. 2026).
 6. **Futsal SFZ 2025/2026 vygenerovaný** (`data/zvaz/sfz/2025-2026-futsal.json`): 246 zápasov, kategórie ADULTS/U20/U17/U15 — futsal má **U20** (doplnená do číselníka). 23 zápasov „Vysokoškolskej ligy vo futsale“ nemá vyplnenú `teams.ageCategory` → vo výstupe kategória `NEZNAMA` + logovaná anomália. Roly osôb identické s futbalom. Pokrytie divákov len 89 % (pod futbalovým štandardom ~95 %).
+
+## 7. Merania 12. 7. 2026 večer — udalosti po kategóriách, historické kategórie, demografia
+
+### 7a. Pokrytie udalostí po vekových kategóriách (2025/2026, celá DB, uzavreté zápasy)
+
+| Kategória | Zápasy | S udalosťou | S gólom |
+|---|---:|---:|---:|
+| ADULTS | 17 288 | 96,3 % | 94,0 % |
+| U19 | 7 845 | 91,3 % | 90,1 % |
+| U17 | 2 163 | 94,4 % | 91,8 % |
+| U15 | 9 196 | 94,3 % | 93,3 % |
+| U13 | 8 119 | 95,3 % | 95,1 % |
+| U11 | 8 950 | 67,5 % | 67,5 % |
+| U09 | 6 136 | 48,6 % | 48,6 % |
+| U10 | 1 418 | 16,6 % | 16,6 % |
+| U08 | 984 | 18,5 % | 18,4 % |
+| U07 | 301 | 28,9 % | 28,9 % |
+
+**Záver č. 3 potvrdený:** dospelí + žiaci + dorast majú stabilne > 91 %; pokles celkového % spôsobujú prípravky (U07–U11), kde sa protokoly udalostí často nevedú a evidencia sa medzi zväzmi líši (Nitra góly eviduje, ZsFZ nie). Karty a góly za prípravky publikovať len s výhradou/nezobrazovať.
+
+### 7b. KRITICKÉ: `teams.ageCategory` existuje len od sezóny 2024/2025
+
+| Sezóna | Zápasy s teams.ageCategory |
+|---|---:|
+| 2013/2014 – 2023/2024 | ~0 % (2022/2023: 52 z 58 481; 2023/2024: 10 z 61 241) |
+| 2024/2025 | 99,6 % |
+| 2025/2026 | 99,6 % |
+
+Historické sezóny majú vekovú kategóriu v **`competitions.parts[].rules.category`** (vyplnenosť 96,5 – 100 % častí súťaží; 2013/2014 a 2016/2017 = 100 %). Zápas nesie `competitionPart._id` → join na súťaž. **ETL potrebuje fallback:** kategória primárne z `teams[].ageCategory`, pre staršie sezóny z časti súťaže. Bez toho sú profily zväzov generovateľné len od 2024/2025. (Tabuľka pokrytia v sekcii 3 merala kategóriu na úrovni súťaží, nie zápasov — preto ukazovala 100 %.)
+
+### 7c. Demografia (O7) — CRM API netreba
+
+CRM API (`/crm/{appSpace}/users`) vyžaduje autentifikáciu a vracia osobné záznamy, žiadny agregovaný endpoint. Overené priamo v DB: kolekcia **`sportnet.users`** má `birthdate` aj `sex`, `_id` = sportnetId (ObjectId). Join z `sutaze.matches.nominations[].athletes[].sportnetUser._id` (string) cez `$toObjectId` funguje (overené na vzorke). ETL demografiu spočíta ako agregáty rok narodenia × pohlavie × rola × zväz — žiadne osobné údaje sa nepublikujú (prah agregátov = O5, DPO).
+

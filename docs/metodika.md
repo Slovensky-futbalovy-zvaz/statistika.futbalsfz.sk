@@ -56,7 +56,9 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 
 ### Vekové kategórie
 
-- Spoľahlivý zdroj: `teams[].ageCategory` s hodnotami `U07`, `U09`, `U11`, `U13`, `U15`, `U17`, `U19`, `ADULTS`.
+- Primárny zdroj: `teams[].ageCategory` — **ale vyplnené len od sezóny 2024/2025** (99,6 %; staršie sezóny ~0 % — overené 12. 7. 2026).
+- **Historické sezóny (≤ 2023/2024):** kategória z `competitions.parts[].rules.category` (vyplnenosť 96,5 – 100 %), join cez `match.competitionPart._id`. ETL musí mať fallback, inak sú profily generovateľné len od 2024/2025.
+- Reálny číselník hodnôt je širší než metodika pôvodne uvádzala: `U06`–`U20` + `ADULTS` (U10 v ZsFZ, U08/U12/U14/U16 inde, U20 vo futsale).
 - Mapovanie do 4 hlavných kategórií: Dospelí (ADULTS), Dorastenci (U17, U19), Žiaci (U12–U15), Prípravky (U07–U11).
 - Dorastenci sú na RFZ/SFZ úrovni nenulová kategória (na rozdiel od niektorých ObFZ) — nulu nikdy nepredpokladať, vždy overiť.
 - Na webe sa zobrazujú len vekové úrovne, ktoré mali v danom ročníku aspoň jeden uzavretý zápas.
@@ -92,6 +94,12 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 1. **Nekonzistentné `season.name`:** varianty „2024/2025“, „2024 / 2025“, „2024/25“, „24/25“, samostatné roky („2016“…), aj testovacie hodnoty („Test“, „KLF“…). ETL musí mať normalizačnú mapu sezón; nenormalizovateľné záznamy sa logujú a vylučujú.
 2. **Staršie sezóny (pred ~2016):** kvalita vyplnenia protokolov (karty, diváci) sa musí zmerať vo F1; ukazovatele s nedostatočným pokrytím sa za dané sezóny **nezobrazia, nie odhadnú**.
 3. **Zmena schémy DB:** ETL beh obsahuje validácie (počty, povinné polia) a alerting pri anomáliách.
+
+## Demografia (10-ročné rady osôb)
+
+- Zdroj: DB **`sportnet`**, kolekcia **`users`** — `_id` = sportnetId (ObjectId), polia `birthdate`, `sex` (overené 12. 7. 2026; uzatvára O7 — CRM API netreba).
+- Join: `sutaze.matches.nominations[].athletes[].sportnetUser._id` (string) → `$toObjectId` → `sportnet.users._id`.
+- Publikujú sa výhradne agregáty (rok narodenia × pohlavie × rola × zväz × sezóna); prah minimálnej veľkosti agregátu podľa O5 (DPO).
 
 ## GDPR zásady
 
