@@ -13,14 +13,18 @@ Pipelines boli odladené a verifikované proti vzorkám ObFZ Nitra
 """
 
 
-def _match_stage(app_spaces: list[str], season_variants: list[str]) -> dict:
-    """Spoločný $match: zväz (1..n appSpace), uzavreté zápasy, varianty zápisu sezóny."""
+def _match_stage(
+    app_spaces: list[str], season_variants: list[str], sport_sector: str = "futbal"
+) -> dict:
+    """Spoločný $match: zväz (1..n appSpace), uzavreté zápasy, varianty zápisu
+    sezóny a športové odvetvie (systémová premenná, číselník etl/config/sporty.json)."""
     app = app_spaces[0] if len(app_spaces) == 1 else {"$in": app_spaces}
     return {
         "$match": {
             "appSpace": app,
             "closed": True,
             "season.name": {"$in": season_variants},
+            "rules.sport_sector": sport_sector,
         }
     }
 
@@ -73,14 +77,14 @@ _PERSON_FACET = [
 ]
 
 
-def kategorie(app_spaces, season_variants):
+def kategorie(app_spaces, season_variants, sport_sector="futbal"):
     """Zápasy, góly, karty a diváci po vekových kategóriách.
 
     divaciPokrytych = počet zápasov s vyplneným protocol.audience (vrátane 0);
     {$gt: [x, null]} je v BSON poradí typov true pre každú ne-null hodnotu.
     """
     return [
-        _match_stage(app_spaces, season_variants),
+        _match_stage(app_spaces, season_variants, sport_sector),
         {
             "$project": {
                 "cat": {"$arrayElemAt": ["$teams.ageCategory", 0]},
@@ -105,10 +109,10 @@ def kategorie(app_spaces, season_variants):
     ]
 
 
-def druzstva(app_spaces, season_variants):
+def druzstva(app_spaces, season_variants, sport_sector="futbal"):
     """Unikátne družstvá (organization.name) po kategóriách — len s ≥1 uzavretým zápasom."""
     return [
-        _match_stage(app_spaces, season_variants),
+        _match_stage(app_spaces, season_variants, sport_sector),
         {"$project": {"teams": 1}},
         {"$unwind": "$teams"},
         {"$group": {"_id": {"cat": "$teams.ageCategory", "org": "$teams.organization.name"}}},
@@ -117,10 +121,10 @@ def druzstva(app_spaces, season_variants):
     ]
 
 
-def hraci(app_spaces, season_variants):
+def hraci(app_spaces, season_variants, sport_sector="futbal"):
     """Hráči: unikáty celkom + unikáty po kategóriách (kategória cez teamId nominácie)."""
     return [
-        _match_stage(app_spaces, season_variants),
+        _match_stage(app_spaces, season_variants, sport_sector),
         {"$project": {"teams": 1, "nominations": 1}},
         {"$unwind": "$nominations"},
         {"$unwind": "$nominations.athletes"},
@@ -129,10 +133,10 @@ def hraci(app_spaces, season_variants):
     ]
 
 
-def treneri(app_spaces, season_variants, coach_positions):
+def treneri(app_spaces, season_variants, coach_positions, sport_sector="futbal"):
     """Tréneri z nominations.crew (pozície z roly.json; `manager` = vedúci družstva, NIE tréner)."""
     return [
-        _match_stage(app_spaces, season_variants),
+        _match_stage(app_spaces, season_variants, sport_sector),
         {"$project": {"teams": 1, "nominations": 1}},
         {"$unwind": "$nominations"},
         {"$unwind": "$nominations.crew"},
@@ -142,7 +146,7 @@ def treneri(app_spaces, season_variants, coach_positions):
     ]
 
 
-def osoby_managers(app_spaces, season_variants, rozhodca_labels, delegat_labels, personal_labels):
+def osoby_managers(app_spaces, season_variants, rozhodca_labels, delegat_labels, personal_labels, sport_sector="futbal"):
     """Rozhodcovia, delegáti a personál z managers[] (roly z roly.json).
 
     Skupiny (rozhodnutie 12. 7. 2026): rozhodcovia vrátane VAR rolí;
@@ -152,7 +156,7 @@ def osoby_managers(app_spaces, season_variants, rozhodca_labels, delegat_labels,
     Vracia facet s rolami `rozhodcovia` / `delegati` / `personal`.
     """
     return [
-        _match_stage(app_spaces, season_variants),
+        _match_stage(app_spaces, season_variants, sport_sector),
         {"$project": {"managers": 1, "cat": {"$arrayElemAt": ["$teams.ageCategory", 0]}}},
         {"$unwind": "$managers"},
         {

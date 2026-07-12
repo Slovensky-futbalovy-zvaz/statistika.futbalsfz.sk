@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-07-12",
+  "note": "Číselník športov a športových odvetví futbalu zo Sportnet API (stiahnuté 12. 7. 2026). Zdroj pravdy v dátach: matches.rules.sport_sector (overené: futbalové zväzy 2025/2026 majú čisto 'futbal'; futsalslovakia.sk má 'futsal'). ETL filtruje zápasy podľa rules.sport_sector.",
+  "zdroje": {
+    "sporty": "https://api.sportnet.online/v1/codelist/sport",
+    "odvetviaFutbalu": "https://api.sportnet.online/v1/codelist/sport/futbal/sector"
+  },
+  "sport": "futbal",
+  "odvetviaFutbalu": [
+    { "value": "futbal", "label": "Futbal" },
+    { "value": "futsal", "label": "Futsal" },
+    { "value": "minifootball", "label": "Malý futbal" },
+    { "value": "beachfutbal", "label": "Plážový futbal" }
+  ],
+  "rozhodnutia": {
+    "2026-07-12-futsal": "Futsal (appSpace futsalslovakia.sk) patrí priamo pod SFZ. Šport/športové odvetvie je systémová premenná ETL aj portálu; MVP generuje odvetvie 'futbal', futsal je pripravené rozšírenie. Rozhodol: Ján Letko.",
+    "2026-07-12-projekty": "Projektové appSpace (disney, kruzkymcd, dajmespolugol) = SFZ grassroots projekty — časom pribudne samostatná časť štatistík 'Projekty'. Zatiaľ mimo ETL. Rozhodol: Ján Letko."
+  }
+}

@@ -53,8 +53,17 @@
     { "id": "obfz-trebisov",           "nazov": "ObFZ Trebišov",           "appSpace": "obfz-trebisov.futbalnet.sk",           "rfz": "vsfz", "geoName": "ObFZ Trebišov" },
     { "id": "obfz-roznava",            "nazov": "ObFZ Rožňava",            "appSpace": "obfz-roznava.futbalnet.sk",            "rfz": "vsfz", "geoName": "ObFZ Rožňava" }
   ],
+  "futsal": {
+    "appSpace": "futsalslovakia.sk",
+    "patriPod": "sfz",
+    "sportSector": "futsal",
+    "poznamka": "Futsal patrí priamo pod SFZ (rozhodnutie Ján Letko, 12. 7. 2026). Šport/odvetvie je systémová premenná — viď etl/config/sporty.json. MVP generuje odvetvie futbal; futsal je pripravené rozšírenie (run.py --sport-sector futsal --zvaz sfz)."
+  },
+  "projekty": {
+    "appSpaces": ["disney", "kruzkymcd", "dajmespolugol"],
+    "poznamka": "SFZ grassroots projekty — časom pribudne samostatná časť štatistík 'Projekty' (rozhodnutie Ján Letko, 12. 7. 2026). Zatiaľ mimo ETL."
+  },
   "mimoRegistra": {
-    "futsalslovakia.sk": "Futsal — mimo rozsahu MVP (otvorená otázka O6).",
-    "test / disney / kruzkymcd / dajmespolugol / issf_club_12878 / fk-trnavka.futbalnet.sk": "Testovacie a klubové priestory — vylúčené z ETL."
+    "test / issf_club_12878 / fk-trnavka.futbalnet.sk": "Testovacie a klubové priestory — vylúčené z ETL."
   }
 }

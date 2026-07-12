@@ -9,7 +9,8 @@ etl/
 ├── config/
 │   ├── zvazy.json          # register 43 zväzov (appSpace, úroveň, názov) — overený, nie hádaný
 │   ├── sezony.json         # normalizačná mapa season.name → kanonická sezóna
-│   └── roly.json           # overený číselník rolí osôb (rozhodcovia, delegáti, tréneri)
+│   ├── roly.json           # overený číselník rolí osôb (rozhodcovia, delegáti, personál, tréneri)
+│   └── sporty.json         # číselník športu a odvetví futbalu (futbal/futsal/…) zo Sportnet API
 ├── pipelines/              # agregačné pipelines (kategórie, družstvá, hráči, tréneri, rozhodcovia+delegáti)
 ├── validate/               # validácie výstupov (KPI = súčet kategórií, pokrytie divákov, anomálie)
 └── run.py                  # CLI beh: agregácia → validácia → zápis JSON → aktualizácia index.json
@@ -22,6 +23,7 @@ export MONGODB_URI="mongodb://…"          # prístup do DB sutaze (read-only p
 python etl/run.py --zvaz obfz-nitra --sezona 2025/2026
 python etl/run.py --zvaz obfz-nitra --all-sezony      # všetky kanonické sezóny s dátami
 python etl/run.py --zvaz zsfz --sezona 2025/2026
+python etl/run.py --zvaz sfz --sezona 2025/2026 --sport-sector futsal   # futsal patrí pod SFZ
 ```
 
 Výstup: `data/zvaz/{id}/{sezona}.json` + aktualizovaný `data/index.json`. Anomálie sa logujú (WARNING); nenulový exit kód pri nezrovnalostiach počtov.

@@ -36,6 +36,14 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 - ETL musí obsahovať **overený register všetkých 43 zväzov** (SFZ + 4 RFZ + 38 ObFZ) s ich appSpace.
 - **SFZ pohľad zahŕňa dva appSpace**: `futbalsfz.sk` a `ulk.futbalnet.sk` (Únia ligových klubov — Niké liga, najvyššia súťaž mužov; riadenie delegované na ULK, ale patrí do SFZ úrovne pyramídy). Rozhodnutie: Ján Letko, 12. 7. 2026.
 
+### Šport a športové odvetvie (systémová premenná)
+
+- Každý zápas nesie `rules.sport_sector` — športové odvetvie; súťaž ho má v `parts[].rules.sport_sector`.
+- Číselníky Sportnet API: šport (`/v1/codelist/sport`) a odvetvia futbalu (`/v1/codelist/sport/futbal/sector`): **futbal, futsal, minifootball, beachfutbal** — lokálna kópia v `etl/config/sporty.json`.
+- ETL vždy filtruje `rules.sport_sector` (default `futbal`) — overené: futbalové zväzy majú v dátach čisto `futbal`, filter nič nemení, ale chráni pred zmiešaním odvetví.
+- **Futsal** (`appSpace: futsalslovakia.sk`) **patrí priamo pod SFZ** (rozhodnutie Ján Letko, 12. 7. 2026); generuje sa cez `run.py --zvaz sfz --sport-sector futsal` do súboru `{sezona}-futsal.json`. MVP publikuje futbal.
+- **Projekty** (`disney`, `kruzkymcd`, `dajmespolugol`) sú SFZ grassroots projekty — časom pribudne samostatná časť štatistík „Projekty“; zatiaľ mimo ETL.
+
 ### Odohraný zápas
 
 - Do štatistík sa počítajú len zápasy s `closed: true` (uzavreté/uzatvorené).

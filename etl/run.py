@@ -36,6 +36,7 @@ log = logging.getLogger("etl")
 
 MAX_TIME_MS = 120_000  # limit agregácie; po jednej sezóne (viac sezón naraz timeoutuje)
 RETRIES = 1  # metodika: občasný timeout → 1 retry
+FUTSAL_APP_SPACE = "futsalslovakia.sk"  # futsal patrí priamo pod SFZ (rozhodnutie 12. 7. 2026)
 
 
 # ---------------------------------------------------------------- konfigurácia
@@ -111,22 +112,29 @@ def _facet_osoby(vysledok: list[dict], rola_kluc: str | None = None) -> dict:
     return {"unikatni": unik, "poKategorii": validate.zorad_kategorie(po_kat)}
 
 
-def vygeneruj(db, zvaz: dict, sezona: str, varianty: list[str], roly: dict) -> dict | None:
-    """Zloží výstupný dokument zväz+sezóna. None, ak sezóna nemá uzavreté zápasy."""
-    spaces = app_spaces(zvaz)
+def vygeneruj(
+    db, zvaz: dict, sezona: str, varianty: list[str], roly: dict, sport_sector: str = "futbal"
+) -> dict | None:
+    """Zloží výstupný dokument zväz+sezóna+odvetvie. None, ak nie sú uzavreté zápasy."""
+    spaces = (
+        [FUTSAL_APP_SPACE] if sport_sector == "futsal" else app_spaces(zvaz)
+    )  # futsal patrí pod SFZ, ale žije na vlastnom appSpace
 
-    kat_raw = agreguj(db, pipelines.kategorie(spaces, varianty), "kategorie")
+    kat_raw = agreguj(db, pipelines.kategorie(spaces, varianty, sport_sector), "kategorie")
     if not kat_raw:
         return None
-    druz_raw = agreguj(db, pipelines.druzstva(spaces, varianty), "druzstva")
-    hraci_raw = agreguj(db, pipelines.hraci(spaces, varianty), "hraci")
+    druz_raw = agreguj(db, pipelines.druzstva(spaces, varianty, sport_sector), "druzstva")
+    hraci_raw = agreguj(db, pipelines.hraci(spaces, varianty, sport_sector), "hraci")
     treneri_raw = agreguj(
-        db, pipelines.treneri(spaces, varianty, roly["treneriCrewPositions"]), "treneri"
+        db,
+        pipelines.treneri(spaces, varianty, roly["treneriCrewPositions"], sport_sector),
+        "treneri",
     )
     rd_raw = agreguj(
         db,
         pipelines.osoby_managers(
-            spaces, varianty, roly["rozhodcovia"], roly["delegati"], roly["personal"]
+            spaces, varianty, roly["rozhodcovia"], roly["delegati"], roly["personal"],
+            sport_sector,
         ),
         "osoby-managers",
     )
@@ -152,6 +160,7 @@ def vygeneruj(db, zvaz: dict, sezona: str, varianty: list[str], roly: dict) -> d
     doc = {
         "zvaz": zvaz["id"],
         "sezona": sezona,
+        "sportSector": sport_sector,
         "generatedAt": datetime.now(timezone(timedelta(hours=2))).isoformat(timespec="seconds"),
         "methodologyFlags": {
             "zapasy": "len closed:true",
@@ -184,7 +193,10 @@ def vygeneruj(db, zvaz: dict, sezona: str, varianty: list[str], roly: dict) -> d
 # ---------------------------------------------------------------- zápis + index
 
 def zapis(doc: dict, out_dir: Path) -> Path:
-    cesta = out_dir / "zvaz" / doc["zvaz"] / (doc["sezona"].replace("/", "-") + ".json")
+    nazov = doc["sezona"].replace("/", "-")
+    if doc.get("sportSector", "futbal") != "futbal":
+        nazov += "-" + doc["sportSector"]  # napr. 2025-2026-futsal.json
+    cesta = out_dir / "zvaz" / doc["zvaz"] / (nazov + ".json")
     cesta.parent.mkdir(parents=True, exist_ok=True)
     with open(cesta, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
@@ -197,8 +209,14 @@ def aktualizuj_index(out_dir: Path, zvaz: dict, zvazy: dict) -> None:
     index_path = out_dir / "index.json"
     index = load_json(index_path) if index_path.exists() else {"zvazy": []}
 
+    import re
+
+    # do zoznamu sezón idú len futbalové súbory (RRRR-RRRR.json); odvetvia
+    # s príponou (napr. 2025-2026-futsal.json) sa evidujú samostatne neskôr
     subory = sorted((out_dir / "zvaz" / zvaz["id"]).glob("*.json"))
-    sezony = [p.stem.replace("-", "/") for p in subory]
+    sezony = [
+        p.stem.replace("-", "/") for p in subory if re.fullmatch(r"\d{4}-\d{4}", p.stem)
+    ]
 
     zaznam = {"id": zvaz["id"], "nazov": zvaz["nazov"], "uroven": zvaz.get("uroven", "ObFZ")}
     if zvaz.get("rfz"):
@@ -225,6 +243,11 @@ def main() -> int:
     grp = ap.add_mutually_exclusive_group(required=True)
     grp.add_argument("--sezona", help="kanonická sezóna, napr. 2025/2026")
     grp.add_argument("--all-sezony", action="store_true", help="všetky kanonické sezóny s dátami")
+    ap.add_argument(
+        "--sport-sector",
+        default="futbal",
+        help="športové odvetvie (číselník etl/config/sporty.json; default: futbal)",
+    )
     ap.add_argument("--mongodb-uri", help="connection string (default: env MONGODB_URI)")
     ap.add_argument("--db", default="sutaze", help="názov databázy (default: sutaze)")
     ap.add_argument("--out", default=str(REPO / "data"), help="výstupný priečinok (default: data/)")
@@ -235,8 +258,15 @@ def main() -> int:
     zvazy = load_json(CONFIG / "zvazy.json")
     sezony_cfg = load_json(CONFIG / "sezony.json")
     roly = load_json(CONFIG / "roly.json")
+    sporty = load_json(CONFIG / "sporty.json")
     zvaz = najdi_zvaz(zvazy, args.zvaz)
     out_dir = Path(args.out)
+
+    odvetvia = [o["value"] for o in sporty["odvetviaFutbalu"]]
+    if args.sport_sector not in odvetvia:
+        raise SystemExit(f"Odvetvie {args.sport_sector!r} nie je v číselníku {odvetvia}.")
+    if args.sport_sector == "futsal" and zvaz["id"] != "sfz":
+        raise SystemExit("Futsal patrí priamo pod SFZ — použi --zvaz sfz.")
 
     db = pripoj_db(args.mongodb_uri, args.db)
 
@@ -244,8 +274,12 @@ def main() -> int:
     chyby = 0
     for sezona in sezony:
         varianty = sezona_varianty(sezony_cfg, sezona)
-        log.info("=== %s %s (appSpace: %s) ===", zvaz["nazov"], sezona, ", ".join(app_spaces(zvaz)))
-        doc = vygeneruj(db, zvaz, sezona, varianty, roly)
+        log.info(
+            "=== %s %s [%s] (appSpace: %s) ===",
+            zvaz["nazov"], sezona, args.sport_sector,
+            FUTSAL_APP_SPACE if args.sport_sector == "futsal" else ", ".join(app_spaces(zvaz)),
+        )
+        doc = vygeneruj(db, zvaz, sezona, varianty, roly, args.sport_sector)
         if doc is None:
             log.info("%s: žiadne uzavreté zápasy — preskakujem.", sezona)
             continue
