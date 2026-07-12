@@ -2,7 +2,7 @@
 
 Verejný štatistický portál slovenského futbalu — interaktívna mapa všetkých troch úrovní futbalovej pyramídy (SFZ → 4 RFZ → 38 ObFZ), sezónne štatistiky s drill-down na vekové úrovne, porovnávanie zväzov a 10-ročná demografia osôb vo futbale (hráči, tréneri, rozhodcovia, delegáti).
 
-> **Stav projektu:** koncepčná fáza (F0) — projektový plán v pripomienkovaní, prototyp v príprave.
+> **Stav projektu:** F1 v plnom prúde — dátový audit hotový, prvá verzia ETL (`etl/run.py`) funkčná a verifikovaná, všetky otvorené otázky O1–O7 rozhodnuté (12. 7. 2026).
 
 ## Čo tu nájdete
 
@@ -31,8 +31,8 @@ Verejný web nemá žiadny prístup k databáze ani interným API — publikujú
 
 | Fáza | Obsah | Stav |
 |---|---|---|
-| F0 | Príprava — schválenie konceptu, prístupy, GDPR, dizajn | 🔄 prebieha |
-| F1 | Dátový audit a ETL (normalizácia sezón, register appSpace, JSON) | ⬜ |
+| F0 | Príprava — schválenie konceptu, prístupy, GDPR, dizajn | ✅ rozhodnutia O1–O7 uzavreté (ADR-0002, ADR-0003) |
+| F1 | Dátový audit a ETL (normalizácia sezón, register appSpace, JSON) | 🔄 audit hotový, ETL v1 funkčné; zostáva dimenzia pohlavie + produkčný beh |
 | F2 | Frontend — interaktívna mapa a profily zväzov | ⬜ |
 | F3 | Porovnania a radenie zväzov | ⬜ |
 | F4 | Demografia za 10 sezón | ⬜ |
