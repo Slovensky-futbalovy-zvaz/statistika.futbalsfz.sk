@@ -208,11 +208,11 @@ Riadenie: týždenný 30-min status počas aktívnych fáz; každá fáza konč�
 
 **Stav otázok k 12. 7. 2026:**
 
-- **O1 — otvorené.** Prebieha výber modelu (interný tím SFZ / Sportnet / externý / kombinácia).
+- **O1 — ROZHODNUTÉ (Ján Letko, 12. 7. 2026):** trojstranný model. **SFZ tím** = tvorcovia myšlienok, prototypy, analýza dát a dátové štruktúry (vedie Ján Letko ako PO). **Sportnet Media s.r.o.** = vlastník a prevádzkovateľ platformy sportnet.online so všetkými dátami SFZ systémov, partner SFZ (vedie tiež Ján Letko). **Bart.sk** = externý dodávateľ senior developerov; security, code review a prevádzka služieb platformy sportnet.online pre SFZ; zadania a projektový manažment dodáva PO.
 - **O2 — ROZHODNUTÉ:** ETL číta priamo MongoDB read-only ([ADR-0002](adr/0002-etl-priamo-mongodb.md)).
-- **O3 — otvorené.** Pripraviť analýzu konkrétnych technických riešení hostingu/CDN (úloha na ďalšiu session).
+- **O3 — v riešení:** DNS futbalsfz.sk spravuje PO (nie je prekážka); analýza technických riešení hostingu/CDN: [docs/analyza-hosting.md](analyza-hosting.md).
 - **O4 — ROZHODNUTÉ (Ján Letko):** dizajn čo najviac podľa brand manuálu SFZ, s denným aj nočným režimom (light + dark mode). Detailný návrh sa dorieši v F2.
-- **O5 — otvorené.** PO si vyžiadal vysvetlenie prahu agregátov; rozhodne po ňom (finálne posúdenie DPO).
+- **O5 — ROZHODNUTÉ (Ján Letko, 12. 7. 2026):** prah minimálnej veľkosti agregátu sa **nepoužije** — SFZ disponuje publicistickou licenciou, agregované počty sa zobrazujú všetky. Zásada „publikujú sa výhradne agregáty, žiadne menné zoznamy ani identifikátory osôb“ zostáva v platnosti (metodika).
 - **O6 — ROZHODNUTÉ:** šport/športové odvetvie je systémová premenná ETL (futbal + futsal pod SFZ, `etl/config/sporty.json`); pohlavie (mužské/ženské súťaže) sa pridá ako ďalšia dimenzia ETL (naplánované, zdroj `parts[].rules.gender`); Projekty (disney, kruzkymcd, dajmespolugol) budú samostatná časť štatistík neskôr.
 - **O7 — ROZHODNUTÉ:** CRM API netreba; demografia priamo z DB `sportnet.users` ako agregáty (viď metodika a report kvality dát, sekcia 7c).
 

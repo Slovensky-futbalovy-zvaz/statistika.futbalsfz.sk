@@ -99,9 +99,9 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 
 - Zdroj: DB **`sportnet`**, kolekcia **`users`** — `_id` = sportnetId (ObjectId), polia `birthdate`, `sex` (overené 12. 7. 2026; uzatvára O7 — CRM API netreba).
 - Join: `sutaze.matches.nominations[].athletes[].sportnetUser._id` (string) → `$toObjectId` → `sportnet.users._id`.
-- Publikujú sa výhradne agregáty (rok narodenia × pohlavie × rola × zväz × sezóna); prah minimálnej veľkosti agregátu podľa O5 (DPO).
+- Publikujú sa výhradne agregáty (rok narodenia × pohlavie × rola × zväz × sezóna); bez prahu minimálnej veľkosti (O5 rozhodnuté — publicistická licencia).
 
 ## GDPR zásady
 
 - Publikujú sa výhradne agregované počty, žiadne menné zoznamy ani identifikátory osôb.
-- Agregáty s hodnotou pod prahom (návrh: < 3) sa posúdia z hľadiska nepriamej identifikovateľnosti (otvorená otázka O5, DPO SFZ).
+- Prah minimálnej veľkosti agregátu sa **nepoužije** — SFZ disponuje publicistickou licenciou, agregované počty sa zobrazujú všetky (rozhodnutie Ján Letko, 12. 7. 2026; uzatvára O5).
