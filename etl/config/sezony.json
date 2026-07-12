@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2026-07-12",
+  "note": "Normalizačná mapa season.name → kanonická sezóna. Hodnoty mimo kanonického zoznamu a mapy variantov sa z ETL vylučujú a logujú. Zdroj: distinct season.name na competitions (84 hodnôt, 12.7.2026).",
+  "kanonicke": [
+    "2012/2013", "2013/2014", "2014/2015", "2015/2016", "2016/2017", "2017/2018",
+    "2018/2019", "2019/2020", "2020/2021", "2021/2022", "2022/2023", "2023/2024",
+    "2024/2025", "2025/2026", "2026/2027"
+  ],
+  "varianty": {
+    "2019 / 2020": "2019/2020",
+    "2020 / 2021": "2020/2021",
+    "2022 / 2023": "2022/2023",
+    "2022/23": "2022/2023",
+    "2023 / 2024": "2023/2024",
+    "2023/24": "2023/2024",
+    "2024 / 2025": "2024/2025",
+    "2024/25": "2024/2025",
+    "24/25": "2024/2025",
+    "2026 / 2027": "2026/2027",
+    "V. liga Stred ZsFZ ( 2021/2022 ) ": "2021/2022",
+    "3 liga stred 2021-2022": "2021/2022"
+  },
+  "vylucene": {
+    "rocneSezony": "Samostatné roky (1939–1944, 1993–2027 ako čísla alebo reťazce) — pravdepodobne iné športy/historické súťaže, mimo futbalovej pyramídy sezón. Preveriť pri rozšírení.",
+    "neplatne": ["Test", "test", "KLF", "6.liga ObfzLC ", "7.liga ObfzBB", "Krajská futbalová liga - Ihrisko s UT - Moldava 2", "V.liga Sever dospelí VsFZ ", "2013 / 2015", "2015 / 2017"]
+  }
+}
