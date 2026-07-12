@@ -126,7 +126,7 @@ def vygeneruj(db, zvaz: dict, sezona: str, varianty: list[str], roly: dict) -> d
     rd_raw = agreguj(
         db,
         pipelines.osoby_managers(
-            spaces, varianty, roly["rozhodcovia"], roly["delegati"], roly["podporovatelia"]
+            spaces, varianty, roly["rozhodcovia"], roly["delegati"], roly["personal"]
         ),
         "osoby-managers",
     )
@@ -175,7 +175,7 @@ def vygeneruj(db, zvaz: dict, sezona: str, varianty: list[str], roly: dict) -> d
             "treneri": _facet_osoby(treneri_raw),
             "rozhodcovia": _facet_osoby(rd_raw, "rozhodcovia"),
             "delegati": _facet_osoby(rd_raw, "delegati"),
-            "podporovatelia": _facet_osoby(rd_raw, "podporovatelia"),
+            "personal": _facet_osoby(rd_raw, "personal"),
         },
     }
     return doc

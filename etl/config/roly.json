@@ -1,6 +1,6 @@
 {
   "generatedAt": "2026-07-12",
-  "note": "Distinct managers.type.label overené dotazom na matches (closed:true, sezóna 2025/2026) naprieč všetkými 43 zväzmi registra. Texty rolí sú IDENTICKÉ vo všetkých zväzoch — žiadne per-zväz varianty. ETL číta roly výhradne z tohto configu. Zaradenie rolí do skupín: rozhodnutie Ján Letko, 12. 7. 2026 (vrát. VAR rolí medzi rozhodcov a skupiny podporovatelia).",
+  "note": "Distinct managers.type.label overené dotazom na matches (closed:true, sezóna 2025/2026) naprieč všetkými 43 zväzmi registra. Texty rolí sú IDENTICKÉ vo všetkých zväzoch — žiadne per-zväz varianty. ETL číta roly výhradne z tohto configu. Zaradenie rolí do skupín: rozhodnutie Ján Letko, 12. 7. 2026.",
   "rozhodcovia": [
     "Rozhodca",
     "1. asistent rozhodcu",
@@ -11,13 +11,13 @@
     "Replay Operátor"
   ],
   "delegati": [
-    "Delegát stretnutia"
+    "Delegát stretnutia",
+    "Pozorovateľ rozhodcov"
   ],
-  "podporovatelia": [
+  "personal": [
     "Hlavný usporiadateľ",
     "Hlásateľ",
-    "Videotechnik",
-    "Pozorovateľ rozhodcov"
+    "Videotechnik"
   ],
   "treneriCrewPositions": [
     "coach",
@@ -27,7 +27,8 @@
   ],
   "rozhodnutia": {
     "2026-07-12-var-roly": "Videorozhodca, Asistent videorozhodcu a Replay Operátor patria medzi rozhodcov (vyskytujú sa prakticky len na futbalsfz.sk + ulk.futbalnet.sk). Rozhodol: Ján Letko.",
-    "2026-07-12-podporovatelia": "Hlavný usporiadateľ, Hlásateľ, Videotechnik a Pozorovateľ rozhodcov tvoria samostatnú skupinu 'podporovatelia' (angl. Supporters). Pozorovateľ rozhodcov sa NEZAPOČÍTAVA medzi delegátov. Rozhodol: Ján Letko."
+    "2026-07-12-delegati": "Delegát stretnutia a Pozorovateľ rozhodcov tvoria spolu skupinu 'delegati' (často tá istá osoba — unikáty to ošetria). Rozhodol: Ján Letko.",
+    "2026-07-12-personal": "Hlavný usporiadateľ, Hlásateľ a Videotechnik tvoria samostatnú skupinu 'personal' (Personál). Rozhodol: Ján Letko (premenované z pôvodného návrhu 'podporovatelia')."
   },
   "vyskytPodlaUrovne": {
     "vsetkyZvazy": ["Rozhodca", "1. asistent rozhodcu", "2. asistent rozhodcu", "Hlavný usporiadateľ", "Hlásateľ", "Videotechnik"],

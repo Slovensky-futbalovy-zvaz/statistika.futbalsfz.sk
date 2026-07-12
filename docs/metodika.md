@@ -58,8 +58,8 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 - **Hráči:** `nominations[].athletes[].sportnetUser._id`, väzba na tím (a kategóriu) cez `nominations[].teamId == teams[]._id`.
 - **Tréneri:** `nominations[].crew[].position` ∈ {`coach`, `assist_coach`, `coach_goalkeepers`, `conditioning_coach`}. **Pozor:** `manager` je vedúci družstva, nie tréner.
 - **Rozhodcovia:** `managers[].type.label` ∈ {`Rozhodca`, `1. asistent rozhodcu`, `2. asistent rozhodcu`, `Náhradný rozhodca`, `Videorozhodca`, `Asistent videorozhodcu`, `Replay Operátor`} — VAR roly sa vyskytujú len na SFZ/ULK úrovni; zaradenie medzi rozhodcov rozhodol Ján Letko, 12. 7. 2026.
-- **Delegáti:** `managers[].type.label == "Delegát stretnutia"`. `Pozorovateľ rozhodcov` sa medzi delegátov NEZAPOČÍTAVA.
-- **Podporovatelia** (angl. Supporters): `managers[].type.label` ∈ {`Hlavný usporiadateľ`, `Hlásateľ`, `Videotechnik`, `Pozorovateľ rozhodcov`} — samostatná skupina osôb (rozhodnutie 12. 7. 2026).
+- **Delegáti:** `managers[].type.label` ∈ {`Delegát stretnutia`, `Pozorovateľ rozhodcov`} — v praxi často tá istá osoba na zápase, unikáty dvojité počítanie ošetria (rozhodnutie 12. 7. 2026).
+- **Personál:** `managers[].type.label` ∈ {`Hlavný usporiadateľ`, `Hlásateľ`, `Videotechnik`} — samostatná skupina osôb, JSON kľúč `personal` (rozhodnutie 12. 7. 2026).
 - Texty rolí sú **identické vo všetkých 43 zväzoch** (overené na sezóne 2025/2026, 12. 7. 2026) — záväzný číselník je v `etl/config/roly.json`.
 - Kategória zápasu pre rozhodcov/delegátov: `$arrayElemAt: ["$teams.ageCategory", 0]`.
 - **Dvojité počítanie:** tá istá osoba pôsobí vo viacerých kategóriách/roliach; súčet po kategóriách je vyšší než počet unikátnych osôb. Publikujú sa **oba pohľady s explicitnou poznámkou** — inak to vyzerá ako chyba.

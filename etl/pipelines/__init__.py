@@ -142,14 +142,14 @@ def treneri(app_spaces, season_variants, coach_positions):
     ]
 
 
-def osoby_managers(app_spaces, season_variants, rozhodca_labels, delegat_labels, podporovatel_labels):
-    """Rozhodcovia, delegáti a podporovatelia z managers[] (roly z roly.json).
+def osoby_managers(app_spaces, season_variants, rozhodca_labels, delegat_labels, personal_labels):
+    """Rozhodcovia, delegáti a personál z managers[] (roly z roly.json).
 
     Skupiny (rozhodnutie 12. 7. 2026): rozhodcovia vrátane VAR rolí;
-    delegáti = len „Delegát stretnutia"; podporovatelia = usporiadateľ,
-    hlásateľ, videotechnik, pozorovateľ rozhodcov.
+    delegáti = Delegát stretnutia + Pozorovateľ rozhodcov; personál =
+    usporiadateľ, hlásateľ, videotechnik.
     Kategória zápasu pre delegované osoby = teams[0].ageCategory.
-    Vracia facet s rolami `rozhodcovia` / `delegati` / `podporovatelia`.
+    Vracia facet s rolami `rozhodcovia` / `delegati` / `personal`.
     """
     return [
         _match_stage(app_spaces, season_variants),
@@ -158,7 +158,7 @@ def osoby_managers(app_spaces, season_variants, rozhodca_labels, delegat_labels,
         {
             "$match": {
                 "managers.type.label": {
-                    "$in": rozhodca_labels + delegat_labels + podporovatel_labels
+                    "$in": rozhodca_labels + delegat_labels + personal_labels
                 }
             }
         },
@@ -174,8 +174,8 @@ def osoby_managers(app_spaces, season_variants, rozhodca_labels, delegat_labels,
                                 "then": "delegati",
                             },
                             {
-                                "case": {"$in": ["$managers.type.label", podporovatel_labels]},
-                                "then": "podporovatelia",
+                                "case": {"$in": ["$managers.type.label", personal_labels]},
+                                "then": "personal",
                             },
                         ],
                         "default": "rozhodcovia",
