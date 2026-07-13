@@ -105,3 +105,59 @@ export function geoNameToId(): Record<string, string> {
 export function fmt(n: number): string {
   return new Intl.NumberFormat('sk-SK').format(n);
 }
+
+// ---- F4: porovnania a radenie zväzov ----
+
+export interface PorovnanieRiadok {
+  id: string;
+  nazov: string;
+  rfz?: string;
+  zapasy: number;
+  druzstva: number;
+  goly: number;
+  divaci: number;
+  zlteKarty: number;
+  cerveneKarty: number;
+  hraci: number;
+  golyNaZapas: number;
+  divaciNaZapas: number;
+}
+
+export interface Porovnanie {
+  uroven: string;
+  sezona: string;
+  generatedAt: string;
+  pocetZvazov: number;
+  zvazy: PorovnanieRiadok[];
+}
+
+const POROVNANIA = path.join(DATA, 'porovnania');
+const UROVEN_SLUGY = ['rfz', 'obfz'] as const;
+
+/** Zoznam dostupných porovnaní (úroveň × sezóna) pre getStaticPaths. */
+export function getPorovnaniaZoznam(): { urovenSlug: string; sezona: string; sezonaSlug: string }[] {
+  const res: { urovenSlug: string; sezona: string; sezonaSlug: string }[] = [];
+  for (const urovenSlug of UROVEN_SLUGY) {
+    const dir = path.join(POROVNANIA, urovenSlug);
+    if (!fs.existsSync(dir)) continue;
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith('.json')) continue;
+      const sezonaSlug = f.replace('.json', '');
+      res.push({ urovenSlug, sezona: sezonaSlug.replace('-', '/'), sezonaSlug });
+    }
+  }
+  return res;
+}
+
+export function getPorovnanie(urovenSlug: string, sezonaSlug: string): Porovnanie {
+  return readJson<Porovnanie>(path.join(POROVNANIA, urovenSlug, sezonaSlug + '.json'));
+}
+
+/** Sezóny dostupné pre danú úroveň (zostupne), na prepínač. */
+export function sezonyUrovne(urovenSlug: string): string[] {
+  return getPorovnaniaZoznam()
+    .filter((p) => p.urovenSlug === urovenSlug)
+    .map((p) => p.sezonaSlug)
+    .sort()
+    .reverse();
+}

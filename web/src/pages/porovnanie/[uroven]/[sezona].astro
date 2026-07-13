@@ -1,0 +1,76 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PorovnanieView from '../../../components/PorovnanieView.astro';
+import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne } from '../../../lib/data';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = () =>
+  getPorovnaniaZoznam().map((p) => ({ params: { uroven: p.urovenSlug, sezona: p.sezonaSlug } }));
+
+const { uroven, sezona: sezonaSlug } = Astro.params;
+const porovnanie = getPorovnanie(uroven!, sezonaSlug!);
+const sezony = sezonyUrovne(uroven!);
+
+const urovne = [
+  { slug: 'rfz', label: 'RFZ' },
+  { slug: 'obfz', label: 'ObFZ' },
+];
+// pri prepnutí úrovne skoč na jej najnovšiu sezónu
+function najnovsiaSlug(slug: string): string {
+  return sezonyUrovne(slug)[0];
+}
+---
+
+<Base title={`Porovnanie ${porovnanie.uroven} ${porovnanie.sezona}`}>
+  <header class="mb-6">
+    <h1 class="text-3xl font-extrabold tracking-tight">Porovnanie zväzov</h1>
+    <p class="mt-1 text-sfz-muted">
+      {porovnanie.uroven} · sezóna {porovnanie.sezona} · {porovnanie.pocetZvazov} zväzov
+    </p>
+  </header>
+
+  <div class="flex flex-wrap items-center gap-2 mb-2">
+    <span class="text-sm text-sfz-muted">Úroveň:</span>
+    {
+      urovne.map((u) => (
+        <a
+          href={`/porovnanie/${u.slug}/${u.slug === uroven ? sezonaSlug : najnovsiaSlug(u.slug)}`}
+          class:list={[
+            'rounded-md border px-2 py-0.5 text-sm',
+            u.slug === uroven
+              ? 'border-sfz-blue bg-sfz-blue text-white font-semibold'
+              : 'border-black/10 text-sfz-blue hover:bg-black/5',
+          ]}
+        >
+          {u.label}
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="flex flex-wrap items-center gap-1.5 mb-6">
+    <span class="text-sm text-sfz-muted mr-1">Sezóna:</span>
+    {
+      sezony.map((s) => (
+        <a
+          href={`/porovnanie/${uroven}/${s}`}
+          class:list={[
+            'rounded-md border px-2 py-0.5 text-sm',
+            s === sezonaSlug
+              ? 'border-sfz-blue text-sfz-blue font-semibold'
+              : 'border-black/10 text-sfz-blue hover:bg-black/5',
+          ]}
+        >
+          {s.replace('-', '/')}
+        </a>
+      ))
+    }
+  </div>
+
+  <PorovnanieView porovnanie={porovnanie} />
+
+  <p class="mt-8 text-xs text-sfz-muted">
+    Generované {porovnanie.generatedAt} · len uzavreté zápasy · historicky môžu byť „družstvá" nižšie
+    (staršie sezóny nemajú vždy vyplnené súpisky).
+  </p>
+</Base>

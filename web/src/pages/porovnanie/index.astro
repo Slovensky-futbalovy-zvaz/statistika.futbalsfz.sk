@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import { sezonyUrovne } from '../../lib/data';
+
+const rfzLatest = sezonyUrovne('rfz')[0];
+const obfzLatest = sezonyUrovne('obfz')[0];
+---
+
+<Base title="Porovnanie zväzov">
+  <header class="mb-6">
+    <h1 class="text-3xl font-extrabold tracking-tight">Porovnanie zväzov</h1>
+    <p class="mt-1 max-w-2xl text-sfz-muted">
+      Porovnajte a zoraďte zväzy rovnakej úrovne podľa vybraného ukazovateľa v danej sezóne.
+    </p>
+  </header>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <a
+      href={`/porovnanie/rfz/${rfzLatest}`}
+      class="rounded-xl border border-black/10 p-5 hover:bg-black/5"
+    >
+      <div class="text-lg font-bold text-sfz-blue">Regionálne zväzy (RFZ)</div>
+      <div class="text-sm text-sfz-muted">4 zväzy · najnovšia sezóna {rfzLatest.replace('-', '/')}</div>
+    </a>
+    <a
+      href={`/porovnanie/obfz/${obfzLatest}`}
+      class="rounded-xl border border-black/10 p-5 hover:bg-black/5"
+    >
+      <div class="text-lg font-bold text-sfz-blue">Oblastné zväzy (ObFZ)</div>
+      <div class="text-sm text-sfz-muted">38 zväzov · najnovšia sezóna {obfzLatest.replace('-', '/')}</div>
+    </a>
+  </div>
+</Base>

@@ -1,0 +1,142 @@
+---
+import type { Porovnanie } from '../lib/data';
+import { fmt } from '../lib/data';
+
+interface Props {
+  porovnanie: Porovnanie;
+}
+const { porovnanie } = Astro.props;
+const rows = porovnanie.zvazy;
+
+const metriky = [
+  { key: 'zapasy', label: 'Zápasy' },
+  { key: 'druzstva', label: 'Družstvá' },
+  { key: 'goly', label: 'Góly' },
+  { key: 'hraci', label: 'Hráči' },
+  { key: 'divaci', label: 'Diváci' },
+  { key: 'golyNaZapas', label: 'Góly/zápas' },
+  { key: 'divaciNaZapas', label: 'Diváci/zápas' },
+  { key: 'zlteKarty', label: 'Žlté karty' },
+  { key: 'cerveneKarty', label: 'Červené karty' },
+];
+
+const chartH = Math.max(220, rows.length * 24 + 70);
+---
+
+<div data-porovnanie data-rows={JSON.stringify(rows)}>
+  <div class="flex items-center gap-2 mb-3">
+    <label class="text-sm text-sfz-muted" for="metrika">Zoradiť podľa:</label>
+    <select id="metrika" class="rounded-md border border-black/15 px-2 py-1 text-sm bg-white">
+      {metriky.map((m) => <option value={m.key}>{m.label}</option>)}
+    </select>
+  </div>
+
+  <div class="chart w-full" style={`height:${chartH}px`} role="img" aria-label="Porovnanie zväzov"></div>
+
+  <div class="mt-8 overflow-x-auto">
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="text-left text-sfz-muted border-b border-black/10">
+          <th class="py-1 pr-2 font-medium">#</th>
+          <th class="py-1 pr-4 font-medium">Zväz</th>
+          <th class="py-1 px-2 font-medium text-right">Zápasy</th>
+          <th class="py-1 px-2 font-medium text-right">Družstvá</th>
+          <th class="py-1 px-2 font-medium text-right">Góly</th>
+          <th class="py-1 px-2 font-medium text-right">Hráči</th>
+          <th class="py-1 px-2 font-medium text-right">Diváci</th>
+          <th class="py-1 px-2 font-medium text-right">Góly/zápas</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((r, i) => (
+            <tr class="border-b border-black/5">
+              <td class="py-1 pr-2 tabular-nums text-sfz-muted">{i + 1}</td>
+              <td class="py-1 pr-4">
+                <a class="text-sfz-blue hover:underline" href={`/zvaz/${r.id}`}>
+                  {r.nazov}
+                </a>
+              </td>
+              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.zapasy)}</td>
+              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.druzstva)}</td>
+              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.goly)}</td>
+              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.hraci)}</td>
+              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.divaci)}</td>
+              <td class="py-1 px-2 text-right tabular-nums">{r.golyNaZapas.toFixed(2)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  import * as echarts from 'echarts/core';
+  import { BarChart } from 'echarts/charts';
+  import { GridComponent, TooltipComponent } from 'echarts/components';
+  import { CanvasRenderer } from 'echarts/renderers';
+  echarts.use([BarChart, GridComponent, TooltipComponent, CanvasRenderer]);
+
+  const REGION_COLOR: Record<string, string> = {
+    BFZ: '#1450df',
+    ZsFZ: '#2aa7ff',
+    SsFZ: '#12b886',
+    VsFZ: '#f59f00',
+  };
+  const LABELS: Record<string, string> = {
+    zapasy: 'Zápasy',
+    druzstva: 'Družstvá',
+    goly: 'Góly',
+    hraci: 'Hráči',
+    divaci: 'Diváci',
+    golyNaZapas: 'Góly/zápas',
+    divaciNaZapas: 'Diváci/zápas',
+    zlteKarty: 'Žlté karty',
+    cerveneKarty: 'Červené karty',
+  };
+  const nf = new Intl.NumberFormat('sk-SK');
+
+  type Row = Record<string, number | string>;
+
+  const root = document.querySelector<HTMLElement>('[data-porovnanie]');
+  if (root) {
+    const rows = JSON.parse(root.dataset.rows ?? '[]') as Row[];
+    const chartEl = root.querySelector<HTMLElement>('.chart')!;
+    const sel = root.querySelector<HTMLSelectElement>('#metrika')!;
+    const chart = echarts.init(chartEl, undefined, { renderer: 'canvas' });
+
+    function render(metric: string) {
+      // vzostupne → najväčší navrchu (ECharts kreslí kategórie zdola)
+      const sorted = [...rows].sort((a, b) => (a[metric] as number) - (b[metric] as number));
+      chart.setOption(
+        {
+          grid: { left: 8, right: 24, top: 10, bottom: 10, containLabel: true },
+          tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+          xAxis: { type: 'value' },
+          yAxis: {
+            type: 'category',
+            data: sorted.map((r) => r.nazov as string),
+            axisLabel: { fontSize: 11 },
+          },
+          series: [
+            {
+              name: LABELS[metric],
+              type: 'bar',
+              data: sorted.map((r) => ({
+                value: r[metric] as number,
+                itemStyle: { color: REGION_COLOR[(r.rfz as string) ?? ''] ?? '#1450df' },
+              })),
+              label: { show: true, position: 'right', fontSize: 10, formatter: (p: any) => nf.format(p.value) },
+            },
+          ],
+        },
+        true,
+      );
+    }
+
+    sel.addEventListener('change', () => render(sel.value));
+    render(sel.value);
+    new ResizeObserver(() => chart.resize()).observe(chartEl);
+  }
+</script>

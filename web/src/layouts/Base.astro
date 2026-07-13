@@ -23,11 +23,15 @@ const fullTitle = title === 'Štatistiky slovenského futbalu' ? title : `${titl
   </head>
   <body class="min-h-screen flex flex-col">
     <header class="border-b border-black/10">
-      <div class="mx-auto max-w-6xl px-4 py-4">
+      <div class="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between gap-4">
         <a href="/" class="inline-flex flex-col leading-none no-underline">
           <span class="font-extrabold tracking-wide text-xl text-sfz-ink">ŠTATISTIKY</span>
           <span class="font-semibold tracking-[0.2em] text-xs text-sfz-blue">SLOVENSKÉHO FUTBALU</span>
         </a>
+        <nav class="flex items-center gap-4 text-sm">
+          <a href="/" class="text-sfz-blue hover:underline">Mapa</a>
+          <a href="/porovnanie" class="text-sfz-blue hover:underline">Porovnanie</a>
+        </nav>
       </div>
     </header>
 
