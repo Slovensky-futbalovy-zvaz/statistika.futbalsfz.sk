@@ -331,12 +331,19 @@ def aktualizuj_index(out_dir: Path, zvaz: dict, zvazy: dict) -> None:
 
     import re
 
-    # do zoznamu sezón idú len futbalové súbory (RRRR-RRRR.json); odvetvia
-    # s príponou (napr. 2025-2026-futsal.json) sa evidujú samostatne neskôr
+    # futbalové súbory RRRR-RRRR.json → pole `sezony`; ostatné odvetvia
+    # (RRRR-RRRR-{sektor}.json, napr. …-futsal.json) → mapa `odvetvia`
     subory = sorted((out_dir / "zvaz" / zvaz["id"]).glob("*.json"))
     sezony = [
         p.stem.replace("-", "/") for p in subory if re.fullmatch(r"\d{4}-\d{4}", p.stem)
     ]
+    odvetvia: dict[str, list[str]] = {}
+    for p in subory:
+        m = re.fullmatch(r"(\d{4})-(\d{4})-(\w+)", p.stem)
+        if m:
+            odvetvia.setdefault(m.group(3), []).append(f"{m.group(1)}/{m.group(2)}")
+    for sektor in odvetvia:
+        odvetvia[sektor] = sorted(odvetvia[sektor])
 
     zaznam = {"id": zvaz["id"], "nazov": zvaz["nazov"], "uroven": zvaz.get("uroven", "ObFZ")}
     if zvaz.get("rfz"):
@@ -344,6 +351,8 @@ def aktualizuj_index(out_dir: Path, zvaz: dict, zvazy: dict) -> None:
         zaznam["rfz"] = rfz["appSpace"]  # zobrazovaná skratka: BFZ/ZsFZ/SsFZ/VsFZ
     zaznam["appSpace"] = ", ".join(app_spaces(zvaz))
     zaznam["sezony"] = sezony
+    if odvetvia:
+        zaznam["odvetvia"] = odvetvia  # napr. {"futsal": ["2014/2015", …]} (F2: samostatná sekcia)
 
     index["generatedAt"] = datetime.now(timezone(timedelta(hours=2))).isoformat(timespec="seconds")
     index.pop("note", None)
