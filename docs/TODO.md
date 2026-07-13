@@ -23,8 +23,11 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
 
 ## Zásobník (podľa priority)
 
-- [ ] **zsfz 2021/22–2024/25 dogenerovať** — `kategorie` agregácia pre ZsFZ 2021/2022 prekračuje časový limit (aj 600 s), pravdepodobne chýbajúci index `matches` (appSpace + season.name + closed). Preveriť indexy, potom `python etl/run.py --zvaz zsfz --sezona 2021/2022 --max-time-ms N` (a zvyšné sezóny). Viď report §9d.
-- [ ] Overiť/doplniť indexy kolekcie `matches` pre rýchlosť ťažkých agregácií (súvisí so zsfz 2021/22)
+- [ ] **DBA/PO: vytvoriť index na `matches`** (diagnóza potvrdená cez explain — viď report §9d):
+  `db.matches.createIndex({ appSpace:1, closed:1, "rules.sport_sector":1, "season.name":1 }, { name: "etl_appSpace_closed_sport_season" })`
+  Zrýchli všetkých 7 ETL agregácií (nielen zsfz 2021/22).
+- [ ] **Po vytvorení indexu: dogenerovať zsfz 2021/22–2024/25** — `python etl/run.py --zvaz zsfz --sezona 2021/2022` (+ 2022/23, 2023/24, 2024/25), commit, kontrola `data/index.json`.
+- [ ] (Neskôr, opatrne) Revízia počtu indexov na `matches` — 44 indexov spomaľuje samotné plánovanie dotazov (`optimizationTimeMillis ≈ 1,9 s`, `maxIndexedAndSolutionsReached`).
 - [ ] Demografia ďalších zväzov (SFZ, 4 RFZ, ostatné ObFZ) — rovnaký vzor ako ObFZ Nitra (`etl/demografia.py`)
 - [ ] Kickoff frontendu (F2): štruktúra `web/`, výber SSG frameworku, načítanie `data/index.json` + profil zväzu
 - [ ] Overiť odoslanie podkladov Bart.sk (`docs/podklady-bart-produkcny-beh.md`) — čaká na odoslanie PO

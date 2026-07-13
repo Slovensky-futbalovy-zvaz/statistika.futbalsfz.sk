@@ -161,7 +161,24 @@ Pri mnohých historických sezónach je pole **`teams[]` nevyplnené** → `dru�
 
 Zápas **OFK Sľažany – ŠK Nevidzany** (IV. liga U13 ObFZ NR, 14. 10. 2019, `_id 5f3ffdab4000de0cc7e62c45`) mal `protocol.audience = 300000` (zjavný preklep; PO požiadal opravu pri zdroji). Kým sa zdroj neopraví, aplikuje sa korekcia na 30 cez `etl/pipelines.audience_expr` (nemodifikuje DB). Efekt na obfz-nitra 2019/2020: `kpi.divaci` 384 941 → **84 971**; do výstupu pribudol `methodologyFlags.korekcie`; anomália „podozrivý priemer divákov" zmizla. Keď zdroj opravia, záznam z `korekcie.json` odstrániť.
 
-### 9d. Známy problém: zsfz 2021/2022 — pomalý DB dotaz
+### 9d. Známy problém: zsfz 2021/2022 — pomalý DB dotaz (diagnóza + riešenie)
 
-Agregácia `kategorie` pre **ZsFZ 2021/2022** opakovane prekračuje časový limit (120 s vo vlne 2 → `MaxTimeMSExpired`; pri re-behu ani po ~9 min pri limite 600 s nedobehla; priamy MCP dotaz na ten istý filter tiež timeoutuje). Príčina nie je počet súťažných častí (len 30, max 2/súťaž) — ukazuje na **chýbajúci/slabý index** pre túto kombináciu na strane DB. **Nevygenerované: zsfz 2021/2022, 2022/2023, 2023/2024, 2024/2025** (zsfz má 2012/13–2020/21 z re-behu + 2025/26 z vlny 1). Doplnené: `run.py`/`beh.py` majú `--max-time-ms` na ťažké sezóny. Akcia (TODO): preveriť indexy `matches` (appSpace + season.name + closed) a dogenerovať tieto 4 sezóny.
+Agregácia `kategorie` pre **ZsFZ 2021/2022** opakovane prekračuje časový limit (120 s vo vlne 2 → `MaxTimeMSExpired`; pri re-behu nedobehla ani po ~9 min pri limite 600 s; priamy MCP dotaz na ten istý filter tiež timeoutuje). **Nevygenerované: zsfz 2021/2022, 2022/2023, 2023/2024, 2024/2025** (zsfz má 2012/13–2020/21 + 2025/26).
+
+**Diagnóza (explain, queryPlanner 13. 7. 2026).** ETL `$match` = `{appSpace, closed, rules.sport_sector, season.name ∈ varianty}`. Žiadny zo 44 indexov kolekcie `matches` túto kombináciu nepokrýva. Optimalizátor zvolil `closed_1___issfMatchStatus_1_season.name_1` → IXSCAN vráti **všetky uzavreté zápasy danej sezóny naprieč všetkými appSpace (celé SR)**, appSpace a rules.sport_sector sa filtrujú až vo FETCH v pamäti. Pri 2021/2022 (prvá plná posezóna po COVIDe → najviac zápasov v SR; staršie ZsFZ sezóny boli COVIDom skrátené) je táto medzimnožina najväčšia → prešvihne limit. Príčina teda nie je počet súťažných častí (len 30, max 2/súťaž).
+
+Druhotný problém: **index bloat**. `optimizationTimeMillis ≈ 1910` (plánovač trávi ~1,9 s len výberom plánu) a `maxIndexedAndSolutionsReached: true` — 44 indexov je nad rozumný limit optimalizátora; opakuje sa pri každej zo 7 agregácií každej sezóny.
+
+**Odporúčané riešenie — jeden cielený index** (poradie podľa pravidla ESR; rovnostné polia najprv, `$in` pole posledné):
+
+```js
+db.matches.createIndex(
+  { appSpace: 1, closed: 1, "rules.sport_sector": 1, "season.name": 1 },
+  { name: "etl_appSpace_closed_sport_season" }
+)
+```
+
+Tým sa `$match` zmení na tesný IXSCAN presne na cieľové zápasy (bez in-memory filtra). Keďže **všetkých 7 ETL agregácií začína týmto istým `$match`**, zrýchli sa celý ETL, nielen zsfz 2021/22.
+
+**Stav:** index na produkčnej DB SFZ NEbol vytvorený (zápisová/DDL operácia — čaká na schválenie PO/DBA). Do ETL doplnené `--max-time-ms` (dočasná pomôcka). **Akcia po vytvorení indexu:** `python etl/run.py --zvaz zsfz --sezona 2021/2022` (a 2022/23, 2023/24, 2024/25), potom commit + kontrola `data/index.json`. Zvážiť aj revíziu 44 indexov (samostatne, opatrne).
 
