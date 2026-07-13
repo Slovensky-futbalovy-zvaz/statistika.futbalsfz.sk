@@ -1,0 +1,98 @@
+{
+  "zvaz": "obfz-dunajska-streda",
+  "sezona": "2013/2014",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T12:50:01+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.999,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 832,
+    "druzstva": 0,
+    "goly": 3543,
+    "divaci": 67220,
+    "zlteKarty": 2620,
+    "cerveneKarty": 132
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 592,
+      "druzstva": 0,
+      "goly": 2299,
+      "zlte": 2009,
+      "cervene": 86,
+      "divaci": 59376,
+      "divaciPokrytych": 591
+    },
+    "U19": {
+      "zapasy": 240,
+      "druzstva": 0,
+      "goly": 1244,
+      "zlte": 611,
+      "cervene": 46,
+      "divaci": 7844,
+      "divaciPokrytych": 240
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 832,
+      "druzstva": 54,
+      "goly": 3543,
+      "divaci": 67220,
+      "zlteKarty": 2620,
+      "cerveneKarty": 132,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 592,
+          "druzstva": 38,
+          "goly": 2299,
+          "zlte": 2009,
+          "cervene": 86,
+          "divaci": 59376,
+          "divaciPokrytych": 591
+        },
+        "U19": {
+          "zapasy": 240,
+          "druzstva": 16,
+          "goly": 1244,
+          "zlte": 611,
+          "cervene": 46,
+          "divaci": 7844,
+          "divaciPokrytych": 240
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 1465,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 59,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 55,
+      "poKategorii": {
+        "ADULTS": 53,
+        "U19": 46
+      }
+    },
+    "delegati": {
+      "unikatni": 18,
+      "poKategorii": {
+        "ADULTS": 17,
+        "U19": 17
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}

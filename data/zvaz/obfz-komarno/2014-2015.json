@@ -1,0 +1,78 @@
+{
+  "zvaz": "obfz-komarno",
+  "sezona": "2014/2015",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T12:58:22+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.892,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 240,
+    "druzstva": 0,
+    "goly": 854,
+    "divaci": 20231,
+    "zlteKarty": 543,
+    "cerveneKarty": 16
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 240,
+      "druzstva": 0,
+      "goly": 854,
+      "zlte": 543,
+      "cervene": 16,
+      "divaci": 20231,
+      "divaciPokrytych": 214
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 240,
+      "druzstva": 16,
+      "goly": 854,
+      "divaci": 20231,
+      "zlteKarty": 543,
+      "cerveneKarty": 16,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 240,
+          "druzstva": 16,
+          "goly": 854,
+          "zlte": 543,
+          "cervene": 16,
+          "divaci": 20231,
+          "divaciPokrytych": 214
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 430,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 18,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 52,
+      "poKategorii": {
+        "ADULTS": 52
+      }
+    },
+    "delegati": {
+      "unikatni": 14,
+      "poKategorii": {
+        "ADULTS": 14
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}

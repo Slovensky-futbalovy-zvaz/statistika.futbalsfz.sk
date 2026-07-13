@@ -1,0 +1,140 @@
+{
+  "zvaz": "obfz-nove-zamky",
+  "sezona": "2017/2018",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T12:57:42+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.978,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 1300,
+    "druzstva": 0,
+    "goly": 8145,
+    "divaci": 68822,
+    "zlteKarty": 1895,
+    "cerveneKarty": 60
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 638,
+      "druzstva": 0,
+      "goly": 2975,
+      "zlte": 1542,
+      "cervene": 39,
+      "divaci": 49912,
+      "divaciPokrytych": 638
+    },
+    "U19": {
+      "zapasy": 135,
+      "druzstva": 0,
+      "goly": 734,
+      "zlte": 234,
+      "cervene": 12,
+      "divaci": 3752,
+      "divaciPokrytych": 119
+    },
+    "U15": {
+      "zapasy": 253,
+      "druzstva": 0,
+      "goly": 2085,
+      "zlte": 107,
+      "cervene": 9,
+      "divaci": 6548,
+      "divaciPokrytych": 244
+    },
+    "U12": {
+      "zapasy": 274,
+      "druzstva": 0,
+      "goly": 2351,
+      "zlte": 12,
+      "cervene": 0,
+      "divaci": 8610,
+      "divaciPokrytych": 271
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 1300,
+      "druzstva": 109,
+      "goly": 8145,
+      "divaci": 68822,
+      "zlteKarty": 1895,
+      "cerveneKarty": 60,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 638,
+          "druzstva": 46,
+          "goly": 2975,
+          "zlte": 1542,
+          "cervene": 39,
+          "divaci": 49912,
+          "divaciPokrytych": 638
+        },
+        "U19": {
+          "zapasy": 135,
+          "druzstva": 10,
+          "goly": 734,
+          "zlte": 234,
+          "cervene": 12,
+          "divaci": 3752,
+          "divaciPokrytych": 119
+        },
+        "U15": {
+          "zapasy": 253,
+          "druzstva": 26,
+          "goly": 2085,
+          "zlte": 107,
+          "cervene": 9,
+          "divaci": 6548,
+          "divaciPokrytych": 244
+        },
+        "U12": {
+          "zapasy": 274,
+          "druzstva": 27,
+          "goly": 2351,
+          "zlte": 12,
+          "cervene": 0,
+          "divaci": 8610,
+          "divaciPokrytych": 271
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 2323,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 96,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 68,
+      "poKategorii": {
+        "ADULTS": 66,
+        "U19": 36,
+        "U15": 45,
+        "U12": 39
+      }
+    },
+    "delegati": {
+      "unikatni": 8,
+      "poKategorii": {
+        "ADULTS": 8
+      }
+    },
+    "personal": {
+      "unikatni": 193,
+      "poKategorii": {
+        "ADULTS": 131,
+        "U19": 33,
+        "U15": 66,
+        "U12": 73
+      }
+    }
+  }
+}

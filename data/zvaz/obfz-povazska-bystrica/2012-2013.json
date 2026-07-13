@@ -1,0 +1,78 @@
+{
+  "zvaz": "obfz-povazska-bystrica",
+  "sezona": "2012/2013",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T12:55:32+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.0,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 42,
+    "druzstva": 0,
+    "goly": 0,
+    "divaci": 0,
+    "zlteKarty": 0,
+    "cerveneKarty": 0
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 42,
+      "druzstva": 0,
+      "goly": 0,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 0,
+      "divaciPokrytych": 0
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 42,
+      "druzstva": 10,
+      "goly": 0,
+      "divaci": 0,
+      "zlteKarty": 0,
+      "cerveneKarty": 0,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 42,
+          "druzstva": 10,
+          "goly": 0,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 0,
+          "divaciPokrytych": 0
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 0,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 0,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 4,
+      "poKategorii": {
+        "ADULTS": 4
+      }
+    },
+    "delegati": {
+      "unikatni": 2,
+      "poKategorii": {
+        "ADULTS": 2
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}
