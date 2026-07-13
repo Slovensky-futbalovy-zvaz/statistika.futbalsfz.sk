@@ -184,3 +184,11 @@ Tým sa `$match` zmení na tesný IXSCAN presne na cieľové zápasy (bez in-mem
 
 **Stav cieľového riešenia:** cielený index (ADR-0004) na produkčnej DB SFZ **stále odporúčaný** — hint je len obchádzka pre tento zväz; index zrýchli všetky zväzy a odstráni potrebu hintu. DDL čaká na PO/DBA. Zvážiť aj revíziu 44 indexov (samostatne, opatrne).
 
+## 10. Futsal (odvetvie pod SFZ) — 13. 7. 2026
+
+Futsal beží len pod SFZ (appSpace `futsalslovakia.sk`, `rules.sport_sector = futsal`). Dogenerovaná **kompletná história: 11 sezón** (2014/15–2021/22, 2023/24, 2024/25, 2025/26; 2022/2023 v DB nemá uzavreté zápasy). Výstupy `data/zvaz/sfz/RRRR-RRRR-futsal.json`, **0 kritických anomálií** (19 dátových — historické osoby bez kategórie, rovnaký vzor ako futbal). Počty overené proti DB.
+
+**Evidencia v `index.json` (konvencia pre F2):** odvetvia mimo futbalu sa neukladajú do `zvazy[].sezony` (to je výhradne futbal), ale do mapy **`zvazy[].odvetvia`**, napr. `sfz.odvetvia.futsal = ["2014/2015", …, "2025/2026"]`. `aktualizuj_index` ju plní automaticky zo súborov `RRRR-RRRR-{sektor}.json`. Frontend F2 tak číta futbal z `sezony` a futsal z `odvetvia.futsal`. Rozšíriteľné na ďalšie odvetvia bez zmeny schémy.
+
+**Stav dát pre F2:** futbal 43/43 zväzov (569 sezónnych výstupov) + futsal SFZ (11) = **kompletné; F2 môže začať.**
+

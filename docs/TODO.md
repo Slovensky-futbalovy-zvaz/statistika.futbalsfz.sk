@@ -32,7 +32,7 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
 - [ ] Kickoff frontendu (F2): štruktúra `web/`, výber SSG frameworku, načítanie `data/index.json` + profil zväzu
 - [ ] Overiť odoslanie podkladov Bart.sk (`docs/podklady-bart-produkcny-beh.md`) — čaká na odoslanie PO
 - [ ] Overiť odoslanie nahlásenia chybného záznamu divákov (`docs/sportnet-nahlasenie-divaci.md`) — draft čaká na PO
-- [ ] Futsal: historické sezóny (`run.py --zvaz sfz --sport-sector futsal --all-sezony`) + evidencia futsalových súborov v `data/index.json`
+- [x] Futsal: historické sezóny (SFZ) — **hotové 13. 7. 2026: 11 sezón (2014/15–2025/26, 2022/23 v DB prázdna), 0 kritických anomálií**; evidencia v `index.json` cez `zvazy[sfz].odvetvia.futsal` (aktualizuj_index rozšírené)
 - [ ] Projekty (disney, kruzkymcd, dajmespolugol) — samostatná časť štatistík „Projekty“ (zatiaľ mimo ETL)
 - [ ] Pokrytie kariet/gólov za prípravky (U07–U11) — publikovať len s výhradou/nezobrazovať (F2 rozhodnutie o UI)
 
