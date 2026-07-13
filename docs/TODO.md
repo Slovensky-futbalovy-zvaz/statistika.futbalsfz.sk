@@ -29,7 +29,8 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
   Zrýchli všetkých 7 ETL agregácií pre všetky zväzy a **odstráni potrebu `--hint`**. Hint je len dočasná obchádzka.
 - [ ] (Neskôr, opatrne) Revízia počtu indexov na `matches` — 44 indexov spomaľuje samotné plánovanie dotazov (`optimizationTimeMillis ≈ 1,9 s`, `maxIndexedAndSolutionsReached`).
 - [ ] Demografia ďalších zväzov (SFZ, 4 RFZ, ostatné ObFZ) — rovnaký vzor ako ObFZ Nitra (`etl/demografia.py`)
-- [~] Frontend (ADR-0005 — Astro + ECharts + Tailwind): **hotové** — mapa SR, profil zväzu, per-sezónne stránky, graf kategórií, pohlavie+osoby, **medziročné porovnanie KPI**, **F4 porovnanie a radenie zväzov** (`/porovnanie/{uroven}/{sezona}` — tabuľka + graf s výberom metriky, RFZ aj ObFZ). Build 646 stránok. **Ďalej:** demografia (F5), prepínač odvetvia futbal/futsal, výber 2–5 zväzov + radar, napojiť Cloudflare Pages (root `web/`).
+- [~] Frontend (ADR-0005 — Astro + ECharts + Tailwind): **hotové** — mapa SR, profil zväzu, per-sezónne stránky, graf kategórií, pohlavie+osoby, medziročné porovnanie KPI, F4 porovnanie a radenie zväzov, **F5 demografia** (10-ročné trendy osôb po rolách na profile). Build 646 stránok. **Ďalej:** prepínač odvetvia futbal/futsal, výber 2–5 zväzov + radar, vekové pyramídy (rok narodenia × pohlavie), napojiť Cloudflare Pages (root `web/`).
+- [x] **Demografia všetkých 43 zväzov** — hotové 13. 7. 2026 (`etl/demografia.py --hint`), `data/demografia/{id}.json`, 0 anomálií (žiadny zväz >20 % bez dátumu narodenia).
 - [ ] Optimalizácia: tree-shaking ECharts (import len potrebných modulov cez `echarts/core`) — teraz sa bundluje celý (~1 MB) na sezónnych stránkach
 - [ ] Overiť odoslanie podkladov Bart.sk (`docs/podklady-bart-produkcny-beh.md`) — čaká na odoslanie PO
 - [ ] Overiť odoslanie nahlásenia chybného záznamu divákov (`docs/sportnet-nahlasenie-divaci.md`) — draft čaká na PO
