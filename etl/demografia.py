@@ -52,6 +52,9 @@ log = logging.getLogger("demografia")
 USERS_CHUNK = 5_000  # veľkosť $in dávky pri čítaní sportnet.users
 ROLY_PORADIE = ["hraci", "treneri", "rozhodcovia", "delegati", "personal"]
 
+_MAXT = MAX_TIME_MS  # limit agregácie (prepísateľný cez --max-time-ms)
+_HINT = None  # voliteľný index hint (--hint) — do vzniku cieleného indexu (ADR-0004)
+
 
 # ---------------------------------------------------------------- MongoDB
 
@@ -66,11 +69,12 @@ def pripoj_klienta(uri: str | None):
 
 def agreguj(db, pipeline: list[dict], popis: str) -> list[dict]:
     """Agregácia s retry (rovnaké pravidlá ako run.py: 1 retry, disk spill)."""
+    kwargs = {"allowDiskUse": True, "maxTimeMS": _MAXT}
+    if _HINT:
+        kwargs["hint"] = _HINT
     for pokus in range(RETRIES + 1):
         try:
-            return list(
-                db.matches.aggregate(pipeline, allowDiskUse=True, maxTimeMS=MAX_TIME_MS)
-            )
+            return list(db.matches.aggregate(pipeline, **kwargs))
         except Exception as e:  # noqa: BLE001
             if pokus < RETRIES:
                 log.warning("%s: pokus %d zlyhal (%s) — retry…", popis, pokus + 1, e)
@@ -227,9 +231,15 @@ def main() -> int:
     ap.add_argument("--db", default="sutaze", help="DB zápasov (default: sutaze)")
     ap.add_argument("--users-db", default="sportnet", help="DB osôb (default: sportnet)")
     ap.add_argument("--out", default=str(REPO / "data"), help="výstupný priečinok (default: data/)")
+    ap.add_argument("--max-time-ms", type=int, default=MAX_TIME_MS, help=f"limit agregácie v ms (default: {MAX_TIME_MS})")
+    ap.add_argument("--hint", default=None, help="názov vynúteného indexu (dočasná pomôcka, ADR-0004)")
     args = ap.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+
+    global _MAXT, _HINT
+    _MAXT = args.max_time_ms
+    _HINT = args.hint
 
     zvazy = load_json(CONFIG / "zvazy.json")
     sezony_cfg = load_json(CONFIG / "sezony.json")
