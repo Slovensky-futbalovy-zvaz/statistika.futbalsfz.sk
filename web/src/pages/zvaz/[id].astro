@@ -1,6 +1,16 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getZvazy, getZvaz, najnovsiaSezona, getProfil, fmt } from '../../lib/data';
+import DemografiaTrend from '../../components/DemografiaTrend.astro';
+import {
+  getZvazy,
+  getZvaz,
+  najnovsiaSezona,
+  getProfil,
+  fmt,
+  getDemografia,
+  ROLY_PORADIE,
+  ROLA_LABEL,
+} from '../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -13,6 +23,16 @@ if (!z) {
 }
 const sezona = najnovsiaSezona(z);
 const profil = sezona ? getProfil(z.id, sezona) : undefined;
+
+// F5 demografia (ak existuje) — trend počtu osôb po rolách za sezóny
+const demo = getDemografia(z.id);
+const demoSezony = demo ? Object.keys(demo.sezony).sort() : [];
+const demoSerie = demo
+  ? ROLY_PORADIE.map((rola) => ({
+      name: ROLA_LABEL[rola],
+      data: demoSezony.map((s) => demo.sezony[s]?.[rola]?.osoby ?? 0),
+    })).filter((s) => s.data.some((v) => v > 0))
+  : [];
 
 const kpiKarty = profil
   ? [
@@ -95,6 +115,18 @@ const futsalSezony = z.odvetvia?.futsal ?? [];
               <span class="rounded-md border border-black/10 px-2 py-0.5 text-sm text-sfz-muted">{s}</span>
             ))}
         </div>
+      </section>
+    )
+  }
+
+  {
+    demo && demoSezony.length > 0 && (
+      <section class="mt-10">
+        <h2 class="text-lg font-bold mb-1">Demografia — trend osôb</h2>
+        <p class="text-sm text-sfz-muted mb-3">
+          Počet osôb podľa roly za {demoSezony.length} sezón (hráči, tréneri, rozhodcovia, delegáti, personál).
+        </p>
+        <DemografiaTrend sezony={demoSezony} serie={demoSerie} />
       </section>
     )
   }

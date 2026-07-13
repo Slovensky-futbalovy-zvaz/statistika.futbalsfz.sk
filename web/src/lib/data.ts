@@ -161,3 +161,35 @@ export function sezonyUrovne(urovenSlug: string): string[] {
     .sort()
     .reverse();
 }
+
+// ---- F5: demografia osôb ----
+
+export interface DemoRola {
+  osoby: number;
+  sUdajmi: number;
+  bezUdajov: number;
+  roky: Record<string, Record<string, number>>; // rok → {M,F,N: počet}
+}
+export interface Demografia {
+  zvaz: string;
+  sportSector: string;
+  generatedAt: string;
+  methodologyFlags: Record<string, unknown>;
+  sezony: Record<string, Record<string, DemoRola>>; // sezóna → rola → agregát
+}
+
+const DEMOGRAFIA = path.join(DATA, 'demografia');
+export const ROLY_PORADIE = ['hraci', 'treneri', 'rozhodcovia', 'delegati', 'personal'] as const;
+export const ROLA_LABEL: Record<string, string> = {
+  hraci: 'Hráči',
+  treneri: 'Tréneri',
+  rozhodcovia: 'Rozhodcovia',
+  delegati: 'Delegáti',
+  personal: 'Personál',
+};
+
+/** Demografia zväzu, ak existuje (súbor môže chýbať). */
+export function getDemografia(id: string): Demografia | undefined {
+  const p = path.join(DEMOGRAFIA, id + '.json');
+  return fs.existsSync(p) ? readJson<Demografia>(p) : undefined;
+}

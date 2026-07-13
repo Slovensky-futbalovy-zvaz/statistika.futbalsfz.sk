@@ -1,0 +1,56 @@
+---
+// ECharts island — 10-ročný trend počtu osôb po rolách (F5).
+interface Serie {
+  name: string;
+  data: number[];
+}
+interface Props {
+  sezony: string[];
+  serie: Serie[];
+}
+const { sezony, serie } = Astro.props;
+const payload = { sezony, serie };
+---
+
+<div
+  data-demo-trend
+  data-payload={JSON.stringify(payload)}
+  class="w-full"
+  style="height: 360px;"
+  role="img"
+  aria-label="Trend počtu osôb po rolách za sezóny"
+>
+</div>
+
+<script>
+  import * as echarts from 'echarts/core';
+  import { LineChart } from 'echarts/charts';
+  import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
+  import { CanvasRenderer } from 'echarts/renderers';
+  echarts.use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
+
+  type Payload = { sezony: string[]; serie: { name: string; data: number[] }[] };
+  const FARBY = ['#1450df', '#12b886', '#f59f00', '#ec1c24', '#7048e8'];
+
+  const el = document.querySelector<HTMLElement>('[data-demo-trend]');
+  if (el) {
+    const { sezony, serie } = JSON.parse(el.dataset.payload ?? '{}') as Payload;
+    const chart = echarts.init(el, undefined, { renderer: 'canvas' });
+    chart.setOption({
+      grid: { left: 48, right: 16, top: 40, bottom: 40 },
+      legend: { top: 0 },
+      tooltip: { trigger: 'axis' },
+      xAxis: { type: 'category', data: sezony, axisLabel: { fontSize: 10, rotate: 45 } },
+      yAxis: { type: 'value' },
+      series: serie.map((s, i) => ({
+        name: s.name,
+        type: 'line',
+        smooth: true,
+        data: s.data,
+        itemStyle: { color: FARBY[i % FARBY.length] },
+        emphasis: { focus: 'series' },
+      })),
+    });
+    new ResizeObserver(() => chart.resize()).observe(el);
+  }
+</script>
