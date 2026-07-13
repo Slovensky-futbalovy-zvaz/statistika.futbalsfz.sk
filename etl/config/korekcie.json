@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-07-13",
+  "note": "Korekčná vrstva ETL — ručné opravy zjavne chybných zdrojových údajov (platforma sportnet.online), kým sa neopravia pri zdroji. Aplikuje sa počas agregácie (etl/pipelines.audience_expr) na základe match _id; NEmodifikuje zdrojovú DB. Keď sa údaj opraví pri zdroji, príslušný záznam odtiaľto odstrániť (bezpečné — beh potom použije zdrojovú hodnotu). Každá korekcia má pôvodnú hodnotu, dôvod a dátum nahlásenia.",
+  "matches": {
+    "5f3ffdab4000de0cc7e62c45": {
+      "audience": 30,
+      "povodne": 300000,
+      "appSpace": "obfz-nitra.futbalnet.sk",
+      "sezona": "2019/2020",
+      "duvod": "protocol.audience 300000 → 30 — zjavný preklep v zápise divákov. OFK Sľažany – ŠK Nevidzany, IV. liga U13 ObFZ NR, 14. 10. 2019.",
+      "nahlasene": "2026-07-13",
+      "nahlasilPO": "Ján Letko (oprava pri zdroji vyžiadaná)"
+    }
+  }
+}

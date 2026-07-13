@@ -97,6 +97,7 @@ def main() -> int:
     zvazy = run.load_json(run.CONFIG / "zvazy.json")
     sezony_cfg = run.load_json(run.CONFIG / "sezony.json")
     roly = run.load_json(run.CONFIG / "roly.json")
+    korekcie = run.load_json(run.CONFIG / "korekcie.json") if (run.CONFIG / "korekcie.json").exists() else {}
     out_dir = Path(args.out)
 
     poradie = zoznam_zvazov(zvazy)
@@ -141,7 +142,7 @@ def main() -> int:
             try:
                 for sezona in sezony:
                     varianty = run.sezona_varianty(sezony_cfg, sezona)
-                    doc = run.vygeneruj(db, zvaz, sezona, varianty, roly)
+                    doc = run.vygeneruj(db, zvaz, sezona, varianty, roly, corrections=korekcie)
                     if doc is None:
                         zaznam["preskocene"].append(sezona)
                         log.info("    %s: žiadne uzavreté zápasy — preskakujem.", sezona)

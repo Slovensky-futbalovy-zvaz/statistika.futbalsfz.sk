@@ -87,6 +87,25 @@ def gender_expr(part_map: dict | None):
     return {"$switch": {"branches": branches, "default": None}}
 
 
+def audience_expr(corrections: dict | None):
+    """Diváci zápasu z protocol.audience s korekčnou vrstvou (etl/config/korekcie.json).
+
+    Pre match _id uvedené v korekciách vráti opravenú hodnotu `audience`; pre
+    ostatné zápasy pôvodný `protocol.audience`. Nemodifikuje zdrojovú DB —
+    oprava sa aplikuje len počas agregácie (rozhodnutie PO 13. 7. 2026).
+    """
+    base = "$protocol.audience"
+    matches = (corrections or {}).get("matches") or {}
+    branches = [
+        {"case": {"$eq": [{"$toString": "$_id"}, mid]}, "then": v["audience"]}
+        for mid, v in matches.items()
+        if "audience" in v
+    ]
+    if not branches:
+        return base
+    return {"$switch": {"branches": branches, "default": base}}
+
+
 def _cat_zapas(part_map: dict | None):
     """Kategória zápasu: primárne teams[0].ageCategory, fallback z časti súťaže."""
     base = {"$arrayElemAt": ["$teams.ageCategory", 0]}
@@ -129,11 +148,12 @@ _PERSON_FACET = [
 ]
 
 
-def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None):
+def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None, corrections=None):
     """Zápasy, góly, karty a diváci po vekových kategóriách.
 
     divaciPokrytych = počet zápasov s vyplneným protocol.audience (vrátane 0);
     {$gt: [x, null]} je v BSON poradí typov true pre každú ne-null hodnotu.
+    Diváci prechádzajú korekčnou vrstvou (audience_expr).
     """
     return [
         _match_stage(app_spaces, season_variants, sport_sector),
@@ -143,7 +163,7 @@ def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None)
                 "goly": _event_count("goal"),
                 "zlte": _event_count("yellow_card"),
                 "cervene": _event_count("red_card"),
-                "audience": "$protocol.audience",
+                "audience": audience_expr(corrections),
             }
         },
         {
@@ -161,11 +181,12 @@ def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None)
     ]
 
 
-def kategorie_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_map=None):
+def kategorie_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_map=None, corrections=None):
     """Zápasy, góly, karty a diváci po pohlaví × vekovej kategórii.
 
     Pohlavie výhradne z časti súťaže (gender_expr); zápas patrí práve jednej
     časti → súčty M+F+NEURCENE presne sedia na celkové KPI (regresná kotva).
+    Diváci prechádzajú korekčnou vrstvou (audience_expr) — rovnako ako v `kategorie`.
     """
     g = gender_expr(part_map)
     return [
@@ -177,7 +198,7 @@ def kategorie_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_
                 "goly": _event_count("goal"),
                 "zlte": _event_count("yellow_card"),
                 "cervene": _event_count("red_card"),
-                "audience": "$protocol.audience",
+                "audience": audience_expr(corrections),
             }
         },
         {

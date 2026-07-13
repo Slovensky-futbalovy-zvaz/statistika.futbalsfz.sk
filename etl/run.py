@@ -192,16 +192,21 @@ def _zloz_pohlavie(kat_g_raw: list[dict], druz_g_raw: list[dict]) -> dict:
 
 
 def vygeneruj(
-    db, zvaz: dict, sezona: str, varianty: list[str], roly: dict, sport_sector: str = "futbal"
+    db, zvaz: dict, sezona: str, varianty: list[str], roly: dict,
+    sport_sector: str = "futbal", corrections: dict | None = None,
 ) -> dict | None:
-    """Zloží výstupný dokument zväz+sezóna+odvetvie. None, ak nie sú uzavreté zápasy."""
+    """Zloží výstupný dokument zväz+sezóna+odvetvie. None, ak nie sú uzavreté zápasy.
+
+    `corrections` (etl/config/korekcie.json) je korekčná vrstva divákov —
+    aplikuje sa v pipelines.kategorie/kategorie_pohlavie cez audience_expr.
+    """
     spaces = (
         [FUTSAL_APP_SPACE] if sport_sector == "futsal" else app_spaces(zvaz)
     )  # futsal patrí pod SFZ, ale žije na vlastnom appSpace
     part_map = nacitaj_part_mapu(db, spaces, varianty)
 
     kat_raw = agreguj(
-        db, pipelines.kategorie(spaces, varianty, sport_sector, part_map), "kategorie"
+        db, pipelines.kategorie(spaces, varianty, sport_sector, part_map, corrections), "kategorie"
     )
     if not kat_raw:
         return None
@@ -224,7 +229,7 @@ def vygeneruj(
     )
     kat_g_raw = agreguj(
         db,
-        pipelines.kategorie_pohlavie(spaces, varianty, sport_sector, part_map),
+        pipelines.kategorie_pohlavie(spaces, varianty, sport_sector, part_map, corrections),
         "kategorie-pohlavie",
     )
     druz_g_raw = agreguj(
@@ -288,6 +293,17 @@ def vygeneruj(
             "personal": _facet_osoby(rd_raw, "personal"),
         },
     }
+
+    # korekčná vrstva: zaeviduj do methodologyFlags, ktoré zápasy tohto
+    # zväzu+sezóny mali opravený údaj (transparentnosť voči zdroju)
+    aplikovane = [
+        {"match": mid, "audience": v.get("audience"), "povodne": v.get("povodne"), "duvod": v.get("duvod")}
+        for mid, v in (corrections or {}).get("matches", {}).items()
+        if v.get("appSpace") in spaces and v.get("sezona") == sezona
+    ]
+    if aplikovane:
+        doc["methodologyFlags"]["korekcie"] = aplikovane
+
     return doc
 
 
@@ -360,6 +376,7 @@ def main() -> int:
     sezony_cfg = load_json(CONFIG / "sezony.json")
     roly = load_json(CONFIG / "roly.json")
     sporty = load_json(CONFIG / "sporty.json")
+    korekcie = load_json(CONFIG / "korekcie.json") if (CONFIG / "korekcie.json").exists() else {}
     zvaz = najdi_zvaz(zvazy, args.zvaz)
     out_dir = Path(args.out)
 
@@ -380,7 +397,7 @@ def main() -> int:
             zvaz["nazov"], sezona, args.sport_sector,
             FUTSAL_APP_SPACE if args.sport_sector == "futsal" else ", ".join(app_spaces(zvaz)),
         )
-        doc = vygeneruj(db, zvaz, sezona, varianty, roly, args.sport_sector)
+        doc = vygeneruj(db, zvaz, sezona, varianty, roly, args.sport_sector, korekcie)
         if doc is None:
             log.info("%s: žiadne uzavreté zápasy — preskakujem.", sezona)
             continue
