@@ -1,0 +1,8 @@
+# Cloudflare Pages cache (ADR-0003)
+# Statické assety s hashom v názve → dlhá nemenná cache
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML stránky → kratšia cache, revalidácia (dáta sa menia denným ETL)
+/*
+  Cache-Control: public, max-age=3600, must-revalidate

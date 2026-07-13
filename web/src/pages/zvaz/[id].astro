@@ -1,0 +1,102 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getZvazy, getZvaz, najnovsiaSezona, getProfil, fmt } from '../../lib/data';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = () =>
+  getZvazy().map((z) => ({ params: { id: z.id } }));
+
+const { id } = Astro.params;
+const z = getZvaz(id!);
+if (!z) {
+  throw new Error(`Zväz ${id} nie je v index.json`);
+}
+const sezona = najnovsiaSezona(z);
+const profil = sezona ? getProfil(z.id, sezona) : undefined;
+
+const kpiKarty = profil
+  ? [
+      { label: 'Zápasy', hodnota: profil.kpi.zapasy },
+      { label: 'Družstvá', hodnota: profil.kpi.druzstva },
+      { label: 'Góly', hodnota: profil.kpi.goly },
+      { label: 'Hráči', hodnota: profil.osoby?.hraci?.unikatni ?? 0 },
+      { label: 'Diváci', hodnota: profil.kpi.divaci },
+      { label: 'Žlté karty', hodnota: profil.kpi.zlteKarty },
+      { label: 'Červené karty', hodnota: profil.kpi.cerveneKarty },
+    ]
+  : [];
+
+const futsalSezony = z.odvetvia?.futsal ?? [];
+---
+
+<Base title={z.nazov}>
+  <p class="mb-2 text-sm">
+    <a href="/" class="text-sfz-blue hover:underline">← Späť na mapu</a>
+  </p>
+
+  <header class="mb-6">
+    <div class="text-xs font-semibold uppercase tracking-wider text-sfz-muted">{z.uroven}</div>
+    <h1 class="text-3xl font-extrabold tracking-tight">{z.nazov}</h1>
+    {sezona && <p class="mt-1 text-sfz-muted">Sezóna {sezona} · futbal</p>}
+  </header>
+
+  {
+    profil ? (
+      <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        {kpiKarty.map((k) => (
+          <div class="rounded-xl border border-black/10 p-4">
+            <div class="text-2xl font-extrabold tabular-nums">{fmt(k.hodnota)}</div>
+            <div class="text-sm text-sfz-muted">{k.label}</div>
+          </div>
+        ))}
+      </section>
+    ) : (
+      <p class="text-sfz-muted">Pre tento zväz zatiaľ nie sú dostupné žiadne sezónne dáta.</p>
+    )
+  }
+
+  <section class="mt-8">
+    <h2 class="text-sm font-semibold uppercase tracking-wider text-sfz-muted mb-2">
+      Dostupné sezóny (futbal)
+    </h2>
+    <div class="flex flex-wrap gap-1.5">
+      {
+        z.sezony
+          .slice()
+          .reverse()
+          .map((s) => (
+            <span
+              class:list={[
+                'rounded-md border px-2 py-0.5 text-sm',
+                s === sezona ? 'border-sfz-blue text-sfz-blue font-semibold' : 'border-black/10 text-sfz-muted',
+              ]}
+            >
+              {s}
+            </span>
+          ))
+      }
+    </div>
+  </section>
+
+  {
+    futsalSezony.length > 0 && (
+      <section class="mt-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-sfz-muted mb-2">
+          Futsal · {futsalSezony.length} sezón
+        </h2>
+        <div class="flex flex-wrap gap-1.5">
+          {futsalSezony
+            .slice()
+            .reverse()
+            .map((s) => (
+              <span class="rounded-md border border-black/10 px-2 py-0.5 text-sm text-sfz-muted">{s}</span>
+            ))}
+        </div>
+      </section>
+    )
+  }
+
+  <p class="mt-10 text-xs text-sfz-muted">
+    Dáta generované {profil?.generatedAt ?? '—'} · len uzavreté zápasy.
+  </p>
+</Base>

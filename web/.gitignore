@@ -1,0 +1,11 @@
+# Astro / Node build artefakty (necommitovať)
+node_modules/
+dist/
+.astro/
+
+# env
+.env
+.env.local
+
+# stray temp súbory (napr. po prerušenom pnpm install)
+_tmp_*

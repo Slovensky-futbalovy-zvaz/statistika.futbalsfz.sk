@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+/* Brand tokeny SFZ (odvodené z prototyp.html / loga) */
+@theme {
+  --color-sfz-blue: #1450df;
+  --color-sfz-red: #ec1c24;
+  --color-sfz-ink: #070504;
+  --color-sfz-muted: #5b5f66;
+
+  /* farby regiónov (RFZ) pre choropleth mapu */
+  --color-rfz-ba: #1450df;
+  --color-rfz-zsfz: #2aa7ff;
+  --color-rfz-ssfz: #12b886;
+  --color-rfz-vsfz: #f59f00;
+
+  --font-sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-sfz-ink);
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}

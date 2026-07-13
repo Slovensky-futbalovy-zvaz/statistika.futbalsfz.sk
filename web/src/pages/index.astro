@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import MapaSR from '../components/MapaSR.astro';
+import { getZvazy } from '../lib/data';
+
+const zvazy = getZvazy();
+const sfz = zvazy.find((z) => z.uroven === 'SFZ');
+const rfzZvazy = zvazy.filter((z) => z.uroven === 'RFZ');
+const obfz = zvazy.filter((z) => z.uroven === 'ObFZ');
+
+const rfzPoradie = ['BFZ', 'ZsFZ', 'SsFZ', 'VsFZ'];
+const rfzNazov: Record<string, string> = Object.fromEntries(
+  rfzZvazy.map((r) => [r.appSpace, r.nazov]),
+);
+const obfzPodlaRfz = rfzPoradie.map((skratka) => ({
+  skratka,
+  nazov: rfzNazov[skratka] ?? skratka,
+  zvazy: obfz.filter((o) => o.rfz === skratka).sort((a, b) => a.nazov.localeCompare(b.nazov, 'sk')),
+}));
+---
+
+<Base>
+  <section class="mb-10">
+    <h1 class="text-3xl font-extrabold tracking-tight">Štatistiky slovenského futbalu</h1>
+    <p class="mt-2 max-w-2xl text-sfz-muted">
+      Sezónne štatistiky naprieč celou futbalovou pyramídou — Slovenský futbalový zväz, 4 regionálne
+      a 38 oblastných zväzov. Vyberte zväz na mape alebo zo zoznamu.
+    </p>
+  </section>
+
+  <section class="mb-12 grid gap-8 md:grid-cols-[1.4fr_1fr] items-start">
+    <div class="rounded-xl border border-black/10 p-3">
+      <MapaSR />
+    </div>
+    <div>
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-sfz-muted">Zväzy</h2>
+      <ul class="mt-3 space-y-1">
+        {
+          sfz && (
+            <li>
+              <a class="font-semibold text-sfz-blue hover:underline" href={`/zvaz/${sfz.id}`}>
+                {sfz.nazov}
+              </a>
+            </li>
+          )
+        }
+        {
+          rfzZvazy.map((r) => (
+            <li>
+              <a class="text-sfz-blue hover:underline" href={`/zvaz/${r.id}`}>
+                {r.nazov}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    obfzPodlaRfz.map((skupina) => (
+      <section class="mb-8">
+        <h2 class="text-lg font-bold border-b border-black/10 pb-1 mb-3">
+          {skupina.nazov} <span class="text-sfz-muted font-normal">· {skupina.zvazy.length} ObFZ</span>
+        </h2>
+        <ul class="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+          {skupina.zvazy.map((o) => (
+            <li>
+              <a class="text-sfz-blue hover:underline" href={`/zvaz/${o.id}`}>
+                {o.nazov}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>

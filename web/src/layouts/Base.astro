@@ -1,0 +1,44 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Štatistiky slovenského futbalu',
+  description = 'Verejný štatistický portál slovenského futbalu — SFZ, regionálne (RFZ) a oblastné (ObFZ) zväzy.',
+} = Astro.props;
+const fullTitle = title === 'Štatistiky slovenského futbalu' ? title : `${title} · Štatistiky slovenského futbalu`;
+---
+
+<!doctype html>
+<html lang="sk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <header class="border-b border-black/10">
+      <div class="mx-auto max-w-6xl px-4 py-4">
+        <a href="/" class="inline-flex flex-col leading-none no-underline">
+          <span class="font-extrabold tracking-wide text-xl text-sfz-ink">ŠTATISTIKY</span>
+          <span class="font-semibold tracking-[0.2em] text-xs text-sfz-blue">SLOVENSKÉHO FUTBALU</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-4 py-8 flex-1 w-full">
+      <slot />
+    </main>
+
+    <footer class="border-t border-black/10 mt-12">
+      <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-sfz-muted">
+        © Slovenský futbalový zväz · Zdroj dát: platforma sportnet.online
+      </div>
+    </footer>
+  </body>
+</html>
