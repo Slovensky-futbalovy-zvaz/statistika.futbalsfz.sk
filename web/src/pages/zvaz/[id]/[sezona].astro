@@ -15,15 +15,35 @@ const z = getZvaz(id!);
 if (!z) throw new Error(`Zväz ${id} nie je v index.json`);
 const profil = getProfil(z.id, sezona);
 
+// medziročné porovnanie (F2/F3): predošlá sezóna zväzu, ak existuje
+const idxSezony = z.sezony.indexOf(sezona);
+const predoslaSezona = idxSezony > 0 ? z.sezony[idxSezony - 1] : undefined;
+const predosly = predoslaSezona ? getProfil(z.id, predoslaSezona) : undefined;
+
+const hraci = (p: typeof profil) => p.osoby?.hraci?.unikatni ?? 0;
 const kpiKarty = [
-  { label: 'Zápasy', hodnota: profil.kpi.zapasy },
-  { label: 'Družstvá', hodnota: profil.kpi.druzstva },
-  { label: 'Góly', hodnota: profil.kpi.goly },
-  { label: 'Hráči', hodnota: profil.osoby?.hraci?.unikatni ?? 0 },
-  { label: 'Diváci', hodnota: profil.kpi.divaci },
-  { label: 'Žlté karty', hodnota: profil.kpi.zlteKarty },
-  { label: 'Červené karty', hodnota: profil.kpi.cerveneKarty },
+  { label: 'Zápasy', hodnota: profil.kpi.zapasy, predch: predosly?.kpi.zapasy },
+  { label: 'Družstvá', hodnota: profil.kpi.druzstva, predch: predosly?.kpi.druzstva },
+  { label: 'Góly', hodnota: profil.kpi.goly, predch: predosly?.kpi.goly },
+  { label: 'Hráči', hodnota: hraci(profil), predch: predosly ? hraci(predosly) : undefined },
+  { label: 'Diváci', hodnota: profil.kpi.divaci, predch: predosly?.kpi.divaci },
+  { label: 'Žlté karty', hodnota: profil.kpi.zlteKarty, predch: predosly?.kpi.zlteKarty },
+  { label: 'Červené karty', hodnota: profil.kpi.cerveneKarty, predch: predosly?.kpi.cerveneKarty },
 ];
+
+/** Medziročná zmena: smer (↑/↓), percento a farba (rast zelená, pokles červená). */
+function delta(hodnota: number, predch?: number) {
+  if (predch === undefined || predch === 0) return null;
+  const rozdiel = hodnota - predch;
+  if (rozdiel === 0) return { sipka: '→', text: '0 %', trieda: 'text-sfz-muted' };
+  const pct = Math.round((rozdiel / predch) * 100);
+  if (pct === 0) return { sipka: '→', text: '≈ 0 %', trieda: 'text-sfz-muted' };
+  return {
+    sipka: rozdiel > 0 ? '▲' : '▼',
+    text: `${rozdiel > 0 ? '+' : ''}${pct} %`,
+    trieda: rozdiel > 0 ? 'text-emerald-600' : 'text-sfz-red',
+  };
+}
 
 // pohlavie
 interface PohlavieBlok {
@@ -86,14 +106,27 @@ const sezonyDesc = z.sezony.slice().reverse();
 
   <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
     {
-      kpiKarty.map((k) => (
-        <div class="rounded-xl border border-black/10 p-4">
-          <div class="text-2xl font-extrabold tabular-nums">{fmt(k.hodnota)}</div>
-          <div class="text-sm text-sfz-muted">{k.label}</div>
-        </div>
-      ))
+      kpiKarty.map((k) => {
+        const d = delta(k.hodnota, k.predch);
+        return (
+          <div class="rounded-xl border border-black/10 p-4">
+            <div class="text-2xl font-extrabold tabular-nums">{fmt(k.hodnota)}</div>
+            <div class="text-sm text-sfz-muted">{k.label}</div>
+            {d && (
+              <div class:list={['mt-1 text-xs font-medium tabular-nums', d.trieda]}>
+                {d.sipka} {d.text}
+              </div>
+            )}
+          </div>
+        );
+      })
     }
   </section>
+  {
+    predoslaSezona && (
+      <p class="mt-2 text-xs text-sfz-muted">Medziročná zmena oproti sezóne {predoslaSezona}.</p>
+    )
+  }
 
   <section class="mt-10">
     <h2 class="text-lg font-bold mb-3">Podľa vekových kategórií</h2>
