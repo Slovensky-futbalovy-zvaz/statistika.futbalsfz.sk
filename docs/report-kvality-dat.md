@@ -136,3 +136,32 @@ Kontrolné súčty (vlna 1, sezóna 2025/2026): SFZ 8 035 zápasov / 830 družst
 
 Ostatných 41 zväzov bez anomálií (KPI = súčet kategórií, pohlavie = KPI, pokrytie divákov v norme).
 
+## 9. Plný dátový beh — vlna 2 (história 2013/2014–2024/2025) — 13. 7. 2026
+
+`etl/beh.py --all-sezony` (všetkých 15 kanonických sezón × 43 zväzov). Výsledok: **42/43 zväzov kompletných, 568 sezón OK, 71 prázdnych preskočených, 1019 anomálií, 0 kritických (žiadna KPI-nezhoda), žiadna systémová chyba.** Súhrn: `/tmp/beh-vlna2-sumar.json`.
+
+### 9a. Rozdelenie anomálií (1019)
+
+| Počet | Typ | Koreň |
+|---:|---|---|
+| 485 | `osoby.hraci`: súčet po kategóriách < unikátni | historické sezóny bez vekovej kategórie |
+| 483 | `osoby.treneri`: súčet po kategóriách < unikátni | to isté |
+| 18 | neznáma kategória `NEZNAMA` | zápasy bez kategórie ani part-fallbacku |
+| 17 | nízke pokrytie divákov (< 80 %) | publikovať s upozornením |
+| 15 | `pohlavie` NEURCENE | časti súťaží bez `rules.gender` |
+| 1 | podozrivý priemer divákov | zápas Sľažany–Nevidzany (opravené, viď §9c) |
+
+95 % anomálií (968) má jeden koreň: pre historické sezóny `teams[].ageCategory` a často aj part-kategória chýbajú, takže osoby sa nedajú rozdeliť po kategóriách (nadväzuje na §7b).
+
+### 9b. Zistenie: historické pokrytie `teams[]` a kategórií (dôležité pre F2)
+
+Pri mnohých historických sezónach je pole **`teams[]` nevyplnené** → `družstvá = 0` a kategórie zápasov chýbajú (napr. SsFZ/VsFZ 2016/2017: tisíce zápasov, 0 družstiev). Vyplnenosť je **nekonzistentná** — niektoré staršie sezóny družstvá majú (napr. VsFZ 2019/2020: 206), iné nie. Hráči (z `nominations`) fungujú aj historicky. **Dôsledok pre frontend:** historické „družstvá" a rozpad osôb po kategóriách sú nespoľahlivé; zvážiť ich historicky nezobrazovať alebo označiť výhradou (rozhodnutie F2).
+
+### 9c. Korekcia divákov (korekčná vrstva `etl/config/korekcie.json`)
+
+Zápas **OFK Sľažany – ŠK Nevidzany** (IV. liga U13 ObFZ NR, 14. 10. 2019, `_id 5f3ffdab4000de0cc7e62c45`) mal `protocol.audience = 300000` (zjavný preklep; PO požiadal opravu pri zdroji). Kým sa zdroj neopraví, aplikuje sa korekcia na 30 cez `etl/pipelines.audience_expr` (nemodifikuje DB). Efekt na obfz-nitra 2019/2020: `kpi.divaci` 384 941 → **84 971**; do výstupu pribudol `methodologyFlags.korekcie`; anomália „podozrivý priemer divákov" zmizla. Keď zdroj opravia, záznam z `korekcie.json` odstrániť.
+
+### 9d. Známy problém: zsfz 2021/2022 — pomalý DB dotaz
+
+Agregácia `kategorie` pre **ZsFZ 2021/2022** opakovane prekračuje časový limit (120 s vo vlne 2 → `MaxTimeMSExpired`; pri re-behu ani po ~9 min pri limite 600 s nedobehla; priamy MCP dotaz na ten istý filter tiež timeoutuje). Príčina nie je počet súťažných častí (len 30, max 2/súťaž) — ukazuje na **chýbajúci/slabý index** pre túto kombináciu na strane DB. **Nevygenerované: zsfz 2021/2022, 2022/2023, 2023/2024, 2024/2025** (zsfz má 2012/13–2020/21 z re-behu + 2025/26 z vlny 1). Doplnené: `run.py`/`beh.py` majú `--max-time-ms` na ťažké sezóny. Akcia (TODO): preveriť indexy `matches` (appSpace + season.name + closed) a dogenerovať tieto 4 sezóny.
+

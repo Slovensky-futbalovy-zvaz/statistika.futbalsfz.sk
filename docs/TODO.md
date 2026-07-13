@@ -17,11 +17,14 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
 ## Prebieha (táto session)
 
 - [x] **Vlna 1:** ETL 2025/2026 pre všetkých 43 zväzov (SFZ → RFZ → ObFZ po regiónoch), dávkový runner `etl/beh.py` — **hotové 13. 7. 2026: 43/43 OK, 0 preskočených, 2 anomálie (VsFZ), žiadna systémová chyba** (viď report-kvality-dat.md §8)
-- [ ] **Vlna 2:** história 2013/2014–2024/2025 pre všetkých 43 zväzov (~470 behov, hodiny) — `python etl/beh.py --all-sezony`
-- [x] Po behu: kontrola `data/index.json` (43 záznamov), anomálie do report-kvality-dat.md §8, commity po regiónoch
+- [x] **Vlna 2:** história pre všetkých 43 zväzov — **hotové 13. 7. 2026: 42/43 zväzov kompletných, 568 sezón OK, 1019 anomálií, 0 kritických** (viď report §9). Výnimka: zsfz 2021/22–2024/25 (viď nižšie).
+- [x] Po behu: kontrola `data/index.json`, anomálie a zistenia do report-kvality-dat.md §8–§9, commity po regiónoch
+- [x] Korekčná vrstva divákov (`etl/config/korekcie.json` + `audience_expr`): Sľažany–Nevidzany 300000→30, obfz-nitra 2019/20 pregenerované (viď report §9c)
 
 ## Zásobník (podľa priority)
 
+- [ ] **zsfz 2021/22–2024/25 dogenerovať** — `kategorie` agregácia pre ZsFZ 2021/2022 prekračuje časový limit (aj 600 s), pravdepodobne chýbajúci index `matches` (appSpace + season.name + closed). Preveriť indexy, potom `python etl/run.py --zvaz zsfz --sezona 2021/2022 --max-time-ms N` (a zvyšné sezóny). Viď report §9d.
+- [ ] Overiť/doplniť indexy kolekcie `matches` pre rýchlosť ťažkých agregácií (súvisí so zsfz 2021/22)
 - [ ] Demografia ďalších zväzov (SFZ, 4 RFZ, ostatné ObFZ) — rovnaký vzor ako ObFZ Nitra (`etl/demografia.py`)
 - [ ] Kickoff frontendu (F2): štruktúra `web/`, výber SSG frameworku, načítanie `data/index.json` + profil zväzu
 - [ ] Overiť odoslanie podkladov Bart.sk (`docs/podklady-bart-produkcny-beh.md`) — čaká na odoslanie PO
