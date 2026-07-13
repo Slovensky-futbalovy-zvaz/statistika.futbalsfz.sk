@@ -90,9 +90,15 @@ def main() -> int:
     ap.add_argument("--db", default="sutaze", help="názov databázy (default: sutaze)")
     ap.add_argument("--out", default=str(REPO / "data"), help="výstupný priečinok (default: data/)")
     ap.add_argument("--sumar", default="/tmp/beh-sumar.json", help="cesta k JSON súhrnu behu")
+    ap.add_argument(
+        "--max-time-ms", type=int, default=run.MAX_TIME_MS,
+        help=f"limit agregácie v ms (default: {run.MAX_TIME_MS}); zvýš pre ťažké sezóny.",
+    )
     args = ap.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+
+    run.MAX_TIME_MS = args.max_time_ms  # aplikuje sa v run.agreguj
 
     zvazy = run.load_json(run.CONFIG / "zvazy.json")
     sezony_cfg = run.load_json(run.CONFIG / "sezony.json")

@@ -355,6 +355,7 @@ def aktualizuj_index(out_dir: Path, zvaz: dict, zvazy: dict) -> None:
 # ---------------------------------------------------------------- main
 
 def main() -> int:
+    global MAX_TIME_MS
     ap = argparse.ArgumentParser(description="ETL profilu zväzu (statistika.futbalsfz.sk)")
     ap.add_argument("--zvaz", required=True, help="id zväzu z etl/config/zvazy.json (napr. obfz-nitra)")
     grp = ap.add_mutually_exclusive_group(required=True)
@@ -368,9 +369,15 @@ def main() -> int:
     ap.add_argument("--mongodb-uri", help="connection string (default: env MONGODB_URI)")
     ap.add_argument("--db", default="sutaze", help="názov databázy (default: sutaze)")
     ap.add_argument("--out", default=str(REPO / "data"), help="výstupný priečinok (default: data/)")
+    ap.add_argument(
+        "--max-time-ms", type=int, default=MAX_TIME_MS,
+        help=f"limit agregácie v ms (default: {MAX_TIME_MS}); zvýš pre ťažké sezóny (napr. ZsFZ 2021/2022).",
+    )
     args = ap.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+
+    MAX_TIME_MS = args.max_time_ms
 
     zvazy = load_json(CONFIG / "zvazy.json")
     sezony_cfg = load_json(CONFIG / "sezony.json")
