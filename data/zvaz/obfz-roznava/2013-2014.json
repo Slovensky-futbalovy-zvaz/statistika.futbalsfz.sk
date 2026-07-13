@@ -1,0 +1,78 @@
+{
+  "zvaz": "obfz-roznava",
+  "sezona": "2013/2014",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T13:06:07+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.812,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 340,
+    "druzstva": 0,
+    "goly": 1255,
+    "divaci": 19607,
+    "zlteKarty": 687,
+    "cerveneKarty": 35
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 340,
+      "druzstva": 0,
+      "goly": 1255,
+      "zlte": 687,
+      "cervene": 35,
+      "divaci": 19607,
+      "divaciPokrytych": 276
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 340,
+      "druzstva": 26,
+      "goly": 1255,
+      "divaci": 19607,
+      "zlteKarty": 687,
+      "cerveneKarty": 35,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 340,
+          "druzstva": 26,
+          "goly": 1255,
+          "zlte": 687,
+          "cervene": 35,
+          "divaci": 19607,
+          "divaciPokrytych": 276
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 598,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 8,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 28,
+      "poKategorii": {
+        "ADULTS": 28
+      }
+    },
+    "delegati": {
+      "unikatni": 14,
+      "poKategorii": {
+        "ADULTS": 14
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "zvaz": "obfz-stara-lubovna",
+  "sezona": "2016/2017",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T13:04:33+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 1.0,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 168,
+    "druzstva": 0,
+    "goly": 817,
+    "divaci": 6293,
+    "zlteKarty": 213,
+    "cerveneKarty": 2
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 72,
+      "druzstva": 0,
+      "goly": 295,
+      "zlte": 211,
+      "cervene": 2,
+      "divaci": 3758,
+      "divaciPokrytych": 72
+    },
+    "U13": {
+      "zapasy": 30,
+      "druzstva": 0,
+      "goly": 170,
+      "zlte": 1,
+      "cervene": 0,
+      "divaci": 635,
+      "divaciPokrytych": 30
+    },
+    "U11": {
+      "zapasy": 66,
+      "druzstva": 0,
+      "goly": 352,
+      "zlte": 1,
+      "cervene": 0,
+      "divaci": 1900,
+      "divaciPokrytych": 66
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 168,
+      "druzstva": 22,
+      "goly": 817,
+      "divaci": 6293,
+      "zlteKarty": 213,
+      "cerveneKarty": 2,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 72,
+          "druzstva": 9,
+          "goly": 295,
+          "zlte": 211,
+          "cervene": 2,
+          "divaci": 3758,
+          "divaciPokrytych": 72
+        },
+        "U13": {
+          "zapasy": 30,
+          "druzstva": 6,
+          "goly": 170,
+          "zlte": 1,
+          "cervene": 0,
+          "divaci": 635,
+          "divaciPokrytych": 30
+        },
+        "U11": {
+          "zapasy": 66,
+          "druzstva": 7,
+          "goly": 352,
+          "zlte": 1,
+          "cervene": 0,
+          "divaci": 1900,
+          "divaciPokrytych": 66
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 432,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 6,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 10,
+      "poKategorii": {
+        "ADULTS": 9,
+        "U13": 7,
+        "U11": 5
+      }
+    },
+    "delegati": {
+      "unikatni": 3,
+      "poKategorii": {
+        "ADULTS": 3
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}

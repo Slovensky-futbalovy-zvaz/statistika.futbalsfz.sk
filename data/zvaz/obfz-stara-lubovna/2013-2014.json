@@ -1,0 +1,78 @@
+{
+  "zvaz": "obfz-stara-lubovna",
+  "sezona": "2013/2014",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T13:04:29+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.955,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 132,
+    "druzstva": 0,
+    "goly": 493,
+    "divaci": 11155,
+    "zlteKarty": 312,
+    "cerveneKarty": 6
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 132,
+      "druzstva": 0,
+      "goly": 493,
+      "zlte": 312,
+      "cervene": 6,
+      "divaci": 11155,
+      "divaciPokrytych": 126
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 132,
+      "druzstva": 12,
+      "goly": 493,
+      "divaci": 11155,
+      "zlteKarty": 312,
+      "cerveneKarty": 6,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 132,
+          "druzstva": 12,
+          "goly": 493,
+          "zlte": 312,
+          "cervene": 6,
+          "divaci": 11155,
+          "divaciPokrytych": 126
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 347,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 3,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 13,
+      "poKategorii": {
+        "ADULTS": 13
+      }
+    },
+    "delegati": {
+      "unikatni": 7,
+      "poKategorii": {
+        "ADULTS": 7
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}

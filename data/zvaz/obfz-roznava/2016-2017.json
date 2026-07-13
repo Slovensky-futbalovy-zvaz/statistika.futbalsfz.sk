@@ -1,0 +1,116 @@
+{
+  "zvaz": "obfz-roznava",
+  "sezona": "2016/2017",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T13:06:08+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.88,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 332,
+    "druzstva": 0,
+    "goly": 1710,
+    "divaci": 16828,
+    "zlteKarty": 593,
+    "cerveneKarty": 26
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 272,
+      "druzstva": 0,
+      "goly": 1236,
+      "zlte": 555,
+      "cervene": 25,
+      "divaci": 15388,
+      "divaciPokrytych": 232
+    },
+    "U19": {
+      "zapasy": 30,
+      "druzstva": 0,
+      "goly": 222,
+      "zlte": 30,
+      "cervene": 1,
+      "divaci": 690,
+      "divaciPokrytych": 30
+    },
+    "U15": {
+      "zapasy": 30,
+      "druzstva": 0,
+      "goly": 252,
+      "zlte": 8,
+      "cervene": 0,
+      "divaci": 750,
+      "divaciPokrytych": 30
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 332,
+      "druzstva": 36,
+      "goly": 1710,
+      "divaci": 16828,
+      "zlteKarty": 593,
+      "cerveneKarty": 26,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 272,
+          "druzstva": 24,
+          "goly": 1236,
+          "zlte": 555,
+          "cervene": 25,
+          "divaci": 15388,
+          "divaciPokrytych": 232
+        },
+        "U19": {
+          "zapasy": 30,
+          "druzstva": 6,
+          "goly": 222,
+          "zlte": 30,
+          "cervene": 1,
+          "divaci": 690,
+          "divaciPokrytych": 30
+        },
+        "U15": {
+          "zapasy": 30,
+          "druzstva": 6,
+          "goly": 252,
+          "zlte": 8,
+          "cervene": 0,
+          "divaci": 750,
+          "divaciPokrytych": 30
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 786,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 8,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 24,
+      "poKategorii": {
+        "ADULTS": 24,
+        "U19": 10,
+        "U15": 9
+      }
+    },
+    "delegati": {
+      "unikatni": 13,
+      "poKategorii": {
+        "ADULTS": 13
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}

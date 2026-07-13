@@ -1,0 +1,186 @@
+{
+  "zvaz": "mfz-kosice",
+  "sezona": "2024/2025",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T13:02:49+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.895,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 209,
+    "druzstva": 38,
+    "goly": 1425,
+    "divaci": 6021,
+    "zlteKarty": 1,
+    "cerveneKarty": 0
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 6,
+      "druzstva": 4,
+      "goly": 30,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 181,
+      "divaciPokrytych": 6
+    },
+    "U15": {
+      "zapasy": 14,
+      "druzstva": 8,
+      "goly": 52,
+      "zlte": 1,
+      "cervene": 0,
+      "divaci": 741,
+      "divaciPokrytych": 14
+    },
+    "U11": {
+      "zapasy": 45,
+      "druzstva": 7,
+      "goly": 398,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 1383,
+      "divaciPokrytych": 45
+    },
+    "U10": {
+      "zapasy": 44,
+      "druzstva": 7,
+      "goly": 337,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 1333,
+      "divaciPokrytych": 44
+    },
+    "U09": {
+      "zapasy": 78,
+      "druzstva": 8,
+      "goly": 453,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 1705,
+      "divaciPokrytych": 56
+    },
+    "U08": {
+      "zapasy": 22,
+      "druzstva": 4,
+      "goly": 155,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 678,
+      "divaciPokrytych": 22
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 209,
+      "druzstva": 38,
+      "goly": 1425,
+      "divaci": 6021,
+      "zlteKarty": 1,
+      "cerveneKarty": 0,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 6,
+          "druzstva": 4,
+          "goly": 30,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 181,
+          "divaciPokrytych": 6
+        },
+        "U15": {
+          "zapasy": 14,
+          "druzstva": 8,
+          "goly": 52,
+          "zlte": 1,
+          "cervene": 0,
+          "divaci": 741,
+          "divaciPokrytych": 14
+        },
+        "U11": {
+          "zapasy": 45,
+          "druzstva": 7,
+          "goly": 398,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 1383,
+          "divaciPokrytych": 45
+        },
+        "U10": {
+          "zapasy": 44,
+          "druzstva": 7,
+          "goly": 337,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 1333,
+          "divaciPokrytych": 44
+        },
+        "U09": {
+          "zapasy": 78,
+          "druzstva": 8,
+          "goly": 453,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 1705,
+          "divaciPokrytych": 56
+        },
+        "U08": {
+          "zapasy": 22,
+          "druzstva": 4,
+          "goly": 155,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 678,
+          "divaciPokrytych": 22
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 507,
+      "poKategorii": {
+        "ADULTS": 42,
+        "U15": 98,
+        "U11": 104,
+        "U10": 118,
+        "U09": 120,
+        "U08": 57
+      }
+    },
+    "treneri": {
+      "unikatni": 25,
+      "poKategorii": {
+        "ADULTS": 2,
+        "U15": 10,
+        "U11": 8,
+        "U10": 7,
+        "U09": 6,
+        "U08": 7
+      }
+    },
+    "rozhodcovia": {
+      "unikatni": 6,
+      "poKategorii": {
+        "ADULTS": 3,
+        "U15": 4
+      }
+    },
+    "delegati": {
+      "unikatni": 0,
+      "poKategorii": {}
+    },
+    "personal": {
+      "unikatni": 9,
+      "poKategorii": {
+        "U11": 3,
+        "U10": 5,
+        "U09": 5,
+        "U08": 3
+      }
+    }
+  }
+}

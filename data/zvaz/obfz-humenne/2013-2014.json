@@ -1,0 +1,78 @@
+{
+  "zvaz": "obfz-humenne",
+  "sezona": "2013/2014",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T13:05:06+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.943,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 298,
+    "druzstva": 0,
+    "goly": 1167,
+    "divaci": 28285,
+    "zlteKarty": 593,
+    "cerveneKarty": 31
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 298,
+      "druzstva": 0,
+      "goly": 1167,
+      "zlte": 593,
+      "cervene": 31,
+      "divaci": 28285,
+      "divaciPokrytych": 281
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 298,
+      "druzstva": 35,
+      "goly": 1167,
+      "divaci": 28285,
+      "zlteKarty": 593,
+      "cerveneKarty": 31,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 298,
+          "druzstva": 35,
+          "goly": 1167,
+          "zlte": 593,
+          "cervene": 31,
+          "divaci": 28285,
+          "divaciPokrytych": 281
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 765,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 21,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 56,
+      "poKategorii": {
+        "ADULTS": 56
+      }
+    },
+    "delegati": {
+      "unikatni": 23,
+      "poKategorii": {
+        "ADULTS": 23
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}
