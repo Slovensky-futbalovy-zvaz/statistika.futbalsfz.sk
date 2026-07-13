@@ -16,9 +16,9 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
 
 ## Prebieha (táto session)
 
-- [ ] **Vlna 1:** ETL 2025/2026 pre všetkých 43 zväzov (SFZ → RFZ → ObFZ po regiónoch), dávkový runner `etl/beh.py`
-- [ ] **Vlna 2:** história 2013/2014–2024/2025 pre všetkých 43 zväzov (~470 behov, hodiny)
-- [ ] Po behu: kontrola `data/index.json`, veľkosť repa, anomálie do report-kvality-dat.md, commity po dávkach
+- [x] **Vlna 1:** ETL 2025/2026 pre všetkých 43 zväzov (SFZ → RFZ → ObFZ po regiónoch), dávkový runner `etl/beh.py` — **hotové 13. 7. 2026: 43/43 OK, 0 preskočených, 2 anomálie (VsFZ), žiadna systémová chyba** (viď report-kvality-dat.md §8)
+- [ ] **Vlna 2:** história 2013/2014–2024/2025 pre všetkých 43 zväzov (~470 behov, hodiny) — `python etl/beh.py --all-sezony`
+- [x] Po behu: kontrola `data/index.json` (43 záznamov), anomálie do report-kvality-dat.md §8, commity po regiónoch
 
 ## Zásobník (podľa priority)
 

@@ -123,3 +123,16 @@ Zistenia:
 5. **Nová kategória `WU14`** (ženská U14, SFZ) — mimo číselníka Ux, validácia hlási anomáliu; zaradenie (samostatná položka vs. mapovanie na U14) rozhodne PO.
 6. **Regresia:** nový `cat_fallback_expr` (part mapa rozšírená o gender) generuje bajtovo identický `$switch` ako pôvodná verzia; ObFZ Nitra má výhradne M časti → existujúce výstupy sa pri pregenerovaní nemenia, pribudne len blok `pohlavie` a `methodologyFlags.pohlaviePoznamka`.
 
+## 8. Plný dátový beh — vlna 1 (2025/2026, všetkých 43 zväzov) — 13. 7. 2026
+
+Dávkový runner `etl/beh.py` (zdieľané DB spojenie, poradie SFZ → RFZ → ObFZ po regiónoch). Beh: **43/43 zväzov OK, 0 preskočených, žiadna systémová chyba.** Výstup: `data/zvaz/{id}/2025-2026.json` (43 súborov) + `data/index.json` (43 záznamov). Súhrn behu: `/tmp/beh-vlna1-sumar.json`.
+
+Kontrolné súčty (vlna 1, sezóna 2025/2026): SFZ 8 035 zápasov / 830 družstiev / 35 064 gólov / 18 840 hráčov; RFZ ZsFZ 6 340, SsFZ 4 486, VsFZ 4 256, BFZ 4 334 zápasov. Najmenší zväz: Ondavský OFZ (Svidník) 208 zápasov.
+
+### 8a. Anomálie z vlny 1 (2, obe VsFZ 2025/2026) — na doriešenie hromadne
+
+1. **`pohlavie`: 40 zápasov bez vyplneného `rules.gender` (NEURCENE).** Časti súťaží VsFZ bez vyplneného pohlavia (nadväzuje na zistenie 7d — školský turnaj Košice „U15 mix" a pod.). Zápasy sú korektne v skupine NEURCENE; KPI nedotknuté. Akcia: overiť dotknuté súťaže na sportnet.online, prípadne nahlásiť na doplnenie `rules.gender`.
+2. **`osoby.hraci`: súčet po kategóriách 8 790 < unikátni 9 283 (rozdiel 493).** Opačný smer než pri dvojitom pôsobení — ~493 hráčov VsFZ nemá priradenú vekovú kategóriu (chýba `teams.ageCategory` aj part-fallback kategórie). Nadväzuje na 7b (kategória spoľahlivá až od 2024/2025). Akcia: preveriť, či ide o špecifické súťaže bez kategórie; pri vlne 2 (história) očakávať výraznejší jav.
+
+Ostatných 41 zväzov bez anomálií (KPI = súčet kategórií, pohlavie = KPI, pokrytie divákov v norme).
+
