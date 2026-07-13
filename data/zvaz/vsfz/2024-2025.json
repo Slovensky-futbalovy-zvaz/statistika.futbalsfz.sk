@@ -1,0 +1,211 @@
+{
+  "zvaz": "vsfz",
+  "sezona": "2024/2025",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T12:35:16+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.923,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 3886,
+    "druzstva": 308,
+    "goly": 18076,
+    "divaci": 241311,
+    "zlteKarty": 8488,
+    "cerveneKarty": 316
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 1615,
+      "druzstva": 112,
+      "goly": 6228,
+      "zlte": 5441,
+      "cervene": 195,
+      "divaci": 169936,
+      "divaciPokrytych": 1395
+    },
+    "U19": {
+      "zapasy": 958,
+      "druzstva": 78,
+      "goly": 4863,
+      "zlte": 2098,
+      "cervene": 83,
+      "divaci": 32467,
+      "divaciPokrytych": 922
+    },
+    "U17": {
+      "zapasy": 240,
+      "druzstva": 16,
+      "goly": 1071,
+      "zlte": 481,
+      "cervene": 18,
+      "divaci": 7698,
+      "divaciPokrytych": 239
+    },
+    "U15": {
+      "zapasy": 582,
+      "druzstva": 54,
+      "goly": 3095,
+      "zlte": 385,
+      "cervene": 15,
+      "divaci": 16338,
+      "divaciPokrytych": 540
+    },
+    "U13": {
+      "zapasy": 491,
+      "druzstva": 48,
+      "goly": 2819,
+      "zlte": 83,
+      "cervene": 5,
+      "divaci": 14872,
+      "divaciPokrytych": 489
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 3795,
+      "druzstva": 346,
+      "goly": 17712,
+      "divaci": 240066,
+      "zlteKarty": 8488,
+      "cerveneKarty": 316,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 1615,
+          "druzstva": 156,
+          "goly": 6228,
+          "zlte": 5441,
+          "cervene": 195,
+          "divaci": 169936,
+          "divaciPokrytych": 1395
+        },
+        "U19": {
+          "zapasy": 958,
+          "druzstva": 78,
+          "goly": 4863,
+          "zlte": 2098,
+          "cervene": 83,
+          "divaci": 32467,
+          "divaciPokrytych": 922
+        },
+        "U17": {
+          "zapasy": 240,
+          "druzstva": 16,
+          "goly": 1071,
+          "zlte": 481,
+          "cervene": 18,
+          "divaci": 7698,
+          "divaciPokrytych": 239
+        },
+        "U15": {
+          "zapasy": 491,
+          "druzstva": 48,
+          "goly": 2731,
+          "zlte": 385,
+          "cervene": 15,
+          "divaci": 15093,
+          "divaciPokrytych": 490
+        },
+        "U13": {
+          "zapasy": 491,
+          "druzstva": 48,
+          "goly": 2819,
+          "zlte": 83,
+          "cervene": 5,
+          "divaci": 14872,
+          "divaciPokrytych": 489
+        }
+      }
+    },
+    "F": {
+      "zapasy": 60,
+      "druzstva": 6,
+      "goly": 364,
+      "divaci": 1193,
+      "zlteKarty": 0,
+      "cerveneKarty": 0,
+      "kategorie": {
+        "U15": {
+          "zapasy": 60,
+          "druzstva": 6,
+          "goly": 364,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 1193,
+          "divaciPokrytych": 49
+        }
+      }
+    },
+    "NEURCENE": {
+      "zapasy": 31,
+      "druzstva": 24,
+      "goly": 0,
+      "divaci": 52,
+      "zlteKarty": 0,
+      "cerveneKarty": 0,
+      "kategorie": {
+        "U15": {
+          "zapasy": 31,
+          "druzstva": 24,
+          "goly": 0,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 52,
+          "divaciPokrytych": 1
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 8229,
+      "poKategorii": {
+        "ADULTS": 3084,
+        "U19": 2000,
+        "U17": 493,
+        "U15": 1290,
+        "U13": 1245
+      }
+    },
+    "treneri": {
+      "unikatni": 406,
+      "poKategorii": {
+        "ADULTS": 203,
+        "U19": 133,
+        "U17": 40,
+        "U15": 83,
+        "U13": 75
+      }
+    },
+    "rozhodcovia": {
+      "unikatni": 238,
+      "poKategorii": {
+        "ADULTS": 192,
+        "U19": 190,
+        "U17": 146,
+        "U15": 148,
+        "U13": 132
+      }
+    },
+    "delegati": {
+      "unikatni": 64,
+      "poKategorii": {
+        "ADULTS": 63,
+        "U15": 1
+      }
+    },
+    "personal": {
+      "unikatni": 768,
+      "poKategorii": {
+        "ADULTS": 515,
+        "U19": 264,
+        "U17": 61,
+        "U15": 154,
+        "U13": 142
+      }
+    }
+  }
+}

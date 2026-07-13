@@ -1,0 +1,180 @@
+{
+  "zvaz": "ssfz",
+  "sezona": "2018/2019",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T12:14:06+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.96,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 4567,
+    "druzstva": 0,
+    "goly": 22889,
+    "divaci": 336881,
+    "zlteKarty": 7641,
+    "cerveneKarty": 184
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 1334,
+      "druzstva": 0,
+      "goly": 4730,
+      "zlte": 4260,
+      "cervene": 92,
+      "divaci": 232801,
+      "divaciPokrytych": 1308
+    },
+    "U19": {
+      "zapasy": 1314,
+      "druzstva": 0,
+      "goly": 6197,
+      "zlte": 2383,
+      "cervene": 66,
+      "divaci": 44771,
+      "divaciPokrytych": 1186
+    },
+    "U17": {
+      "zapasy": 240,
+      "druzstva": 0,
+      "goly": 1076,
+      "zlte": 302,
+      "cervene": 10,
+      "divaci": 8306,
+      "divaciPokrytych": 230
+    },
+    "U15": {
+      "zapasy": 891,
+      "druzstva": 0,
+      "goly": 4724,
+      "zlte": 658,
+      "cervene": 16,
+      "divaci": 27453,
+      "divaciPokrytych": 883
+    },
+    "U13": {
+      "zapasy": 788,
+      "druzstva": 0,
+      "goly": 6162,
+      "zlte": 38,
+      "cervene": 0,
+      "divaci": 23550,
+      "divaciPokrytych": 779
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 4465,
+      "druzstva": 345,
+      "goly": 22348,
+      "divaci": 333816,
+      "zlteKarty": 7641,
+      "cerveneKarty": 184,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 1334,
+          "druzstva": 104,
+          "goly": 4730,
+          "zlte": 4260,
+          "cervene": 92,
+          "divaci": 232801,
+          "divaciPokrytych": 1308
+        },
+        "U19": {
+          "zapasy": 1314,
+          "druzstva": 99,
+          "goly": 6197,
+          "zlte": 2383,
+          "cervene": 66,
+          "divaci": 44771,
+          "divaciPokrytych": 1186
+        },
+        "U17": {
+          "zapasy": 240,
+          "druzstva": 16,
+          "goly": 1076,
+          "zlte": 302,
+          "cervene": 10,
+          "divaci": 8306,
+          "divaciPokrytych": 230
+        },
+        "U15": {
+          "zapasy": 789,
+          "druzstva": 63,
+          "goly": 4183,
+          "zlte": 658,
+          "cervene": 16,
+          "divaci": 24388,
+          "divaciPokrytych": 784
+        },
+        "U13": {
+          "zapasy": 788,
+          "druzstva": 63,
+          "goly": 6162,
+          "zlte": 38,
+          "cervene": 0,
+          "divaci": 23550,
+          "divaciPokrytych": 779
+        }
+      }
+    },
+    "F": {
+      "zapasy": 102,
+      "druzstva": 8,
+      "goly": 541,
+      "divaci": 3065,
+      "zlteKarty": 0,
+      "cerveneKarty": 0,
+      "kategorie": {
+        "U15": {
+          "zapasy": 102,
+          "druzstva": 8,
+          "goly": 541,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 3065,
+          "divaciPokrytych": 99
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 7622,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 465,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 300,
+      "poKategorii": {
+        "ADULTS": 183,
+        "U19": 284,
+        "U17": 169,
+        "U15": 213,
+        "U13": 209
+      }
+    },
+    "delegati": {
+      "unikatni": 63,
+      "poKategorii": {
+        "ADULTS": 63,
+        "U19": 48
+      }
+    },
+    "personal": {
+      "unikatni": 865,
+      "poKategorii": {
+        "ADULTS": 475,
+        "U19": 486,
+        "U17": 84,
+        "U15": 297,
+        "U13": 251
+      }
+    }
+  }
+}
