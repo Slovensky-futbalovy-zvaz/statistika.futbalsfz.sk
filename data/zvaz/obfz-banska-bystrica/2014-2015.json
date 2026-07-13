@@ -1,0 +1,78 @@
+{
+  "zvaz": "obfz-banska-bystrica",
+  "sezona": "2014/2015",
+  "sportSector": "futbal",
+  "generatedAt": "2026-07-13T13:01:10+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 0.987,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 464,
+    "druzstva": 0,
+    "goly": 2062,
+    "divaci": 36917,
+    "zlteKarty": 1081,
+    "cerveneKarty": 44
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 464,
+      "druzstva": 0,
+      "goly": 2062,
+      "zlte": 1081,
+      "cervene": 44,
+      "divaci": 36917,
+      "divaciPokrytych": 458
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 464,
+      "druzstva": 37,
+      "goly": 2062,
+      "divaci": 36917,
+      "zlteKarty": 1081,
+      "cerveneKarty": 44,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 464,
+          "druzstva": 37,
+          "goly": 2062,
+          "zlte": 1081,
+          "cervene": 44,
+          "divaci": 36917,
+          "divaciPokrytych": 458
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 1023,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 26,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 58,
+      "poKategorii": {
+        "ADULTS": 58
+      }
+    },
+    "delegati": {
+      "unikatni": 8,
+      "poKategorii": {
+        "ADULTS": 8
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}
