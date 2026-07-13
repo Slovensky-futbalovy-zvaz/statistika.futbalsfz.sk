@@ -1,0 +1,97 @@
+{
+  "zvaz": "sfz",
+  "sezona": "2016/2017",
+  "sportSector": "futsal",
+  "generatedAt": "2026-07-13T16:17:43+02:00",
+  "methodologyFlags": {
+    "zapasy": "len closed:true",
+    "divaciPokrytie": 1.0,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+  },
+  "kpi": {
+    "zapasy": 219,
+    "druzstva": 0,
+    "goly": 1717,
+    "divaci": 25127,
+    "zlteKarty": 447,
+    "cerveneKarty": 14
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 143,
+      "druzstva": 0,
+      "goly": 1227,
+      "zlte": 358,
+      "cervene": 7,
+      "divaci": 23005,
+      "divaciPokrytych": 143
+    },
+    "U20": {
+      "zapasy": 76,
+      "druzstva": 0,
+      "goly": 490,
+      "zlte": 89,
+      "cervene": 7,
+      "divaci": 2122,
+      "divaciPokrytych": 76
+    }
+  },
+  "pohlavie": {
+    "M": {
+      "zapasy": 219,
+      "druzstva": 23,
+      "goly": 1717,
+      "divaci": 25127,
+      "zlteKarty": 447,
+      "cerveneKarty": 14,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 143,
+          "druzstva": 14,
+          "goly": 1227,
+          "zlte": 358,
+          "cervene": 7,
+          "divaci": 23005,
+          "divaciPokrytych": 143
+        },
+        "U20": {
+          "zapasy": 76,
+          "druzstva": 9,
+          "goly": 490,
+          "zlte": 89,
+          "cervene": 7,
+          "divaci": 2122,
+          "divaciPokrytych": 76
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 411,
+      "poKategorii": {}
+    },
+    "treneri": {
+      "unikatni": 5,
+      "poKategorii": {}
+    },
+    "rozhodcovia": {
+      "unikatni": 26,
+      "poKategorii": {
+        "ADULTS": 23,
+        "U20": 16
+      }
+    },
+    "delegati": {
+      "unikatni": 8,
+      "poKategorii": {
+        "ADULTS": 8
+      }
+    },
+    "personal": {
+      "unikatni": 0,
+      "poKategorii": {}
+    }
+  }
+}
