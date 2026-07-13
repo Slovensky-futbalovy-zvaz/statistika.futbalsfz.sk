@@ -29,7 +29,8 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
   Zrýchli všetkých 7 ETL agregácií pre všetky zväzy a **odstráni potrebu `--hint`**. Hint je len dočasná obchádzka.
 - [ ] (Neskôr, opatrne) Revízia počtu indexov na `matches` — 44 indexov spomaľuje samotné plánovanie dotazov (`optimizationTimeMillis ≈ 1,9 s`, `maxIndexedAndSolutionsReached`).
 - [ ] Demografia ďalších zväzov (SFZ, 4 RFZ, ostatné ObFZ) — rovnaký vzor ako ObFZ Nitra (`etl/demografia.py`)
-- [ ] Kickoff frontendu (F2): stack rozhodnutý (ADR-0005 — Astro + ECharts + Tailwind, SVG mapa). Ďalej: scaffold Astro projektu vo `web/`, načítanie `data/index.json` + profil zväzu, komponent mapy z `mapa.json`, brand tokeny SFZ
+- [~] Frontend F2 (ADR-0005 — Astro + ECharts + Tailwind): **hotové** — scaffold, SVG mapa SR, homepage, profil zväzu, per-sezónne stránky (`zvaz/[id]/[sezona]`), prvý ECharts graf (kategórie), pohlavie + osoby; build overený (617 stránok). **Ďalej:** F3 porovnania, F4 demografia, prepínač odvetvia futbal/futsal, napojiť Cloudflare Pages projekt (root `web/`).
+- [ ] Optimalizácia: tree-shaking ECharts (import len potrebných modulov cez `echarts/core`) — teraz sa bundluje celý (~1 MB) na sezónnych stránkach
 - [ ] Overiť odoslanie podkladov Bart.sk (`docs/podklady-bart-produkcny-beh.md`) — čaká na odoslanie PO
 - [ ] Overiť odoslanie nahlásenia chybného záznamu divákov (`docs/sportnet-nahlasenie-divaci.md`) — draft čaká na PO
 - [x] Futsal: historické sezóny (SFZ) — **hotové 13. 7. 2026: 11 sezón (2014/15–2025/26, 2022/23 v DB prázdna), 0 kritických anomálií**; evidencia v `index.json` cez `zvazy[sfz].odvetvia.futsal` (aktualizuj_index rozšírené)

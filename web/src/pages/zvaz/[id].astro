@@ -65,14 +65,17 @@ const futsalSezony = z.odvetvia?.futsal ?? [];
           .slice()
           .reverse()
           .map((s) => (
-            <span
+            <a
+              href={`/zvaz/${z.id}/${s.replace('/', '-')}`}
               class:list={[
                 'rounded-md border px-2 py-0.5 text-sm',
-                s === sezona ? 'border-sfz-blue text-sfz-blue font-semibold' : 'border-black/10 text-sfz-muted',
+                s === sezona
+                  ? 'border-sfz-blue text-sfz-blue font-semibold'
+                  : 'border-black/10 text-sfz-blue hover:bg-black/5',
               ]}
             >
               {s}
-            </span>
+            </a>
           ))
       }
     </div>

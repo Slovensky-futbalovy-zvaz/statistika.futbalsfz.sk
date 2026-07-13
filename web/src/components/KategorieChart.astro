@@ -1,0 +1,59 @@
+---
+// ECharts island — stĺpcový graf góly/zápasy po vekových kategóriách.
+// echarts sa zabundluje len na stránkach, ktoré komponent použijú.
+import type { Kategoria } from '../lib/data';
+
+interface Props {
+  kategorie: Record<string, Kategoria>;
+}
+const { kategorie } = Astro.props;
+
+// poradie kategórií zachované z JSON (validate.zorad_kategorie ich už zoradil)
+const data = Object.entries(kategorie).map(([cat, k]) => ({
+  cat,
+  goly: k.goly,
+  zapasy: k.zapasy,
+}));
+---
+
+<div
+  data-kategorie-chart
+  data-values={JSON.stringify(data)}
+  class="w-full"
+  style="height: 380px;"
+  role="img"
+  aria-label="Góly a zápasy podľa vekových kategórií"
+>
+</div>
+
+<script>
+  import * as echarts from 'echarts';
+
+  type Row = { cat: string; goly: number; zapasy: number };
+
+  function initCharts() {
+    const nodes = document.querySelectorAll<HTMLElement>('[data-kategorie-chart]');
+    nodes.forEach((el) => {
+      const data = JSON.parse(el.dataset.values ?? '[]') as Row[];
+      const chart = echarts.init(el, undefined, { renderer: 'canvas' });
+      chart.setOption({
+        grid: { left: 48, right: 16, top: 40, bottom: 32 },
+        legend: { data: ['Góly', 'Zápasy'], top: 0 },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        xAxis: {
+          type: 'category',
+          data: data.map((d) => d.cat),
+          axisLabel: { fontSize: 11 },
+        },
+        yAxis: { type: 'value' },
+        series: [
+          { name: 'Góly', type: 'bar', data: data.map((d) => d.goly), itemStyle: { color: '#1450df' } },
+          { name: 'Zápasy', type: 'bar', data: data.map((d) => d.zapasy), itemStyle: { color: '#94a3b8' } },
+        ],
+      });
+      new ResizeObserver(() => chart.resize()).observe(el);
+    });
+  }
+
+  initCharts();
+</script>
