@@ -2,7 +2,7 @@
 
 Verejný štatistický portál slovenského futbalu — interaktívna mapa všetkých troch úrovní futbalovej pyramídy (SFZ → 4 RFZ → 38 ObFZ), sezónne štatistiky s drill-down na vekové úrovne, porovnávanie zväzov a 10-ročná demografia osôb vo futbale (hráči, tréneri, rozhodcovia, delegáti).
 
-> **Stav projektu:** F1 v plnom prúde — dátový audit hotový, prvá verzia ETL (`etl/run.py`) funkčná a verifikovaná, všetky otvorené otázky O1–O7 rozhodnuté (12. 7. 2026).
+> **Stav projektu:** F1 finišuje — ETL verifikované vrát. dimenzie pohlavie a demografie v1; prebieha plný dátový beh všetkých 43 zväzov (13. 7. 2026). Priebežný zásobník úloh: [docs/TODO.md](docs/TODO.md).
 
 ## Čo tu nájdete
 
@@ -16,13 +16,14 @@ Verejný štatistický portál slovenského futbalu — interaktívna mapa všet
 ## Kľúčové dokumenty
 
 - [Projektový plán a koncept](docs/projektovy-plan.md) ([docx verzia](docs/Statistika-futbalsfz-sk_Projektovy-plan-a-koncept_v1.0.docx))
+- [TODO — projektový zásobník](docs/TODO.md)
 - [Metodika a poznatky o dátach](docs/metodika.md)
 - [ADR-0001: Predgenerované JSON namiesto živého API](docs/adr/0001-architektura-predgenerovane-json.md)
 
 ## Architektúra (skratka)
 
 ```
-Sportnet MongoDB („sutaze“) ──► ETL (Python, denne) ──► statické JSON ──► web (SSG) + CDN
+sportnet.online MongoDB („sutaze“) ──► ETL (Python, denne) ──► statické JSON ──► web (SSG) + CDN
 ```
 
 Verejný web nemá žiadny prístup k databáze ani interným API — publikujú sa výhradne agregované dáta. Detaily a zdôvodnenie v ADR-0001.
@@ -44,4 +45,4 @@ Verejný web nemá žiadny prístup k databáze ani interným API — publikujú
 Produktový vlastník: **Ján Letko** (jan.letko@futbalsfz.sk)
 
 ---
-© Slovenský futbalový zväz · Zdroj dát: Sportnet
+© Slovenský futbalový zväz · Zdroj dát: platforma sportnet.online
