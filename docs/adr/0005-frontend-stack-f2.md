@@ -12,7 +12,8 @@ Fáza F2 stavia verejný web statistika.futbalsfz.sk nad predgenerovanými stati
 - **Grafy: Apache ECharts** (ako Astro island, načítaný len na stránkach s grafom). Pokrýva KPI, drill-down, porovnania aj demografiu s rozumným úsilím. D3 len ako doplnok pre prípadnú bespoke vizualizáciu.
 - **Mapa: inline SVG choropleth** z `web/assets/geo/mapa.json` (nie Leaflet — ten je na dlaždicové geo-mapy). Interaktivita (hover/klik → drill-down na RFZ/ObFZ) cez malý island.
 - **Styling: Tailwind CSS + brand tokeny SFZ** (farby, typografia).
-- **Build/deploy: Node + npm → Cloudflare Pages** (ADR-0003), doména `statistika.futbalsfz.sk`, cache cez `_headers`.
+- **Runtime/manažér balíkov: Node 24 LTS + pnpm.** Node 20 dosiahol EOL 30. 4. 2026; Node 24 je Active LTS (podpora do apríla 2028). pnpm pre rýchlosť a striktné závislosti. Verzia zafixovaná cez `.node-version` + `engines` v `package.json` + `NODE_VERSION` pre Cloudflare; pnpm cez pole `packageManager` (corepack) → reprodukovateľný build.
+- **Build/deploy: → Cloudflare Pages** (ADR-0003), doména `statistika.futbalsfz.sk`, cache cez `_headers`.
 
 ## Zvažované varianty (zhrnutie)
 
