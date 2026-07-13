@@ -17,16 +17,16 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
 ## Prebieha (táto session)
 
 - [x] **Vlna 1:** ETL 2025/2026 pre všetkých 43 zväzov (SFZ → RFZ → ObFZ po regiónoch), dávkový runner `etl/beh.py` — **hotové 13. 7. 2026: 43/43 OK, 0 preskočených, 2 anomálie (VsFZ), žiadna systémová chyba** (viď report-kvality-dat.md §8)
-- [x] **Vlna 2:** história pre všetkých 43 zväzov — **hotové 13. 7. 2026: 42/43 zväzov kompletných, 568 sezón OK, 1019 anomálií, 0 kritických** (viď report §9). Výnimka: zsfz 2021/22–2024/25 (viď nižšie).
+- [x] **Vlna 2:** história pre všetkých 43 zväzov — **hotové 13. 7. 2026: 43/43 zväzov kompletných, 573 sezónnych výstupov, 0 kritických anomálií** (viď report §9). zsfz 2021/22–2024/25 dogenerované cez `--hint` (viď §9d).
 - [x] Po behu: kontrola `data/index.json`, anomálie a zistenia do report-kvality-dat.md §8–§9, commity po regiónoch
 - [x] Korekčná vrstva divákov (`etl/config/korekcie.json` + `audience_expr`): Sľažany–Nevidzany 300000→30, obfz-nitra 2019/20 pregenerované (viď report §9c)
 
 ## Zásobník (podľa priority)
 
-- [ ] **DBA/PO: vytvoriť index na `matches`** (diagnóza potvrdená cez explain — viď report §9d):
+- [x] zsfz 2021/22–2024/25 dogenerované (13. 7. 2026) cez `--hint` — zsfz kompletný (14 sezón), stav 43/43 (viď report §9d).
+- [ ] **DBA/PO: vytvoriť cielený index na `matches`** (ADR-0004; diagnóza cez explain — report §9d):
   `db.matches.createIndex({ appSpace:1, closed:1, "rules.sport_sector":1, "season.name":1 }, { name: "etl_appSpace_closed_sport_season" })`
-  Zrýchli všetkých 7 ETL agregácií (nielen zsfz 2021/22).
-- [ ] **Po vytvorení indexu: dogenerovať zsfz 2021/22–2024/25** — `python etl/run.py --zvaz zsfz --sezona 2021/2022` (+ 2022/23, 2023/24, 2024/25), commit, kontrola `data/index.json`.
+  Zrýchli všetkých 7 ETL agregácií pre všetky zväzy a **odstráni potrebu `--hint`**. Hint je len dočasná obchádzka.
 - [ ] (Neskôr, opatrne) Revízia počtu indexov na `matches` — 44 indexov spomaľuje samotné plánovanie dotazov (`optimizationTimeMillis ≈ 1,9 s`, `maxIndexedAndSolutionsReached`).
 - [ ] Demografia ďalších zväzov (SFZ, 4 RFZ, ostatné ObFZ) — rovnaký vzor ako ObFZ Nitra (`etl/demografia.py`)
 - [ ] Kickoff frontendu (F2): štruktúra `web/`, výber SSG frameworku, načítanie `data/index.json` + profil zväzu

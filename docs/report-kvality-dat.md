@@ -138,7 +138,7 @@ Ostatných 41 zväzov bez anomálií (KPI = súčet kategórií, pohlavie = KPI,
 
 ## 9. Plný dátový beh — vlna 2 (história 2013/2014–2024/2025) — 13. 7. 2026
 
-`etl/beh.py --all-sezony` (všetkých 15 kanonických sezón × 43 zväzov). Výsledok: **42/43 zväzov kompletných, 568 sezón OK, 71 prázdnych preskočených, 1019 anomálií, 0 kritických (žiadna KPI-nezhoda), žiadna systémová chyba.** Súhrn: `/tmp/beh-vlna2-sumar.json`.
+`etl/beh.py --all-sezony` (všetkých 15 kanonických sezón × 43 zväzov). Výsledok behu: **42/43 zväzov kompletných, 568 sezón OK, 71 prázdnych preskočených, 1019 anomálií, 0 kritických (žiadna KPI-nezhoda), žiadna systémová chyba.** Súhrn: `/tmp/beh-vlna2-sumar.json`. Jediná výnimka behu — zsfz 2021/22–2024/25 — bola **následne dogenerovaná** cez index hint (viď §9d); po doplnení je stav **43/43 zväzov, 573 sezónnych výstupov**.
 
 ### 9a. Rozdelenie anomálií (1019)
 
@@ -180,5 +180,7 @@ db.matches.createIndex(
 
 Tým sa `$match` zmení na tesný IXSCAN presne na cieľové zápasy (bez in-memory filtra). Keďže **všetkých 7 ETL agregácií začína týmto istým `$match`**, zrýchli sa celý ETL, nielen zsfz 2021/22.
 
-**Stav:** index na produkčnej DB SFZ NEbol vytvorený (zápisová/DDL operácia — čaká na schválenie PO/DBA). Do ETL doplnené `--max-time-ms` (dočasná pomôcka). **Akcia po vytvorení indexu:** `python etl/run.py --zvaz zsfz --sezona 2021/2022` (a 2022/23, 2023/24, 2024/25), potom commit + kontrola `data/index.json`. Zvážiť aj revíziu 44 indexov (samostatne, opatrne).
+**Vyriešené (dočasne, 13. 7. 2026) cez index hint.** ETL dostalo prepínač `--hint <index>`; vynútením `appSpace`-indexu (`appSpace_1_closed_1_competition._id_1_competitionPart._id_1_round.dateFrom_-1_startDate_-1`) sa scan obmedzí na daný zväz namiesto celého SR. zsfz 2021/2022 tak dobehlo za ~75 s (5 043 zápasov) a rovnako aj 2022/23–2024/25. **zsfz je kompletný (14 sezón); stav 43/43.** Príkaz: `python etl/run.py --zvaz zsfz --sezona 2021/2022 --hint 'appSpace_1_closed_1_...' --max-time-ms 600000`.
+
+**Stav cieľového riešenia:** cielený index (ADR-0004) na produkčnej DB SFZ **stále odporúčaný** — hint je len obchádzka pre tento zväz; index zrýchli všetky zväzy a odstráni potrebu hintu. DDL čaká na PO/DBA. Zvážiť aj revíziu 44 indexov (samostatne, opatrne).
 
