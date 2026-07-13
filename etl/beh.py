@@ -94,11 +94,16 @@ def main() -> int:
         "--max-time-ms", type=int, default=run.MAX_TIME_MS,
         help=f"limit agregácie v ms (default: {run.MAX_TIME_MS}); zvýš pre ťažké sezóny.",
     )
+    ap.add_argument(
+        "--hint", default=None,
+        help="názov indexu vynúteného pre agregácie (dočasná pomôcka do vzniku cieleného indexu, ADR-0004).",
+    )
     args = ap.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
     run.MAX_TIME_MS = args.max_time_ms  # aplikuje sa v run.agreguj
+    run.HINT = args.hint
 
     zvazy = run.load_json(run.CONFIG / "zvazy.json")
     sezony_cfg = run.load_json(run.CONFIG / "sezony.json")

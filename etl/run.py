@@ -37,6 +37,8 @@ log = logging.getLogger("etl")
 MAX_TIME_MS = 120_000  # limit agregácie; po jednej sezóne (viac sezón naraz timeoutuje)
 RETRIES = 1  # metodika: občasný timeout → 1 retry
 FUTSAL_APP_SPACE = "futsalslovakia.sk"  # futsal patrí priamo pod SFZ (rozhodnutie 12. 7. 2026)
+HINT = None  # voliteľný index hint pre agregácie (--hint); dočasná pomôcka do vzniku
+#             cieleného indexu (ADR-0004). Napr. appSpace-index obmedzí scan na daný zväz.
 
 
 # ---------------------------------------------------------------- konfigurácia
@@ -116,11 +118,12 @@ def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
 
 def agreguj(db, pipeline: list[dict], popis: str) -> list[dict]:
     """Agregácia s retry (MCP/Atlas občas timeoutne) a diskovým spillom."""
+    kwargs = {"allowDiskUse": True, "maxTimeMS": MAX_TIME_MS}
+    if HINT:
+        kwargs["hint"] = HINT  # dočasná pomôcka do vzniku cieleného indexu (ADR-0004)
     for pokus in range(RETRIES + 1):
         try:
-            return list(
-                db.matches.aggregate(pipeline, allowDiskUse=True, maxTimeMS=MAX_TIME_MS)
-            )
+            return list(db.matches.aggregate(pipeline, **kwargs))
         except Exception as e:  # noqa: BLE001 — retry na akýkoľvek transport/timeout
             if pokus < RETRIES:
                 log.warning("%s: pokus %d zlyhal (%s) — retry…", popis, pokus + 1, e)
@@ -355,7 +358,7 @@ def aktualizuj_index(out_dir: Path, zvaz: dict, zvazy: dict) -> None:
 # ---------------------------------------------------------------- main
 
 def main() -> int:
-    global MAX_TIME_MS
+    global MAX_TIME_MS, HINT
     ap = argparse.ArgumentParser(description="ETL profilu zväzu (statistika.futbalsfz.sk)")
     ap.add_argument("--zvaz", required=True, help="id zväzu z etl/config/zvazy.json (napr. obfz-nitra)")
     grp = ap.add_mutually_exclusive_group(required=True)
@@ -373,11 +376,17 @@ def main() -> int:
         "--max-time-ms", type=int, default=MAX_TIME_MS,
         help=f"limit agregácie v ms (default: {MAX_TIME_MS}); zvýš pre ťažké sezóny (napr. ZsFZ 2021/2022).",
     )
+    ap.add_argument(
+        "--hint", default=None,
+        help="názov indexu vynúteného pre agregácie (dočasná pomôcka do vzniku cieleného indexu, ADR-0004). "
+             "Napr. appSpace_1_closed_1_competition._id_1_competitionPart._id_1_round.dateFrom_-1_startDate_-1",
+    )
     args = ap.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
     MAX_TIME_MS = args.max_time_ms
+    HINT = args.hint
 
     zvazy = load_json(CONFIG / "zvazy.json")
     sezony_cfg = load_json(CONFIG / "sezony.json")
