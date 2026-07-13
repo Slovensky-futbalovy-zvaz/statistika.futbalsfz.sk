@@ -27,7 +27,12 @@ const data = Object.entries(kategorie).map(([cat, k]) => ({
 </div>
 
 <script>
-  import * as echarts from 'echarts';
+  // Tree-shaken ECharts — len potrebné moduly (bar + grid + tooltip + legend + canvas)
+  import * as echarts from 'echarts/core';
+  import { BarChart } from 'echarts/charts';
+  import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
+  import { CanvasRenderer } from 'echarts/renderers';
+  echarts.use([BarChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
   type Row = { cat: string; goly: number; zapasy: number };
 
