@@ -17,7 +17,7 @@ Kompletný vizuálny redizajn portálu podľa handoffu. **React islands** (ADR-0
 - [x] **F6** Projekty — donut pohlavia, zladenie na nové tokeny.
 - [x] **F7** ETL sunburstOsoby 4-prstencový (odvetvie→úroveň→rola→vek; SFZ vrátane ULK) — nahrádza placeholder.
 
-Build 707 stránok. **Poznámky/zvyšky:** stará `/prehlad` stránka je duplicitná (index = plný Prehľad) — zvážiť zmazanie so súhlasom PO; SeasonPicker na Prehľade zatiaľ nemení sezónu reaktívne (Prehľad je server-rendered pre poslednú kompletnú sezónu) — plná reaktivita/permalink je ďalší krok; staré komponenty MapaSR.astro, KategorieChart.astro, SumarSR.astro ostali v repe (nahradené, neodkázané) — zmazať so súhlasom.
+Build 706 stránok. **Upratané (19. 7. 2026):** zmazané nahradené/duplicitné súbory — `prehlad.astro`, `SumarSR.astro`, `MapaSR.astro`, `KategorieChart.astro`, `logo-statistiky.svg`. **Pozn./ďalší krok:** SeasonPicker na Prehľade zatiaľ nemení sezónu reaktívne (Prehľad je server-rendered pre poslednú kompletnú sezónu) — plná reaktivita/permalink je možné vylepšenie. **Fix nasadenia:** Vercel `frozen-lockfile` zlyhával, kým `pnpm-lock.yaml` nemal React deps (opravené, deployment READY).
 
 ## Stav k 19. 7. 2026 (predošlá session)
 
