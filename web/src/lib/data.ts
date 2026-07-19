@@ -220,3 +220,47 @@ export function getDemografia(id: string): Demografia | undefined {
   const p = path.join(DEMOGRAFIA, id + '.json');
   return fs.existsSync(p) ? readJson<Demografia>(p) : undefined;
 }
+
+// ---- Celoslovenský sumár (etl/sumar.py → data/sumar) ----
+
+export interface SunburstUzol {
+  name: string;
+  id?: string;
+  value?: number;
+  pohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → zápasy)
+  children?: SunburstUzol[];
+}
+
+export interface Sumar {
+  sezona: string;
+  generatedAt: string;
+  pocetZvazov: number;
+  methodologyFlags: Record<string, string>;
+  kpi: Kpi;
+  osoby: Record<string, number>; // roly + spolu
+  odvetvia: Record<string, { kpi: Kpi; osoby: Record<string, number> }>;
+  sunburstSutaze: SunburstUzol;
+  sunburstOsoby: SunburstUzol;
+}
+
+const SUMAR = path.join(DATA, 'sumar');
+
+/** Sezóny so sumárom (vzostupne), z data/sumar/RRRR-RRRR.json. */
+export function getSumarSezony(): string[] {
+  if (!fs.existsSync(SUMAR)) return [];
+  return fs
+    .readdirSync(SUMAR)
+    .filter((f) => /^\d{4}-\d{4}\.json$/.test(f))
+    .map((f) => f.replace('.json', '').replace('-', '/'))
+    .sort();
+}
+
+export function getSumar(sezona: string): Sumar {
+  return readJson<Sumar>(path.join(SUMAR, sezona.replace('/', '-') + '.json'));
+}
+
+/** Celoslovenská demografia (súčet zväzov; dvojité pôsobenie — viď methodologyFlags). */
+export function getSumarDemografia(): Demografia | undefined {
+  const p = path.join(SUMAR, 'demografia.json');
+  return fs.existsSync(p) ? readJson<Demografia>(p) : undefined;
+}

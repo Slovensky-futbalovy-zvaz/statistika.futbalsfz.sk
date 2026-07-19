@@ -1,9 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
 import MapaSR from '../components/MapaSR.astro';
-import { getZvazy } from '../lib/data';
+import SumarSR from '../components/SumarSR.astro';
+import VekovaPyramida from '../components/VekovaPyramida.astro';
+import { getZvazy, getSumarSezony, getSumarDemografia } from '../lib/data';
 
 const zvazy = getZvazy();
+const sumarSezony = getSumarSezony();
+const srDemo = getSumarDemografia();
 const sfz = zvazy.find((z) => z.uroven === 'SFZ');
 const rfzZvazy = zvazy.filter((z) => z.uroven === 'RFZ');
 const obfz = zvazy.filter((z) => z.uroven === 'ObFZ');
@@ -27,6 +31,28 @@ const obfzPodlaRfz = rfzPoradie.map((skratka) => ({
       a 38 oblastných zväzov. Vyberte zväz na mape alebo zo zoznamu.
     </p>
   </section>
+
+  {
+    sumarSezony.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-lg font-bold mb-3">Slovenský futbal v číslach</h2>
+        <SumarSR />
+      </section>
+    )
+  }
+
+  {
+    srDemo && (
+      <section class="mb-12">
+        <h2 class="text-lg font-bold mb-1">Veková pyramída — celé Slovensko</h2>
+        <p class="text-sm text-sfz-muted mb-3">
+          Vek × pohlavie podľa roly a sezóny (vek k záveru sezóny), súčet všetkých zväzov. Osoba
+          pôsobiaca vo viacerých zväzoch sa počíta v každom z nich.
+        </p>
+        <VekovaPyramida demo={srDemo} />
+      </section>
+    )
+  }
 
   <section class="mb-12 grid gap-8 md:grid-cols-[1.4fr_1fr] items-start">
     <div class="rounded-xl border border-black/10 p-3">

@@ -1,0 +1,220 @@
+---
+// ECharts island — celoslovenský sumár na úvodnej stránke: KPI bloky, osoby po
+// roliach, sunburst súťaží (SR → odvetvie → SFZ → RFZ → ObFZ) a sunburst osôb
+// (SR → odvetvie → rola → veková úroveň). Prepínač sezóny + pill filter pohlavia
+// (filter sa aplikuje na sunburst súťaží; osoby × pohlavie × kategória v dátach
+// zatiaľ neexistuje — viď TODO).
+import { getSumarSezony, getSumar } from '../lib/data';
+import type { Sumar } from '../lib/data';
+
+const sezony = getSumarSezony(); // vzostupne
+const payload: Record<string, Sumar> = {};
+for (const s of sezony) payload[s] = getSumar(s);
+const aktualna = sezony[sezony.length - 1];
+---
+
+<div data-sumar-sr data-payload={JSON.stringify(payload)} data-aktualna={aktualna}>
+  <div class="flex flex-wrap items-center gap-1.5 mb-2">
+    <span class="text-sm text-sfz-muted mr-1">Sezóna:</span>
+    <div class="sezona-chips flex flex-wrap gap-1.5"></div>
+  </div>
+  <p class="sezona-note text-sm text-sfz-muted mb-4 hidden">
+    Sezóna práve začala (od 1. 7.) — dáta pribúdajú s uzatváraním zápasov, čísla sú zatiaľ nízke.
+  </p>
+
+  <div class="kpi-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
+
+  <h3 class="mt-6 mb-2 text-sm font-semibold uppercase tracking-wider text-sfz-muted">
+    Osoby vo futbale (unikátne v rámci zväzu a roly)
+  </h3>
+  <div class="osoby-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
+  <p class="mt-2 text-xs text-sfz-muted">
+    Osoba pôsobiaca vo viacerých zväzoch alebo roliach sa počíta v každom z nich.
+  </p>
+
+  <div class="mt-8 flex flex-wrap items-center gap-1.5">
+    <span class="text-sm text-sfz-muted mr-1">Pohlavie:</span>
+    {
+      [
+        { k: 'VSETCI', label: 'Všetci' },
+        { k: 'M', label: 'Muži' },
+        { k: 'F', label: 'Ženy' },
+      ].map((p, i) => (
+        <button
+          type="button"
+          data-pohlavie={p.k}
+          class:list={[
+            'pill rounded-full border px-3 py-0.5 text-sm',
+            i === 0
+              ? 'border-sfz-blue bg-sfz-blue text-white font-semibold'
+              : 'border-black/10 text-sfz-blue hover:bg-black/5',
+          ]}
+        >
+          {p.label}
+        </button>
+      ))
+    }
+    <span class="text-xs text-sfz-muted ml-2">Filter pohlavia sa vzťahuje na sunburst súťaží.</span>
+  </div>
+
+  <div class="mt-4 grid gap-8 lg:grid-cols-2">
+    <div>
+      <h3 class="text-lg font-bold mb-1">Súťaže — štruktúra pyramídy</h3>
+      <p class="text-sm text-sfz-muted mb-2">
+        Zápasy podľa odvetvia a riadiaceho zväzu (SFZ → RFZ → ObFZ). Klik = priblíženie.
+      </p>
+      <div class="sunburst-sutaze w-full" style="height: 480px;" role="img" aria-label="Sunburst súťaží"></div>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold mb-1">Osoby — roly a vekové úrovne</h3>
+      <p class="text-sm text-sfz-muted mb-2">
+        Osoby podľa odvetvia, roly a vekovej úrovne. Klik = priblíženie.
+      </p>
+      <div class="sunburst-osoby w-full" style="height: 480px;" role="img" aria-label="Sunburst osôb"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import * as echarts from 'echarts/core';
+  import { SunburstChart } from 'echarts/charts';
+  import { TooltipComponent } from 'echarts/components';
+  import { CanvasRenderer } from 'echarts/renderers';
+  echarts.use([SunburstChart, TooltipComponent, CanvasRenderer]);
+
+  type Uzol = {
+    name: string;
+    id?: string;
+    value?: number;
+    pohlavie?: Record<string, number>;
+    children?: Uzol[];
+  };
+  type Sumar = {
+    sezona: string;
+    kpi: Record<string, number>;
+    osoby: Record<string, number>;
+    odvetvia: Record<string, { kpi: Record<string, number>; osoby: Record<string, number> }>;
+    sunburstSutaze: Uzol;
+    sunburstOsoby: Uzol;
+  };
+
+  const nf = new Intl.NumberFormat('sk-SK');
+  const KPI_POLIA: [string, string][] = [
+    ['zapasy', 'Zápasy'],
+    ['druzstva', 'Družstvá'],
+    ['goly', 'Góly'],
+    ['divaci', 'Diváci'],
+    ['zlteKarty', 'Žlté karty'],
+    ['cerveneKarty', 'Červené karty'],
+  ];
+  const OSOBY_POLIA: [string, string][] = [
+    ['spolu', 'Osoby spolu'],
+    ['hraci', 'Hráči'],
+    ['treneri', 'Tréneri'],
+    ['rozhodcovia', 'Rozhodcovia'],
+    ['delegati', 'Delegáti'],
+    ['personal', 'Personál'],
+  ];
+  const AKTIVNA = ['border-sfz-blue', 'bg-sfz-blue', 'text-white', 'font-semibold'];
+  const NEAKTIVNA = ['border-black/10', 'text-sfz-blue'];
+
+  const root = document.querySelector<HTMLElement>('[data-sumar-sr]');
+  if (root) {
+    const payload = JSON.parse(root.dataset.payload ?? '{}') as Record<string, Sumar>;
+    const aktualna = root.dataset.aktualna ?? '';
+    const sezony = Object.keys(payload).sort().reverse(); // najnovšia prvá
+    let sezona = aktualna || sezony[0];
+    let pohlavie = 'VSETCI';
+
+    const chipsEl = root.querySelector<HTMLElement>('.sezona-chips')!;
+    const noteEl = root.querySelector<HTMLElement>('.sezona-note')!;
+    const kpiEl = root.querySelector<HTMLElement>('.kpi-grid')!;
+    const osobyEl = root.querySelector<HTMLElement>('.osoby-grid')!;
+    const sutazeChart = echarts.init(root.querySelector<HTMLElement>('.sunburst-sutaze')!, undefined, { renderer: 'canvas' });
+    const osobyChart = echarts.init(root.querySelector<HTMLElement>('.sunburst-osoby')!, undefined, { renderer: 'canvas' });
+
+    function karta(hodnota: number, label: string): string {
+      return `<div class="rounded-xl border border-black/10 p-4">
+        <div class="text-2xl font-extrabold tabular-nums">${nf.format(hodnota)}</div>
+        <div class="text-sm text-sfz-muted">${label}</div>
+      </div>`;
+    }
+
+    /** Prepočet stromu súťaží podľa filtra pohlavia (listy nesú `pohlavie`). */
+    function filtrujStrom(uzol: Uzol): Uzol | null {
+      if (uzol.children?.length) {
+        const deti = uzol.children.map(filtrujStrom).filter(Boolean) as Uzol[];
+        return deti.length ? { ...uzol, children: deti, value: undefined } : null;
+      }
+      const v = pohlavie === 'VSETCI' ? (uzol.value ?? 0) : (uzol.pohlavie?.[pohlavie] ?? 0);
+      return v > 0 ? { ...uzol, value: v } : null;
+    }
+
+    function sunburstOption(strom: Uzol, farby: string[]) {
+      return {
+        color: farby,
+        tooltip: {
+          formatter: (p: any) => `${p.treePathInfo.map((t: any) => t.name).filter(Boolean).join(' › ')}<br/><b>${nf.format(p.value)}</b>`,
+        },
+        series: [
+          {
+            type: 'sunburst',
+            data: strom.children ?? [],
+            radius: [0, '92%'],
+            emphasis: { focus: 'ancestor' },
+            label: { fontSize: 10, minAngle: 8, overflow: 'truncate', width: 90 },
+            labelLayout: { hideOverlap: true },
+          },
+        ],
+      };
+    }
+
+    function render() {
+      const s = payload[sezona];
+      if (!s) return;
+      // chips
+      chipsEl.innerHTML = sezony
+        .map(
+          (x) =>
+            `<button type="button" data-sezona="${x}" class="rounded-md border px-2 py-0.5 text-sm ${
+              x === sezona
+                ? 'border-sfz-blue bg-sfz-blue text-white font-semibold'
+                : 'border-black/10 text-sfz-blue hover:bg-black/5'
+            }">${x}</button>`,
+        )
+        .join('');
+      chipsEl.querySelectorAll<HTMLButtonElement>('button').forEach((b) =>
+        b.addEventListener('click', () => {
+          sezona = b.dataset.sezona!;
+          render();
+        }),
+      );
+      noteEl.classList.toggle('hidden', sezona !== aktualna);
+
+      kpiEl.innerHTML = KPI_POLIA.map(([k, l]) => karta(s.kpi[k] ?? 0, l)).join('');
+      osobyEl.innerHTML = OSOBY_POLIA.map(([k, l]) => karta(s.osoby[k] ?? 0, l)).join('');
+
+      const strom = filtrujStrom(s.sunburstSutaze) ?? { name: 'SR', children: [] };
+      sutazeChart.setOption(sunburstOption(strom, ['#1450df', '#f59f00', '#12b886', '#ec1c24', '#7048e8']), true);
+      osobyChart.setOption(sunburstOption(s.sunburstOsoby, ['#12b886', '#1450df', '#f59f00', '#ec1c24', '#7048e8']), true);
+    }
+
+    root.querySelectorAll<HTMLButtonElement>('.pill').forEach((b) =>
+      b.addEventListener('click', () => {
+        pohlavie = b.dataset.pohlavie!;
+        root.querySelectorAll<HTMLButtonElement>('.pill').forEach((x) => {
+          const aktivny = x === b;
+          AKTIVNA.forEach((c) => x.classList.toggle(c, aktivny));
+          NEAKTIVNA.forEach((c) => x.classList.toggle(c, !aktivny));
+        });
+        render();
+      }),
+    );
+
+    render();
+    new ResizeObserver(() => {
+      sutazeChart.resize();
+      osobyChart.resize();
+    }).observe(root);
+  }
+</script>

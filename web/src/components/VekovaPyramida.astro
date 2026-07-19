@@ -1,7 +1,9 @@
 ---
-// ECharts island — veková pyramída (rok narodenia × pohlavie) z data/demografia.
+// ECharts island — veková pyramída (vek × pohlavie) z data/demografia.
+// Dáta sú uložené po rokoch narodenia; na osi sa zobrazuje VEK vypočítaný
+// z koncového roka zvolenej sezóny (rozhodnutie PO 19. 7. 2026).
 // Prepínače roly a sezóny sú klientske (dáta všetkých sezón × rolí sú v payloade;
-// gzip ich zrazí na zlomok — max ~60 KB nekomprimované pri SFZ).
+// gzip ich zrazí na zlomok).
 import { ROLY_PORADIE, ROLA_LABEL } from '../lib/data';
 import type { Demografia } from '../lib/data';
 
@@ -38,7 +40,7 @@ const rolyLabels: Record<string, string> = ROLA_LABEL;
     class="pyramida-chart w-full"
     style="height: 520px;"
     role="img"
-    aria-label="Veková pyramída — rok narodenia × pohlavie"
+    aria-label="Veková pyramída — vek × pohlavie"
   >
   </div>
   <p class="pyramida-note text-xs text-sfz-muted mt-2"></p>
@@ -86,7 +88,10 @@ const rolyLabels: Record<string, string> = ROLA_LABEL;
       const data = payload[sezona]?.[rola];
       if (!data) return;
 
-      const roky = Object.keys(data.roky).sort(); // najstarší rok dole? — vzostupne: najstarší prvý
+      // vek = koncový rok sezóny − rok narodenia; rok desc → vek vzostupne zdola
+      const koncovyRok = parseInt(sezona.split('/')[1] ?? '0', 10);
+      const roky = Object.keys(data.roky).sort().reverse();
+      const veky = roky.map((r) => String(koncovyRok - parseInt(r, 10)));
       const m = roky.map((r) => -(data.roky[r].M ?? 0)); // muži vľavo (záporné)
       const f = roky.map((r) => data.roky[r].F ?? 0);
       const n = roky.reduce((acc, r) => acc + (data.roky[r].N ?? 0), 0);
@@ -99,11 +104,12 @@ const rolyLabels: Record<string, string> = ROLA_LABEL;
             trigger: 'axis',
             axisPointer: { type: 'shadow' },
             formatter: (params: any) => {
-              const rok = params[0]?.axisValue ?? '';
+              const vek = params[0]?.axisValue ?? '';
+              const rok = koncovyRok - parseInt(vek, 10);
               const riadky = params.map(
                 (p: any) => `${p.seriesName}: <b>${nf.format(Math.abs(p.value))}</b>`,
               );
-              return `Rok narodenia <b>${rok}</b><br/>${riadky.join('<br/>')}`;
+              return `Vek <b>${vek}</b> (nar. ${rok})<br/>${riadky.join('<br/>')}`;
             },
           },
           grid: { left: 8, right: 24, top: 28, bottom: 10, containLabel: true },
@@ -115,7 +121,9 @@ const rolyLabels: Record<string, string> = ROLA_LABEL;
           },
           yAxis: {
             type: 'category',
-            data: roky,
+            name: 'Vek',
+            nameTextStyle: { fontSize: 10 },
+            data: veky,
             axisLabel: { fontSize: 9 },
             axisTick: { show: false },
           },
