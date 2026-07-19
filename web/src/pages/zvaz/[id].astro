@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import DemografiaTrend from '../../components/DemografiaTrend.astro';
 import VekovaPyramida from '../../components/VekovaPyramida.astro';
+import ZvazPicker from '../../components/ZvazPicker.tsx';
 import {
   getZvazy,
   getZvaz,
@@ -16,6 +17,8 @@ import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
   getZvazy().map((z) => ({ params: { id: z.id } }));
+
+const vsetkyZvazy = getZvazy().map((zz) => ({ id: zz.id, nazov: zz.nazov, uroven: zz.uroven, rfz: zz.rfz }));
 
 const { id } = Astro.params;
 const z = getZvaz(id!);
@@ -55,10 +58,13 @@ const futsalSezony = z.odvetvia?.futsal ?? [];
     <a href="/" class="text-sfz-blue hover:underline">← Späť na mapu</a>
   </p>
 
-  <header class="mb-6">
-    <div class="text-xs font-semibold uppercase tracking-wider text-sfz-muted">{z.uroven}</div>
-    <h1 class="text-3xl font-extrabold tracking-tight">{z.nazov}</h1>
-    {sezona && <p class="mt-1 text-sfz-muted">Sezóna {sezona} · futbal</p>}
+  <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wider text-muted">{z.uroven}</div>
+      <h1 class="text-3xl font-extrabold tracking-tight">{z.nazov}</h1>
+      {sezona && <p class="mt-1 text-muted">Sezóna {sezona} · futbal</p>}
+    </div>
+    <ZvazPicker client:load zvazy={vsetkyZvazy} aktualne={z.id} />
   </header>
 
   {
