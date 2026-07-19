@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Statický web (ADR-0001), hosting Cloudflare Workers static assets (nástupca
+  // Cloudflare Pages — ADR-0003). Bez Worker kódu (main): "assets-only" Worker,
+  // requesty obsluhuje priamo assets vrstva (žiaden vlastný fetch handler).
+  "name": "statistika-futbalsfz-sk",
+  "compatibility_date": "2026-07-19",
+  "assets": {
+    "directory": "./dist"
+    // not_found_handling: "404-page" by vyžadovalo vlastnú dist/404.html —
+    // web ju zatiaľ negeneruje (žiadna src/pages/404.astro); default "none"
+    // vráti štandardnú Cloudflare 404. TODO: pridať 404.astro a zapnúť.
+  }
+}
