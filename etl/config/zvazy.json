@@ -61,7 +61,30 @@
   },
   "projekty": {
     "appSpaces": ["disney", "kruzkymcd", "dajmespolugol"],
-    "poznamka": "SFZ grassroots projekty — časom pribudne samostatná časť štatistík 'Projekty' (rozhodnutie Ján Letko, 12. 7. 2026). Zatiaľ mimo ETL."
+    "zoznam": [
+      {
+        "id": "dajmespolugol",
+        "appSpace": "dajmespolugol",
+        "nazov": "Dajme spolu gól",
+        "popis": "Grassroots program SFZ pre najmenších — zapájanie detí z materských a základných škôl do futbalu.",
+        "vynechatSezony": ["2018/2019"]
+      },
+      {
+        "id": "kruzkymcd",
+        "appSpace": "kruzkymcd",
+        "nazov": "Futbalové krúžky McDonald's",
+        "popis": "Futbalové krúžky na školách (projekt ukončený).",
+        "vynechatSezony": []
+      },
+      {
+        "id": "disney",
+        "appSpace": "disney",
+        "nazov": "Disney Playmakers",
+        "popis": "Program zameraný na zapájanie detí do futbalu; plná evidencia účastníkov od sezóny 2026/2027.",
+        "vynechatSezony": []
+      }
+    ],
+    "poznamka": "SFZ grassroots projekty — samostatná časť štatistík 'Projekty' (ETL etl/projekty.py z competitions, nie matches — dáta sú súpisky/deti, nie zápasy). Rozhodnutia PO 19. 7. 2026: dajmespolugol bez 2018/2019; kruzkymcd ukončený; disney plné dáta od 2026/2027."
   },
   "mimoRegistra": {
     "test / issf_club_12878 / fk-trnavka.futbalnet.sk": "Testovacie a klubové priestory — vylúčené z ETL."

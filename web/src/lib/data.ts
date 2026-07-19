@@ -265,3 +265,42 @@ export function getSumarDemografia(): Demografia | undefined {
   const p = path.join(SUMAR, 'demografia.json');
   return fs.existsSync(p) ? readJson<Demografia>(p) : undefined;
 }
+
+// ---- Projekty (grassroots) — etl/projekty.py → data/projekty ----
+
+export interface ProjektSezona {
+  deti: number;
+  skoly: number;
+  timy: number;
+  pohlavie: Record<string, number>; // M/F/N
+  vek: Record<string, Record<string, number>>; // vek → {M,F,N}
+}
+export interface Projekt {
+  projekt: string;
+  nazov: string;
+  popis: string;
+  generatedAt: string;
+  methodologyFlags: Record<string, string>;
+  sezony: Record<string, ProjektSezona>;
+}
+export interface ProjektIndexPolozka {
+  id: string;
+  nazov: string;
+  popis: string;
+  sezony: string[];
+  poslednaDeti: number;
+}
+
+const PROJEKTY = path.join(DATA, 'projekty');
+
+export function getProjektyIndex(): ProjektIndexPolozka[] {
+  const p = path.join(PROJEKTY, 'index.json');
+  return fs.existsSync(p)
+    ? readJson<{ projekty: ProjektIndexPolozka[] }>(p).projekty
+    : [];
+}
+
+export function getProjekt(id: string): Projekt | undefined {
+  const p = path.join(PROJEKTY, id + '.json');
+  return fs.existsSync(p) ? readJson<Projekt>(p) : undefined;
+}

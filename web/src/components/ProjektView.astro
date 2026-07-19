@@ -1,0 +1,138 @@
+---
+// ECharts island — jeden projekt: KPI (deti, školy, tímy) pre poslednú sezónu,
+// trend detí a škôl cez sezóny, vekové rozdelenie a pohlavie pre zvolenú sezónu
+// (pill prepínač sezóny). Dáta z data/projekty/{id}.json.
+import Ikona from './Ikona.astro';
+import { fmt } from '../lib/data';
+import type { Projekt } from '../lib/data';
+
+interface Props {
+  projekt: Projekt;
+}
+const { projekt } = Astro.props;
+const sezony = Object.keys(projekt.sezony).sort();
+const posledna = sezony[sezony.length - 1];
+---
+
+<div data-projekt data-payload={JSON.stringify(projekt.sezony)} data-sezony={JSON.stringify(sezony)}>
+  <div class="mb-4 flex flex-wrap items-center gap-1.5">
+    <span class="text-sm text-sfz-muted mr-1">Sezóna:</span>
+    <div class="sezony-pills flex flex-wrap gap-1.5"></div>
+  </div>
+
+  <div class="kpi grid grid-cols-3 gap-3 max-w-xl"></div>
+
+  <div class="mt-8 grid gap-8 lg:grid-cols-2">
+    <div>
+      <h3 class="text-lg font-bold mb-1">Vývoj zapojenia</h3>
+      <p class="text-sm text-sfz-muted mb-2">Počet detí a škôl cez sezóny.</p>
+      <div class="trend w-full" style="height: 320px;" role="img" aria-label="Trend zapojenia"></div>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold mb-1">Vek a pohlavie · <span class="sezona-label"></span></h3>
+      <p class="text-sm text-sfz-muted mb-2">Rozdelenie zapojených detí podľa veku (chlapci vľavo, dievčatá vpravo).</p>
+      <div class="vek w-full" style="height: 320px;" role="img" aria-label="Vek a pohlavie"></div>
+      <p class="vek-note text-xs text-sfz-muted mt-1"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  import * as echarts from 'echarts/core';
+  import { BarChart, LineChart } from 'echarts/charts';
+  import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
+  import { CanvasRenderer } from 'echarts/renderers';
+  echarts.use([BarChart, LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
+
+  type Sezona = {
+    deti: number; skoly: number; timy: number;
+    pohlavie: Record<string, number>;
+    vek: Record<string, Record<string, number>>;
+  };
+  const nf = new Intl.NumberFormat('sk-SK');
+  const AKTIVNY = 'rounded-full border px-3 py-0.5 text-sm border-sfz-blue bg-sfz-blue text-white font-semibold';
+  const NEAKTIVNY = 'rounded-full border px-3 py-0.5 text-sm border-black/10 text-sfz-blue hover:bg-black/5';
+  const IKONY: Record<string, string> = {
+    deti: '<circle cx="12" cy="6" r="3"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/>',
+    skoly: '<path d="M3 9l9-5 9 5-9 5-9-5Z"/><path d="M7 11v5a5 3 0 0 0 10 0v-5"/>',
+    timy: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 6M21 20a5 5 0 0 0-4-4.9"/>',
+  };
+
+  const root = document.querySelector<HTMLElement>('[data-projekt]');
+  if (root) {
+    const payload = JSON.parse(root.dataset.payload ?? '{}') as Record<string, Sezona>;
+    const sezony = (JSON.parse(root.dataset.sezony ?? '[]') as string[]);
+    let sezona = sezony[sezony.length - 1];
+
+    const pillsEl = root.querySelector<HTMLElement>('.sezony-pills')!;
+    const kpiEl = root.querySelector<HTMLElement>('.kpi')!;
+    const labelEl = root.querySelector<HTMLElement>('.sezona-label')!;
+    const vekNote = root.querySelector<HTMLElement>('.vek-note')!;
+    const trendChart = echarts.init(root.querySelector<HTMLElement>('.trend')!, undefined, { renderer: 'canvas' });
+    const vekChart = echarts.init(root.querySelector<HTMLElement>('.vek')!, undefined, { renderer: 'canvas' });
+
+    function kpiKarta(ikona: string, hodnota: number, label: string): string {
+      return `<div class="rounded-xl border border-black/10 p-4">
+        <div class="text-sfz-blue mb-1.5"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">${IKONY[ikona]}</svg></div>
+        <div class="text-2xl font-extrabold tabular-nums">${nf.format(hodnota)}</div>
+        <div class="text-sm text-sfz-muted">${label}</div>
+      </div>`;
+    }
+
+    function renderTrend() {
+      trendChart.setOption({
+        legend: { top: 0, data: ['Deti', 'Školy'] },
+        tooltip: { trigger: 'axis' },
+        grid: { left: 8, right: 8, top: 34, bottom: 24, containLabel: true },
+        xAxis: { type: 'category', data: sezony, axisLabel: { fontSize: 10, rotate: 45 } },
+        yAxis: [{ type: 'value' }, { type: 'value' }],
+        series: [
+          { name: 'Deti', type: 'bar', data: sezony.map((s) => payload[s].deti), itemStyle: { color: '#1450df' } },
+          { name: 'Školy', type: 'line', yAxisIndex: 1, smooth: true, data: sezony.map((s) => payload[s].skoly), itemStyle: { color: '#f59f00' } },
+        ],
+      }, true);
+    }
+
+    function renderVek() {
+      const s = payload[sezona];
+      const veky = Object.keys(s.vek).sort((a, b) => +a - +b);
+      const m = veky.map((v) => -(s.vek[v].M ?? 0));
+      const f = veky.map((v) => s.vek[v].F ?? 0);
+      const maxAbs = Math.max(...m.map(Math.abs), ...f, 1);
+      vekChart.setOption({
+        legend: { top: 0, data: ['Chlapci', 'Dievčatá'] },
+        tooltip: {
+          trigger: 'axis', axisPointer: { type: 'shadow' },
+          formatter: (p: any) => `Vek <b>${p[0]?.axisValue}</b><br/>` + p.map((x: any) => `${x.seriesName}: <b>${nf.format(Math.abs(x.value))}</b>`).join('<br/>'),
+        },
+        grid: { left: 8, right: 16, top: 34, bottom: 8, containLabel: true },
+        xAxis: { type: 'value', min: -maxAbs, max: maxAbs, axisLabel: { formatter: (v: number) => nf.format(Math.abs(v)), fontSize: 10 } },
+        yAxis: { type: 'category', name: 'Vek', nameTextStyle: { fontSize: 10 }, data: veky, axisLabel: { fontSize: 9 }, axisTick: { show: false } },
+        series: [
+          { name: 'Chlapci', type: 'bar', stack: 'v', data: m, itemStyle: { color: '#1450df' } },
+          { name: 'Dievčatá', type: 'bar', stack: 'v', data: f, itemStyle: { color: '#ec1c24' } },
+        ],
+      }, true);
+      const n = s.pohlavie.N ?? 0;
+      vekNote.textContent = n > 0 ? `${nf.format(n)} detí bez uvedeného pohlavia (nezobrazené).` : '';
+      if (!veky.length) vekNote.textContent = 'Pre túto sezónu zatiaľ nie sú evidované deti so súpiskou.';
+    }
+
+    function render() {
+      pillsEl.innerHTML = sezony.slice().reverse()
+        .map((x) => `<button type="button" data-s="${x}" class="${x === sezona ? AKTIVNY : NEAKTIVNY}">${x}</button>`)
+        .join('');
+      pillsEl.querySelectorAll<HTMLButtonElement>('button').forEach((b) =>
+        b.addEventListener('click', () => { sezona = b.dataset.s!; render(); }),
+      );
+      const s = payload[sezona];
+      labelEl.textContent = sezona;
+      kpiEl.innerHTML = kpiKarta('deti', s.deti, 'Zapojené deti') + kpiKarta('skoly', s.skoly, 'Školy') + kpiKarta('timy', s.timy, 'Tímy / skupiny');
+      renderTrend();
+      renderVek();
+    }
+
+    render();
+    new ResizeObserver(() => { trendChart.resize(); vekChart.resize(); }).observe(root);
+  }
+</script>
