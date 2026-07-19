@@ -1,6 +1,6 @@
 # ADR-0003: Hosting na Cloudflare Pages, ETL ako cron u Sportnet/Bart.sk
 
-**Stav:** rozhodnuté · **Dátum:** 12. 7. 2026 · **Rozhodol:** Ján Letko (PO) — uzatvára otázku O3 z projektového plánu
+**Stav:** ⚠️ časť „Web + CDN“ nahradená **ADR-0006** (19. 7. 2026) — DNS zóna `futbalsfz.sk` nie je na Cloudflare (je na WebSupport, email cez M365), web beží na Vercel. Časť „ETL cron u Sportnet/Bart.sk“ ostáva v platnosti. · **Dátum:** 12. 7. 2026 · **Rozhodol:** Ján Letko (PO) — uzatvára otázku O3 z projektového plánu
 
 ## Kontext
 
