@@ -181,6 +181,42 @@ export function getPorovnanie(urovenSlug: string, sezonaSlug: string): Porovnani
   return readJson<Porovnanie>(path.join(POROVNANIA, urovenSlug, sezonaSlug + '.json'));
 }
 
+export interface BumpData {
+  sezony: string[]; // vzostupne
+  zvazy: { id: string; nazov: string }[];
+  hodnoty: Record<string, Record<string, Record<string, number>>>; // sezona → id → metrika → hodnota
+}
+
+/** Dáta pre bump chart poradia RFZ v čase (všetky RFZ sezóny). */
+export function getBumpDataRfz(): BumpData {
+  const dir = path.join(POROVNANIA, 'rfz');
+  if (!fs.existsSync(dir)) return { sezony: [], zvazy: [], hodnoty: {} };
+  const sezony = fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith('.json'))
+    .map((f) => f.replace('.json', ''))
+    .sort();
+  const hodnoty: BumpData['hodnoty'] = {};
+  const zvazMap = new Map<string, string>();
+  const metriky = ['zapasy', 'divaci', 'hraci', 'golyNaZapas', 'divaciNaZapas'];
+  for (const slug of sezony) {
+    const por = getPorovnanie('rfz', slug);
+    const sezona = slug.replace('-', '/');
+    hodnoty[sezona] = {};
+    for (const r of por.zvazy) {
+      zvazMap.set(r.id, r.nazov);
+      hodnoty[sezona][r.id] = Object.fromEntries(
+        metriky.map((m) => [m, (r as unknown as Record<string, number>)[m] ?? 0]),
+      );
+    }
+  }
+  return {
+    sezony: sezony.map((s) => s.replace('-', '/')),
+    zvazy: [...zvazMap.entries()].map(([id, nazov]) => ({ id, nazov })),
+    hodnoty,
+  };
+}
+
 /** Sezóny dostupné pre danú úroveň (zostupne), na prepínač. */
 export function sezonyUrovne(urovenSlug: string): string[] {
   return getPorovnaniaZoznam()

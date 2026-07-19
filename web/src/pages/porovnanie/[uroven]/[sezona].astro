@@ -1,7 +1,8 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import PorovnanieView from '../../../components/PorovnanieView.astro';
-import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne } from '../../../lib/data';
+import BumpChart from '../../../components/BumpChart.tsx';
+import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne, getBumpDataRfz } from '../../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -10,6 +11,7 @@ export const getStaticPaths: GetStaticPaths = () =>
 const { uroven, sezona: sezonaSlug } = Astro.params;
 const porovnanie = getPorovnanie(uroven!, sezonaSlug!);
 const sezony = sezonyUrovne(uroven!);
+const bump = getBumpDataRfz();
 
 const urovne = [
   { slug: 'rfz', label: 'RFZ' },
@@ -68,6 +70,20 @@ function najnovsiaSlug(slug: string): string {
   </div>
 
   <PorovnanieView porovnanie={porovnanie} />
+
+  {
+    bump.sezony.length > 1 && (
+      <section class="mt-12">
+        <h2 class="text-lg font-bold mb-1">Vývoj poradia RFZ v čase</h2>
+        <p class="text-sm text-muted mb-3">
+          Poradie 4 regionálnych zväzov naprieč {bump.sezony.length} sezónami podľa zvolenej metriky (1. = najlepší).
+        </p>
+        <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+          <BumpChart client:visible bump={bump} />
+        </div>
+      </section>
+    )
+  }
 
   <p class="mt-8 text-xs text-sfz-muted">
     Generované {porovnanie.generatedAt} · len uzavreté zápasy · historicky môžu byť „družstvá" nižšie
