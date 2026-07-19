@@ -342,6 +342,76 @@ export function getProjekt(id: string): Projekt | undefined {
   return fs.existsSync(p) ? readJson<Projekt>(p) : undefined;
 }
 
+// ---- Kluby (COWORK_TASK_KLUBY) ----
+
+export interface KlubIndexPolozka {
+  id: string;
+  nazov: string;
+  zvaz: string | null;
+  zvazNazov: string;
+  uroven: string;
+  sezony: string[];
+  zapasy: number;
+  hraci: number;
+}
+export interface Klub {
+  klub: string;
+  orgId: string;
+  nazov: string;
+  sezona: string;
+  sportSector: string;
+  zvaz: string | null;
+  uroven: string;
+  generatedAt: string;
+  methodologyFlags: Record<string, unknown>;
+  kpi: Kpi;
+  kategorie: Record<string, Kategoria>;
+  osoby: Record<string, OsobaSkupina>;
+}
+
+const KLUBY = path.join(DATA, 'kluby');
+const KLUB = path.join(DATA, 'klub');
+
+export function getKluby(): KlubIndexPolozka[] {
+  const p = path.join(KLUBY, 'index.json');
+  return fs.existsSync(p) ? readJson<{ kluby: KlubIndexPolozka[] }>(p).kluby : [];
+}
+
+/** Sezóny dostupné pre klub (podľa súborov RRRR-RRRR.json). */
+export function getKlubSezony(id: string): string[] {
+  const d = path.join(KLUB, id);
+  if (!fs.existsSync(d)) return [];
+  return fs
+    .readdirSync(d)
+    .filter((f) => /^\d{4}-\d{4}\.json$/.test(f))
+    .map((f) => f.replace('.json', '').replace('-', '/'))
+    .sort();
+}
+
+export function getKlub(id: string, sezona: string): Klub | undefined {
+  const p = path.join(KLUB, id, sezona.replace('/', '-') + '.json');
+  return fs.existsSync(p) ? readJson<Klub>(p) : undefined;
+}
+
+/** Zoznam (klub, sezóna) pre getStaticPaths. */
+export function getKlubyPaths(): { id: string; sezonaSlug: string }[] {
+  const res: { id: string; sezonaSlug: string }[] = [];
+  if (!fs.existsSync(KLUB)) return res;
+  for (const id of fs.readdirSync(KLUB)) {
+    const d = path.join(KLUB, id);
+    if (!fs.statSync(d).isDirectory()) continue;
+    for (const f of fs.readdirSync(d)) {
+      if (/^\d{4}-\d{4}\.json$/.test(f)) res.push({ id, sezonaSlug: f.replace('.json', '') });
+    }
+  }
+  return res;
+}
+
+/** Kluby patriace pod daný zväz (na prepojenie zo zväzu). */
+export function klubyZvazu(zvazId: string): KlubIndexPolozka[] {
+  return getKluby().filter((k) => k.zvaz === zvazId);
+}
+
 // ---- Mapové dáta pre choropleth (redizajn) ----
 
 export interface MapRegion {

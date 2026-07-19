@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import KlubyView from '../../components/KlubyView.tsx';
+import { getKluby } from '../../lib/data';
+
+const kluby = getKluby();
+const sezona = kluby[0]?.sezony?.[0];
+---
+
+<Base title="Kluby">
+  <header class="mb-6">
+    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Kluby</div>
+    <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Kluby slovenského futbalu</h1>
+    <p class="mt-2 max-w-2xl text-muted">
+      {kluby.length} klubov s aspoň jedným odohraným zápasom{sezona ? ` v sezóne ${sezona}` : ''}.
+      Hľadaj klub, filtruj podľa úrovne alebo zoraď tabuľku; klik otvorí profil klubu.
+    </p>
+  </header>
+
+  {
+    kluby.length ? (
+      <KlubyView client:load kluby={kluby} />
+    ) : (
+      <p class="text-muted">Klubové dáta zatiaľ nie sú dostupné.</p>
+    )
+  }
+</Base>
