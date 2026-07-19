@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
-import DemografiaLines from '../../components/DemografiaLines.tsx';
-import VekovaPyramida from '../../components/VekovaPyramida.astro';
+import DemografiaSekcia from '../../components/DemografiaSekcia.tsx';
+import AgePyramid from '../../components/AgePyramid.tsx';
 import ZvazPicker from '../../components/ZvazPicker.tsx';
 import { getSumarDemografia, getZvazy } from '../../lib/data';
 
@@ -9,31 +9,31 @@ const srDemo = getSumarDemografia();
 const vsetkyZvazy = getZvazy().map((zz) => ({ id: zz.id, nazov: zz.nazov, uroven: zz.uroven, rfz: zz.rfz }));
 ---
 
-<Base title="Demografia — celé Slovensko">
+<Base title="Demografia">
   <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
     <div>
-      <div class="text-xs font-semibold uppercase tracking-wider text-muted">Demografia</div>
-      <h1 class="text-3xl font-extrabold tracking-tight">Demografia — celé Slovensko</h1>
-      <p class="mt-1 text-muted">Súčet všetkých zväzov. Pre jednotlivý zväz vyberte vpravo.</p>
+      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Demografia osôb</div>
+      <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Ako rastie futbalová komunita</h1>
+      <p class="mt-2 max-w-2xl text-muted">
+        Vývoj počtu registrovaných osôb v slovenskom futbale — porovnaj vekové kategórie a úrovne
+        ako samostatné čiary. Súčet všetkých zväzov.
+      </p>
     </div>
-    <ZvazPicker client:load zvazy={vsetkyZvazy} aktualne="" hrefTemplate="/demografia/{id}" />
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wider text-muted mb-1 text-right">Vybrať zväz</div>
+      <ZvazPicker client:load zvazy={vsetkyZvazy} aktualne="" hrefTemplate="/demografia/{id}" />
+    </div>
   </header>
 
   {
     srDemo ? (
       <>
-        <section class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
-          <h2 class="text-lg font-bold mb-1">10-ročný trend podľa vekových úrovní</h2>
-          <p class="text-sm text-muted mb-3">
-            Jedna čiara na každú vybranú kategóriu alebo vekovú úroveň. Prepínač roly a výber čiar nižšie.
-          </p>
-          <DemografiaLines client:load demo={srDemo} />
-        </section>
-
-        <section class="mt-8 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
-          <h2 class="text-lg font-bold mb-1">Veková pyramída</h2>
-          <p class="text-sm text-muted mb-3">Vek × pohlavie podľa roly a sezóny.</p>
-          <VekovaPyramida demo={srDemo} />
+        <DemografiaSekcia client:load demo={srDemo} />
+        <section class="mt-4 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+          <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Veková štruktúra</div>
+          <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Veková pyramída</h2>
+          <p class="text-sm text-muted mb-3">Registrované osoby podľa veku a pohlavia. Prepni rolu.</p>
+          <AgePyramid client:visible demo={srDemo} />
         </section>
       </>
     ) : (

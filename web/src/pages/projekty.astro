@@ -1,40 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
-import ProjektView from '../components/ProjektView.astro';
+import ProjektyView from '../components/ProjektyView.tsx';
 import { getProjektyIndex, getProjekt } from '../lib/data';
 
 const index = getProjektyIndex();
-const projekty = index.map((p) => ({ meta: p, data: getProjekt(p.id)! })).filter((p) => p.data);
+const projekty = index.map((p) => getProjekt(p.id)!).filter(Boolean);
 ---
 
-<Base title="Projekty — grassroots">
+<Base title="Projekty">
   <header class="mb-6">
-    <h1 class="text-3xl font-extrabold tracking-tight">Grassroots projekty SFZ</h1>
-    <p class="mt-1 max-w-2xl text-sfz-muted">
-      Programy na zapájanie detí do futbalu. Na rozdiel od súťaží sa nesledujú zápasy, ale počet
-      zapojených detí a škôl.
+    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Grassroots</div>
+    <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Projekty pre najmenších</h1>
+    <p class="mt-2 max-w-2xl text-muted">
+      Školské a náborové programy SFZ, ktoré privádzajú deti k futbalu — mimo súťažných zápasov.
     </p>
   </header>
 
   {
-    projekty.length === 0 ? (
-      <p class="text-sfz-muted">Zatiaľ nie sú dostupné žiadne dáta projektov.</p>
+    projekty.length ? (
+      <ProjektyView client:load projekty={projekty} />
     ) : (
-      projekty.map((p) => (
-        <section class="mb-14">
-          <div class="flex items-baseline gap-3 border-b border-black/10 pb-2 mb-4">
-            <h2 class="text-2xl font-extrabold tracking-tight">{p.meta.nazov}</h2>
-            <span class="text-sm text-sfz-muted">{p.meta.sezony.length} sezón</span>
-          </div>
-          <p class="text-sm text-sfz-muted mb-4 max-w-2xl">{p.meta.popis}</p>
-          <ProjektView projekt={p.data} />
-        </section>
-      ))
+      <p class="text-muted">Zatiaľ nie sú dostupné žiadne dáta projektov.</p>
     )
   }
-
-  <p class="mt-8 text-xs text-sfz-muted">
-    Zdroj: súpisky družstiev v projektových súťažiach (platforma sportnet.online). Deti = počet
-    detí v súpiskách; školy = unikátne zapojené školy. Bez zápasov.
-  </p>
 </Base>
