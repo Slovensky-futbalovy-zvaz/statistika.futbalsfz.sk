@@ -24,11 +24,26 @@ const chartH = Math.max(220, rows.length * 24 + 70);
 ---
 
 <div data-porovnanie data-rows={JSON.stringify(rows)}>
-  <div class="flex items-center gap-2 mb-3">
-    <label class="text-sm text-sfz-muted" for="metrika">Zoradiť podľa:</label>
-    <select id="metrika" class="rounded-md border border-black/15 px-2 py-1 text-sm bg-white">
-      {metriky.map((m) => <option value={m.key}>{m.label}</option>)}
-    </select>
+  <div class="flex flex-wrap items-center gap-1.5 mb-3">
+    <span class="text-sm text-muted mr-1">Zoradiť podľa:</span>
+    <div class="metrika-pills flex flex-wrap gap-1.5" role="group" aria-label="Zoradiť podľa metriky">
+      {
+        metriky.map((m, i) => (
+          <button
+            type="button"
+            data-metrika={m.key}
+            class:list={[
+              'rounded-full border px-3 py-0.5 text-sm',
+              i === 0
+                ? 'border-sfz-blue bg-sfz-blue text-white font-semibold'
+                : 'border-black/10 text-sfz-blue hover:bg-black/5',
+            ]}
+          >
+            {m.label}
+          </button>
+        ))
+      }
+    </div>
   </div>
 
   <div class="chart w-full" style={`height:${chartH}px`} role="img" aria-label="Porovnanie zväzov"></div>
@@ -132,8 +147,11 @@ const chartH = Math.max(220, rows.length * 24 + 70);
   if (root) {
     const rows = JSON.parse(root.dataset.rows ?? '[]') as Row[];
     const chartEl = root.querySelector<HTMLElement>('.chart')!;
-    const sel = root.querySelector<HTMLSelectElement>('#metrika')!;
+    const pills = [...root.querySelectorAll<HTMLButtonElement>('.metrika-pills button')];
+    let metrika = pills[0]?.dataset.metrika ?? 'zapasy';
     const chart = echarts.init(chartEl, undefined, { renderer: 'canvas' });
+    const AKT = ['border-sfz-blue', 'bg-sfz-blue', 'text-white', 'font-semibold'];
+    const NEAKT = ['border-black/10', 'text-sfz-blue'];
 
     function render(metric: string) {
       // vzostupne → najväčší navrchu (ECharts kreslí kategórie zdola)
@@ -164,8 +182,18 @@ const chartH = Math.max(220, rows.length * 24 + 70);
       );
     }
 
-    sel.addEventListener('change', () => render(sel.value));
-    render(sel.value);
+    pills.forEach((b) =>
+      b.addEventListener('click', () => {
+        metrika = b.dataset.metrika!;
+        pills.forEach((x) => {
+          const on = x === b;
+          AKT.forEach((c) => x.classList.toggle(c, on));
+          NEAKT.forEach((c) => x.classList.toggle(c, !on));
+        });
+        render(metrika);
+      }),
+    );
+    render(metrika);
     new ResizeObserver(() => chart.resize()).observe(chartEl);
 
     // ---- Priame porovnanie 2–5 zväzov (radar) ----
