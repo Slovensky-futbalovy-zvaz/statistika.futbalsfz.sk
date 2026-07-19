@@ -1,0 +1,153 @@
+---
+// ECharts island — veková pyramída (rok narodenia × pohlavie) z data/demografia.
+// Prepínače roly a sezóny sú klientske (dáta všetkých sezón × rolí sú v payloade;
+// gzip ich zrazí na zlomok — max ~60 KB nekomprimované pri SFZ).
+import { ROLY_PORADIE, ROLA_LABEL } from '../lib/data';
+import type { Demografia } from '../lib/data';
+
+interface Props {
+  demo: Demografia;
+}
+const { demo } = Astro.props;
+
+// payload: sezóna → rola → { roky, bezUdajov } (len roly s aspoň 1 osobou)
+const sezony = Object.keys(demo.sezony).sort();
+const payload: Record<string, Record<string, { roky: Record<string, Record<string, number>>; bezUdajov: number }>> = {};
+for (const s of sezony) {
+  payload[s] = {};
+  for (const rola of ROLY_PORADIE) {
+    const r = demo.sezony[s]?.[rola];
+    if (r && r.osoby > 0) payload[s][rola] = { roky: r.roky, bezUdajov: r.bezUdajov };
+  }
+}
+const rolyLabels: Record<string, string> = ROLA_LABEL;
+---
+
+<div data-pyramida data-payload={JSON.stringify(payload)} data-roly={JSON.stringify(rolyLabels)}>
+  <div class="flex flex-wrap items-center gap-3 mb-3">
+    <label class="text-sm text-sfz-muted">
+      Rola:
+      <select data-rola class="ml-1 rounded-md border border-black/15 px-2 py-1 text-sm bg-white"></select>
+    </label>
+    <label class="text-sm text-sfz-muted">
+      Sezóna:
+      <select data-sezona class="ml-1 rounded-md border border-black/15 px-2 py-1 text-sm bg-white"></select>
+    </label>
+  </div>
+  <div
+    class="pyramida-chart w-full"
+    style="height: 520px;"
+    role="img"
+    aria-label="Veková pyramída — rok narodenia × pohlavie"
+  >
+  </div>
+  <p class="pyramida-note text-xs text-sfz-muted mt-2"></p>
+</div>
+
+<script>
+  import * as echarts from 'echarts/core';
+  import { BarChart } from 'echarts/charts';
+  import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
+  import { CanvasRenderer } from 'echarts/renderers';
+  echarts.use([BarChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
+
+  type Roky = Record<string, Record<string, number>>;
+  type Payload = Record<string, Record<string, { roky: Roky; bezUdajov: number }>>;
+  const nf = new Intl.NumberFormat('sk-SK');
+
+  const root = document.querySelector<HTMLElement>('[data-pyramida]');
+  if (root) {
+    const payload = JSON.parse(root.dataset.payload ?? '{}') as Payload;
+    const rolaLabel = JSON.parse(root.dataset.roly ?? '{}') as Record<string, string>;
+    const sezony = Object.keys(payload).sort().reverse(); // najnovšia prvá
+    const selRola = root.querySelector<HTMLSelectElement>('[data-rola]')!;
+    const selSezona = root.querySelector<HTMLSelectElement>('[data-sezona]')!;
+    const noteEl = root.querySelector<HTMLElement>('.pyramida-note')!;
+    const chartEl = root.querySelector<HTMLElement>('.pyramida-chart')!;
+    const chart = echarts.init(chartEl, undefined, { renderer: 'canvas' });
+
+    function naplnSelecty() {
+      selSezona.innerHTML = sezony.map((s) => `<option value="${s}">${s}</option>`).join('');
+      naplnRoly();
+    }
+    function naplnRoly() {
+      const sezona = selSezona.value || sezony[0];
+      const dostupne = Object.keys(payload[sezona] ?? {});
+      const aktualna = selRola.value;
+      selRola.innerHTML = dostupne
+        .map((r) => `<option value="${r}">${rolaLabel[r] ?? r}</option>`)
+        .join('');
+      if (dostupne.includes(aktualna)) selRola.value = aktualna;
+    }
+
+    function render() {
+      const sezona = selSezona.value || sezony[0];
+      const rola = selRola.value;
+      const data = payload[sezona]?.[rola];
+      if (!data) return;
+
+      const roky = Object.keys(data.roky).sort(); // najstarší rok dole? — vzostupne: najstarší prvý
+      const m = roky.map((r) => -(data.roky[r].M ?? 0)); // muži vľavo (záporné)
+      const f = roky.map((r) => data.roky[r].F ?? 0);
+      const n = roky.reduce((acc, r) => acc + (data.roky[r].N ?? 0), 0);
+      const maxAbs = Math.max(...m.map(Math.abs), ...f, 1);
+
+      chart.setOption(
+        {
+          legend: { top: 0, data: ['Muži', 'Ženy'] },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            formatter: (params: any) => {
+              const rok = params[0]?.axisValue ?? '';
+              const riadky = params.map(
+                (p: any) => `${p.seriesName}: <b>${nf.format(Math.abs(p.value))}</b>`,
+              );
+              return `Rok narodenia <b>${rok}</b><br/>${riadky.join('<br/>')}`;
+            },
+          },
+          grid: { left: 8, right: 24, top: 28, bottom: 10, containLabel: true },
+          xAxis: {
+            type: 'value',
+            min: -maxAbs,
+            max: maxAbs,
+            axisLabel: { formatter: (v: number) => nf.format(Math.abs(v)), fontSize: 10 },
+          },
+          yAxis: {
+            type: 'category',
+            data: roky,
+            axisLabel: { fontSize: 9 },
+            axisTick: { show: false },
+          },
+          series: [
+            {
+              name: 'Muži',
+              type: 'bar',
+              stack: 'p',
+              data: m,
+              itemStyle: { color: '#1450df' },
+              barCategoryGap: '20%',
+            },
+            { name: 'Ženy', type: 'bar', stack: 'p', data: f, itemStyle: { color: '#ec1c24' } },
+          ],
+        },
+        true,
+      );
+
+      const poznamky = [`Sezóna ${sezona} · ${rolaLabel[rola] ?? rola}.`];
+      if (n > 0) poznamky.push(`${nf.format(n)} osôb bez uvedeného pohlavia (nezobrazené).`);
+      if (data.bezUdajov > 0)
+        poznamky.push(`${nf.format(data.bezUdajov)} osôb bez dátumu narodenia (mimo pyramídy).`);
+      noteEl.textContent = poznamky.join(' ');
+    }
+
+    naplnSelecty();
+    selSezona.addEventListener('change', () => {
+      naplnRoly();
+      render();
+    });
+    selRola.addEventListener('change', render);
+    render();
+    new ResizeObserver(() => chart.resize()).observe(chartEl);
+  }
+</script>

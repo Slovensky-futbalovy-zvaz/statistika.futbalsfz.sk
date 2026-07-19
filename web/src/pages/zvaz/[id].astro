@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import DemografiaTrend from '../../components/DemografiaTrend.astro';
+import VekovaPyramida from '../../components/VekovaPyramida.astro';
 import {
   getZvazy,
   getZvaz,
@@ -132,6 +133,19 @@ const futsalSezony = z.odvetvia?.futsal ?? [];
           Počet osôb podľa roly za {demoSezony.length} sezón (hráči, tréneri, rozhodcovia, delegáti, personál).
         </p>
         <DemografiaTrend sezony={demoSezony} serie={demoSerie} />
+      </section>
+    )
+  }
+
+  {
+    demo && demoSezony.length > 0 && (
+      <section class="mt-10">
+        <h2 class="text-lg font-bold mb-1">Veková pyramída</h2>
+        <p class="text-sm text-sfz-muted mb-3">
+          Rok narodenia × pohlavie podľa roly a sezóny. Muži vľavo, ženy vpravo; osoby bez dátumu
+          narodenia sú mimo pyramídy (uvedené v poznámke).
+        </p>
+        <VekovaPyramida demo={demo} />
       </section>
     )
   }
