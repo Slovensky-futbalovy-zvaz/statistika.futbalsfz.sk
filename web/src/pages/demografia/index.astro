@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import DemografiaLines from '../../components/DemografiaLines.tsx';
+import VekovaPyramida from '../../components/VekovaPyramida.astro';
+import ZvazPicker from '../../components/ZvazPicker.tsx';
+import { getSumarDemografia, getZvazy } from '../../lib/data';
+
+const srDemo = getSumarDemografia();
+const vsetkyZvazy = getZvazy().map((zz) => ({ id: zz.id, nazov: zz.nazov, uroven: zz.uroven, rfz: zz.rfz }));
+---
+
+<Base title="Demografia — celé Slovensko">
+  <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <div class="text-xs font-semibold uppercase tracking-wider text-muted">Demografia</div>
+      <h1 class="text-3xl font-extrabold tracking-tight">Demografia — celé Slovensko</h1>
+      <p class="mt-1 text-muted">Súčet všetkých zväzov. Pre jednotlivý zväz vyberte vpravo.</p>
+    </div>
+    <ZvazPicker client:load zvazy={vsetkyZvazy} aktualne="" hrefTemplate="/demografia/{id}" />
+  </header>
+
+  {
+    srDemo ? (
+      <>
+        <section class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+          <h2 class="text-lg font-bold mb-1">10-ročný trend podľa vekových úrovní</h2>
+          <p class="text-sm text-muted mb-3">
+            Jedna čiara na každú vybranú kategóriu alebo vekovú úroveň. Prepínač roly a výber čiar nižšie.
+          </p>
+          <DemografiaLines client:load demo={srDemo} />
+        </section>
+
+        <section class="mt-8 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+          <h2 class="text-lg font-bold mb-1">Veková pyramída</h2>
+          <p class="text-sm text-muted mb-3">Vek × pohlavie podľa roly a sezóny.</p>
+          <VekovaPyramida demo={srDemo} />
+        </section>
+      </>
+    ) : (
+      <p class="text-muted">Demografické dáta zatiaľ nie sú dostupné.</p>
+    )
+  }
+</Base>
