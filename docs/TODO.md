@@ -2,7 +2,24 @@
 
 Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v každej session; rozhodnutia PO sa zapisujú sem a do príslušných dokumentov (metodika, ADR, report kvality).
 
-**Stav k:** 19. 7. 2026 (session: dokončenie webu — futsal UI, radar, vekové pyramídy)
+**Stav k:** 19. 7. 2026 (session: vizuálny redizajn podľa design handoff — React islands)
+
+## Redizajn 2026 (design_handoff_statistika_redesign) — 19. 7. 2026
+
+Kompletný vizuálny redizajn portálu podľa handoffu. **React islands** (ADR-0007), brand tokeny z `theme.css`, Archivo fonty, kontajner 1240px. Fázy:
+
+- [x] **F0** React setup (@astrojs/react), tokeny, fonty, `lib/format.ts` + `lib/palette.ts`, logo, ADR-0007.
+- [x] **F1** Header — kruhové logo SFZ, BETA badge, nav (5 sekcií), custom SeasonPicker, mobilný hamburger.
+- [x] **F2** Prehľad — hero gradient, KPI band 7 kariet s YoY+ikony, choropleth mapa (React: SFZ/RFZ/ObFZ + metriky + hover + rebríček), small multiples osôb (sparkline), 2 sunbursty (šport/gender filter; osoby 4-prstencové per úroveň), SR pyramída.
+- [x] **F3** Profil zväzu — vyhľadávateľný ZvazPicker (ObFZ pod RFZ, bez diakritiky), drill-down vekových kategórií.
+- [x] **F4** Porovnania — bump chart poradia RFZ v čase (+ existujúca sort tabuľka a radar).
+- [x] **F5** Demografia — nová sekcia `/demografia` + `/demografia/[id]` (multi-line trend po kategóriách/úrovniach, výber čiar, pyramída).
+- [x] **F6** Projekty — donut pohlavia, zladenie na nové tokeny.
+- [x] **F7** ETL sunburstOsoby 4-prstencový (odvetvie→úroveň→rola→vek; SFZ vrátane ULK) — nahrádza placeholder.
+
+Build 707 stránok. **Poznámky/zvyšky:** stará `/prehlad` stránka je duplicitná (index = plný Prehľad) — zvážiť zmazanie so súhlasom PO; SeasonPicker na Prehľade zatiaľ nemení sezónu reaktívne (Prehľad je server-rendered pre poslednú kompletnú sezónu) — plná reaktivita/permalink je ďalší krok; staré komponenty MapaSR.astro, KategorieChart.astro, SumarSR.astro ostali v repe (nahradené, neodkázané) — zmazať so súhlasom.
+
+## Stav k 19. 7. 2026 (predošlá session)
 
 ## Rozhodnutia PO z 13. 7. 2026 (plný dátový beh)
 

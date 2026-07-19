@@ -20,7 +20,13 @@ const posledna = sezony[sezony.length - 1];
     <div class="sezony-pills flex flex-wrap gap-1.5"></div>
   </div>
 
-  <div class="kpi grid grid-cols-3 gap-3 max-w-xl"></div>
+  <div class="flex flex-wrap items-start gap-4">
+    <div class="kpi grid grid-cols-3 gap-3 flex-1 min-w-[280px]"></div>
+    <div class="border border-line rounded-2xl p-3" style="box-shadow:var(--shadow-card);">
+      <div class="text-[11px] font-bold uppercase tracking-wider text-muted mb-1 text-center">Pohlavie detí</div>
+      <div class="donut" style="width: 150px; height: 130px;" role="img" aria-label="Pohlavie detí"></div>
+    </div>
+  </div>
 
   <div class="mt-8 grid gap-8 lg:grid-cols-2">
     <div>
@@ -39,10 +45,10 @@ const posledna = sezony[sezony.length - 1];
 
 <script>
   import * as echarts from 'echarts/core';
-  import { BarChart, LineChart } from 'echarts/charts';
+  import { BarChart, LineChart, PieChart } from 'echarts/charts';
   import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
   import { CanvasRenderer } from 'echarts/renderers';
-  echarts.use([BarChart, LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
+  echarts.use([BarChart, LineChart, PieChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
   type Sezona = {
     deti: number; skoly: number; timy: number;
@@ -70,6 +76,19 @@ const posledna = sezony[sezony.length - 1];
     const vekNote = root.querySelector<HTMLElement>('.vek-note')!;
     const trendChart = echarts.init(root.querySelector<HTMLElement>('.trend')!, undefined, { renderer: 'canvas' });
     const vekChart = echarts.init(root.querySelector<HTMLElement>('.vek')!, undefined, { renderer: 'canvas' });
+    const donutChart = echarts.init(root.querySelector<HTMLElement>('.donut')!, undefined, { renderer: 'canvas' });
+
+    function renderDonut() {
+      const p = payload[sezona].pohlavie;
+      const data = [
+        { name: 'Chlapci', value: p.M ?? 0, itemStyle: { color: '#1450df' } },
+        { name: 'Dievčatá', value: p.F ?? 0, itemStyle: { color: '#ec1c24' } },
+      ].filter((d) => d.value > 0);
+      donutChart.setOption({
+        tooltip: { trigger: 'item', formatter: (x: any) => `${x.name}: <b>${nf.format(x.value)}</b> (${x.percent}%)` },
+        series: [{ type: 'pie', radius: ['52%', '80%'], center: ['50%', '50%'], label: { show: false }, data }],
+      }, true);
+    }
 
     function kpiKarta(ikona: string, hodnota: number, label: string): string {
       return `<div class="rounded-xl border border-black/10 p-4">
@@ -130,9 +149,10 @@ const posledna = sezony[sezony.length - 1];
       kpiEl.innerHTML = kpiKarta('deti', s.deti, 'Zapojené deti') + kpiKarta('skoly', s.skoly, 'Školy') + kpiKarta('timy', s.timy, 'Tímy / skupiny');
       renderTrend();
       renderVek();
+      renderDonut();
     }
 
     render();
-    new ResizeObserver(() => { trendChart.resize(); vekChart.resize(); }).observe(root);
+    new ResizeObserver(() => { trendChart.resize(); vekChart.resize(); donutChart.resize(); }).observe(root);
   }
 </script>
