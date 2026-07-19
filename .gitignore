@@ -18,6 +18,9 @@ __pycache__/
 .venv/
 venv/
 
+# Dočasné spúšťače behov (host)
+etl/_rebeh_*.sh
+
 # ETL — lokálne behy a citlivé konfigurácie
 etl/.env
 etl/output/
