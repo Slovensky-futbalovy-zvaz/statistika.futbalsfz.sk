@@ -2,8 +2,8 @@
 // ECharts island — veková pyramída (vek × pohlavie) z data/demografia.
 // Dáta sú uložené po rokoch narodenia; na osi sa zobrazuje VEK vypočítaný
 // z koncového roka zvolenej sezóny (rozhodnutie PO 19. 7. 2026).
-// Prepínače roly a sezóny sú klientske (dáta všetkých sezón × rolí sú v payloade;
-// gzip ich zrazí na zlomok).
+// Prepínače roly a sezóny sú pill tagy v dvoch riadkoch (rozhodnutie PO
+// 19. 7. 2026); dáta všetkých sezón × rolí sú v payloade (gzip ich zrazí).
 import { ROLY_PORADIE, ROLA_LABEL } from '../lib/data';
 import type { Demografia } from '../lib/data';
 
@@ -26,15 +26,13 @@ const rolyLabels: Record<string, string> = ROLA_LABEL;
 ---
 
 <div data-pyramida data-payload={JSON.stringify(payload)} data-roly={JSON.stringify(rolyLabels)}>
-  <div class="flex flex-wrap items-center gap-3 mb-3">
-    <label class="text-sm text-sfz-muted">
-      Rola:
-      <select data-rola class="ml-1 rounded-md border border-black/15 px-2 py-1 text-sm bg-white"></select>
-    </label>
-    <label class="text-sm text-sfz-muted">
-      Sezóna:
-      <select data-sezona class="ml-1 rounded-md border border-black/15 px-2 py-1 text-sm bg-white"></select>
-    </label>
+  <div class="mb-1.5 flex flex-wrap items-center gap-1.5">
+    <span class="text-sm text-sfz-muted mr-1">Rola:</span>
+    <div class="roly-pills flex flex-wrap gap-1.5" role="group" aria-label="Výber roly"></div>
+  </div>
+  <div class="mb-3 flex flex-wrap items-center gap-1.5">
+    <span class="text-sm text-sfz-muted mr-1">Sezóna:</span>
+    <div class="sezony-pills flex flex-wrap gap-1.5" role="group" aria-label="Výber sezóny"></div>
   </div>
   <div
     class="pyramida-chart w-full"
@@ -57,34 +55,66 @@ const rolyLabels: Record<string, string> = ROLA_LABEL;
   type Payload = Record<string, Record<string, { roky: Roky; bezUdajov: number }>>;
   const nf = new Intl.NumberFormat('sk-SK');
 
+  const AKTIVNY = 'rounded-full border px-3 py-0.5 text-sm border-sfz-blue bg-sfz-blue text-white font-semibold';
+  const NEAKTIVNY = 'rounded-full border px-3 py-0.5 text-sm border-black/10 text-sfz-blue hover:bg-black/5';
+
   const root = document.querySelector<HTMLElement>('[data-pyramida]');
   if (root) {
     const payload = JSON.parse(root.dataset.payload ?? '{}') as Payload;
     const rolaLabel = JSON.parse(root.dataset.roly ?? '{}') as Record<string, string>;
     const sezony = Object.keys(payload).sort().reverse(); // najnovšia prvá
-    const selRola = root.querySelector<HTMLSelectElement>('[data-rola]')!;
-    const selSezona = root.querySelector<HTMLSelectElement>('[data-sezona]')!;
+    const rolyPoradie = Object.keys(rolaLabel);
+
+    const rolyEl = root.querySelector<HTMLElement>('.roly-pills')!;
+    const sezonyEl = root.querySelector<HTMLElement>('.sezony-pills')!;
     const noteEl = root.querySelector<HTMLElement>('.pyramida-note')!;
     const chartEl = root.querySelector<HTMLElement>('.pyramida-chart')!;
     const chart = echarts.init(chartEl, undefined, { renderer: 'canvas' });
 
-    function naplnSelecty() {
-      selSezona.innerHTML = sezony.map((s) => `<option value="${s}">${s}</option>`).join('');
-      naplnRoly();
+    let sezona = sezony[0];
+    let rola = '';
+
+    /** Roly dostupné vo zvolenej sezóne (s aspoň 1 osobou), v kanonickom poradí. */
+    function dostupneRoly(): string[] {
+      const d = Object.keys(payload[sezona] ?? {});
+      return rolyPoradie.filter((r) => d.includes(r));
     }
-    function naplnRoly() {
-      const sezona = selSezona.value || sezony[0];
-      const dostupne = Object.keys(payload[sezona] ?? {});
-      const aktualna = selRola.value;
-      selRola.innerHTML = dostupne
-        .map((r) => `<option value="${r}">${rolaLabel[r] ?? r}</option>`)
+
+    function pills(
+      el: HTMLElement,
+      polozky: { k: string; label: string }[],
+      aktivna: string,
+      onPick: (k: string) => void,
+    ) {
+      el.innerHTML = polozky
+        .map(
+          (p) =>
+            `<button type="button" data-k="${p.k}" aria-pressed="${p.k === aktivna}" class="${
+              p.k === aktivna ? AKTIVNY : NEAKTIVNY
+            }">${p.label}</button>`,
+        )
         .join('');
-      if (dostupne.includes(aktualna)) selRola.value = aktualna;
+      el.querySelectorAll<HTMLButtonElement>('button').forEach((b) =>
+        b.addEventListener('click', () => onPick(b.dataset.k!)),
+      );
+    }
+
+    function renderOvladanie() {
+      const roly = dostupneRoly();
+      if (!roly.includes(rola)) rola = roly[0] ?? '';
+      pills(rolyEl, roly.map((r) => ({ k: r, label: rolaLabel[r] ?? r })), rola, (k) => {
+        rola = k;
+        render();
+      });
+      pills(sezonyEl, sezony.map((s) => ({ k: s, label: s })), sezona, (k) => {
+        sezona = k;
+        renderOvladanie();
+        render();
+      });
     }
 
     function render() {
-      const sezona = selSezona.value || sezony[0];
-      const rola = selRola.value;
+      renderOvladanie();
       const data = payload[sezona]?.[rola];
       if (!data) return;
 
@@ -149,12 +179,6 @@ const rolyLabels: Record<string, string> = ROLA_LABEL;
       noteEl.textContent = poznamky.join(' ');
     }
 
-    naplnSelecty();
-    selSezona.addEventListener('change', () => {
-      naplnRoly();
-      render();
-    });
-    selRola.addEventListener('change', render);
     render();
     new ResizeObserver(() => chart.resize()).observe(chartEl);
   }
