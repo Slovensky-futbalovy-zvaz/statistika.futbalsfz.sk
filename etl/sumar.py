@@ -145,16 +145,16 @@ def sunburst_sutaze(zvazy_cfg: dict, out_dir: Path, sezona: str) -> dict:
 
 
 def sunburst_osoby(zvazy_cfg: dict, out_dir: Path, sezona: str) -> dict:
-    """Strom SR → odvetvie (Futbal/Futsal) → rola → veková úroveň.
+    """Strom SR → odvetvie (Futbal/Futsal) → úroveň (SFZ/RFZ/ObFZ) → rola → veková úroveň.
 
-    Hodnota listu = súčet osôb v kategórii cez všetky zväzy odvetvia
-    (osoby.{rola}.poKategorii). Osoby bez priradenej kategórie (historické
-    sezóny) sú v liste „Bez kategórie“, aby súčet sedel na súčet unikátnych.
-    POZOR: pohlavie × rola × kategória v ETL výstupoch neexistuje — pill filter
-    pohlavia sa na tento strom neaplikuje (viď TODO).
+    4-prstencový agregát (rozhodnutie PO 19. 7. 2026 — nahrádza placeholder z prototypu).
+    Hodnota listu = súčet osôb v kategórii cez všetky zväzy danej úrovne
+    (osoby.{rola}.poKategorii). Úroveň SFZ = zväzy `sfz` (ich profil je v ETL
+    agregovaný cez appSpaces `futbalsfz.sk` + `ulk.futbalnet.sk`, teda ULK/Niké
+    liga je automaticky započítaná). Futsal beží len pod SFZ.
+    Osoby bez priradenej kategórie (historické sezóny) → list „Bez kategórie“,
+    aby súčet sedel na počet unikátnych.
     """
-    vsetky = zvazy_cfg["sfz"] + zvazy_cfg["rfz"] + zvazy_cfg["obfz"]
-
     def rola_uzly(profily: list[dict]) -> list[dict]:
         uzly = []
         for rola in ROLY:
@@ -173,19 +173,33 @@ def sunburst_osoby(zvazy_cfg: dict, out_dir: Path, sezona: str) -> dict:
                 uzly.append({"name": ROLA_NAZOV[rola], "children": deti})
         return uzly
 
-    odvetvia = []
-    profily_futbal = [p for z in vsetky if (p := profil(out_dir, z["id"], sezona))]
-    futbal = rola_uzly(profily_futbal)
-    if futbal:
-        odvetvia.append({"name": "Futbal", "children": futbal})
+    def uroven_uzly(zvazy: list[dict], nazov: str) -> dict | None:
+        profily = [p for z in zvazy if (p := profil(out_dir, z["id"], sezona))]
+        roly = rola_uzly(profily)
+        return {"name": nazov, "uroven": nazov, "children": roly} if roly else None
 
+    # futbal — SFZ / RFZ / ObFZ ako medzi-prsteň úrovne
+    urovne = [
+        uroven_uzly(zvazy_cfg["sfz"], "SFZ"),
+        uroven_uzly(zvazy_cfg["rfz"], "RFZ"),
+        uroven_uzly(zvazy_cfg["obfz"], "ObFZ"),
+    ]
+    urovne = [u for u in urovne if u]
+    odvetvia = []
+    if urovne:
+        odvetvia.append({"name": "Futbal", "children": urovne})
+
+    # futsal — len SFZ úroveň
     sfz_dir = out_dir / "zvaz" / zvazy_cfg["sfz"][0]["id"]
     slug = sezona.replace("/", "-")
     for f in sorted(sfz_dir.glob(f"{slug}-*.json")):
         sektor = f.stem[len(slug) + 1 :]
-        uzly = rola_uzly([load_json(f)])
-        if uzly:
-            odvetvia.append({"name": sektor.capitalize(), "children": uzly})
+        roly = rola_uzly([load_json(f)])
+        if roly:
+            odvetvia.append({
+                "name": sektor.capitalize(),
+                "children": [{"name": "SFZ", "uroven": "SFZ", "children": roly}],
+            })
 
     return {"name": "SR", "children": odvetvia}
 

@@ -1,6 +1,6 @@
 {
  "sezona": "2015/2016",
- "generatedAt": "2026-07-19T20:04:54+02:00",
+ "generatedAt": "2026-07-19T22:07:24+02:00",
  "pocetZvazov": 43,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
@@ -453,90 +453,224 @@
     "name": "Futbal",
     "children": [
      {
-      "name": "Hráči",
+      "name": "SFZ",
+      "uroven": "SFZ",
       "children": [
        {
-        "name": "Bez kategórie",
-        "value": 101597
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 8678
+         }
+        ]
+       },
+       {
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 455
+         }
+        ]
+       },
+       {
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "U15",
+          "value": 490
+         },
+         {
+          "name": "U14",
+          "value": 476
+         },
+         {
+          "name": "ADULTS",
+          "value": 432
+         },
+         {
+          "name": "U12",
+          "value": 329
+         },
+         {
+          "name": "U13",
+          "value": 328
+         },
+         {
+          "name": "U19",
+          "value": 223
+         },
+         {
+          "name": "U17",
+          "value": 195
+         },
+         {
+          "name": "U16",
+          "value": 195
+         }
+        ]
+       },
+       {
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 134
+         },
+         {
+          "name": "U19",
+          "value": 33
+         }
+        ]
        }
       ]
      },
      {
-      "name": "Tréneri",
+      "name": "RFZ",
+      "uroven": "RFZ",
       "children": [
        {
-        "name": "Bez kategórie",
-        "value": 3284
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 29670
+         }
+        ]
+       },
+       {
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 1327
+         }
+        ]
+       },
+       {
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "U19",
+          "value": 896
+         },
+         {
+          "name": "ADULTS",
+          "value": 724
+         },
+         {
+          "name": "U15",
+          "value": 699
+         },
+         {
+          "name": "U17",
+          "value": 691
+         },
+         {
+          "name": "U13",
+          "value": 616
+         },
+         {
+          "name": "U11",
+          "value": 93
+         },
+         {
+          "name": "U10",
+          "value": 57
+         },
+         {
+          "name": "U09",
+          "value": 44
+         }
+        ]
+       },
+       {
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 276
+         },
+         {
+          "name": "U19",
+          "value": 178
+         },
+         {
+          "name": "U17",
+          "value": 1
+         }
+        ]
        }
       ]
      },
      {
-      "name": "Rozhodcovia",
+      "name": "ObFZ",
+      "uroven": "ObFZ",
       "children": [
        {
-        "name": "ADULTS",
-        "value": 3303
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 63249
+         }
+        ]
        },
        {
-        "name": "U15",
-        "value": 2449
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 1502
+         }
+        ]
        },
        {
-        "name": "U19",
-        "value": 2432
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 2147
+         },
+         {
+          "name": "U19",
+          "value": 1313
+         },
+         {
+          "name": "U15",
+          "value": 1260
+         },
+         {
+          "name": "U13",
+          "value": 395
+         },
+         {
+          "name": "U11",
+          "value": 169
+         },
+         {
+          "name": "U12",
+          "value": 33
+         }
+        ]
        },
        {
-        "name": "U13",
-        "value": 1339
-       },
-       {
-        "name": "U17",
-        "value": 886
-       },
-       {
-        "name": "U14",
-        "value": 476
-       },
-       {
-        "name": "U12",
-        "value": 362
-       },
-       {
-        "name": "U11",
-        "value": 262
-       },
-       {
-        "name": "U16",
-        "value": 195
-       },
-       {
-        "name": "U10",
-        "value": 57
-       },
-       {
-        "name": "U09",
-        "value": 44
-       }
-      ]
-     },
-     {
-      "name": "Delegáti",
-      "children": [
-       {
-        "name": "ADULTS",
-        "value": 863
-       },
-       {
-        "name": "U19",
-        "value": 249
-       },
-       {
-        "name": "U15",
-        "value": 2
-       },
-       {
-        "name": "U17",
-        "value": 1
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 453
+         },
+         {
+          "name": "U19",
+          "value": 38
+         },
+         {
+          "name": "U15",
+          "value": 2
+         }
+        ]
        }
       ]
      }
@@ -546,46 +680,52 @@
     "name": "Futsal",
     "children": [
      {
-      "name": "Hráči",
+      "name": "SFZ",
+      "uroven": "SFZ",
       "children": [
        {
-        "name": "Bez kategórie",
-        "value": 353
-       }
-      ]
-     },
-     {
-      "name": "Tréneri",
-      "children": [
-       {
-        "name": "Bez kategórie",
-        "value": 7
-       }
-      ]
-     },
-     {
-      "name": "Rozhodcovia",
-      "children": [
-       {
-        "name": "ADULTS",
-        "value": 20
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 353
+         }
+        ]
        },
        {
-        "name": "U19",
-        "value": 11
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 7
+         }
+        ]
        },
        {
-        "name": "U20",
-        "value": 4
-       }
-      ]
-     },
-     {
-      "name": "Delegáti",
-      "children": [
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 20
+         },
+         {
+          "name": "U19",
+          "value": 11
+         },
+         {
+          "name": "U20",
+          "value": 4
+         }
+        ]
+       },
        {
-        "name": "ADULTS",
-        "value": 8
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 8
+         }
+        ]
        }
       ]
      }

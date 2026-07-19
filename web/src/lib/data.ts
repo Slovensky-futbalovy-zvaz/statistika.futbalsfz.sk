@@ -227,6 +227,7 @@ export function getDemografia(id: string): Demografia | undefined {
 export interface SunburstUzol {
   name: string;
   id?: string;
+  uroven?: string; // SFZ/RFZ/ObFZ — na uzloch úrovne v sunburstOsoby
   value?: number;
   pohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → zápasy)
   children?: SunburstUzol[];

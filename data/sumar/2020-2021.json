@@ -1,6 +1,6 @@
 {
  "sezona": "2020/2021",
- "generatedAt": "2026-07-19T20:04:55+02:00",
+ "generatedAt": "2026-07-19T22:07:24+02:00",
  "pocetZvazov": 43,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
@@ -454,139 +454,351 @@
     "name": "Futbal",
     "children": [
      {
-      "name": "Hráči",
+      "name": "SFZ",
+      "uroven": "SFZ",
       "children": [
        {
-        "name": "U08",
-        "value": 62
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 13321
+         }
+        ]
        },
        {
-        "name": "Bez kategórie",
-        "value": 92089
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 1205
+         }
+        ]
+       },
+       {
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 435
+         },
+         {
+          "name": "U19",
+          "value": 365
+         },
+         {
+          "name": "U17",
+          "value": 321
+         },
+         {
+          "name": "U15",
+          "value": 262
+         },
+         {
+          "name": "U14",
+          "value": 233
+         },
+         {
+          "name": "U16",
+          "value": 114
+         }
+        ]
+       },
+       {
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 179
+         },
+         {
+          "name": "U19",
+          "value": 138
+         }
+        ]
+       },
+       {
+        "name": "Personál",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 567
+         },
+         {
+          "name": "U19",
+          "value": 183
+         },
+         {
+          "name": "U17",
+          "value": 130
+         },
+         {
+          "name": "U15",
+          "value": 108
+         },
+         {
+          "name": "U14",
+          "value": 73
+         },
+         {
+          "name": "U13",
+          "value": 45
+         },
+         {
+          "name": "U16",
+          "value": 39
+         },
+         {
+          "name": "U12",
+          "value": 37
+         },
+         {
+          "name": "U09",
+          "value": 20
+         },
+         {
+          "name": "U11",
+          "value": 17
+         },
+         {
+          "name": "U10",
+          "value": 16
+         }
+        ]
        }
       ]
      },
      {
-      "name": "Tréneri",
+      "name": "RFZ",
+      "uroven": "RFZ",
       "children": [
        {
-        "name": "U08",
-        "value": 4
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "U08",
+          "value": 62
+         },
+         {
+          "name": "Bez kategórie",
+          "value": 23942
+         }
+        ]
        },
        {
-        "name": "Bez kategórie",
-        "value": 4501
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "U08",
+          "value": 4
+         },
+         {
+          "name": "Bez kategórie",
+          "value": 1528
+         }
+        ]
+       },
+       {
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 618
+         },
+         {
+          "name": "U19",
+          "value": 571
+         },
+         {
+          "name": "U15",
+          "value": 431
+         },
+         {
+          "name": "U13",
+          "value": 414
+         },
+         {
+          "name": "U17",
+          "value": 339
+         },
+         {
+          "name": "U11",
+          "value": 34
+         },
+         {
+          "name": "U10",
+          "value": 18
+         },
+         {
+          "name": "U09",
+          "value": 18
+         }
+        ]
+       },
+       {
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 254
+         },
+         {
+          "name": "U19",
+          "value": 76
+         }
+        ]
+       },
+       {
+        "name": "Personál",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 1619
+         },
+         {
+          "name": "U19",
+          "value": 742
+         },
+         {
+          "name": "U15",
+          "value": 498
+         },
+         {
+          "name": "U13",
+          "value": 436
+         },
+         {
+          "name": "U11",
+          "value": 197
+         },
+         {
+          "name": "U17",
+          "value": 145
+         },
+         {
+          "name": "U09",
+          "value": 110
+         },
+         {
+          "name": "U10",
+          "value": 77
+         },
+         {
+          "name": "U08",
+          "value": 34
+         }
+        ]
        }
       ]
      },
      {
-      "name": "Rozhodcovia",
+      "name": "ObFZ",
+      "uroven": "ObFZ",
       "children": [
        {
-        "name": "ADULTS",
-        "value": 2524
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 54826
+         }
+        ]
        },
        {
-        "name": "U19",
-        "value": 1626
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 1768
+         }
+        ]
        },
        {
-        "name": "U15",
-        "value": 1445
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 1471
+         },
+         {
+          "name": "U15",
+          "value": 752
+         },
+         {
+          "name": "U19",
+          "value": 690
+         },
+         {
+          "name": "U13",
+          "value": 277
+         },
+         {
+          "name": "U11",
+          "value": 240
+         },
+         {
+          "name": "U09",
+          "value": 59
+         },
+         {
+          "name": "U17",
+          "value": 3
+         },
+         {
+          "name": "U10",
+          "value": 3
+         }
+        ]
        },
        {
-        "name": "U13",
-        "value": 691
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 264
+         },
+         {
+          "name": "U19",
+          "value": 3
+         }
+        ]
        },
        {
-        "name": "U17",
-        "value": 663
-       },
-       {
-        "name": "U11",
-        "value": 274
-       },
-       {
-        "name": "U14",
-        "value": 233
-       },
-       {
-        "name": "U16",
-        "value": 114
-       },
-       {
-        "name": "U09",
-        "value": 77
-       },
-       {
-        "name": "U10",
-        "value": 21
-       }
-      ]
-     },
-     {
-      "name": "Delegáti",
-      "children": [
-       {
-        "name": "ADULTS",
-        "value": 697
-       },
-       {
-        "name": "U19",
-        "value": 217
-       }
-      ]
-     },
-     {
-      "name": "Personál",
-      "children": [
-       {
-        "name": "ADULTS",
-        "value": 5448
-       },
-       {
-        "name": "U15",
-        "value": 1755
-       },
-       {
-        "name": "U19",
-        "value": 1653
-       },
-       {
-        "name": "U13",
-        "value": 1065
-       },
-       {
-        "name": "U11",
-        "value": 946
-       },
-       {
-        "name": "U09",
-        "value": 389
-       },
-       {
-        "name": "U17",
-        "value": 280
-       },
-       {
-        "name": "U10",
-        "value": 110
-       },
-       {
-        "name": "U14",
-        "value": 73
-       },
-       {
-        "name": "U16",
-        "value": 39
-       },
-       {
-        "name": "U12",
-        "value": 37
-       },
-       {
-        "name": "U08",
-        "value": 34
+        "name": "Personál",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 3262
+         },
+         {
+          "name": "U15",
+          "value": 1149
+         },
+         {
+          "name": "U11",
+          "value": 732
+         },
+         {
+          "name": "U19",
+          "value": 728
+         },
+         {
+          "name": "U13",
+          "value": 584
+         },
+         {
+          "name": "U09",
+          "value": 259
+         },
+         {
+          "name": "U10",
+          "value": 17
+         },
+         {
+          "name": "U17",
+          "value": 5
+         }
+        ]
        }
       ]
      }
@@ -596,63 +808,69 @@
     "name": "Futsal",
     "children": [
      {
-      "name": "Hráči",
+      "name": "SFZ",
+      "uroven": "SFZ",
       "children": [
        {
-        "name": "Bez kategórie",
-        "value": 345
-       }
-      ]
-     },
-     {
-      "name": "Tréneri",
-      "children": [
-       {
-        "name": "Bez kategórie",
-        "value": 14
-       }
-      ]
-     },
-     {
-      "name": "Rozhodcovia",
-      "children": [
-       {
-        "name": "ADULTS",
-        "value": 24
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 345
+         }
+        ]
        },
        {
-        "name": "U20",
-        "value": 12
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "Bez kategórie",
+          "value": 14
+         }
+        ]
        },
        {
-        "name": "U17",
-        "value": 7
-       }
-      ]
-     },
-     {
-      "name": "Delegáti",
-      "children": [
-       {
-        "name": "ADULTS",
-        "value": 7
-       }
-      ]
-     },
-     {
-      "name": "Personál",
-      "children": [
-       {
-        "name": "ADULTS",
-        "value": 39
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 24
+         },
+         {
+          "name": "U20",
+          "value": 12
+         },
+         {
+          "name": "U17",
+          "value": 7
+         }
+        ]
        },
        {
-        "name": "U20",
-        "value": 21
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 7
+         }
+        ]
        },
        {
-        "name": "U17",
-        "value": 7
+        "name": "Personál",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 39
+         },
+         {
+          "name": "U20",
+          "value": 21
+         },
+         {
+          "name": "U17",
+          "value": 7
+         }
+        ]
        }
       ]
      }
