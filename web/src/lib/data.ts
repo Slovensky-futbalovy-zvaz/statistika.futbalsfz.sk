@@ -84,6 +84,33 @@ export function getProfil(id: string, sezona: string): Profil {
   return readJson<Profil>(path.join(DATA, 'zvaz', id, nazov));
 }
 
+// ---- Odvetvia mimo futbalu (konvencia index.odvetvia — report kvality §10) ----
+
+export const ODVETVIE_LABEL: Record<string, string> = {
+  futbal: 'Futbal',
+  futsal: 'Futsal',
+};
+
+/**
+ * Načíta profil zväzu za sezónu pre iné odvetvie než futbal
+ * (súbor RRRR-RRRR-{sektor}.json, napr. 2025-2026-futsal.json).
+ */
+export function getProfilOdvetvie(id: string, sezona: string, sektor: string): Profil {
+  const nazov = `${sezona.replace('/', '-')}-${sektor}.json`;
+  return readJson<Profil>(path.join(DATA, 'zvaz', id, nazov));
+}
+
+/** Sezóny zväzu pre dané odvetvie (futbal = zvaz.sezony, inak z odvetvia mapy). */
+export function sezonyOdvetvia(z: ZvazIndex, odvetvie: string): string[] {
+  return odvetvie === 'futbal' ? z.sezony : (z.odvetvia?.[odvetvie] ?? []);
+}
+
+/** Odvetvia dostupné pre zväz (futbal prvé, potom podľa index.odvetvia). */
+export function odvetviaZvazu(z: ZvazIndex): string[] {
+  const dalsie = Object.keys(z.odvetvia ?? {}).filter((o) => (z.odvetvia?.[o] ?? []).length > 0);
+  return [...(z.sezony.length ? ['futbal'] : []), ...dalsie.sort()];
+}
+
 /**
  * Mapa geoName → id zväzu (z etl/config/zvazy.json) na spojenie polygónov
  * mapy (web/assets/geo/mapa.json má `name` = geoName) s profilmi zväzov.

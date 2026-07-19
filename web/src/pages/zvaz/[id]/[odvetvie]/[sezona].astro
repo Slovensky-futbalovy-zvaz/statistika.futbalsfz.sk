@@ -1,0 +1,41 @@
+---
+// Sezónna stránka pre odvetvia mimo futbalu (konvencia index.odvetvia — report §10).
+// Dnes futsal (SFZ); rozšíriteľné o ďalšie odvetvia bez zmeny kódu.
+import Base from '../../../../layouts/Base.astro';
+import SezonaProfil from '../../../../components/SezonaProfil.astro';
+import { getZvazy, getZvaz, getProfilOdvetvie, sezonyOdvetvia } from '../../../../lib/data';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = () =>
+  getZvazy().flatMap((z) =>
+    Object.entries(z.odvetvia ?? {}).flatMap(([odvetvie, sezony]) =>
+      sezony.map((s) => ({
+        params: { id: z.id, odvetvie, sezona: s.replace('/', '-') },
+      })),
+    ),
+  );
+
+const { id, odvetvie, sezona: sezonaUrl } = Astro.params;
+const sezona = sezonaUrl!.replace('-', '/');
+const z = getZvaz(id!);
+if (!z) throw new Error(`Zväz ${id} nie je v index.json`);
+const profil = getProfilOdvetvie(z.id, sezona, odvetvie!);
+
+// medziročné porovnanie v rámci odvetvia (pozor: sezóny nemusia byť súvislé —
+// futsal 2022/2023 v DB chýba, takže „predošlá“ je predchádzajúca DOSTUPNÁ sezóna)
+const sezony = sezonyOdvetvia(z, odvetvie!);
+const idxSezony = sezony.indexOf(sezona);
+const predoslaSezona = idxSezony > 0 ? sezony[idxSezony - 1] : undefined;
+const predosly = predoslaSezona ? getProfilOdvetvie(z.id, predoslaSezona, odvetvie!) : undefined;
+---
+
+<Base title={`${z.nazov} — ${odvetvie} ${sezona}`}>
+  <SezonaProfil
+    z={z}
+    sezona={sezona}
+    odvetvie={odvetvie!}
+    profil={profil}
+    predoslaSezona={predoslaSezona}
+    predosly={predosly}
+  />
+</Base>

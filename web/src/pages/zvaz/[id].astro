@@ -112,7 +112,12 @@ const futsalSezony = z.odvetvia?.futsal ?? [];
             .slice()
             .reverse()
             .map((s) => (
-              <span class="rounded-md border border-black/10 px-2 py-0.5 text-sm text-sfz-muted">{s}</span>
+              <a
+                href={`/zvaz/${z.id}/futsal/${s.replace('/', '-')}`}
+                class="rounded-md border border-black/10 px-2 py-0.5 text-sm text-sfz-blue hover:bg-black/5"
+              >
+                {s}
+              </a>
             ))}
         </div>
       </section>

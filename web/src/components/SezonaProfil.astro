@@ -1,0 +1,218 @@
+---
+// Zdieľaný obsah sezónnej stránky zväzu — KPI s medziročným porovnaním,
+// graf kategórií, pohlavie a osoby. Používa sa pre futbal (/zvaz/[id]/[sezona])
+// aj ďalšie odvetvia (/zvaz/[id]/[odvetvie]/[sezona], napr. futsal — §10).
+import KategorieChart from './KategorieChart.astro';
+import { fmt, sezonyOdvetvia, odvetviaZvazu, ODVETVIE_LABEL } from '../lib/data';
+import type { Profil, ZvazIndex } from '../lib/data';
+
+interface Props {
+  z: ZvazIndex;
+  sezona: string;
+  odvetvie: string; // 'futbal' | 'futsal' | …
+  profil: Profil;
+  predoslaSezona?: string;
+  predosly?: Profil;
+}
+const { z, sezona, odvetvie, profil, predoslaSezona, predosly } = Astro.props;
+
+/** URL sezónnej stránky pre odvetvie (futbal je bez segmentu odvetvia). */
+function sezonaUrl(o: string, s: string): string {
+  const slug = s.replace('/', '-');
+  return o === 'futbal' ? `/zvaz/${z.id}/${slug}` : `/zvaz/${z.id}/${o}/${slug}`;
+}
+
+// prepínač odvetvia: pri prepnutí ostaň na rovnakej sezóne, ak ju odvetvie má,
+// inak skoč na jeho najnovšiu sezónu
+const odvetvia = odvetviaZvazu(z);
+const prepinacOdvetvi = odvetvia.map((o) => {
+  const sez = sezonyOdvetvia(z, o);
+  const ciel = sez.includes(sezona) ? sezona : sez[sez.length - 1];
+  return { odvetvie: o, label: ODVETVIE_LABEL[o] ?? o, url: sezonaUrl(o, ciel) };
+});
+
+const hraci = (p: Profil) => p.osoby?.hraci?.unikatni ?? 0;
+const kpiKarty = [
+  { label: 'Zápasy', hodnota: profil.kpi.zapasy, predch: predosly?.kpi.zapasy },
+  { label: 'Družstvá', hodnota: profil.kpi.druzstva, predch: predosly?.kpi.druzstva },
+  { label: 'Góly', hodnota: profil.kpi.goly, predch: predosly?.kpi.goly },
+  { label: 'Hráči', hodnota: hraci(profil), predch: predosly ? hraci(predosly) : undefined },
+  { label: 'Diváci', hodnota: profil.kpi.divaci, predch: predosly?.kpi.divaci },
+  { label: 'Žlté karty', hodnota: profil.kpi.zlteKarty, predch: predosly?.kpi.zlteKarty },
+  { label: 'Červené karty', hodnota: profil.kpi.cerveneKarty, predch: predosly?.kpi.cerveneKarty },
+];
+
+/** Medziročná zmena: smer (▲/▼), percento a farba (rast zelená, pokles červená). */
+function delta(hodnota: number, predch?: number) {
+  if (predch === undefined || predch === 0) return null;
+  const rozdiel = hodnota - predch;
+  if (rozdiel === 0) return { sipka: '→', text: '0 %', trieda: 'text-sfz-muted' };
+  const pct = Math.round((rozdiel / predch) * 100);
+  if (pct === 0) return { sipka: '→', text: '≈ 0 %', trieda: 'text-sfz-muted' };
+  return {
+    sipka: rozdiel > 0 ? '▲' : '▼',
+    text: `${rozdiel > 0 ? '+' : ''}${pct} %`,
+    trieda: rozdiel > 0 ? 'text-emerald-600' : 'text-sfz-red',
+  };
+}
+
+// pohlavie
+interface PohlavieBlok {
+  zapasy: number;
+  druzstva: number;
+  goly: number;
+  divaci: number;
+  zlteKarty: number;
+  cerveneKarty: number;
+}
+const pohlavieLabel: Record<string, string> = { M: 'Muži', F: 'Ženy', NEURCENE: 'Neurčené' };
+const pohlavie = profil.pohlavie as Record<string, PohlavieBlok>;
+const pohlavieRiadky = Object.entries(pohlavie).map(([g, b]) => ({
+  label: pohlavieLabel[g] ?? g,
+  ...b,
+}));
+
+// osoby
+const osobaLabel: Record<string, string> = {
+  hraci: 'Hráči',
+  treneri: 'Tréneri',
+  rozhodcovia: 'Rozhodcovia',
+  delegati: 'Delegáti',
+  personal: 'Personál',
+};
+const osobyRiadky = Object.entries(profil.osoby).map(([rola, o]) => ({
+  label: osobaLabel[rola] ?? rola,
+  unikatni: o.unikatni,
+}));
+
+const sezonyDesc = sezonyOdvetvia(z, odvetvie).slice().reverse();
+const odvetvieLabel = ODVETVIE_LABEL[odvetvie] ?? odvetvie;
+---
+
+<p class="mb-2 text-sm">
+  <a href={`/zvaz/${z.id}`} class="text-sfz-blue hover:underline">← {z.nazov}</a>
+</p>
+
+<header class="mb-6">
+  <div class="text-xs font-semibold uppercase tracking-wider text-sfz-muted">
+    {z.uroven} · {odvetvieLabel.toLowerCase()}
+  </div>
+  <h1 class="text-3xl font-extrabold tracking-tight">{z.nazov}</h1>
+
+  {
+    prepinacOdvetvi.length > 1 && (
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        <span class="text-sm text-sfz-muted mr-1 self-center">Odvetvie:</span>
+        {prepinacOdvetvi.map((o) => (
+          <a
+            href={o.url}
+            class:list={[
+              'rounded-md border px-2 py-0.5 text-sm',
+              o.odvetvie === odvetvie
+                ? 'border-sfz-blue bg-sfz-blue text-white font-semibold'
+                : 'border-black/10 text-sfz-blue hover:bg-black/5',
+            ]}
+          >
+            {o.label}
+          </a>
+        ))}
+      </div>
+    )
+  }
+
+  <div class="mt-3 flex flex-wrap gap-1.5">
+    {
+      sezonyDesc.map((s) => (
+        <a
+          href={sezonaUrl(odvetvie, s)}
+          class:list={[
+            'rounded-md border px-2 py-0.5 text-sm',
+            s === sezona
+              ? 'border-sfz-blue bg-sfz-blue text-white font-semibold'
+              : 'border-black/10 text-sfz-blue hover:bg-black/5',
+          ]}
+        >
+          {s}
+        </a>
+      ))
+    }
+  </div>
+</header>
+
+<section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+  {
+    kpiKarty.map((k) => {
+      const d = delta(k.hodnota, k.predch);
+      return (
+        <div class="rounded-xl border border-black/10 p-4">
+          <div class="text-2xl font-extrabold tabular-nums">{fmt(k.hodnota)}</div>
+          <div class="text-sm text-sfz-muted">{k.label}</div>
+          {d && (
+            <div class:list={['mt-1 text-xs font-medium tabular-nums', d.trieda]}>
+              {d.sipka} {d.text}
+            </div>
+          )}
+        </div>
+      );
+    })
+  }
+</section>
+{
+  predoslaSezona && (
+    <p class="mt-2 text-xs text-sfz-muted">Medziročná zmena oproti sezóne {predoslaSezona}.</p>
+  )
+}
+
+<section class="mt-10">
+  <h2 class="text-lg font-bold mb-3">Podľa vekových kategórií</h2>
+  <KategorieChart kategorie={profil.kategorie} />
+</section>
+
+<div class="mt-10 grid gap-8 md:grid-cols-2">
+  <section>
+    <h2 class="text-lg font-bold mb-3">Pohlavie</h2>
+    <table class="w-full text-sm border-collapse">
+      <thead>
+        <tr class="text-left text-sfz-muted border-b border-black/10">
+          <th class="py-1 font-medium">Skupina</th>
+          <th class="py-1 font-medium text-right">Zápasy</th>
+          <th class="py-1 font-medium text-right">Družstvá</th>
+          <th class="py-1 font-medium text-right">Góly</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          pohlavieRiadky.map((r) => (
+            <tr class="border-b border-black/5">
+              <td class="py-1">{r.label}</td>
+              <td class="py-1 text-right tabular-nums">{fmt(r.zapasy)}</td>
+              <td class="py-1 text-right tabular-nums">{fmt(r.druzstva)}</td>
+              <td class="py-1 text-right tabular-nums">{fmt(r.goly)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2 class="text-lg font-bold mb-3">Osoby (unikátne)</h2>
+    <table class="w-full text-sm border-collapse">
+      <tbody>
+        {
+          osobyRiadky.map((r) => (
+            <tr class="border-b border-black/5">
+              <td class="py-1">{r.label}</td>
+              <td class="py-1 text-right tabular-nums">{fmt(r.unikatni)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+    <p class="mt-2 text-xs text-sfz-muted">
+      Súčet po kategóriách môže prevýšiť počet unikátnych osôb (dvojité pôsobenie).
+    </p>
+  </section>
+</div>
+
+<p class="mt-10 text-xs text-sfz-muted">Dáta generované {profil.generatedAt} · len uzavreté zápasy.</p>
