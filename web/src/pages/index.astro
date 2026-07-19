@@ -1,13 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import MapaSR from '../components/MapaSR.astro';
-import SumarSR from '../components/SumarSR.astro';
-import VekovaPyramida from '../components/VekovaPyramida.astro';
-import { getZvazy, getSumarSezony, getSumarDemografia } from '../lib/data';
+import Ikona from '../components/Ikona.astro';
+import { getZvazy, getSumarSezony, getSumar, fmt } from '../lib/data';
 
 const zvazy = getZvazy();
-const sumarSezony = getSumarSezony();
-const srDemo = getSumarDemografia();
 const sfz = zvazy.find((z) => z.uroven === 'SFZ');
 const rfzZvazy = zvazy.filter((z) => z.uroven === 'RFZ');
 const obfz = zvazy.filter((z) => z.uroven === 'ObFZ');
@@ -21,10 +18,51 @@ const obfzPodlaRfz = rfzPoradie.map((skratka) => ({
   nazov: rfzNazov[skratka] ?? skratka,
   zvazy: obfz.filter((o) => o.rfz === skratka).sort((a, b) => a.nazov.localeCompare(b.nazov, 'sk')),
 }));
+
+// aktuálna sezóna = najnovšia so sumárom (sezóna začína 1. 7.)
+const sumarSezony = getSumarSezony();
+const aktualna = sumarSezony.length ? sumarSezony[sumarSezony.length - 1] : undefined;
+const sumar = aktualna ? getSumar(aktualna) : undefined;
+
+// KPI za celé SR (futbal + futsal): pripočítaj odvetvia k futbalovým súčtom
+const KPI = ['sutaze', 'zapasy', 'druzstva', 'goly', 'divaci', 'zlteKarty', 'cerveneKarty'] as const;
+const kpiSpolu: Record<string, number> = {};
+if (sumar) {
+  for (const k of KPI) kpiSpolu[k] = (sumar.kpi as Record<string, number>)[k] ?? 0;
+  for (const o of Object.values(sumar.odvetvia)) {
+    for (const k of KPI) kpiSpolu[k] += (o.kpi as Record<string, number>)[k] ?? 0;
+  }
+}
+const kpiKarty = [
+  { key: 'sutaze', label: 'Súťaže' },
+  { key: 'druzstva', label: 'Družstvá' },
+  { key: 'zapasy', label: 'Zápasy' },
+  { key: 'goly', label: 'Góly' },
+  { key: 'divaci', label: 'Diváci' },
+  { key: 'zlteKarty', label: 'Žlté karty' },
+  { key: 'cerveneKarty', label: 'Červené karty' },
+];
+
+// osoby po roliach za celé SR (futbal + futsal)
+const osobySpolu: Record<string, number> = {};
+if (sumar) {
+  for (const [k, v] of Object.entries(sumar.osoby)) osobySpolu[k] = v;
+  for (const o of Object.values(sumar.odvetvia)) {
+    for (const [k, v] of Object.entries(o.osoby)) osobySpolu[k] = (osobySpolu[k] ?? 0) + v;
+  }
+}
+const osobyKarty = [
+  { key: 'spolu', label: 'Osoby spolu' },
+  { key: 'hraci', label: 'Hráči' },
+  { key: 'treneri', label: 'Tréneri' },
+  { key: 'rozhodcovia', label: 'Rozhodcovia' },
+  { key: 'delegati', label: 'Delegáti' },
+  { key: 'personal', label: 'Personál' },
+];
 ---
 
 <Base>
-  <section class="mb-10">
+  <section class="mb-8">
     <h1 class="text-3xl font-extrabold tracking-tight">Štatistiky slovenského futbalu</h1>
     <p class="mt-2 max-w-2xl text-sfz-muted">
       Sezónne štatistiky naprieč celou futbalovou pyramídou — Slovenský futbalový zväz, 4 regionálne
@@ -33,23 +71,46 @@ const obfzPodlaRfz = rfzPoradie.map((skratka) => ({
   </section>
 
   {
-    sumarSezony.length > 0 && (
-      <section class="mb-12">
-        <h2 class="text-lg font-bold mb-3">Slovenský futbal v číslach</h2>
-        <SumarSR />
-      </section>
-    )
-  }
-
-  {
-    srDemo && (
-      <section class="mb-12">
-        <h2 class="text-lg font-bold mb-1">Veková pyramída — celé Slovensko</h2>
-        <p class="text-sm text-sfz-muted mb-3">
-          Vek × pohlavie podľa roly a sezóny (vek k záveru sezóny), súčet všetkých zväzov. Osoba
-          pôsobiaca vo viacerých zväzoch sa počíta v každom z nich.
+    sumar && (
+      <section class="mb-10">
+        <div class="flex items-baseline justify-between gap-3 mb-3">
+          <h2 class="text-lg font-bold">Aktuálna sezóna {aktualna}</h2>
+          <a href="/prehlad" class="text-sm text-sfz-blue hover:underline">Celý prehľad →</a>
+        </div>
+        <p class="text-xs text-sfz-muted mb-4">
+          Súhrn za všetky zväzy (futbal aj futsal). Sezóna sa začala 1. 7. — dáta pribúdajú s
+          uzatváraním zápasov.
         </p>
-        <VekovaPyramida demo={srDemo} />
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+          {kpiKarty.map((k) => (
+            <div class="rounded-xl border border-black/10 p-4">
+              <div class="text-sfz-blue mb-1.5">
+                <Ikona name={k.key} class="w-5 h-5" />
+              </div>
+              <div class="text-2xl font-extrabold tabular-nums">{fmt(kpiSpolu[k.key] ?? 0)}</div>
+              <div class="text-sm text-sfz-muted">{k.label}</div>
+            </div>
+          ))}
+        </div>
+
+        <h3 class="mt-6 mb-3 text-sm font-semibold uppercase tracking-wider text-sfz-muted">
+          Osoby vo futbale
+        </h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {osobyKarty.map((k) => (
+            <div class="rounded-xl border border-black/10 p-4">
+              <div class="text-sfz-blue mb-1.5">
+                <Ikona name={k.key} class="w-5 h-5" />
+              </div>
+              <div class="text-2xl font-extrabold tabular-nums">{fmt(osobySpolu[k.key] ?? 0)}</div>
+              <div class="text-sm text-sfz-muted">{k.label}</div>
+            </div>
+          ))}
+        </div>
+        <p class="mt-2 text-xs text-sfz-muted">
+          Osoba pôsobiaca vo viacerých zväzoch alebo roliach sa počíta v každom z nich.
+        </p>
       </section>
     )
   }

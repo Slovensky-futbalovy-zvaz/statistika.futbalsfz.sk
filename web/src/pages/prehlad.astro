@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import SumarSR from '../components/SumarSR.astro';
+import VekovaPyramida from '../components/VekovaPyramida.astro';
+import { getSumarSezony, getSumarDemografia } from '../lib/data';
+
+const sumarSezony = getSumarSezony();
+const srDemo = getSumarDemografia();
+---
+
+<Base title="Prehľad — celý slovenský futbal">
+  <header class="mb-6">
+    <h1 class="text-3xl font-extrabold tracking-tight">Prehľad — celý slovenský futbal</h1>
+    <p class="mt-1 text-sfz-muted">
+      Súhrn všetkých zväzov (futbal aj futsal): súťaže a osoby v štruktúre pyramídy, demografia.
+    </p>
+  </header>
+
+  {
+    sumarSezony.length > 0 ? (
+      <SumarSR />
+    ) : (
+      <p class="text-sfz-muted">Sumárne dáta zatiaľ nie sú dostupné.</p>
+    )
+  }
+
+  {
+    srDemo && (
+      <section class="mt-12">
+        <h2 class="text-lg font-bold mb-1">Veková pyramída — celé Slovensko</h2>
+        <p class="text-sm text-sfz-muted mb-3">
+          Vek × pohlavie podľa roly a sezóny (vek k záveru sezóny), súčet všetkých zväzov. Osoba
+          pôsobiaca vo viacerých zväzoch sa počíta v každom z nich.
+        </p>
+        <VekovaPyramida demo={srDemo} />
+      </section>
+    )
+  }
+</Base>

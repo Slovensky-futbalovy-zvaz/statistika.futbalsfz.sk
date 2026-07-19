@@ -3,6 +3,7 @@
 // graf kategórií, pohlavie a osoby. Používa sa pre futbal (/zvaz/[id]/[sezona])
 // aj ďalšie odvetvia (/zvaz/[id]/[odvetvie]/[sezona], napr. futsal — §10).
 import KategorieChart from './KategorieChart.astro';
+import Ikona from './Ikona.astro';
 import { fmt, sezonyOdvetvia, odvetviaZvazu, ODVETVIE_LABEL } from '../lib/data';
 import type { Profil, ZvazIndex } from '../lib/data';
 
@@ -33,14 +34,34 @@ const prepinacOdvetvi = odvetvia.map((o) => {
 
 const hraci = (p: Profil) => p.osoby?.hraci?.unikatni ?? 0;
 const kpiKarty = [
-  { label: 'Zápasy', hodnota: profil.kpi.zapasy, predch: predosly?.kpi.zapasy },
-  { label: 'Družstvá', hodnota: profil.kpi.druzstva, predch: predosly?.kpi.druzstva },
-  { label: 'Góly', hodnota: profil.kpi.goly, predch: predosly?.kpi.goly },
-  { label: 'Hráči', hodnota: hraci(profil), predch: predosly ? hraci(predosly) : undefined },
-  { label: 'Diváci', hodnota: profil.kpi.divaci, predch: predosly?.kpi.divaci },
-  { label: 'Žlté karty', hodnota: profil.kpi.zlteKarty, predch: predosly?.kpi.zlteKarty },
-  { label: 'Červené karty', hodnota: profil.kpi.cerveneKarty, predch: predosly?.kpi.cerveneKarty },
-];
+  { ikona: 'sutaze', label: 'Súťaže', hodnota: profil.kpi.sutaze, predch: predosly?.kpi.sutaze },
+  { ikona: 'druzstva', label: 'Družstvá', hodnota: profil.kpi.druzstva, predch: predosly?.kpi.druzstva },
+  { ikona: 'zapasy', label: 'Zápasy', hodnota: profil.kpi.zapasy, predch: predosly?.kpi.zapasy },
+  { ikona: 'goly', label: 'Góly', hodnota: profil.kpi.goly, predch: predosly?.kpi.goly },
+  { ikona: 'hraci', label: 'Hráči', hodnota: hraci(profil), predch: predosly ? hraci(predosly) : undefined },
+  { ikona: 'divaci', label: 'Diváci', hodnota: profil.kpi.divaci, predch: predosly?.kpi.divaci },
+  { ikona: 'zlteKarty', label: 'Žlté karty', hodnota: profil.kpi.zlteKarty, predch: predosly?.kpi.zlteKarty },
+  { ikona: 'cerveneKarty', label: 'Červené karty', hodnota: profil.kpi.cerveneKarty, predch: predosly?.kpi.cerveneKarty },
+].filter((k) => k.hodnota !== undefined) as {
+  ikona: string;
+  label: string;
+  hodnota: number;
+  predch?: number;
+}[];
+
+// rozpis po vekových kategóriách (dáta už v profil.kategorie)
+const katPoradie = Object.keys(profil.kategorie);
+const katRiadky = katPoradie.map((cat) => ({ cat, ...profil.kategorie[cat] }));
+
+// osoby po kategóriách (profil.osoby.{rola}.poKategorii) — tabuľka rola × kategória
+const osobyRoly = [
+  { key: 'hraci', label: 'Hráči' },
+  { key: 'treneri', label: 'Tréneri' },
+  { key: 'rozhodcovia', label: 'Rozhodcovia' },
+  { key: 'delegati', label: 'Delegáti' },
+  { key: 'personal', label: 'Personál' },
+].filter((r) => (profil.osoby[r.key]?.unikatni ?? 0) > 0);
+const maKategorie = katPoradie.length > 0;
 
 /** Medziročná zmena: smer (▲/▼), percento a farba (rast zelená, pokles červená). */
 function delta(hodnota: number, predch?: number) {
@@ -81,6 +102,7 @@ const osobaLabel: Record<string, string> = {
   personal: 'Personál',
 };
 const osobyRiadky = Object.entries(profil.osoby).map(([rola, o]) => ({
+  ikona: rola,
   label: osobaLabel[rola] ?? rola,
   unikatni: o.unikatni,
 }));
@@ -145,6 +167,9 @@ const odvetvieLabel = ODVETVIE_LABEL[odvetvie] ?? odvetvie;
       const d = delta(k.hodnota, k.predch);
       return (
         <div class="rounded-xl border border-black/10 p-4">
+          <div class="text-sfz-blue mb-1.5">
+            <Ikona name={k.ikona} class="w-5 h-5" />
+          </div>
           <div class="text-2xl font-extrabold tabular-nums">{fmt(k.hodnota)}</div>
           <div class="text-sm text-sfz-muted">{k.label}</div>
           {d && (
@@ -166,6 +191,49 @@ const odvetvieLabel = ODVETVIE_LABEL[odvetvie] ?? odvetvie;
 <section class="mt-10">
   <h2 class="text-lg font-bold mb-3">Podľa vekových kategórií</h2>
   <KategorieChart kategorie={profil.kategorie} />
+
+  {
+    maKategorie && (
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="text-left text-sfz-muted border-b border-black/10">
+              <th class="py-1 pr-4 font-medium">Kategória</th>
+              <th class="py-1 px-2 font-medium text-right">Zápasy</th>
+              <th class="py-1 px-2 font-medium text-right">Družstvá</th>
+              <th class="py-1 px-2 font-medium text-right">Góly</th>
+              <th class="py-1 px-2 font-medium text-right">Góly/zápas</th>
+              <th class="py-1 px-2 font-medium text-right">Diváci</th>
+              <th class="py-1 px-2 font-medium text-right">Žlté</th>
+              <th class="py-1 px-2 font-medium text-right">Červené</th>
+            </tr>
+          </thead>
+          <tbody>
+            {katRiadky.map((r) => (
+              <tr class="border-b border-black/5">
+                <td class="py-1 pr-4 font-medium">{r.cat}</td>
+                <td class="py-1 px-2 text-right tabular-nums">{fmt(r.zapasy)}</td>
+                <td class="py-1 px-2 text-right tabular-nums">{fmt(r.druzstva)}</td>
+                <td class="py-1 px-2 text-right tabular-nums">{fmt(r.goly)}</td>
+                <td class="py-1 px-2 text-right tabular-nums">
+                  {r.zapasy ? (r.goly / r.zapasy).toFixed(2) : '—'}
+                </td>
+                <td class="py-1 px-2 text-right tabular-nums">{fmt(r.divaci)}</td>
+                <td class="py-1 px-2 text-right tabular-nums">{fmt(r.zlte)}</td>
+                <td class="py-1 px-2 text-right tabular-nums">{fmt(r.cervene)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="mt-2 text-xs text-sfz-muted">
+          Góly a karty z udalostí v zápisoch o stretnutí; diváci z vyplnených protokolov (pokrytie
+          {' '}
+          {Math.round(((profil.methodologyFlags?.divaciPokrytie as number) ?? 0) * 100)} %). Družstvá
+          = unikátne kluby s ≥ 1 odohraným zápasom.
+        </p>
+      </div>
+    )
+  }
 </section>
 
 <div class="mt-10 grid gap-8 md:grid-cols-2">
@@ -202,7 +270,10 @@ const odvetvieLabel = ODVETVIE_LABEL[odvetvie] ?? odvetvie;
         {
           osobyRiadky.map((r) => (
             <tr class="border-b border-black/5">
-              <td class="py-1">{r.label}</td>
+              <td class="py-1 flex items-center gap-2">
+                <span class="text-sfz-blue"><Ikona name={r.ikona} class="w-4 h-4" /></span>
+                {r.label}
+              </td>
               <td class="py-1 text-right tabular-nums">{fmt(r.unikatni)}</td>
             </tr>
           ))
@@ -214,5 +285,49 @@ const odvetvieLabel = ODVETVIE_LABEL[odvetvie] ?? odvetvie;
     </p>
   </section>
 </div>
+
+{
+  maKategorie && osobyRoly.length > 0 && (
+    <section class="mt-10">
+      <h2 class="text-lg font-bold mb-3">Osoby podľa vekových kategórií</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="text-left text-sfz-muted border-b border-black/10">
+              <th class="py-1 pr-4 font-medium">Rola</th>
+              {katPoradie.map((cat) => (
+                <th class="py-1 px-2 font-medium text-right">{cat}</th>
+              ))}
+              <th class="py-1 px-2 font-medium text-right">Unikátne</th>
+            </tr>
+          </thead>
+          <tbody>
+            {osobyRoly.map((rola) => {
+              const o = profil.osoby[rola.key];
+              return (
+                <tr class="border-b border-black/5">
+                  <td class="py-1 pr-4 flex items-center gap-2">
+                    <span class="text-sfz-blue"><Ikona name={rola.key} class="w-4 h-4" /></span>
+                    {rola.label}
+                  </td>
+                  {katPoradie.map((cat) => (
+                    <td class="py-1 px-2 text-right tabular-nums">
+                      {o.poKategorii[cat] ? fmt(o.poKategorii[cat]) : '—'}
+                    </td>
+                  ))}
+                  <td class="py-1 px-2 text-right tabular-nums font-semibold">{fmt(o.unikatni)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-2 text-xs text-sfz-muted">
+        Tá istá osoba môže pôsobiť vo viacerých kategóriách, preto súčet po kategóriách býva vyšší
+        než počet unikátnych osôb. Historické sezóny nemusia mať priradenú kategóriu ku každej osobe.
+      </p>
+    </section>
+  )
+}
 
 <p class="mt-10 text-xs text-sfz-muted">Dáta generované {profil.generatedAt} · len uzavreté zápasy.</p>

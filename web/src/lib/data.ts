@@ -22,6 +22,7 @@ export interface Index {
 }
 
 export interface Kpi {
+  sutaze?: number; // počet súťaží (od 19. 7. 2026; staršie profily ho nemajú)
   zapasy: number;
   druzstva: number;
   goly: number;

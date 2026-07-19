@@ -1,0 +1,46 @@
+---
+// Inline SVG ikony (stroke, currentColor) pre KPI a osoby. Jednoduchý register
+// podľa `name`; neznámy názov → prázdny bod. Štýl: lucide-like, 24×24, 1.8 stroke.
+interface Props {
+  name: string;
+  class?: string;
+}
+const { name, class: cls = 'w-6 h-6' } = Astro.props;
+
+const P: Record<string, string> = {
+  // súťaže — trofej
+  sutaze: '<path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/>',
+  // zápasy — lopta
+  zapasy: '<circle cx="12" cy="12" r="9"/><path d="m12 7 2.6 1.9-1 3h-3.2l-1-3L12 7ZM12 7V3M4.5 10l3.9 1M19.5 10l-3.9 1M7.4 18l2-2.8M16.6 18l-2-2.8"/>',
+  // družstvá — štít s ľuďmi
+  druzstva: '<path d="M12 3 4 6v5c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-3Z"/><circle cx="12" cy="10" r="2"/><path d="M8.5 15a3.5 3.5 0 0 1 7 0"/>',
+  // góly — bránka/terč
+  goly: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/>',
+  // diváci — oko
+  divaci: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  // žlté karty — obdĺžnik
+  zlteKarty: '<rect x="7" y="4" width="10" height="16" rx="1.5"/>',
+  cerveneKarty: '<rect x="7" y="4" width="10" height="16" rx="1.5"/>',
+  // osoby
+  spolu: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 6M21 20a5 5 0 0 0-4-4.9"/>',
+  hraci: '<circle cx="12" cy="6" r="3"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/>',
+  treneri: '<rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4V3h6v1M9 9h6M9 13h4"/>',
+  rozhodcovia: '<path d="M6 3v18M6 4h11l-2 3 2 3H6"/>',
+  delegati: '<path d="M12 3l2 2h4v4l2 2-2 2v4h-4l-2 2-2-2H6v-4l-2-2 2-2V5h4l2-2Z"/><path d="m9 12 2 2 4-4"/>',
+  personal: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4l-6 6 2 2 6-6a4 4 0 0 0 5.4-5.4l-2.5 2.5-2-2 2.5-2.5Z"/>',
+};
+const d = P[name] ?? '<circle cx="12" cy="12" r="3"/>';
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.8"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class={cls}
+  aria-hidden="true"
+  set:html={d}
+></svg>
