@@ -2,7 +2,7 @@
 
 Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v každej session; rozhodnutia PO sa zapisujú sem a do príslušných dokumentov (metodika, ADR, report kvality).
 
-**Stav k:** 13. 7. 2026 (session: plný dátový beh)
+**Stav k:** 19. 7. 2026 (session: dokončenie webu — futsal UI, radar, vekové pyramídy)
 
 ## Rozhodnutia PO z 13. 7. 2026 (plný dátový beh)
 
@@ -29,7 +29,10 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
   Zrýchli všetkých 7 ETL agregácií pre všetky zväzy a **odstráni potrebu `--hint`**. Hint je len dočasná obchádzka.
 - [ ] (Neskôr, opatrne) Revízia počtu indexov na `matches` — 44 indexov spomaľuje samotné plánovanie dotazov (`optimizationTimeMillis ≈ 1,9 s`, `maxIndexedAndSolutionsReached`).
 - [ ] Demografia ďalších zväzov (SFZ, 4 RFZ, ostatné ObFZ) — rovnaký vzor ako ObFZ Nitra (`etl/demografia.py`)
-- [~] Frontend (ADR-0005 — Astro + ECharts + Tailwind): **hotové** — mapa SR, profil zväzu, per-sezónne stránky, graf kategórií, pohlavie+osoby, medziročné porovnanie KPI, F4 porovnanie a radenie zväzov, **F5 demografia** (10-ročné trendy osôb po rolách na profile). Build 646 stránok. **Ďalej:** prepínač odvetvia futbal/futsal, výber 2–5 zväzov + radar, vekové pyramídy (rok narodenia × pohlavie), napojiť Cloudflare Pages (root `web/`).
+- [~] Frontend (ADR-0005 — Astro + ECharts + Tailwind): **hotové** — mapa SR, profil zväzu, per-sezónne stránky, graf kategórií, pohlavie+osoby, medziročné porovnanie KPI, F4 porovnanie a radenie zväzov, **F5 demografia** (10-ročné trendy osôb po rolách na profile). Build 646 stránok. **Ďalej:** napojiť Cloudflare Pages (root `web/`).
+- [x] **Prepínač odvetvia futbal/futsal** (19. 7. 2026) — futsalové sezónne stránky `/zvaz/[id]/[odvetvie]/[sezona]` (11 sezón SFZ z `…-futsal.json`), prepínač odvetvia na sezónnych stránkach (`SezonaProfil.astro` — zdieľaný futbal aj futsal), futsalové sezóny na profile ako odkazy; medziročné porovnanie v rámci odvetvia preskakuje chýbajúce sezóny (futsal 2022/23). Build 657 stránok.
+- [x] **F4 rozšírenie: výber 2–5 zväzov + radar** (19. 7. 2026) — `PorovnanieView.astro`: chips výber zväzov (limit 5), radar graf normalizovaný na maximum úrovne (100 % = najlepší zväz v metrike), skutočné hodnoty v tooltipe.
+- [x] **Vekové pyramídy** (19. 7. 2026) — `VekovaPyramida.astro` na profile zväzu: rok narodenia × pohlavie z `data/demografia/{id}.json`, klientske prepínače roly a sezóny, poznámka o osobách bez pohlavia/dátumu narodenia (payload max ~60 KB, SFZ profil 132 KB HTML).
 - [x] **Demografia všetkých 43 zväzov** — hotové 13. 7. 2026 (`etl/demografia.py --hint`), `data/demografia/{id}.json`, 0 anomálií (žiadny zväz >20 % bez dátumu narodenia).
 - [ ] Optimalizácia: tree-shaking ECharts (import len potrebných modulov cez `echarts/core`) — teraz sa bundluje celý (~1 MB) na sezónnych stránkach
 - [ ] Overiť odoslanie podkladov Bart.sk (`docs/podklady-bart-produkcny-beh.md`) — čaká na odoslanie PO
