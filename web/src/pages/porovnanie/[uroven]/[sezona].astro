@@ -23,50 +23,36 @@ function najnovsiaSlug(slug: string): string {
 }
 ---
 
-<Base title={`Porovnanie ${porovnanie.uroven} ${porovnanie.sezona}`}>
+<Base
+  title={`Porovnanie ${porovnanie.uroven} ${porovnanie.sezona}`}
+  sezony={sezony.map((s) => s.replace('-', '/'))}
+  aktualnaSezona={sezonaSlug.replace('-', '/')}
+  seasonHrefTemplate={`/porovnanie/${uroven}/{sezona}`}
+>
   <header class="mb-6">
-    <h1 class="text-3xl font-extrabold tracking-tight">Porovnanie zväzov</h1>
-    <p class="mt-1 text-sfz-muted">
-      {porovnanie.uroven} · sezóna {porovnanie.sezona} · {porovnanie.pocetZvazov} zväzov
+    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Porovnania a radenie</div>
+    <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(21px,2.4vw,28px);">Ktorý zväz vedie?</h1>
+    <p class="mt-1 text-muted">
+      {porovnanie.uroven} · sezóna {porovnanie.sezona} · {porovnanie.pocetZvazov} zväzov. Klikni na riadok pre profil.
     </p>
   </header>
 
-  <div class="flex flex-wrap items-center gap-2 mb-2">
-    <span class="text-sm text-sfz-muted">Úroveň:</span>
-    {
-      urovne.map((u) => (
-        <a
-          href={`/porovnanie/${u.slug}/${u.slug === uroven ? sezonaSlug : najnovsiaSlug(u.slug)}`}
-          class:list={[
-            'rounded-md border px-2 py-0.5 text-sm',
-            u.slug === uroven
-              ? 'border-sfz-blue bg-sfz-blue text-white font-semibold'
-              : 'border-black/10 text-sfz-blue hover:bg-black/5',
-          ]}
-        >
-          {u.label}
-        </a>
-      ))
-    }
-  </div>
-
-  <div class="flex flex-wrap items-center gap-1.5 mb-6">
-    <span class="text-sm text-sfz-muted mr-1">Sezóna:</span>
-    {
-      sezony.map((s) => (
-        <a
-          href={`/porovnanie/${uroven}/${s}`}
-          class:list={[
-            'rounded-md border px-2 py-0.5 text-sm',
-            s === sezonaSlug
-              ? 'border-sfz-blue text-sfz-blue font-semibold'
-              : 'border-black/10 text-sfz-blue hover:bg-black/5',
-          ]}
-        >
-          {s.replace('-', '/')}
-        </a>
-      ))
-    }
+  <div class="flex flex-wrap items-center gap-2 mb-6">
+    <div class="inline-flex rounded-xl p-[3px]" style="background:var(--color-track);">
+      {
+        urovne.map((u) => (
+          <a
+            href={u.slug === uroven ? `/porovnanie/${u.slug}/${sezonaSlug}` : `/porovnanie/${u.slug}/${najnovsiaSlug(u.slug)}`}
+            class:list={[
+              'rounded-[9px] px-3.5 py-1 text-sm font-bold',
+              u.slug === uroven ? 'bg-card text-sfz-blue shadow-sm' : 'text-muted',
+            ]}
+          >
+            {u.label}
+          </a>
+        ))
+      }
+    </div>
   </div>
 
   <PorovnanieView porovnanie={porovnanie} />

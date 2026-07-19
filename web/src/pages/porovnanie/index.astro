@@ -1,33 +1,70 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { sezonyUrovne } from '../../lib/data';
+import PorovnanieView from '../../components/PorovnanieView.astro';
+import BumpChart from '../../components/BumpChart.tsx';
+import { getPorovnanie, sezonyUrovne, getBumpDataRfz } from '../../lib/data';
 
-const rfzLatest = sezonyUrovne('rfz')[0];
-const obfzLatest = sezonyUrovne('obfz')[0];
+// /porovnanie = plné porovnanie pre default úroveň RFZ + najnovšia sezóna
+const uroven = 'rfz';
+const sezonaSlug = sezonyUrovne('rfz')[0];
+const porovnanie = getPorovnanie(uroven, sezonaSlug);
+const sezony = sezonyUrovne(uroven);
+const bump = getBumpDataRfz();
+
+const urovne = [
+  { slug: 'rfz', label: 'RFZ' },
+  { slug: 'obfz', label: 'ObFZ' },
+];
+function najnovsiaSlug(slug: string): string {
+  return sezonyUrovne(slug)[0];
+}
 ---
 
-<Base title="Porovnanie zväzov">
+<Base title="Porovnania" sezony={sezony.map((s) => s.replace('-', '/'))} aktualnaSezona={sezonaSlug.replace('-', '/')} seasonHrefTemplate={`/porovnanie/${uroven}/{sezona}`}>
   <header class="mb-6">
-    <h1 class="text-3xl font-extrabold tracking-tight">Porovnanie zväzov</h1>
-    <p class="mt-1 max-w-2xl text-sfz-muted">
-      Porovnajte a zoraďte zväzy rovnakej úrovne podľa vybraného ukazovateľa v danej sezóne.
+    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Porovnania a radenie</div>
+    <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(21px,2.4vw,28px);">Ktorý zväz vedie?</h1>
+    <p class="mt-1 text-muted">
+      Zoraď zväzy podľa ľubovoľného ukazovateľa. Klikni na riadok pre profil zväzu.
     </p>
   </header>
 
-  <div class="grid gap-4 sm:grid-cols-2">
-    <a
-      href={`/porovnanie/rfz/${rfzLatest}`}
-      class="rounded-xl border border-black/10 p-5 hover:bg-black/5"
-    >
-      <div class="text-lg font-bold text-sfz-blue">Regionálne zväzy (RFZ)</div>
-      <div class="text-sm text-sfz-muted">4 zväzy · najnovšia sezóna {rfzLatest.replace('-', '/')}</div>
-    </a>
-    <a
-      href={`/porovnanie/obfz/${obfzLatest}`}
-      class="rounded-xl border border-black/10 p-5 hover:bg-black/5"
-    >
-      <div class="text-lg font-bold text-sfz-blue">Oblastné zväzy (ObFZ)</div>
-      <div class="text-sm text-sfz-muted">38 zväzov · najnovšia sezóna {obfzLatest.replace('-', '/')}</div>
-    </a>
+  <div class="flex flex-wrap items-center gap-2 mb-6">
+    <div class="inline-flex rounded-xl p-[3px]" style="background:var(--color-track);">
+      {
+        urovne.map((u) => (
+          <a
+            href={u.slug === uroven ? '/porovnanie' : `/porovnanie/${u.slug}/${najnovsiaSlug(u.slug)}`}
+            class:list={[
+              'rounded-[9px] px-3.5 py-1 text-sm font-bold',
+              u.slug === uroven ? 'bg-card text-sfz-blue shadow-sm' : 'text-muted',
+            ]}
+          >
+            {u.label}
+          </a>
+        ))
+      }
+    </div>
   </div>
+
+  <PorovnanieView porovnanie={porovnanie} />
+
+  {
+    bump.sezony.length > 1 && (
+      <section class="mt-12">
+        <h2 class="text-lg font-bold mb-1">Vývoj poradia RFZ v čase</h2>
+        <p class="text-sm text-muted mb-3">
+          Poradie 4 regionálnych zväzov naprieč {bump.sezony.length} sezónami podľa zvolenej metriky (1. = najlepší).
+        </p>
+        <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+          <BumpChart client:visible bump={bump} />
+        </div>
+      </section>
+    )
+  }
+
+  <p class="mt-8 text-xs text-muted">
+    Generované {porovnanie.generatedAt} · len uzavreté zápasy · historicky môžu byť „družstvá" nižšie
+    (staršie sezóny nemajú vždy vyplnené súpisky).
+  </p>
 </Base>
