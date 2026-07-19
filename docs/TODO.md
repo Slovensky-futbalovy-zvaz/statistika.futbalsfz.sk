@@ -45,6 +45,7 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
 - [ ] Optimalizácia úvodnej stránky — payload sumáru (452 KB HTML; gzip to zrazí, ale zvážiť orezanie sunburst dát starých sezón).
 - [x] **Úvodná stránka: celoslovenský sumár** (19. 7. 2026) — `etl/sumar.py` → `data/sumar/` (KPI SR, osoby po roliach, sunbursty, SR demografia); KPI bloky s prepínačom sezóny (default aktuálna 2026/2027 + poznámka), sunburst súťaží (odvetvie→SFZ→RFZ→ObFZ, pill filter pohlavia) a osôb (odvetvie→rola→veková úroveň), SR veková pyramída. Pyramídy zobrazujú **vek** namiesto roku narodenia (rozhodnutie PO). Build 660 stránok, nasadené na Vercel.
 - [x] **ETL sezóna 2026/2027** (19. 7. 2026) — beh 43 zväzov (3 s dátami: SFZ, ObFZ NR, SOFZ SNV — 29 zápasov, sezóna začala 1. 7.), demografia SFZ; `demografia.py` merguje jednotlivé sezóny do existujúceho súboru (pripravené pre denný cron).
+- [x] **Počet súťaží — historický re-beh** (19. 7. 2026) — `kpi.sutaze` (distinct súťaž so zápasom) doplnený pre všetkých 43 zväzov × celú históriu (576 sezón, ~29 min cez index hint) + futsal (11). Overené: ZsFZ 2025/26 = 21 súťaží (sedí so vzorom infografiky). Karta Súťaže + blok o súťažiach teraz na všetkých sezónach.
 - [ ] Pokrytie kariet/gólov za prípravky (U07–U11) — publikovať len s výhradou/nezobrazovať (F2 rozhodnutie o UI)
 
 ## Hotové (výber)
