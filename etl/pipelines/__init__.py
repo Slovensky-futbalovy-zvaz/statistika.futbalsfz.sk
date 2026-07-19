@@ -253,6 +253,19 @@ def druzstva_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_m
     ]
 
 
+def pocet_sutazi(app_spaces, season_variants, sport_sector="futbal"):
+    """Počet súťaží zväzu v sezóne = distinct competition._id s ≥1 uzavretým zápasom.
+
+    Definícia „súťaž = distinct competition so zápasom“ (rozhodnutie PO 19. 7. 2026);
+    zodpovedá číslu na infografike ZsFZ (21 súťaží 2025/26).
+    """
+    return [
+        _match_stage(app_spaces, season_variants, sport_sector),
+        {"$group": {"_id": "$competition._id"}},
+        {"$count": "sutaze"},
+    ]
+
+
 def druzstva(app_spaces, season_variants, sport_sector="futbal", part_map=None):
     """Unikátne družstvá (organization.name) po kategóriách — len s ≥1 uzavretým zápasom."""
     return [

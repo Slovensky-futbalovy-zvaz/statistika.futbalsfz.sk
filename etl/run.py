@@ -241,6 +241,11 @@ def vygeneruj(
         "druzstva-pohlavie",
     )
 
+    sutaze_raw = agreguj(
+        db, pipelines.pocet_sutazi(spaces, varianty, sport_sector), "pocet-sutazi"
+    )
+    pocet_sutazi = sutaze_raw[0]["sutaze"] if sutaze_raw else 0
+
     druz = {r["_id"]: r["druzstva"] for r in druz_raw}
     kategorie = {}
     for r in kat_raw:
@@ -279,6 +284,7 @@ def vygeneruj(
             ),
         },
         "kpi": {
+            "sutaze": pocet_sutazi,
             "zapasy": zapasy,
             "druzstva": sum(k["druzstva"] for k in kategorie.values()),
             "goly": sum(k["goly"] for k in kategorie.values()),

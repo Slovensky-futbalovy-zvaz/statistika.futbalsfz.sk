@@ -41,7 +41,7 @@ ROLA_NAZOV = {
     "delegati": "Delegáti",
     "personal": "Personál",
 }
-KPI_KLUCE = ["zapasy", "druzstva", "goly", "divaci", "zlteKarty", "cerveneKarty"]
+KPI_KLUCE = ["sutaze", "zapasy", "druzstva", "goly", "divaci", "zlteKarty", "cerveneKarty"]
 
 
 def load_json(path: Path) -> dict:
