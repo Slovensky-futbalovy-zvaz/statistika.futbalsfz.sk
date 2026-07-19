@@ -20,7 +20,7 @@ const idxSez = sezony.indexOf(sezona);
 const predoslaSezona = idxSez > 0 ? sezony[idxSez - 1] : undefined;
 const predosly = predoslaSezona ? getKlub(id!, predoslaSezona) : undefined;
 
-const klubyItems = getKluby().map((k) => ({ id: k.id, nazov: k.nazov, zvazNazov: k.zvazNazov, uroven: k.uroven }));
+const klubyItems = getKluby().map((k) => ({ id: k.id, nazov: k.nazov, zvazNazov: k.zvazNazov, uroven: k.uroven, sezony: k.sezony }));
 const zvaz = klub.zvaz ? getZvaz(klub.zvaz) : undefined;
 
 const kpiKarty = [

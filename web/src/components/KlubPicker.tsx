@@ -6,6 +6,7 @@ interface KlubItem {
   nazov: string;
   zvazNazov: string;
   uroven: string;
+  sezony?: string[];
 }
 interface Props {
   kluby: KlubItem[];
@@ -42,8 +43,11 @@ export default function KlubPicker({ kluby, aktualne, hrefTemplate = '/klub/{id}
     return [...grp.entries()];
   }, [kluby, filter]);
 
-  function go(id: string) {
-    window.location.href = hrefTemplate.replace('{id}', id);
+  function go(k: KlubItem) {
+    const s = k.sezony?.[k.sezony.length - 1];
+    window.location.href = s
+      ? `/klub/${k.id}/${s.replace('/', '-')}`
+      : hrefTemplate.replace('{id}', k.id);
   }
 
   return (
@@ -76,7 +80,7 @@ export default function KlubPicker({ kluby, aktualne, hrefTemplate = '/klub/{id}
                 <button
                   key={k.id}
                   type="button"
-                  onClick={() => go(k.id)}
+                  onClick={() => go(k)}
                   style={{ display: 'block', width: '100%', textAlign: 'left', padding: '6px 10px 6px 20px', borderRadius: 8, fontSize: 13.5, fontWeight: k.id === aktualne ? 700 : 500, color: k.id === aktualne ? 'var(--color-sfz-blue)' : 'var(--color-ink)', background: k.id === aktualne ? '#eef3ff' : 'transparent', border: 'none', cursor: 'pointer' }}
                 >
                   {k.nazov}

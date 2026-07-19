@@ -31,6 +31,11 @@ export default function KlubyView({ kluby }: Props) {
     return r.slice(0, 200);
   }, [kluby, uroven, filter, sortKey, sortDir]);
 
+  const klubUrl = (k: KlubIndexPolozka) => {
+    const s = k.sezony?.[k.sezony.length - 1];
+    return s ? `/klub/${k.id}/${s.replace('/', '-')}` : `/klub/${k.id}`;
+  };
+
   function sort(k: string) {
     if (k === sortKey) setSortDir((d) => (d === -1 ? 1 : -1));
     else { setSortKey(k); setSortDir(-1); }
@@ -72,10 +77,10 @@ export default function KlubyView({ kluby }: Props) {
           </thead>
           <tbody>
             {rows.map((k, i) => (
-              <tr key={k.id} style={{ borderBottom: '1px solid var(--color-line)', cursor: 'pointer', background: i % 2 ? 'rgba(0,0,0,.015)' : undefined }} onClick={() => (window.location.href = `/klub/${k.id}`)}>
+              <tr key={k.id} style={{ borderBottom: '1px solid var(--color-line)', cursor: 'pointer', background: i % 2 ? 'rgba(0,0,0,.015)' : undefined }} onClick={() => (window.location.href = klubUrl(k))}>
                 <td style={{ padding: '8px 16px 8px 0' }}>
                   <span style={{ display: 'inline-block', width: 9, height: 9, borderRadius: 3, background: REGION[k.zvaz ?? ''] ?? '#c7ccd2', marginRight: 8 }} />
-                  <a href={`/klub/${k.id}`} style={{ color: 'var(--color-sfz-blue)' }} onClick={(e) => e.stopPropagation()}>{k.nazov}</a>
+                  <a href={klubUrl(k)} style={{ color: 'var(--color-sfz-blue)' }} onClick={(e) => e.stopPropagation()}>{k.nazov}</a>
                 </td>
                 <td style={{ padding: '8px 8px', color: 'var(--color-muted)' }}>{k.zvazNazov}</td>
                 {STLPCE.map((s) => (

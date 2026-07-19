@@ -211,7 +211,7 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
       <p class="text-sm text-muted mb-3">{klubyPocet} klubov s odohraným zápasom pod týmto zväzom.</p>
       <div class="flex flex-wrap gap-1.5">
         {klubyPodZvazom.map((k) => (
-          <a href={`/klub/${k.id}`} class="rounded-full border border-black/10 px-3 py-0.5 text-sm text-sfz-blue hover:bg-black/5">{k.nazov}</a>
+          <a href={k.sezony?.length ? `/klub/${k.id}/${k.sezony[k.sezony.length - 1].replace('/', '-')}` : `/klub/${k.id}`} class="rounded-full border border-black/10 px-3 py-0.5 text-sm text-sfz-blue hover:bg-black/5">{k.nazov}</a>
         ))}
         <a href="/kluby" class="rounded-full border border-sfz-blue bg-sfz-blue text-white px-3 py-0.5 text-sm font-semibold">Všetky kluby →</a>
       </div>
