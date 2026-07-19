@@ -40,7 +40,11 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
 - [ ] Overiť odoslanie podkladov Bart.sk (`docs/podklady-bart-produkcny-beh.md`) — čaká na odoslanie PO
 - [ ] Overiť odoslanie nahlásenia chybného záznamu divákov (`docs/sportnet-nahlasenie-divaci.md`) — draft čaká na PO
 - [x] Futsal: historické sezóny (SFZ) — **hotové 13. 7. 2026: 11 sezón (2014/15–2025/26, 2022/23 v DB prázdna), 0 kritických anomálií**; evidencia v `index.json` cez `zvazy[sfz].odvetvia.futsal` (aktualizuj_index rozšírené)
-- [ ] Projekty (disney, kruzkymcd, dajmespolugol) — samostatná časť štatistík „Projekty“ (zatiaľ mimo ETL)
+- [~] Projekty (disney, kruzkymcd, dajmespolugol) — **výskum hotový 19. 7. 2026** (`docs/projekty-datove-zdroje.md`): dáta nie sú v zápasoch, ale v súpiskách častí súťaží (školy + deti; DSG 836–2 330 detí/sezónu). Čaká na rozhodnutie PO o metrikách (4 otvorené otázky v dokumente); potom ETL `etl/projekty.py` + stránka `/projekty`.
+- [ ] Osoby × pohlavie × veková úroveň v ETL profiloch — rozšírenie pipelines (pohlavie osôb cez gender časti súťaže), umožní pill filter pohlavia aj na sunburste osôb (dnes len na súťažiach); vyžaduje re-beh histórie.
+- [ ] Optimalizácia úvodnej stránky — payload sumáru (452 KB HTML; gzip to zrazí, ale zvážiť orezanie sunburst dát starých sezón).
+- [x] **Úvodná stránka: celoslovenský sumár** (19. 7. 2026) — `etl/sumar.py` → `data/sumar/` (KPI SR, osoby po roliach, sunbursty, SR demografia); KPI bloky s prepínačom sezóny (default aktuálna 2026/2027 + poznámka), sunburst súťaží (odvetvie→SFZ→RFZ→ObFZ, pill filter pohlavia) a osôb (odvetvie→rola→veková úroveň), SR veková pyramída. Pyramídy zobrazujú **vek** namiesto roku narodenia (rozhodnutie PO). Build 660 stránok, nasadené na Vercel.
+- [x] **ETL sezóna 2026/2027** (19. 7. 2026) — beh 43 zväzov (3 s dátami: SFZ, ObFZ NR, SOFZ SNV — 29 zápasov, sezóna začala 1. 7.), demografia SFZ; `demografia.py` merguje jednotlivé sezóny do existujúceho súboru (pripravené pre denný cron).
 - [ ] Pokrytie kariet/gólov za prípravky (U07–U11) — publikovať len s výhradou/nezobrazovať (F2 rozhodnutie o UI)
 
 ## Hotové (výber)
