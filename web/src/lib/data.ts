@@ -305,3 +305,73 @@ export function getProjekt(id: string): Projekt | undefined {
   const p = path.join(PROJEKTY, id + '.json');
   return fs.existsSync(p) ? readJson<Projekt>(p) : undefined;
 }
+
+// ---- Mapové dáta pre choropleth (redizajn) ----
+
+export interface MapRegion {
+  id?: string;
+  name: string;
+  path: string;
+  values: Record<string, number>; // zapasy, druzstva, goly, divaci, hraci
+}
+export interface MapData {
+  viewBox: string;
+  slovensko: string;
+  rfz: MapRegion[];
+  obfz: MapRegion[];
+  sfz: Record<string, number>;
+  nazvy: Record<string, string>; // id → názov zväzu (pre tooltip/klik)
+}
+
+const MAP_METRIKY = ['zapasy', 'druzstva', 'goly', 'divaci', 'hraci'] as const;
+
+function porovnanieValues(urovenSlug: string, sezonaSlug: string): Record<string, Record<string, number>> {
+  const p = path.join(POROVNANIA, urovenSlug, sezonaSlug + '.json');
+  if (!fs.existsSync(p)) return {};
+  const por = readJson<Porovnanie>(p);
+  const out: Record<string, Record<string, number>> = {};
+  for (const r of por.zvazy) {
+    out[r.id] = Object.fromEntries(
+      MAP_METRIKY.map((m) => [m, (r as unknown as Record<string, number>)[m] ?? 0]),
+    );
+  }
+  return out;
+}
+
+/** Kompletné mapové dáta pre React island (choropleth) za sezónu. */
+export function getMapData(sezona: string): MapData {
+  const slug = sezona.replace('/', '-');
+  const mapa = readJson<{ viewBox: string; slovensko: string; rfz: { name: string; path: string }[]; obfz: { name: string; path: string }[] }>(
+    path.join(process.cwd(), 'assets', 'geo', 'mapa.json'),
+  );
+  const geo = geoNameToId(); // geoName → id
+  const nazvy: Record<string, string> = Object.fromEntries(getZvazy().map((z) => [z.id, z.nazov]));
+  const rfzVals = porovnanieValues('rfz', slug);
+  const obfzVals = porovnanieValues('obfz', slug);
+
+  const rfz: MapRegion[] = mapa.rfz.map((r) => {
+    const id = geo[r.name];
+    return { id, name: nazvy[id] ?? r.name, path: r.path, values: rfzVals[id] ?? {} };
+  });
+  const obfz: MapRegion[] = mapa.obfz.map((o) => {
+    const id = geo[o.name];
+    return { id, name: nazvy[id] ?? o.name, path: o.path, values: obfzVals[id] ?? {} };
+  });
+
+  // SFZ = národný súčet (sumár): KPI + hráči z osôb
+  let sfz: Record<string, number> = {};
+  try {
+    const s = getSumar(sezona);
+    sfz = {
+      zapasy: s.kpi.zapasy,
+      druzstva: s.kpi.druzstva,
+      goly: s.kpi.goly,
+      divaci: s.kpi.divaci,
+      hraci: s.osoby?.hraci ?? 0,
+    };
+  } catch {
+    // sumár pre sezónu nemusí existovať
+  }
+
+  return { viewBox: mapa.viewBox, slovensko: mapa.slovensko, rfz, obfz, sfz, nazvy };
+}

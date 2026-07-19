@@ -1,165 +1,203 @@
 ---
 import Base from '../layouts/Base.astro';
-import MapaSR from '../components/MapaSR.astro';
 import Ikona from '../components/Ikona.astro';
-import { getZvazy, getSumarSezony, getSumar, fmt } from '../lib/data';
+import SlovakiaMap from '../components/SlovakiaMap.tsx';
+import SunburstSutaze from '../components/SunburstSutaze.tsx';
+import SunburstOsoby from '../components/SunburstOsoby.tsx';
+import VekovaPyramida from '../components/VekovaPyramida.astro';
+import {
+  getSumarSezony,
+  getSumar,
+  getMapData,
+  getSumarDemografia,
+  fmt,
+} from '../lib/data';
+import { delta } from '../lib/format';
 
-const zvazy = getZvazy();
-const sfz = zvazy.find((z) => z.uroven === 'SFZ');
-const rfzZvazy = zvazy.filter((z) => z.uroven === 'RFZ');
-const obfz = zvazy.filter((z) => z.uroven === 'ObFZ');
+const sezony = getSumarSezony(); // vzostupne
+const sumreMap = new Map(sezony.map((s) => [s, getSumar(s)]));
 
-const rfzPoradie = ['BFZ', 'ZsFZ', 'SsFZ', 'VsFZ'];
-const rfzNazov: Record<string, string> = Object.fromEntries(
-  rfzZvazy.map((r) => [r.appSpace, r.nazov]),
-);
-const obfzPodlaRfz = rfzPoradie.map((skratka) => ({
-  skratka,
-  nazov: rfzNazov[skratka] ?? skratka,
-  zvazy: obfz.filter((o) => o.rfz === skratka).sort((a, b) => a.nazov.localeCompare(b.nazov, 'sk')),
-}));
+// default = najnovšia sezóna s aspoň polovicou max. objemu (vynechá práve začatú)
+const maxZ = Math.max(...sezony.map((s) => sumreMap.get(s)!.kpi.zapasy));
+const kompletne = sezony.filter((s) => sumreMap.get(s)!.kpi.zapasy >= maxZ * 0.5);
+const aktualna = kompletne[kompletne.length - 1] ?? sezony[sezony.length - 1];
+const idx = sezony.indexOf(aktualna);
+const predosla = idx > 0 ? sezony[idx - 1] : undefined;
+const sumar = sumreMap.get(aktualna)!;
+const sumarPrev = predosla ? sumreMap.get(predosla) : undefined;
 
-// aktuálna sezóna = najnovšia so sumárom (sezóna začína 1. 7.)
-const sumarSezony = getSumarSezony();
-const aktualna = sumarSezony.length ? sumarSezony[sumarSezony.length - 1] : undefined;
-const sumar = aktualna ? getSumar(aktualna) : undefined;
-
-// KPI za celé SR (futbal + futsal): pripočítaj odvetvia k futbalovým súčtom
+// KPI za celé SR (futbal + odvetvia)
 const KPI = ['sutaze', 'zapasy', 'druzstva', 'goly', 'divaci', 'zlteKarty', 'cerveneKarty'] as const;
-const kpiSpolu: Record<string, number> = {};
-if (sumar) {
-  for (const k of KPI) kpiSpolu[k] = (sumar.kpi as Record<string, number>)[k] ?? 0;
-  for (const o of Object.values(sumar.odvetvia)) {
-    for (const k of KPI) kpiSpolu[k] += (o.kpi as Record<string, number>)[k] ?? 0;
-  }
+function spolu(s: ReturnType<typeof getSumar> | undefined, k: string): number {
+  if (!s) return 0;
+  let v = (s.kpi as Record<string, number>)[k] ?? 0;
+  for (const o of Object.values(s.odvetvia)) v += (o.kpi as Record<string, number>)[k] ?? 0;
+  return v;
 }
 const kpiKarty = [
-  { key: 'sutaze', label: 'Súťaže' },
-  { key: 'druzstva', label: 'Družstvá' },
-  { key: 'zapasy', label: 'Zápasy' },
-  { key: 'goly', label: 'Góly' },
-  { key: 'divaci', label: 'Diváci' },
-  { key: 'zlteKarty', label: 'Žlté karty' },
-  { key: 'cerveneKarty', label: 'Červené karty' },
-];
+  { key: 'sutaze', label: 'Súťaže', good: true },
+  { key: 'zapasy', label: 'Odohraté zápasy', good: true },
+  { key: 'druzstva', label: 'Družstvá', good: true },
+  { key: 'goly', label: 'Strelené góly', good: true },
+  { key: 'divaci', label: 'Diváci', good: true },
+  { key: 'zlteKarty', label: 'Žlté karty', good: false },
+  { key: 'cerveneKarty', label: 'Červené karty', good: false },
+].map((k) => ({
+  ...k,
+  hodnota: spolu(sumar, k.key),
+  d: delta(spolu(sumar, k.key), sumarPrev ? spolu(sumarPrev, k.key) : undefined, k.good),
+}));
 
-// osoby po roliach za celé SR (futbal + futsal)
-const osobySpolu: Record<string, number> = {};
-if (sumar) {
-  for (const [k, v] of Object.entries(sumar.osoby)) osobySpolu[k] = v;
-  for (const o of Object.values(sumar.odvetvia)) {
-    for (const [k, v] of Object.entries(o.osoby)) osobySpolu[k] = (osobySpolu[k] ?? 0) + v;
-  }
+// osoby po roliach (futbal + odvetvia) + sparkline trend
+function osobySpolu(s: ReturnType<typeof getSumar>, rola: string): number {
+  let v = (s.osoby as Record<string, number>)[rola] ?? 0;
+  for (const o of Object.values(s.odvetvia)) v += (o.osoby as Record<string, number>)[rola] ?? 0;
+  return v;
 }
-const osobyKarty = [
-  { key: 'spolu', label: 'Osoby spolu' },
+const roly = [
   { key: 'hraci', label: 'Hráči' },
   { key: 'treneri', label: 'Tréneri' },
   { key: 'rozhodcovia', label: 'Rozhodcovia' },
   { key: 'delegati', label: 'Delegáti' },
   { key: 'personal', label: 'Personál' },
 ];
+const osobyKarty = roly.map((r) => {
+  const trend = sezony.map((s) => osobySpolu(sumreMap.get(s)!, r.key));
+  const hodnota = osobySpolu(sumar, r.key);
+  const prev = sumarPrev ? osobySpolu(sumarPrev, r.key) : undefined;
+  // sparkline body (0..100 x, 0..24 y invert)
+  const mn = Math.min(...trend), mx = Math.max(...trend);
+  const pts = trend
+    .map((v, i) => {
+      const x = (i / (trend.length - 1 || 1)) * 100;
+      const y = 24 - ((v - mn) / (mx - mn || 1)) * 22 - 1;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(' ');
+  return { ...r, hodnota, d: delta(hodnota, prev, true), pts };
+});
+
+const mapData = getMapData(aktualna);
+const srDemo = getSumarDemografia();
 ---
 
-<Base>
-  <section class="mb-8">
-    <h1 class="text-3xl font-extrabold tracking-tight">Štatistiky slovenského futbalu</h1>
-    <p class="mt-2 max-w-2xl text-sfz-muted">
-      Sezónne štatistiky naprieč celou futbalovou pyramídou — Slovenský futbalový zväz, 4 regionálne
-      a 38 oblastných zväzov. Vyberte zväz na mape alebo zo zoznamu.
-    </p>
+<Base sezony={sezony} aktualnaSezona={aktualna}>
+  <!-- Hero -->
+  <section
+    class="relative overflow-hidden text-white"
+    style="border-radius:20px; padding:clamp(26px,4vw,46px); background:linear-gradient(120deg,#0a2a8f,#1450df 60%,#2f6bff);"
+  >
+    <div
+      aria-hidden="true"
+      style="position:absolute; right:-80px; top:-80px; width:320px; height:320px; border-radius:9999px; background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);"
+    >
+    </div>
+    <div class="relative">
+      <span
+        class="inline-block rounded-full px-3 py-1 text-xs font-semibold"
+        style="background:rgba(255,255,255,.16);"
+      >
+        Sezóna {aktualna} · celé Slovensko
+      </span>
+      <h1 class="font-display mt-3 font-extrabold" style="font-size:clamp(28px,4.6vw,52px); line-height:1.05;">
+        Slovenský futbal v číslach
+      </h1>
+      <p class="mt-3 max-w-2xl text-white/85" style="font-size:15px;">
+        Sezónne štatistiky naprieč celou futbalovou pyramídou — Slovenský futbalový zväz, 4 regionálne
+        a 38 oblastných zväzov, futbal aj futsal.
+      </p>
+    </div>
   </section>
 
+  <!-- KPI band -->
+  <section class="mt-8 grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+    {
+      kpiKarty.map((k) => (
+        <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:16px; box-shadow:var(--shadow-card);">
+          <div class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted">
+            <span class="text-sfz-blue"><Ikona name={k.key} class="w-4 h-4" /></span>
+            {k.label}
+          </div>
+          <div class="tnum mt-1.5 font-extrabold" style="font-size:clamp(24px,3vw,32px);">{fmt(k.hodnota)}</div>
+          {k.d && (
+            <div class="tnum mt-0.5 text-xs font-medium" style={`color:${k.d.color};`}>
+              {k.d.arrow} {k.d.text} <span class="text-muted">medziročne</span>
+            </div>
+          )}
+        </div>
+      ))
+    }
+  </section>
+
+  <!-- Mapa + rebríček -->
+  <section class="mt-10">
+    <h2 class="mb-3 font-extrabold" style="font-size:clamp(21px,2.4vw,28px); letter-spacing:-.01em;">
+      Mapa a rebríček zväzov
+    </h2>
+    <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+      <SlovakiaMap client:load mapData={mapData} />
+    </div>
+  </section>
+
+  <!-- Osoby vo futbale (small multiples) -->
+  <section class="mt-10">
+    <h2 class="mb-3 font-extrabold" style="font-size:clamp(21px,2.4vw,28px); letter-spacing:-.01em;">
+      Osoby vo futbale
+    </h2>
+    <div class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
+      {
+        osobyKarty.map((o) => (
+          <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:16px; box-shadow:var(--shadow-card);">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-muted">{o.label}</div>
+            <div class="tnum mt-1 text-2xl font-extrabold">{fmt(o.hodnota)}</div>
+            {o.d && (
+              <div class="tnum text-xs font-medium" style={`color:${o.d.color};`}>
+                {o.d.arrow} {o.d.text}
+              </div>
+            )}
+            <svg viewBox="0 0 100 24" preserveAspectRatio="none" class="mt-2 w-full" style="height:26px;">
+              <polyline points={o.pts} fill="none" stroke="var(--color-sfz-blue)" stroke-width="1.6" vector-effect="non-scaling-stroke" />
+            </svg>
+          </div>
+        ))
+      }
+    </div>
+    <p class="mt-2 text-xs text-muted">Trend za {sezony.length} sezón. Osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich.</p>
+  </section>
+
+  <!-- Celoslovenský súhrn — 2 sunbursty -->
+  <section class="mt-10">
+    <h2 class="mb-3 font-extrabold" style="font-size:clamp(21px,2.4vw,28px); letter-spacing:-.01em;">
+      Celoslovenský súhrn
+    </h2>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+        <h3 class="text-lg font-bold mb-1">Súťaže — štruktúra pyramídy</h3>
+        <p class="text-sm text-muted mb-2">Zápasy podľa odvetvia a riadiaceho zväzu (SFZ → RFZ → ObFZ).</p>
+        <SunburstSutaze client:visible strom={sumar.sunburstSutaze} />
+      </div>
+      <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+        <h3 class="text-lg font-bold mb-1">Osoby — úroveň, rola a vek</h3>
+        <p class="text-sm text-muted mb-2">Osoby podľa odvetvia, úrovne (SFZ/RFZ/ObFZ), roly a vekovej kategórie.</p>
+        <SunburstOsoby client:visible strom={sumar.sunburstOsoby} />
+      </div>
+    </div>
+  </section>
+
+  <!-- Veková pyramída SR -->
   {
-    sumar && (
-      <section class="mb-10">
-        <div class="flex items-baseline justify-between gap-3 mb-3">
-          <h2 class="text-lg font-bold">Aktuálna sezóna {aktualna}</h2>
-          <a href="/prehlad" class="text-sm text-sfz-blue hover:underline">Celý prehľad →</a>
-        </div>
-        <p class="text-xs text-sfz-muted mb-4">
-          Súhrn za všetky zväzy (futbal aj futsal). Sezóna sa začala 1. 7. — dáta pribúdajú s
-          uzatváraním zápasov.
+    srDemo && (
+      <section class="mt-10">
+        <h2 class="mb-1 font-extrabold" style="font-size:clamp(21px,2.4vw,28px); letter-spacing:-.01em;">
+          Veková pyramída — celé Slovensko
+        </h2>
+        <p class="text-sm text-muted mb-3">
+          Vek × pohlavie podľa roly a sezóny (vek k záveru sezóny), súčet všetkých zväzov.
         </p>
-
-        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-          {kpiKarty.map((k) => (
-            <div class="rounded-xl border border-black/10 p-4">
-              <div class="text-sfz-blue mb-1.5">
-                <Ikona name={k.key} class="w-5 h-5" />
-              </div>
-              <div class="text-2xl font-extrabold tabular-nums">{fmt(kpiSpolu[k.key] ?? 0)}</div>
-              <div class="text-sm text-sfz-muted">{k.label}</div>
-            </div>
-          ))}
+        <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+          <VekovaPyramida demo={srDemo} />
         </div>
-
-        <h3 class="mt-6 mb-3 text-sm font-semibold uppercase tracking-wider text-sfz-muted">
-          Osoby vo futbale
-        </h3>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {osobyKarty.map((k) => (
-            <div class="rounded-xl border border-black/10 p-4">
-              <div class="text-sfz-blue mb-1.5">
-                <Ikona name={k.key} class="w-5 h-5" />
-              </div>
-              <div class="text-2xl font-extrabold tabular-nums">{fmt(osobySpolu[k.key] ?? 0)}</div>
-              <div class="text-sm text-sfz-muted">{k.label}</div>
-            </div>
-          ))}
-        </div>
-        <p class="mt-2 text-xs text-sfz-muted">
-          Osoba pôsobiaca vo viacerých zväzoch alebo roliach sa počíta v každom z nich.
-        </p>
       </section>
     )
-  }
-
-  <section class="mb-12 grid gap-8 md:grid-cols-[1.4fr_1fr] items-start">
-    <div class="rounded-xl border border-black/10 p-3">
-      <MapaSR />
-    </div>
-    <div>
-      <h2 class="text-sm font-semibold uppercase tracking-wider text-sfz-muted">Zväzy</h2>
-      <ul class="mt-3 space-y-1">
-        {
-          sfz && (
-            <li>
-              <a class="font-semibold text-sfz-blue hover:underline" href={`/zvaz/${sfz.id}`}>
-                {sfz.nazov}
-              </a>
-            </li>
-          )
-        }
-        {
-          rfzZvazy.map((r) => (
-            <li>
-              <a class="text-sfz-blue hover:underline" href={`/zvaz/${r.id}`}>
-                {r.nazov}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  {
-    obfzPodlaRfz.map((skupina) => (
-      <section class="mb-8">
-        <h2 class="text-lg font-bold border-b border-black/10 pb-1 mb-3">
-          {skupina.nazov} <span class="text-sfz-muted font-normal">· {skupina.zvazy.length} ObFZ</span>
-        </h2>
-        <ul class="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
-          {skupina.zvazy.map((o) => (
-            <li>
-              <a class="text-sfz-blue hover:underline" href={`/zvaz/${o.id}`}>
-                {o.nazov}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))
   }
 </Base>
