@@ -1,15 +1,24 @@
 ---
 import '../styles/global.css';
+import Header from '../components/Header.astro';
 
 interface Props {
   title?: string;
   description?: string;
+  sezony?: string[];
+  aktualnaSezona?: string;
+  seasonHrefTemplate?: string;
 }
 const {
   title = 'Štatistiky slovenského futbalu',
   description = 'Verejný štatistický portál slovenského futbalu — SFZ, regionálne (RFZ) a oblastné (ObFZ) zväzy.',
+  sezony,
+  aktualnaSezona,
+  seasonHrefTemplate,
 } = Astro.props;
-const fullTitle = title === 'Štatistiky slovenského futbalu' ? title : `${title} · Štatistiky slovenského futbalu`;
+const fullTitle =
+  title === 'Štatistiky slovenského futbalu' ? title : `${title} · Štatistiky slovenského futbalu`;
+const pathname = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -19,30 +28,28 @@ const fullTitle = title === 'Štatistiky slovenského futbalu' ? title : `${titl
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/sfz-logo-official.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Expanded:wght@600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body class="min-h-screen flex flex-col">
-    <header class="border-b border-black/10">
-      <div class="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between gap-4">
-        <a href="/" class="inline-flex flex-col leading-none no-underline">
-          <span class="font-extrabold tracking-wide text-xl text-sfz-ink">ŠTATISTIKY</span>
-          <span class="font-semibold tracking-[0.2em] text-xs text-sfz-blue">SLOVENSKÉHO FUTBALU</span>
-        </a>
-        <nav class="flex items-center gap-4 text-sm">
-          <a href="/" class="text-sfz-blue hover:underline">Mapa</a>
-          <a href="/prehlad" class="text-sfz-blue hover:underline">Prehľad</a>
-          <a href="/porovnanie" class="text-sfz-blue hover:underline">Porovnanie</a>
-          <a href="/projekty" class="text-sfz-blue hover:underline">Projekty</a>
-        </nav>
-      </div>
-    </header>
+    <Header
+      pathname={pathname}
+      sezony={sezony}
+      aktualnaSezona={aktualnaSezona}
+      seasonHrefTemplate={seasonHrefTemplate}
+    />
 
-    <main class="mx-auto max-w-6xl px-4 py-8 flex-1 w-full">
+    <main class="mx-auto flex-1 w-full" style="max-width:1240px; padding:34px 24px 70px;">
       <slot />
     </main>
 
-    <footer class="border-t border-black/10 mt-12">
-      <div class="mx-auto max-w-6xl px-4 py-6 text-sm text-sfz-muted">
+    <footer class="border-t border-line mt-12">
+      <div class="mx-auto text-sm text-muted" style="max-width:1240px; padding:24px;">
         © Slovenský futbalový zväz · Zdroj dát: platforma sportnet.online
       </div>
     </footer>

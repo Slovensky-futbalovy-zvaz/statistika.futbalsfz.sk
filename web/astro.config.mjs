@@ -1,11 +1,13 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import react from '@astrojs/react';
 
-// Čisto statický web (ADR-0001), hosting Cloudflare Pages (ADR-0003).
-// Dáta sa čítajú pri builde zo susedného priečinka ../data (viď src/lib/data.ts).
+// Čisto statický web (ADR-0001), hosting Vercel (ADR-0006).
+// Interaktívne prvky = React islands (ADR-0007). Dáta z ../data pri builde (data.ts).
 export default defineConfig({
   site: 'https://statistika.futbalsfz.sk',
+  integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
   },

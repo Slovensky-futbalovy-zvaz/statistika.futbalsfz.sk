@@ -1,28 +1,76 @@
 @import "tailwindcss";
 
-/* Brand tokeny SFZ (odvodené z prototyp.html / loga) */
+/* Brand tokeny SFZ (redizajn 2026 — design handoff; farby overené z brand manuálu str. 31). */
 @theme {
-  --color-sfz-blue: #1450df;
-  --color-sfz-red: #ec1c24;
-  --color-sfz-ink: #070504;
-  --color-sfz-muted: #5b5f66;
+  /* --- brand --- */
+  --color-sfz-blue: #1450df; /* Pantone 2935 C */
+  --color-sfz-red: #ec1c24; /* Warm Red C */
+  --color-sfz-grey: #bbbdbf; /* Cool Grey 6 C */
+  --color-sfz-ink: #070504; /* Black 6 C */
 
-  /* farby regiónov (RFZ) pre choropleth mapu */
-  --color-rfz-ba: #1450df;
-  --color-rfz-zsfz: #2aa7ff;
-  --color-rfz-ssfz: #12b886;
-  --color-rfz-vsfz: #f59f00;
+  /* --- UI neutrály (tón do studena) --- */
+  --color-ink: #0b0a0a;
+  --color-muted: #6c7178;
+  --color-line: #e7e9ec;
+  --color-bg: #f4f5f7;
+  --color-card: #ffffff;
+  --color-track: #eceef1;
+  --color-good: #12a06b;
+
+  /* spätná kompatibilita so staršími komponentmi */
+  --color-sfz-muted: #6c7178;
+
+  /* --- regióny RFZ --- */
+  --color-rfz-bfz: #1450df;
+  --color-rfz-zsfz: #2f9bff;
+  --color-rfz-ssfz: #12a06b;
+  --color-rfz-vsfz: #f0961b;
+  --color-sfz-own: #7a44e0;
+  --color-rfz-ba: #1450df; /* alias */
+
+  /* --- vekové kategórie (skupiny) --- */
+  --color-cat-dospeli: #1450df;
+  --color-cat-dorast: #2f9bff;
+  --color-cat-ziaci: #12a06b;
+  --color-cat-pripravky: #f0961b;
+
+  /* --- choropleth (sekvenčná modrá) --- */
+  --color-choro-lo: #dbe6ff;
+  --color-choro-hi: #1450df;
 
   --font-sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Archivo Expanded", "Archivo", sans-serif;
+
+  --radius-card: 16px;
+
+  --shadow-card: 0 1px 2px rgba(11, 10, 10, 0.04);
+  --shadow-pop: 0 16px 40px rgba(11, 10, 10, 0.16);
 }
 
 :root {
   color-scheme: light;
 }
-
 body {
   font-family: var(--font-sans);
-  color: var(--color-sfz-ink);
-  background: #fff;
+  color: var(--color-ink);
+  background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+.font-display {
+  font-family: var(--font-display);
+}
+a {
+  color: var(--color-sfz-blue);
+  text-decoration: none;
+}
+a:hover {
+  color: #0f3ab3;
+}
+::selection {
+  background: var(--color-sfz-blue);
+  color: #fff;
 }

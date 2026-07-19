@@ -1,0 +1,85 @@
+---
+import SeasonPicker from './SeasonPicker.tsx';
+import MobileMenu from './MobileMenu.tsx';
+
+interface Props {
+  pathname: string;
+  sezony?: string[];
+  aktualnaSezona?: string;
+  seasonHrefTemplate?: string;
+}
+const { pathname, sezony, aktualnaSezona, seasonHrefTemplate } = Astro.props;
+
+const nav = [
+  { href: '/', label: 'Prehľad', match: (p: string) => p === '/' },
+  { href: '/zvaz/sfz', label: 'Profil zväzu', match: (p: string) => p.startsWith('/zvaz') },
+  { href: '/porovnanie', label: 'Porovnania', match: (p: string) => p.startsWith('/porovnanie') },
+  { href: '/demografia', label: 'Demografia', match: (p: string) => p.startsWith('/demografia') },
+  { href: '/projekty', label: 'Projekty', match: (p: string) => p.startsWith('/projekty') },
+];
+const items = nav.map((n) => ({ href: n.href, label: n.label, aktivna: n.match(pathname) }));
+const maPicker = sezony && sezony.length > 0 && aktualnaSezona;
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-line"
+  style="background: rgba(255,255,255,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);"
+>
+  <div class="mx-auto flex items-center justify-between gap-4" style="max-width:1240px; padding:12px 24px;">
+    <a href="/" class="inline-flex items-center gap-3 no-underline">
+      <img src="/sfz-logo-official.svg" alt="SFZ" width="44" height="44" style="border-radius:9999px;" />
+      <span class="inline-flex flex-col leading-none">
+        <span class="font-display font-extrabold tracking-wide text-lg text-sfz-ink">ŠTATISTIKY</span>
+        <span class="font-semibold tracking-[0.2em] text-[11px] text-sfz-blue">SLOVENSKÉHO FUTBALU</span>
+        <span
+          class="mt-1 inline-block w-fit rounded-full px-1.5 py-[1px] text-[9px] font-bold uppercase tracking-wider text-white"
+          style="background: var(--color-sfz-red);"
+        >
+          Beta verzia
+        </span>
+      </span>
+    </a>
+
+    <!-- desktop nav -->
+    <nav class="hidden md:flex items-center gap-5 text-sm">
+      {
+        items.map((it) => (
+          <a
+            href={it.href}
+            class:list={[
+              'hover:text-sfz-blue',
+              it.aktivna ? 'text-sfz-blue font-semibold' : 'text-ink',
+            ]}
+          >
+            {it.label}
+          </a>
+        ))
+      }
+      {
+        maPicker && (
+          <SeasonPicker
+            client:load
+            sezony={sezony}
+            aktualna={aktualnaSezona}
+            hrefTemplate={seasonHrefTemplate}
+          />
+        )
+      }
+    </nav>
+
+    <!-- mobile -->
+    <div class="md:hidden flex items-center gap-2">
+      {
+        maPicker && (
+          <SeasonPicker
+            client:load
+            sezony={sezony}
+            aktualna={aktualnaSezona}
+            hrefTemplate={seasonHrefTemplate}
+          />
+        )
+      }
+      <MobileMenu client:load polozky={items} />
+    </div>
+  </div>
+</header>
