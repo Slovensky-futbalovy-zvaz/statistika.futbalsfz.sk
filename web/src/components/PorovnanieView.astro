@@ -1,6 +1,5 @@
 ---
 import type { Porovnanie } from '../lib/data';
-import { fmt } from '../lib/data';
 
 interface Props {
   porovnanie: Porovnanie;
@@ -8,213 +7,147 @@ interface Props {
 const { porovnanie } = Astro.props;
 const rows = porovnanie.zvazy;
 
-const metriky = [
-  { key: 'zapasy', label: 'Zápasy' },
-  { key: 'druzstva', label: 'Družstvá' },
-  { key: 'goly', label: 'Góly' },
-  { key: 'hraci', label: 'Hráči' },
-  { key: 'divaci', label: 'Diváci' },
-  { key: 'golyNaZapas', label: 'Góly/zápas' },
-  { key: 'divaciNaZapas', label: 'Diváci/zápas' },
-  { key: 'zlteKarty', label: 'Žlté karty' },
-  { key: 'cerveneKarty', label: 'Červené karty' },
+const stlpce = [
+  { key: 'zapasy', label: 'Zápasy', fixed: 0 },
+  { key: 'druzstva', label: 'Družstvá', fixed: 0 },
+  { key: 'goly', label: 'Góly', fixed: 0 },
+  { key: 'divaci', label: 'Diváci', fixed: 0 },
+  { key: 'hraci', label: 'Hráči', fixed: 0 },
+  { key: 'golyNaZapas', label: 'Góly/zápas', fixed: 1 },
+  { key: 'divaciNaZapas', label: 'Diváci/zápas', fixed: 1 },
+  { key: 'zlteKarty', label: 'ŽK', fixed: 0 },
+  { key: 'cerveneKarty', label: 'ČK', fixed: 0 },
 ];
-
-const chartH = Math.max(220, rows.length * 24 + 70);
+const CARD = 'border border-line';
+const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);';
 ---
 
-<div data-porovnanie data-rows={JSON.stringify(rows)}>
-  <div class="flex flex-wrap items-center gap-1.5 mb-3">
-    <span class="text-sm text-muted mr-1">Zoradiť podľa:</span>
-    <div class="metrika-pills flex flex-wrap gap-1.5" role="group" aria-label="Zoradiť podľa metriky">
-      {
-        metriky.map((m, i) => (
-          <button
-            type="button"
-            data-metrika={m.key}
-            class:list={[
-              'rounded-full border px-3 py-0.5 text-sm',
-              i === 0
-                ? 'border-sfz-blue bg-sfz-blue text-white font-semibold'
-                : 'border-black/10 text-sfz-blue hover:bg-black/5',
-            ]}
-          >
-            {m.label}
-          </button>
-        ))
-      }
-    </div>
-  </div>
-
-  <div class="chart w-full" style={`height:${chartH}px`} role="img" aria-label="Porovnanie zväzov"></div>
-
-  <section class="mt-10">
-    <h2 class="text-lg font-bold mb-1">Priame porovnanie zväzov</h2>
-    <p class="text-sm text-sfz-muted mb-3">
-      Vyber 2–5 zväzov. Radar zobrazuje hodnoty normalizované na maximum úrovne (100 % = najlepší
-      zväz v danej metrike); skutočné hodnoty v tooltipe.
+<div data-porovnanie data-rows={JSON.stringify(rows)} data-stlpce={JSON.stringify(stlpce)}>
+  <!-- priame porovnanie (radar) -->
+  <section class={CARD} style={CARD_STYLE}>
+    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Priame porovnanie</div>
+    <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Priame porovnanie zväzov</h2>
+    <p class="text-sm text-muted mb-3">
+      Vyber 2–5 zväzov. Radar normalizuje na maximum úrovne (100 % = najlepší zväz v metrike);
+      skutočné hodnoty v tooltipe.
     </p>
     <div class="vyber flex flex-wrap gap-1.5 mb-4" role="group" aria-label="Výber zväzov na porovnanie">
       {
         rows.map((r) => (
-          <button
-            type="button"
-            data-zvaz={r.id}
-            class="vyber-chip rounded-md border border-black/10 px-2 py-0.5 text-sm text-sfz-blue hover:bg-black/5"
-          >
+          <button type="button" data-zvaz={r.id} class="vyber-chip rounded-full border border-black/10 px-3 py-0.5 text-sm text-sfz-blue hover:bg-black/5">
             {r.nazov}
           </button>
         ))
       }
     </div>
-    <div
-      class="radar w-full hidden"
-      style="height: 420px;"
-      role="img"
-      aria-label="Radarové porovnanie vybraných zväzov"
-    >
-    </div>
-    <p class="radar-hint text-sm text-sfz-muted">Vyber aspoň 2 zväzy.</p>
+    <div class="radar w-full hidden" style="height: 420px;" role="img" aria-label="Radarové porovnanie vybraných zväzov"></div>
+    <p class="radar-hint text-sm text-muted">Vyber aspoň 2 zväzy.</p>
   </section>
 
-  <div class="mt-8 overflow-x-auto">
-    <table class="w-full text-sm border-collapse">
-      <thead>
-        <tr class="text-left text-sfz-muted border-b border-black/10">
-          <th class="py-1 pr-2 font-medium">#</th>
-          <th class="py-1 pr-4 font-medium">Zväz</th>
-          <th class="py-1 px-2 font-medium text-right">Zápasy</th>
-          <th class="py-1 px-2 font-medium text-right">Družstvá</th>
-          <th class="py-1 px-2 font-medium text-right">Góly</th>
-          <th class="py-1 px-2 font-medium text-right">Hráči</th>
-          <th class="py-1 px-2 font-medium text-right">Diváci</th>
-          <th class="py-1 px-2 font-medium text-right">Góly/zápas</th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          rows.map((r, i) => (
-            <tr class="border-b border-black/5">
-              <td class="py-1 pr-2 tabular-nums text-sfz-muted">{i + 1}</td>
-              <td class="py-1 pr-4">
-                <a class="text-sfz-blue hover:underline" href={`/zvaz/${r.id}`}>
-                  {r.nazov}
-                </a>
-              </td>
-              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.zapasy)}</td>
-              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.druzstva)}</td>
-              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.goly)}</td>
-              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.hraci)}</td>
-              <td class="py-1 px-2 text-right tabular-nums">{fmt(r.divaci)}</td>
-              <td class="py-1 px-2 text-right tabular-nums">{r.golyNaZapas.toFixed(2)}</td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
-  </div>
+  <!-- zoraditeľná tabuľka -->
+  <section class={CARD} style={`${CARD_STYLE} margin-top:18px;`}>
+    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Rebríček</div>
+    <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 10px;">Tabuľka zväzov</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm border-collapse" data-tabulka>
+        <thead>
+          <tr class="text-left text-muted border-b border-line">
+            <th class="py-2 pr-4 font-semibold">Zväz</th>
+            {
+              stlpce.map((s) => (
+                <th
+                  class="py-2 px-2 font-semibold text-right cursor-pointer select-none hover:text-sfz-blue"
+                  data-sort={s.key}
+                >
+                  {s.label} <span class="sort-ind"></span>
+                </th>
+              ))
+            }
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="mt-3 text-xs text-muted">Klikni na hlavičku stĺpca pre zoradenie, na riadok pre profil zväzu.</p>
+  </section>
 </div>
 
 <script>
   import * as echarts from 'echarts/core';
-  import { BarChart, RadarChart } from 'echarts/charts';
-  import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
+  import { RadarChart } from 'echarts/charts';
+  import { TooltipComponent, LegendComponent } from 'echarts/components';
   import { CanvasRenderer } from 'echarts/renderers';
-  echarts.use([BarChart, RadarChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
+  echarts.use([RadarChart, TooltipComponent, LegendComponent, CanvasRenderer]);
 
-  const REGION_COLOR: Record<string, string> = {
-    BFZ: '#1450df',
-    ZsFZ: '#2aa7ff',
-    SsFZ: '#12b886',
-    VsFZ: '#f59f00',
-  };
-  const LABELS: Record<string, string> = {
-    zapasy: 'Zápasy',
-    druzstva: 'Družstvá',
-    goly: 'Góly',
-    hraci: 'Hráči',
-    divaci: 'Diváci',
-    golyNaZapas: 'Góly/zápas',
-    divaciNaZapas: 'Diváci/zápas',
-    zlteKarty: 'Žlté karty',
-    cerveneKarty: 'Červené karty',
-  };
+  const REGION: Record<string, string> = { bfz: '#1450df', zsfz: '#2f9bff', ssfz: '#12a06b', vsfz: '#f0961b' };
+  const RFZ_SKR: Record<string, string> = { BFZ: 'bfz', ZsFZ: 'zsfz', SsFZ: 'ssfz', VsFZ: 'vsfz' };
+  const PALETTE = ['#1450df', '#ec1c24', '#12a06b', '#f0961b', '#7a44e0'];
   const nf = new Intl.NumberFormat('sk-SK');
+  const nf1 = new Intl.NumberFormat('sk-SK', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
   type Row = Record<string, number | string>;
+  type Stlpec = { key: string; label: string; fixed: number };
 
   const root = document.querySelector<HTMLElement>('[data-porovnanie]');
   if (root) {
     const rows = JSON.parse(root.dataset.rows ?? '[]') as Row[];
-    const chartEl = root.querySelector<HTMLElement>('.chart')!;
-    const pills = [...root.querySelectorAll<HTMLButtonElement>('.metrika-pills button')];
-    let metrika = pills[0]?.dataset.metrika ?? 'zapasy';
-    const chart = echarts.init(chartEl, undefined, { renderer: 'canvas' });
-    const AKT = ['border-sfz-blue', 'bg-sfz-blue', 'text-white', 'font-semibold'];
-    const NEAKT = ['border-black/10', 'text-sfz-blue'];
+    const stlpce = JSON.parse(root.dataset.stlpce ?? '[]') as Stlpec[];
 
-    function render(metric: string) {
-      // vzostupne → najväčší navrchu (ECharts kreslí kategórie zdola)
-      const sorted = [...rows].sort((a, b) => (a[metric] as number) - (b[metric] as number));
-      chart.setOption(
-        {
-          grid: { left: 8, right: 24, top: 10, bottom: 10, containLabel: true },
-          tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-          xAxis: { type: 'value' },
-          yAxis: {
-            type: 'category',
-            data: sorted.map((r) => r.nazov as string),
-            axisLabel: { fontSize: 11 },
-          },
-          series: [
-            {
-              name: LABELS[metric],
-              type: 'bar',
-              data: sorted.map((r) => ({
-                value: r[metric] as number,
-                itemStyle: { color: REGION_COLOR[(r.rfz as string) ?? ''] ?? '#1450df' },
-              })),
-              label: { show: true, position: 'right', fontSize: 10, formatter: (p: any) => nf.format(p.value) },
-            },
-          ],
-        },
-        true,
-      );
+    function farbaRiadku(r: Row): string {
+      const id = r.id as string;
+      if (REGION[id]) return REGION[id];
+      const skr = RFZ_SKR[(r.rfz as string) ?? ''];
+      return REGION[skr] ?? '#c7ccd2';
+    }
+    function fmtVal(v: number, fixed: number): string {
+      return fixed ? nf1.format(v) : nf.format(v);
     }
 
-    pills.forEach((b) =>
-      b.addEventListener('click', () => {
-        metrika = b.dataset.metrika!;
-        pills.forEach((x) => {
-          const on = x === b;
-          AKT.forEach((c) => x.classList.toggle(c, on));
-          NEAKT.forEach((c) => x.classList.toggle(c, !on));
-        });
-        render(metrika);
+    // ---- tabuľka so sortom ----
+    const tbody = root.querySelector<HTMLElement>('[data-tabulka] tbody')!;
+    let sortKey = 'zapasy';
+    let sortDir: 1 | -1 = -1; // zostupne
+    function renderTabulka() {
+      const sorted = [...rows].sort((a, b) => ((a[sortKey] as number) - (b[sortKey] as number)) * sortDir);
+      tbody.innerHTML = sorted
+        .map((r, i) => {
+          const bunky = stlpce
+            .map((s) => `<td class="py-2 px-2 text-right tabular-nums">${fmtVal(r[s.key] as number, s.fixed)}</td>`)
+            .join('');
+          return `<tr class="border-b border-line cursor-pointer ${i % 2 ? 'bg-black/[.015]' : ''}" data-id="${r.id}">
+            <td class="py-2 pr-4"><span style="display:inline-block;width:9px;height:9px;border-radius:3px;background:${farbaRiadku(r)};margin-right:8px;"></span><a class="text-sfz-blue hover:underline" href="/zvaz/${r.id}">${r.nazov}</a></td>
+            ${bunky}</tr>`;
+        })
+        .join('');
+      tbody.querySelectorAll<HTMLElement>('tr').forEach((tr) =>
+        tr.addEventListener('click', (e) => {
+          if ((e.target as HTMLElement).tagName !== 'A') window.location.href = `/zvaz/${tr.dataset.id}`;
+        }),
+      );
+      root.querySelectorAll<HTMLElement>('[data-sort]').forEach((th) => {
+        const ind = th.querySelector('.sort-ind')!;
+        ind.textContent = th.dataset.sort === sortKey ? (sortDir === -1 ? '▼' : '▲') : '';
+        th.classList.toggle('text-sfz-blue', th.dataset.sort === sortKey);
+      });
+    }
+    root.querySelectorAll<HTMLElement>('[data-sort]').forEach((th) =>
+      th.addEventListener('click', () => {
+        const k = th.dataset.sort!;
+        if (k === sortKey) sortDir = sortDir === -1 ? 1 : -1;
+        else { sortKey = k; sortDir = -1; }
+        renderTabulka();
       }),
     );
-    render(metrika);
-    new ResizeObserver(() => chart.resize()).observe(chartEl);
+    renderTabulka();
 
-    // ---- Priame porovnanie 2–5 zväzov (radar) ----
-    const MAX_VYBER = 5;
-    const RADAR_METRIKY = [
-      'zapasy',
-      'druzstva',
-      'goly',
-      'hraci',
-      'divaci',
-      'golyNaZapas',
-      'divaciNaZapas',
-    ] as const;
-    const RADAR_FARBY = ['#1450df', '#ec1c24', '#12b886', '#f59f00', '#7048e8'];
-
-    // normalizácia: 100 % = maximum metriky v celej tabuľke (úroveň × sezóna),
-    // takže tvar radaru je stabilný bez ohľadu na výber
+    // ---- radar 2–5 zväzov ----
+    const RADAR = [
+      { k: 'zapasy', label: 'Zápasy' }, { k: 'divaciNaZapas', label: 'Diváci/zápas' },
+      { k: 'golyNaZapas', label: 'Góly/zápas' }, { k: 'divaci', label: 'Diváci' },
+      { k: 'hraci', label: 'Hráči' }, { k: 'goly', label: 'Góly' }, { k: 'druzstva', label: 'Družstvá' },
+    ];
     const maxima: Record<string, number> = {};
-    for (const m of RADAR_METRIKY) {
-      maxima[m] = Math.max(...rows.map((r) => (r[m] as number) || 0), 1);
-    }
+    for (const m of RADAR) maxima[m.k] = Math.max(...rows.map((r) => (r[m.k] as number) || 0), 1);
 
     const radarEl = root.querySelector<HTMLElement>('.radar')!;
     const hintEl = root.querySelector<HTMLElement>('.radar-hint')!;
@@ -224,67 +157,37 @@ const chartH = Math.max(220, rows.length * 24 + 70);
 
     function renderRadar() {
       const vyber = rows.filter((r) => vybrane.has(r.id as string));
-      const aktivny = vyber.length >= 2;
-      radarEl.classList.toggle('hidden', !aktivny);
-      hintEl.classList.toggle('hidden', aktivny);
-      if (!aktivny) return;
-      radar.setOption(
-        {
-          legend: { top: 0, data: vyber.map((r) => r.nazov as string) },
-          tooltip: {
-            trigger: 'item',
-            formatter: (p: any) => {
-              const r = vyber[p.dataIndex];
-              const riadky = RADAR_METRIKY.map((m, i) => {
-                const v = (r[m] as number) || 0;
-                const txt = m === 'golyNaZapas' || m === 'divaciNaZapas' ? v.toFixed(2) : nf.format(v);
-                return `${LABELS[m]}: <b>${txt}</b> (${Math.round(p.value[i])} %)`;
-              });
-              return `<b>${r.nazov}</b><br/>${riadky.join('<br/>')}`;
-            },
+      const on = vyber.length >= 2;
+      radarEl.classList.toggle('hidden', !on);
+      hintEl.classList.toggle('hidden', on);
+      if (!on) return;
+      radar.setOption({
+        legend: { top: 0, data: vyber.map((r) => r.nazov as string) },
+        tooltip: {
+          trigger: 'item',
+          formatter: (p: { dataIndex: number; value: number[] }) => {
+            const r = vyber[p.dataIndex];
+            return `<b>${r.nazov}</b><br/>` + RADAR.map((m, i) => `${m.label}: <b>${fmtVal(r[m.k] as number, m.k.includes('Zapas') ? 1 : 0)}</b> (${Math.round(p.value[i])} %)`).join('<br/>');
           },
-          radar: {
-            indicator: RADAR_METRIKY.map((m) => ({ name: LABELS[m], max: 100 })),
-            radius: '62%',
-            axisName: { fontSize: 11, color: '#475569' },
-          },
-          series: [
-            {
-              type: 'radar',
-              data: vyber.map((r, i) => ({
-                name: r.nazov as string,
-                value: RADAR_METRIKY.map((m) => (((r[m] as number) || 0) / maxima[m]) * 100),
-                itemStyle: { color: RADAR_FARBY[i % RADAR_FARBY.length] },
-                areaStyle: { opacity: 0.12 },
-              })),
-            },
-          ],
         },
-        true,
-      );
+        radar: { indicator: RADAR.map((m) => ({ name: m.label, max: 100 })), radius: '62%', axisName: { fontSize: 11, color: '#475569' } },
+        series: [{ type: 'radar', data: vyber.map((r, i) => ({ name: r.nazov as string, value: RADAR.map((m) => (((r[m.k] as number) || 0) / maxima[m.k]) * 100), itemStyle: { color: PALETTE[i % PALETTE.length] }, areaStyle: { opacity: 0.12 } })) }],
+      }, true);
       radar.resize();
     }
-
     function toggleChip(btn: HTMLButtonElement) {
       const id = btn.dataset.zvaz!;
-      if (vybrane.has(id)) {
-        vybrane.delete(id);
-      } else {
-        if (vybrane.size >= MAX_VYBER) return; // limit 5
-        vybrane.add(id);
-      }
-      const aktivna = vybrane.has(id);
-      btn.classList.toggle('bg-sfz-blue', aktivna);
-      btn.classList.toggle('text-white', aktivna);
-      btn.classList.toggle('border-sfz-blue', aktivna);
-      btn.classList.toggle('font-semibold', aktivna);
-      btn.classList.toggle('text-sfz-blue', !aktivna);
-      btn.setAttribute('aria-pressed', String(aktivna));
+      if (vybrane.has(id)) vybrane.delete(id);
+      else { if (vybrane.size >= 5) return; vybrane.add(id); }
+      const on = vybrane.has(id);
+      btn.classList.toggle('bg-sfz-blue', on);
+      btn.classList.toggle('text-white', on);
+      btn.classList.toggle('border-sfz-blue', on);
+      btn.classList.toggle('font-semibold', on);
+      btn.classList.toggle('text-sfz-blue', !on);
       renderRadar();
     }
-
     chips.forEach((btn) => btn.addEventListener('click', () => toggleChip(btn)));
-    // predvolený výber: prvé 3 zväzy tabuľky (okamžitá ukážka radaru)
     chips.slice(0, 3).forEach((btn) => toggleChip(btn));
     new ResizeObserver(() => radar.resize()).observe(radarEl);
   }
