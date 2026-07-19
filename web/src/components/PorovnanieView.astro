@@ -33,6 +33,35 @@ const chartH = Math.max(220, rows.length * 24 + 70);
 
   <div class="chart w-full" style={`height:${chartH}px`} role="img" aria-label="Porovnanie zväzov"></div>
 
+  <section class="mt-10">
+    <h2 class="text-lg font-bold mb-1">Priame porovnanie zväzov</h2>
+    <p class="text-sm text-sfz-muted mb-3">
+      Vyber 2–5 zväzov. Radar zobrazuje hodnoty normalizované na maximum úrovne (100 % = najlepší
+      zväz v danej metrike); skutočné hodnoty v tooltipe.
+    </p>
+    <div class="vyber flex flex-wrap gap-1.5 mb-4" role="group" aria-label="Výber zväzov na porovnanie">
+      {
+        rows.map((r) => (
+          <button
+            type="button"
+            data-zvaz={r.id}
+            class="vyber-chip rounded-md border border-black/10 px-2 py-0.5 text-sm text-sfz-blue hover:bg-black/5"
+          >
+            {r.nazov}
+          </button>
+        ))
+      }
+    </div>
+    <div
+      class="radar w-full hidden"
+      style="height: 420px;"
+      role="img"
+      aria-label="Radarové porovnanie vybraných zväzov"
+    >
+    </div>
+    <p class="radar-hint text-sm text-sfz-muted">Vyber aspoň 2 zväzy.</p>
+  </section>
+
   <div class="mt-8 overflow-x-auto">
     <table class="w-full text-sm border-collapse">
       <thead>
@@ -73,10 +102,10 @@ const chartH = Math.max(220, rows.length * 24 + 70);
 
 <script>
   import * as echarts from 'echarts/core';
-  import { BarChart } from 'echarts/charts';
-  import { GridComponent, TooltipComponent } from 'echarts/components';
+  import { BarChart, RadarChart } from 'echarts/charts';
+  import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
   import { CanvasRenderer } from 'echarts/renderers';
-  echarts.use([BarChart, GridComponent, TooltipComponent, CanvasRenderer]);
+  echarts.use([BarChart, RadarChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
   const REGION_COLOR: Record<string, string> = {
     BFZ: '#1450df',
@@ -138,5 +167,97 @@ const chartH = Math.max(220, rows.length * 24 + 70);
     sel.addEventListener('change', () => render(sel.value));
     render(sel.value);
     new ResizeObserver(() => chart.resize()).observe(chartEl);
+
+    // ---- Priame porovnanie 2–5 zväzov (radar) ----
+    const MAX_VYBER = 5;
+    const RADAR_METRIKY = [
+      'zapasy',
+      'druzstva',
+      'goly',
+      'hraci',
+      'divaci',
+      'golyNaZapas',
+      'divaciNaZapas',
+    ] as const;
+    const RADAR_FARBY = ['#1450df', '#ec1c24', '#12b886', '#f59f00', '#7048e8'];
+
+    // normalizácia: 100 % = maximum metriky v celej tabuľke (úroveň × sezóna),
+    // takže tvar radaru je stabilný bez ohľadu na výber
+    const maxima: Record<string, number> = {};
+    for (const m of RADAR_METRIKY) {
+      maxima[m] = Math.max(...rows.map((r) => (r[m] as number) || 0), 1);
+    }
+
+    const radarEl = root.querySelector<HTMLElement>('.radar')!;
+    const hintEl = root.querySelector<HTMLElement>('.radar-hint')!;
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('.vyber-chip')];
+    const radar = echarts.init(radarEl, undefined, { renderer: 'canvas' });
+    const vybrane = new Set<string>();
+
+    function renderRadar() {
+      const vyber = rows.filter((r) => vybrane.has(r.id as string));
+      const aktivny = vyber.length >= 2;
+      radarEl.classList.toggle('hidden', !aktivny);
+      hintEl.classList.toggle('hidden', aktivny);
+      if (!aktivny) return;
+      radar.setOption(
+        {
+          legend: { top: 0, data: vyber.map((r) => r.nazov as string) },
+          tooltip: {
+            trigger: 'item',
+            formatter: (p: any) => {
+              const r = vyber[p.dataIndex];
+              const riadky = RADAR_METRIKY.map((m, i) => {
+                const v = (r[m] as number) || 0;
+                const txt = m === 'golyNaZapas' || m === 'divaciNaZapas' ? v.toFixed(2) : nf.format(v);
+                return `${LABELS[m]}: <b>${txt}</b> (${Math.round(p.value[i])} %)`;
+              });
+              return `<b>${r.nazov}</b><br/>${riadky.join('<br/>')}`;
+            },
+          },
+          radar: {
+            indicator: RADAR_METRIKY.map((m) => ({ name: LABELS[m], max: 100 })),
+            radius: '62%',
+            axisName: { fontSize: 11, color: '#475569' },
+          },
+          series: [
+            {
+              type: 'radar',
+              data: vyber.map((r, i) => ({
+                name: r.nazov as string,
+                value: RADAR_METRIKY.map((m) => (((r[m] as number) || 0) / maxima[m]) * 100),
+                itemStyle: { color: RADAR_FARBY[i % RADAR_FARBY.length] },
+                areaStyle: { opacity: 0.12 },
+              })),
+            },
+          ],
+        },
+        true,
+      );
+      radar.resize();
+    }
+
+    function toggleChip(btn: HTMLButtonElement) {
+      const id = btn.dataset.zvaz!;
+      if (vybrane.has(id)) {
+        vybrane.delete(id);
+      } else {
+        if (vybrane.size >= MAX_VYBER) return; // limit 5
+        vybrane.add(id);
+      }
+      const aktivna = vybrane.has(id);
+      btn.classList.toggle('bg-sfz-blue', aktivna);
+      btn.classList.toggle('text-white', aktivna);
+      btn.classList.toggle('border-sfz-blue', aktivna);
+      btn.classList.toggle('font-semibold', aktivna);
+      btn.classList.toggle('text-sfz-blue', !aktivna);
+      btn.setAttribute('aria-pressed', String(aktivna));
+      renderRadar();
+    }
+
+    chips.forEach((btn) => btn.addEventListener('click', () => toggleChip(btn)));
+    // predvolený výber: prvé 3 zväzy tabuľky (okamžitá ukážka radaru)
+    chips.slice(0, 3).forEach((btn) => toggleChip(btn));
+    new ResizeObserver(() => radar.resize()).observe(radarEl);
   }
 </script>
