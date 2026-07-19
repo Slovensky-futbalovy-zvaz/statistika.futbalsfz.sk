@@ -273,6 +273,18 @@ def main() -> int:
         log.info("Žiadne dáta — súbor sa negeneruje.")
         return 0
 
+    # Merge s existujúcim súborom: pri behu jednej sezóny (napr. denný cron
+    # aktuálnej sezóny) sa ostatné sezóny zachovajú; --all-sezony regeneruje celý
+    # súbor. Nová generácia sezóny má prednosť pred uloženou.
+    cesta_stara = Path(args.out) / "demografia" / (zvaz["id"] + ".json")
+    if not args.all_sezony and cesta_stara.exists():
+        stare = load_json(cesta_stara)
+        if stare.get("sportSector") == args.sport_sector:
+            zlucene = dict(stare.get("sezony", {}))
+            zlucene.update(vysledky)
+            vysledky = {s: zlucene[s] for s in sorted(zlucene)}
+            log.info("Merge s existujúcim súborom (%d sezón spolu).", len(vysledky))
+
     doc = {
         "zvaz": zvaz["id"],
         "sportSector": args.sport_sector,

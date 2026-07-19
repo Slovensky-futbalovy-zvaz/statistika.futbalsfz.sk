@@ -1,0 +1,661 @@
+{
+ "sezona": "2020/2021",
+ "generatedAt": "2026-07-19T17:59:04+02:00",
+ "pocetZvazov": 43,
+ "methodologyFlags": {
+  "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
+  "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia."
+ },
+ "kpi": {
+  "zapasy": 24532,
+  "druzstva": 4,
+  "goly": 135169,
+  "divaci": 1353623,
+  "zlteKarty": 36092,
+  "cerveneKarty": 1107
+ },
+ "osoby": {
+  "hraci": 92151,
+  "treneri": 4505,
+  "rozhodcovia": 2830,
+  "delegati": 742,
+  "personal": 8079,
+  "spolu": 108307
+ },
+ "odvetvia": {
+  "futsal": {
+   "kpi": {
+    "zapasy": 111,
+    "druzstva": 0,
+    "goly": 727,
+    "divaci": 961,
+    "zlteKarty": 145,
+    "cerveneKarty": 5
+   },
+   "osoby": {
+    "hraci": 345,
+    "treneri": 14,
+    "rozhodcovia": 28,
+    "delegati": 7,
+    "personal": 57,
+    "spolu": 451
+   }
+  }
+ },
+ "sunburstSutaze": {
+  "name": "SR",
+  "children": [
+   {
+    "name": "Futbal",
+    "children": [
+     {
+      "name": "Slovenský futbalový zväz",
+      "id": "sfz",
+      "children": [
+       {
+        "name": "SFZ — vlastné súťaže",
+        "value": 2116,
+        "pohlavie": {
+         "M": 1905,
+         "F": 211
+        },
+        "id": "sfz"
+       },
+       {
+        "name": "Bratislavský futbalový zväz",
+        "id": "bfz",
+        "children": [
+         {
+          "name": "Bratislavský futbalový zväz — vlastné súťaže",
+          "value": 1296,
+          "pohlavie": {
+           "M": 1285,
+           "F": 11
+          },
+          "id": "bfz"
+         },
+         {
+          "name": "ObFZ Bratislava-mesto",
+          "value": 371,
+          "pohlavie": {
+           "M": 371
+          },
+          "id": "obfz-bratislava-mesto"
+         },
+         {
+          "name": "ObFZ Bratislava-vidiek",
+          "value": 333,
+          "pohlavie": {
+           "M": 333
+          },
+          "id": "obfz-bratislava-vidiek"
+         }
+        ]
+       },
+       {
+        "name": "Západoslovenský futbalový zväz",
+        "id": "zsfz",
+        "children": [
+         {
+          "name": "Západoslovenský futbalový zväz — vlastné súťaže",
+          "value": 2571,
+          "pohlavie": {
+           "M": 2554,
+           "F": 17
+          },
+          "id": "zsfz"
+         },
+         {
+          "name": "ObFZ Trnava",
+          "value": 774,
+          "pohlavie": {
+           "M": 774
+          },
+          "id": "obfz-trnava"
+         },
+         {
+          "name": "ObFZ Dunajská Streda",
+          "value": 355,
+          "pohlavie": {
+           "M": 355
+          },
+          "id": "obfz-dunajska-streda"
+         },
+         {
+          "name": "ObFZ Galanta",
+          "value": 262,
+          "pohlavie": {
+           "M": 262
+          },
+          "id": "obfz-galanta"
+         },
+         {
+          "name": "ObFZ Senica",
+          "value": 574,
+          "pohlavie": {
+           "M": 574
+          },
+          "id": "obfz-senica"
+         },
+         {
+          "name": "ObFZ Trenčín",
+          "value": 594,
+          "pohlavie": {
+           "M": 594
+          },
+          "id": "obfz-trencin"
+         },
+         {
+          "name": "ObFZ Prievidza",
+          "value": 670,
+          "pohlavie": {
+           "M": 670
+          },
+          "id": "obfz-prievidza"
+         },
+         {
+          "name": "ObFZ Považská Bystrica",
+          "value": 456,
+          "pohlavie": {
+           "M": 456
+          },
+          "id": "obfz-povazska-bystrica"
+         },
+         {
+          "name": "ObFZ Nitra",
+          "value": 952,
+          "pohlavie": {
+           "M": 952
+          },
+          "id": "obfz-nitra"
+         },
+         {
+          "name": "ObFZ Nové Zámky",
+          "value": 639,
+          "pohlavie": {
+           "M": 639
+          },
+          "id": "obfz-nove-zamky"
+         },
+         {
+          "name": "ObFZ Levice",
+          "value": 359,
+          "pohlavie": {
+           "M": 359
+          },
+          "id": "obfz-levice"
+         },
+         {
+          "name": "ObFZ Komárno",
+          "value": 209,
+          "pohlavie": {
+           "M": 209
+          },
+          "id": "obfz-komarno"
+         },
+         {
+          "name": "ObFZ Topoľčany",
+          "value": 459,
+          "pohlavie": {
+           "M": 459
+          },
+          "id": "obfz-topolcany"
+         }
+        ]
+       },
+       {
+        "name": "Stredoslovenský futbalový zväz",
+        "id": "ssfz",
+        "children": [
+         {
+          "name": "Stredoslovenský futbalový zväz — vlastné súťaže",
+          "value": 1669,
+          "pohlavie": {
+           "M": 1643,
+           "F": 26
+          },
+          "id": "ssfz"
+         },
+         {
+          "name": "ObFZ Žilina",
+          "value": 694,
+          "pohlavie": {
+           "M": 694
+          },
+          "id": "obfz-zilina"
+         },
+         {
+          "name": "ObFZ Kysúc",
+          "value": 184,
+          "pohlavie": {
+           "M": 184
+          },
+          "id": "obfz-kysuc"
+         },
+         {
+          "name": "Oravský futbalový zväz",
+          "value": 490,
+          "pohlavie": {
+           "M": 490
+          },
+          "id": "ofz-orava"
+         },
+         {
+          "name": "Liptovský futbalový zväz",
+          "value": 526,
+          "pohlavie": {
+           "M": 526
+          },
+          "id": "lfz-liptov"
+         },
+         {
+          "name": "Turčiansky futbalový zväz",
+          "value": 342,
+          "pohlavie": {
+           "M": 342
+          },
+          "id": "tfz-turiec"
+         },
+         {
+          "name": "ObFZ Banská Bystrica",
+          "value": 438,
+          "pohlavie": {
+           "M": 438
+          },
+          "id": "obfz-banska-bystrica"
+         },
+         {
+          "name": "ObFZ Zvolen",
+          "value": 205,
+          "pohlavie": {
+           "M": 205
+          },
+          "id": "obfz-zvolen"
+         },
+         {
+          "name": "ObFZ Žiar nad Hronom",
+          "value": 243,
+          "pohlavie": {
+           "M": 243
+          },
+          "id": "obfz-ziar-nad-hronom"
+         },
+         {
+          "name": "ObFZ Lučenec",
+          "value": 153,
+          "pohlavie": {
+           "M": 153
+          },
+          "id": "obfz-lucenec"
+         },
+         {
+          "name": "ObFZ Veľký Krtíš",
+          "value": 198,
+          "pohlavie": {
+           "M": 198
+          },
+          "id": "obfz-velky-krtis"
+         },
+         {
+          "name": "ObFZ Rimavská Sobota",
+          "value": 145,
+          "pohlavie": {
+           "M": 145
+          },
+          "id": "obfz-rimavska-sobota"
+         }
+        ]
+       },
+       {
+        "name": "Východoslovenský futbalový zväz",
+        "id": "vsfz",
+        "children": [
+         {
+          "name": "Východoslovenský futbalový zväz — vlastné súťaže",
+          "value": 1895,
+          "pohlavie": {
+           "M": 1872,
+           "F": 23
+          },
+          "id": "vsfz"
+         },
+         {
+          "name": "ObFZ Košice-okolie",
+          "value": 399,
+          "pohlavie": {
+           "M": 399
+          },
+          "id": "obfz-kosice-okolie"
+         },
+         {
+          "name": "Mestský FZ Košice",
+          "value": 175,
+          "pohlavie": {
+           "M": 175
+          },
+          "id": "mfz-kosice"
+         },
+         {
+          "name": "ObFZ Prešov",
+          "value": 1101,
+          "pohlavie": {
+           "M": 1101
+          },
+          "id": "obfz-presov"
+         },
+         {
+          "name": "Podtatranský futbalový zväz",
+          "value": 466,
+          "pohlavie": {
+           "M": 466
+          },
+          "id": "pfz-poprad"
+         },
+         {
+          "name": "Spišský oblastný futbalový zväz",
+          "value": 350,
+          "pohlavie": {
+           "M": 350
+          },
+          "id": "sofz-spisska-nova-ves"
+         },
+         {
+          "name": "ObFZ Stará Ľubovňa",
+          "value": 165,
+          "pohlavie": {
+           "M": 165
+          },
+          "id": "obfz-stara-lubovna"
+         },
+         {
+          "name": "ObFZ Bardejov",
+          "value": 225,
+          "pohlavie": {
+           "M": 225
+          },
+          "id": "obfz-bardejov"
+         },
+         {
+          "name": "Ondavský oblastný futbalový zväz",
+          "value": 204,
+          "pohlavie": {
+           "M": 204
+          },
+          "id": "oofz-svidnik"
+         },
+         {
+          "name": "ObFZ Humenné",
+          "value": 285,
+          "pohlavie": {
+           "M": 285
+          },
+          "id": "obfz-humenne"
+         },
+         {
+          "name": "ObFZ Vranov nad Topľou",
+          "value": 142,
+          "pohlavie": {
+           "M": 142
+          },
+          "id": "obfz-vranov-nad-toplou"
+         },
+         {
+          "name": "ObFZ Michalovce",
+          "value": 494,
+          "pohlavie": {
+           "M": 494
+          },
+          "id": "obfz-michalovce"
+         },
+         {
+          "name": "ObFZ Trebišov",
+          "value": 200,
+          "pohlavie": {
+           "M": 200
+          },
+          "id": "obfz-trebisov"
+         },
+         {
+          "name": "ObFZ Rožňava",
+          "value": 154,
+          "pohlavie": {
+           "M": 154
+          },
+          "id": "obfz-roznava"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Futsal",
+    "children": [
+     {
+      "name": "Slovenský futsal",
+      "value": 111,
+      "pohlavie": {
+       "M": 99,
+       "F": 12
+      },
+      "id": "sfz"
+     }
+    ]
+   }
+  ]
+ },
+ "sunburstOsoby": {
+  "name": "SR",
+  "children": [
+   {
+    "name": "Futbal",
+    "children": [
+     {
+      "name": "Hráči",
+      "children": [
+       {
+        "name": "U08",
+        "value": 62
+       },
+       {
+        "name": "Bez kategórie",
+        "value": 92089
+       }
+      ]
+     },
+     {
+      "name": "Tréneri",
+      "children": [
+       {
+        "name": "U08",
+        "value": 4
+       },
+       {
+        "name": "Bez kategórie",
+        "value": 4501
+       }
+      ]
+     },
+     {
+      "name": "Rozhodcovia",
+      "children": [
+       {
+        "name": "ADULTS",
+        "value": 2524
+       },
+       {
+        "name": "U19",
+        "value": 1626
+       },
+       {
+        "name": "U15",
+        "value": 1445
+       },
+       {
+        "name": "U13",
+        "value": 691
+       },
+       {
+        "name": "U17",
+        "value": 663
+       },
+       {
+        "name": "U11",
+        "value": 274
+       },
+       {
+        "name": "U14",
+        "value": 233
+       },
+       {
+        "name": "U16",
+        "value": 114
+       },
+       {
+        "name": "U09",
+        "value": 77
+       },
+       {
+        "name": "U10",
+        "value": 21
+       }
+      ]
+     },
+     {
+      "name": "Delegáti",
+      "children": [
+       {
+        "name": "ADULTS",
+        "value": 697
+       },
+       {
+        "name": "U19",
+        "value": 217
+       }
+      ]
+     },
+     {
+      "name": "Personál",
+      "children": [
+       {
+        "name": "ADULTS",
+        "value": 5448
+       },
+       {
+        "name": "U15",
+        "value": 1755
+       },
+       {
+        "name": "U19",
+        "value": 1653
+       },
+       {
+        "name": "U13",
+        "value": 1065
+       },
+       {
+        "name": "U11",
+        "value": 946
+       },
+       {
+        "name": "U09",
+        "value": 389
+       },
+       {
+        "name": "U17",
+        "value": 280
+       },
+       {
+        "name": "U10",
+        "value": 110
+       },
+       {
+        "name": "U14",
+        "value": 73
+       },
+       {
+        "name": "U16",
+        "value": 39
+       },
+       {
+        "name": "U12",
+        "value": 37
+       },
+       {
+        "name": "U08",
+        "value": 34
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "name": "Futsal",
+    "children": [
+     {
+      "name": "Hráči",
+      "children": [
+       {
+        "name": "Bez kategórie",
+        "value": 345
+       }
+      ]
+     },
+     {
+      "name": "Tréneri",
+      "children": [
+       {
+        "name": "Bez kategórie",
+        "value": 14
+       }
+      ]
+     },
+     {
+      "name": "Rozhodcovia",
+      "children": [
+       {
+        "name": "ADULTS",
+        "value": 24
+       },
+       {
+        "name": "U20",
+        "value": 12
+       },
+       {
+        "name": "U17",
+        "value": 7
+       }
+      ]
+     },
+     {
+      "name": "Delegáti",
+      "children": [
+       {
+        "name": "ADULTS",
+        "value": 7
+       }
+      ]
+     },
+     {
+      "name": "Personál",
+      "children": [
+       {
+        "name": "ADULTS",
+        "value": 39
+       },
+       {
+        "name": "U20",
+        "value": 21
+       },
+       {
+        "name": "U17",
+        "value": 7
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

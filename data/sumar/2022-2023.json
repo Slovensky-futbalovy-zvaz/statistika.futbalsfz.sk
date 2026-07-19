@@ -1,0 +1,597 @@
+{
+ "sezona": "2022/2023",
+ "generatedAt": "2026-07-19T17:59:05+02:00",
+ "pocetZvazov": 43,
+ "methodologyFlags": {
+  "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
+  "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia."
+ },
+ "kpi": {
+  "zapasy": 58151,
+  "druzstva": 582,
+  "goly": 288331,
+  "divaci": 3843348,
+  "zlteKarty": 73999,
+  "cerveneKarty": 2575
+ },
+ "osoby": {
+  "hraci": 108913,
+  "treneri": 4741,
+  "rozhodcovia": 3219,
+  "delegati": 733,
+  "personal": 10179,
+  "spolu": 127785
+ },
+ "odvetvia": {},
+ "sunburstSutaze": {
+  "name": "SR",
+  "children": [
+   {
+    "name": "Futbal",
+    "children": [
+     {
+      "name": "Slovenský futbalový zväz",
+      "id": "sfz",
+      "children": [
+       {
+        "name": "SFZ — vlastné súťaže",
+        "value": 6228,
+        "pohlavie": {
+         "M": 5337,
+         "F": 878,
+         "NEURCENE": 13
+        },
+        "id": "sfz"
+       },
+       {
+        "name": "Bratislavský futbalový zväz",
+        "id": "bfz",
+        "children": [
+         {
+          "name": "Bratislavský futbalový zväz — vlastné súťaže",
+          "value": 3787,
+          "pohlavie": {
+           "M": 3710,
+           "F": 77
+          },
+          "id": "bfz"
+         },
+         {
+          "name": "ObFZ Bratislava-mesto",
+          "value": 968,
+          "pohlavie": {
+           "M": 968
+          },
+          "id": "obfz-bratislava-mesto"
+         },
+         {
+          "name": "ObFZ Bratislava-vidiek",
+          "value": 807,
+          "pohlavie": {
+           "M": 807
+          },
+          "id": "obfz-bratislava-vidiek"
+         }
+        ]
+       },
+       {
+        "name": "Západoslovenský futbalový zväz",
+        "id": "zsfz",
+        "children": [
+         {
+          "name": "Západoslovenský futbalový zväz — vlastné súťaže",
+          "value": 5035,
+          "pohlavie": {
+           "M": 5035
+          },
+          "id": "zsfz"
+         },
+         {
+          "name": "ObFZ Trnava",
+          "value": 2086,
+          "pohlavie": {
+           "M": 2086
+          },
+          "id": "obfz-trnava"
+         },
+         {
+          "name": "ObFZ Dunajská Streda",
+          "value": 1303,
+          "pohlavie": {
+           "M": 1303
+          },
+          "id": "obfz-dunajska-streda"
+         },
+         {
+          "name": "ObFZ Galanta",
+          "value": 777,
+          "pohlavie": {
+           "M": 777
+          },
+          "id": "obfz-galanta"
+         },
+         {
+          "name": "ObFZ Senica",
+          "value": 1446,
+          "pohlavie": {
+           "M": 1446
+          },
+          "id": "obfz-senica"
+         },
+         {
+          "name": "ObFZ Trenčín",
+          "value": 2286,
+          "pohlavie": {
+           "M": 2286
+          },
+          "id": "obfz-trencin"
+         },
+         {
+          "name": "ObFZ Prievidza",
+          "value": 1863,
+          "pohlavie": {
+           "M": 1863
+          },
+          "id": "obfz-prievidza"
+         },
+         {
+          "name": "ObFZ Považská Bystrica",
+          "value": 1053,
+          "pohlavie": {
+           "M": 1053
+          },
+          "id": "obfz-povazska-bystrica"
+         },
+         {
+          "name": "ObFZ Nitra",
+          "value": 2416,
+          "pohlavie": {
+           "M": 2416
+          },
+          "id": "obfz-nitra"
+         },
+         {
+          "name": "ObFZ Nové Zámky",
+          "value": 1314,
+          "pohlavie": {
+           "M": 1314
+          },
+          "id": "obfz-nove-zamky"
+         },
+         {
+          "name": "ObFZ Levice",
+          "value": 776,
+          "pohlavie": {
+           "M": 776
+          },
+          "id": "obfz-levice"
+         },
+         {
+          "name": "ObFZ Komárno",
+          "value": 496,
+          "pohlavie": {
+           "M": 496
+          },
+          "id": "obfz-komarno"
+         },
+         {
+          "name": "ObFZ Topoľčany",
+          "value": 821,
+          "pohlavie": {
+           "M": 821
+          },
+          "id": "obfz-topolcany"
+         }
+        ]
+       },
+       {
+        "name": "Stredoslovenský futbalový zväz",
+        "id": "ssfz",
+        "children": [
+         {
+          "name": "Stredoslovenský futbalový zväz — vlastné súťaže",
+          "value": 3874,
+          "pohlavie": {
+           "M": 3759,
+           "F": 115
+          },
+          "id": "ssfz"
+         },
+         {
+          "name": "ObFZ Žilina",
+          "value": 1673,
+          "pohlavie": {
+           "M": 1673
+          },
+          "id": "obfz-zilina"
+         },
+         {
+          "name": "ObFZ Kysúc",
+          "value": 456,
+          "pohlavie": {
+           "M": 456
+          },
+          "id": "obfz-kysuc"
+         },
+         {
+          "name": "Oravský futbalový zväz",
+          "value": 1447,
+          "pohlavie": {
+           "M": 1447
+          },
+          "id": "ofz-orava"
+         },
+         {
+          "name": "Liptovský futbalový zväz",
+          "value": 1169,
+          "pohlavie": {
+           "M": 1155,
+           "NEURCENE": 14
+          },
+          "id": "lfz-liptov"
+         },
+         {
+          "name": "Turčiansky futbalový zväz",
+          "value": 674,
+          "pohlavie": {
+           "M": 674
+          },
+          "id": "tfz-turiec"
+         },
+         {
+          "name": "ObFZ Banská Bystrica",
+          "value": 852,
+          "pohlavie": {
+           "M": 852
+          },
+          "id": "obfz-banska-bystrica"
+         },
+         {
+          "name": "ObFZ Zvolen",
+          "value": 442,
+          "pohlavie": {
+           "M": 442
+          },
+          "id": "obfz-zvolen"
+         },
+         {
+          "name": "ObFZ Žiar nad Hronom",
+          "value": 598,
+          "pohlavie": {
+           "M": 598
+          },
+          "id": "obfz-ziar-nad-hronom"
+         },
+         {
+          "name": "ObFZ Lučenec",
+          "value": 445,
+          "pohlavie": {
+           "M": 442,
+           "NEURCENE": 3
+          },
+          "id": "obfz-lucenec"
+         },
+         {
+          "name": "ObFZ Veľký Krtíš",
+          "value": 246,
+          "pohlavie": {
+           "M": 246
+          },
+          "id": "obfz-velky-krtis"
+         },
+         {
+          "name": "ObFZ Rimavská Sobota",
+          "value": 114,
+          "pohlavie": {
+           "M": 114
+          },
+          "id": "obfz-rimavska-sobota"
+         }
+        ]
+       },
+       {
+        "name": "Východoslovenský futbalový zväz",
+        "id": "vsfz",
+        "children": [
+         {
+          "name": "Východoslovenský futbalový zväz — vlastné súťaže",
+          "value": 3593,
+          "pohlavie": {
+           "M": 3441,
+           "F": 60,
+           "NEURCENE": 92
+          },
+          "id": "vsfz"
+         },
+         {
+          "name": "ObFZ Košice-okolie",
+          "value": 974,
+          "pohlavie": {
+           "M": 974
+          },
+          "id": "obfz-kosice-okolie"
+         },
+         {
+          "name": "Mestský FZ Košice",
+          "value": 303,
+          "pohlavie": {
+           "M": 303
+          },
+          "id": "mfz-kosice"
+         },
+         {
+          "name": "ObFZ Prešov",
+          "value": 2392,
+          "pohlavie": {
+           "M": 2392
+          },
+          "id": "obfz-presov"
+         },
+         {
+          "name": "Podtatranský futbalový zväz",
+          "value": 1174,
+          "pohlavie": {
+           "M": 1174
+          },
+          "id": "pfz-poprad"
+         },
+         {
+          "name": "Spišský oblastný futbalový zväz",
+          "value": 537,
+          "pohlavie": {
+           "M": 537
+          },
+          "id": "sofz-spisska-nova-ves"
+         },
+         {
+          "name": "ObFZ Stará Ľubovňa",
+          "value": 395,
+          "pohlavie": {
+           "M": 395
+          },
+          "id": "obfz-stara-lubovna"
+         },
+         {
+          "name": "ObFZ Bardejov",
+          "value": 478,
+          "pohlavie": {
+           "M": 478
+          },
+          "id": "obfz-bardejov"
+         },
+         {
+          "name": "Ondavský oblastný futbalový zväz",
+          "value": 331,
+          "pohlavie": {
+           "M": 331
+          },
+          "id": "oofz-svidnik"
+         },
+         {
+          "name": "ObFZ Humenné",
+          "value": 602,
+          "pohlavie": {
+           "M": 602
+          },
+          "id": "obfz-humenne"
+         },
+         {
+          "name": "ObFZ Vranov nad Topľou",
+          "value": 350,
+          "pohlavie": {
+           "M": 350
+          },
+          "id": "obfz-vranov-nad-toplou"
+         },
+         {
+          "name": "ObFZ Michalovce",
+          "value": 846,
+          "pohlavie": {
+           "M": 846
+          },
+          "id": "obfz-michalovce"
+         },
+         {
+          "name": "ObFZ Trebišov",
+          "value": 478,
+          "pohlavie": {
+           "M": 478
+          },
+          "id": "obfz-trebisov"
+         },
+         {
+          "name": "ObFZ Rožňava",
+          "value": 246,
+          "pohlavie": {
+           "M": 246
+          },
+          "id": "obfz-roznava"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "sunburstOsoby": {
+  "name": "SR",
+  "children": [
+   {
+    "name": "Futbal",
+    "children": [
+     {
+      "name": "Hráči",
+      "children": [
+       {
+        "name": "U09",
+        "value": 76
+       },
+       {
+        "name": "Bez kategórie",
+        "value": 108837
+       }
+      ]
+     },
+     {
+      "name": "Tréneri",
+      "children": [
+       {
+        "name": "U09",
+        "value": 7
+       },
+       {
+        "name": "U08",
+        "value": 2
+       },
+       {
+        "name": "Bez kategórie",
+        "value": 4732
+       }
+      ]
+     },
+     {
+      "name": "Rozhodcovia",
+      "children": [
+       {
+        "name": "ADULTS",
+        "value": 2672
+       },
+       {
+        "name": "U15",
+        "value": 2093
+       },
+       {
+        "name": "U19",
+        "value": 2078
+       },
+       {
+        "name": "U13",
+        "value": 1092
+       },
+       {
+        "name": "U17",
+        "value": 967
+       },
+       {
+        "name": "U14",
+        "value": 421
+       },
+       {
+        "name": "U11",
+        "value": 386
+       },
+       {
+        "name": "U16",
+        "value": 251
+       },
+       {
+        "name": "U09",
+        "value": 102
+       },
+       {
+        "name": "U08",
+        "value": 7
+       },
+       {
+        "name": "U10",
+        "value": 6
+       },
+       {
+        "name": "U20",
+        "value": 4
+       }
+      ]
+     },
+     {
+      "name": "Delegáti",
+      "children": [
+       {
+        "name": "ADULTS",
+        "value": 672
+       },
+       {
+        "name": "U19",
+        "value": 274
+       },
+       {
+        "name": "U15",
+        "value": 1
+       },
+       {
+        "name": "U11",
+        "value": 1
+       },
+       {
+        "name": "U20",
+        "value": 1
+       },
+       {
+        "name": "U16",
+        "value": 1
+       }
+      ]
+     },
+     {
+      "name": "Personál",
+      "children": [
+       {
+        "name": "ADULTS",
+        "value": 6283
+       },
+       {
+        "name": "U15",
+        "value": 2615
+       },
+       {
+        "name": "U19",
+        "value": 2183
+       },
+       {
+        "name": "U13",
+        "value": 1693
+       },
+       {
+        "name": "U11",
+        "value": 1620
+       },
+       {
+        "name": "U09",
+        "value": 679
+       },
+       {
+        "name": "U17",
+        "value": 402
+       },
+       {
+        "name": "U14",
+        "value": 142
+       },
+       {
+        "name": "U10",
+        "value": 123
+       },
+       {
+        "name": "U16",
+        "value": 63
+       },
+       {
+        "name": "U08",
+        "value": 63
+       },
+       {
+        "name": "U12",
+        "value": 34
+       },
+       {
+        "name": "U20",
+        "value": 1
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}
