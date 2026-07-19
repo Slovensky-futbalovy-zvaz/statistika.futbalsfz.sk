@@ -19,6 +19,8 @@ const U_LEVELS = ['ADULTS', 'U19', 'U18', 'U17', 'U16', 'U15', 'U14', 'U13', 'U1
 export default function DemografiaLines({ demo }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const chart = useRef<echarts.ECharts | null>(null);
+  const barEl = useRef<HTMLDivElement>(null);
+  const barChart = useRef<echarts.ECharts | null>(null);
   const [rola, setRola] = useState('hraci');
   const [sel, setSel] = useState<string[]>(GROUPS.map((g) => g.key)); // default 4 skupiny
 
@@ -68,6 +70,36 @@ export default function DemografiaLines({ demo }: Props) {
     return () => ro.disconnect();
   }, [sel, rola, sezony]);
 
+  // rozpad poslednej sezóny — bar na každú vybranú sériu
+  useEffect(() => {
+    if (!barEl.current || !sezony.length) return;
+    if (!barChart.current) barChart.current = echarts.init(barEl.current, undefined, { renderer: 'canvas' });
+    const posledna = sezony[sezony.length - 1];
+    barChart.current.setOption(
+      {
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { left: 8, right: 16, top: 12, bottom: 8, containLabel: true },
+        xAxis: { type: 'value' },
+        yAxis: { type: 'category', data: sel, axisLabel: { fontSize: 11 } },
+        series: [
+          {
+            type: 'bar',
+            data: sel.map((key, i) => ({
+              value: hodnota(posledna, key),
+              itemStyle: { color: jeSkupina(key) ? GROUP_COLOR[key] : PALETTE[i % PALETTE.length] },
+            })),
+            label: { show: true, position: 'right', fontSize: 10, formatter: (p: { value: number }) => fmt(p.value) },
+            barMaxWidth: 22,
+          },
+        ],
+      },
+      true,
+    );
+    const ro = new ResizeObserver(() => barChart.current?.resize());
+    ro.observe(barEl.current);
+    return () => ro.disconnect();
+  }, [sel, rola, sezony]);
+
   function toggle(key: string) {
     setSel((cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]));
   }
@@ -113,6 +145,12 @@ export default function DemografiaLines({ demo }: Props) {
         ))}
       </div>
       <div ref={el} style={{ width: '100%', height: 380 }} role="img" aria-label="Trend demografie" />
+      <div style={{ marginTop: 16 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-muted)', marginBottom: 6 }}>
+          Rozpad poslednej sezóny{sezony.length ? ` · ${sezony[sezony.length - 1]}` : ''}
+        </div>
+        <div ref={barEl} style={{ width: '100%', height: Math.max(120, sel.length * 34 + 20) }} role="img" aria-label="Rozpad poslednej sezóny" />
+      </div>
       <p style={{ fontSize: 11.5, color: 'var(--color-muted)', marginTop: 6 }}>
         Veková úroveň je odvodená z roku narodenia (vek k záveru sezóny) — proxy, keďže historická
         súťažná kategória osôb nie je dostupná. Súčet M+Ž+neuvedené.
