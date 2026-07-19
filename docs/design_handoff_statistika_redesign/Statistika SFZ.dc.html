@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Archivo+Expanded:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{font-family:"Archivo","Helvetica Neue",Arial,sans-serif;color:#0b0a0a;background:#f4f5f7;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;padding:0}
+    select{font-family:inherit}
+    a{color:#1450df;text-decoration:none}
+    a:hover{color:#0f3ab3}
+    ::selection{background:#1450df;color:#fff}
+    ::-webkit-scrollbar{height:10px;width:10px}
+    ::-webkit-scrollbar-thumb{background:#d3d6db;border-radius:6px}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    @keyframes dash{to{stroke-dashoffset:0}}
+  </style>
+  <script src="sfz-data.js"></script>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;background:#f4f5f7">
+  <header style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.86);backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid #e7e9ec">
+    <div style="max-width:1240px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+      <button onClick="{{ goHome }}" style="display:flex;align-items:center;gap:12px">
+        <img src="assets/sfz-logo-official.svg" alt="SFZ" style="height:44px;width:44px;display:block">
+        <span style="display:flex;flex-direction:column;line-height:1;text-align:left">
+          <span style="font-family:'Archivo Expanded',Archivo,sans-serif;font-weight:800;font-size:15px;letter-spacing:1.5px;color:#0b0a0a">ŠTATISTIKY</span>
+          <span style="font-weight:600;font-size:10px;letter-spacing:2.6px;color:#1450df;margin-top:3px">SLOVENSKÉHO FUTBALU</span>
+          <span style="align-self:flex-start;display:inline-flex;align-items:center;background:#ec1c24;color:#fff;font-size:9px;font-weight:800;letter-spacing:.11em;text-transform:uppercase;padding:3px 8px;border-radius:20px;margin-top:7px">Beta verzia</span>
+        </span>
+      </button>
+      {{ headerControls }}
+    </div>
+  </header>
+  <main style="flex:1">{{ screen }}</main>
+  <footer style="border-top:1px solid #e7e9ec;background:#fff">
+    <div style="max-width:1240px;margin:0 auto;padding:26px 24px;display:flex;gap:18px;flex-wrap:wrap;align-items:baseline;justify-content:space-between;color:#6c7178;font-size:12.5px">
+      <span>© Slovenský futbalový zväz — <strong style="color:#0b0a0a;font-weight:700">statistika.futbalsfz.sk</strong></span>
+      <span>Zdroj dát: platforma sportnet.online · publikujú sa výhradne agregované počty · Aktualizované {{ updatedDate }}</span>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+const h = React.createElement;
+const BLUE='#1450df', RED='#ec1c24', INK='#0b0a0a', MUT='#6c7178', LINE='#e7e9ec', CARD='#ffffff', BG='#f4f5f7';
+const GOOD='#12a06b', GREY='#bbbdbf';
+const REGION={bfz:'#1450df', zsfz:'#2f9bff', ssfz:'#12a06b', vsfz:'#f0961b'};
+const RFZ_OF_NAME={BA:'bfz', ZsFZ:'zsfz', SsFZ:'ssfz', VsFZ:'vsfz'};
+const RFZ_LABEL={bfz:'Bratislavský FZ', zsfz:'Západoslovenský FZ', ssfz:'Stredoslovenský FZ', vsfz:'Východoslovenský FZ'};
+const METRICS=[
+  {k:'zapasy',label:'Zápasy'},{k:'druzstva',label:'Družstvá'},{k:'goly',label:'Góly'},
+  {k:'divaci',label:'Diváci'},{k:'hraci',label:'Hráči'}];
+const KPI_DEFS=[
+  {k:'sutaze',label:'Súťaže',good:true},
+  {k:'zapasy',label:'Odohraté zápasy',good:true},
+  {k:'druzstva',label:'Družstvá',good:true},
+  {k:'goly',label:'Strelené góly',good:true},
+  {k:'divaci',label:'Diváci',good:true},
+  {k:'zlteKarty',label:'Žlté karty',good:false},
+  {k:'cerveneKarty',label:'Červené karty',good:false}];
+const ROLES=[{k:'hraci',label:'Hráči'},{k:'treneri',label:'Tréneri'},{k:'rozhodcovia',label:'Rozhodcovia'},{k:'delegati',label:'Delegáti'},{k:'personal',label:'Personál'}];
+const GROUPS=[
+  {key:'Dospelí',cats:['ADULTS']},
+  {key:'Dorast',cats:['U19','U18','U17','U16']},
+  {key:'Žiaci',cats:['U15','U14','U13','U12']},
+  {key:'Prípravky',cats:['U11','U10','U09','U08','U07']}];
+const GROUP_COLOR={'Dospelí':'#1450df','Dorast':'#2f9bff','Žiaci':'#12a06b','Prípravky':'#f0961b'};
+const RADAR=[{k:'zapasy',label:'Zápasy'},{k:'divaciNaZapas',label:'Diváci/zápas'},{k:'golyNaZapas',label:'Góly/zápas'},{k:'divaci',label:'Diváci'},{k:'hraci',label:'Hráči'},{k:'goly',label:'Góly'},{k:'druzstva',label:'Družstvá'}];
+const COMPARE_COLORS=['#1450df','#ec1c24','#12a06b','#f0961b','#7a44e0'];
+
+class Component extends DCLogic {
+  state = {
+    ready:false, view:'domov', season:'2025/2026',
+    mapLevel:'RFZ', mapMetric:'zapasy', mapHover:null, mx:0, my:0,
+    zvaz:'bfz', drill:null,
+    porovLevel:'ObFZ', sortKey:'zapasy', sortDir:-1, compare:[],
+    bumpMetric:'divaciNaZapas',
+    demoRole:'hraci', demoSel:[], pyrRole:'hraci', pyrRoleSR:'hraci', zvazPickerOpen:false, zvazQuery:'', menuOpen:false, seasonOpen:false, sbHover:null, sbHover2:null, sbGender:'all', sports:{futbal:true,futsal:true}, projekt:'dajmespolugol' };
+
+  componentDidMount(){
+    const tick=()=>{ if(window.SFZ){ this.setState({ready:true}); } else setTimeout(tick,60); };
+    tick();
+    this._onResize=()=>this.setState({vw:window.innerWidth});
+    window.addEventListener('resize',this._onResize); this.setState({vw:window.innerWidth});
+  }
+  componentWillUnmount(){ if(this._onResize) window.removeEventListener('resize',this._onResize); }
+  narrow(){ return (this.state.vw||1200)<820; }
+  D(){ return window.SFZ; }
+  fmt(n){ if(n==null||isNaN(n)) return '—'; return new Intl.NumberFormat('sk-SK').format(Math.round(n)); }
+  fmt1(n){ if(n==null||isNaN(n)) return '—'; return new Intl.NumberFormat('sk-SK',{maximumFractionDigits:1,minimumFractionDigits:1}).format(n); }
+  trendRow(season){ return (this.D().nationalTrend||[]).find(t=>t.sezona===season); }
+  prevSeason(season){ const t=this.D().nationalTrend||[]; const i=t.findIndex(x=>x.sezona===season); return i>0?t[i-1]:null; }
+
+  // ---------- generic chart bits ----------
+  polar(cx,cy,r,a){ return [cx+r*Math.cos(a), cy+r*Math.sin(a)]; }
+  arcPath(cx,cy,r0,r1,a0,a1){
+    const large=(a1-a0)>Math.PI?1:0;
+    const [x0,y0]=this.polar(cx,cy,r1,a0), [x1,y1]=this.polar(cx,cy,r1,a1);
+    const [x2,y2]=this.polar(cx,cy,r0,a1), [x3,y3]=this.polar(cx,cy,r0,a0);
+    return `M${x0} ${y0} A${r1} ${r1} 0 ${large} 1 ${x1} ${y1} L${x2} ${y2} A${r0} ${r0} 0 ${large} 0 ${x3} ${y3} Z`;
+  }
+  lerpColor(a,b,t){ const p=x=>parseInt(x,16); const A=[p(a.slice(1,3)),p(a.slice(3,5)),p(a.slice(5,7))],B=[p(b.slice(1,3)),p(b.slice(3,5)),p(b.slice(5,7))];
+    const c=A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')); return '#'+c.join(''); }
+
+  // ---------- shell helpers ----------
+  wrap(children,style){ return h('div',{style:Object.assign({maxWidth:1240,margin:'0 auto',padding:'34px 24px 70px'},style||{})},children); }
+  card(children,style){ return h('div',{style:Object.assign({background:CARD,border:'1px solid '+LINE,borderRadius:16,boxShadow:'0 1px 2px rgba(11,10,10,.04)'},style||{})},children); }
+  kicker(t){ return h('div',{style:{fontSize:11,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',color:BLUE}},t); }
+  sectionHead(kick,title,desc){
+    return h('div',{style:{marginBottom:18}},[
+      this.kicker(kick),
+      h('h2',{key:'t',style:{margin:'8px 0 0',fontSize:'clamp(21px,2.4vw,28px)',fontWeight:800,letterSpacing:'-.01em',lineHeight:1.1}},title),
+      desc?h('p',{key:'d',style:{margin:'8px 0 0',color:MUT,fontSize:14,maxWidth:640,lineHeight:1.5}},desc):null ]);
+  }
+  pill(txt,color){ return h('span',{style:{display:'inline-flex',alignItems:'center',gap:6,fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:color||BLUE,background:(color||BLUE)+'14',padding:'5px 10px',borderRadius:20}},txt); }
+
+  deltaEl(cur,prev,good){
+    if(prev==null||!prev){ return null; }
+    const d=(cur-prev)/prev*100; const up=d>=0; const positive = good? up : !up;
+    const col= Math.abs(d)<0.05? MUT : (positive?GOOD:RED);
+    const arrow= Math.abs(d)<0.05?'→':(up?'▲':'▼');
+    return h('div',{style:{display:'flex',alignItems:'center',gap:5,fontSize:12.5,fontWeight:700,color:col}},[
+      h('span',{key:'a'},arrow), h('span',{key:'b'},(up?'+':'')+this.fmt1(d)+' %'),
+      h('span',{key:'c',style:{color:MUT,fontWeight:500}},'medziročne') ]);
+  }
+
+  // ================= NAV =================
+  navStyle(active){ return {padding:'9px 14px',borderRadius:10,fontSize:13.5,fontWeight:700,letterSpacing:'.01em',
+    color:active?'#fff':INK, background:active?BLUE:'transparent', transition:'background .15s'}; }
+
+  // ================= MAP =================
+  geoToId(){ const m={}; (this.D().zvazy||[]).forEach(z=>{ if(z.geoName) m[z.geoName]=z.id; }); return m; }
+  mapRegions(){
+    const D=this.D(), lvl=this.state.mapLevel, metric=this.state.mapMetric;
+    if(lvl==='SFZ'){
+      const kpi=(this.trendRow(this.state.season)||{}).kpi||D.national.kpi;
+      const val= metric==='hraci' ? (this.trendRow(this.state.season)||{}).osoby?.hraci : kpi[metric];
+      return [{id:'sfz',name:'Slovenský futbalový zväz',path:D.map.slovensko,value:val||0}];
+    }
+    if(lvl==='RFZ'){
+      const rows=(D.rfzPorov[this.state.season]||D.rfzPorov['2025/2026']||[]);
+      const byId={}; rows.forEach(r=>byId[r.id]=r);
+      return D.map.rfz.map(r=>{ const id=RFZ_OF_NAME[r.name]; const row=byId[id]||{}; 
+        return {id,name:RFZ_LABEL[id]||r.name,path:r.path,value:row[metric]||0}; });
+    }
+    const g2i=this.geoToId(); const byId={}; (D.obfzLatest?.zvazy||[]).forEach(r=>byId[r.id]=r);
+    return D.map.obfz.map(r=>{ const id=g2i[r.name]; const row=(id&&byId[id])||{}; const z=(D.zvazy||[]).find(x=>x.id===id);
+      return {id,name:(z&&z.nazov)||r.name,path:r.path,value:row[metric]||0}; });
+  }
+  renderMap(){
+    const regs=this.mapRegions();
+    const vals=regs.map(r=>r.value).filter(v=>v>0);
+    const min=Math.min(...vals,0), max=Math.max(...vals,1);
+    const color=v=>{ if(!v) return '#eef0f3'; const t=max===min?0.6:(v-min)/(max-min); return this.lerpColor('#dbe6ff',BLUE,0.15+t*0.85); };
+    const hv=this.state.mapHover;
+    const paths=regs.map(r=> h('path',{key:r.id||r.name, d:r.path, fill:color(r.value),
+      stroke: hv&&hv.id===r.id?RED:'#fff', strokeWidth: hv&&hv.id===r.id?2.2:0.9,
+      style:{cursor: r.id?'pointer':'default', transition:'fill .15s'},
+      onMouseEnter:(e)=>this.setState({mapHover:r}),
+      onMouseMove:(e)=>{ const b=e.currentTarget.ownerSVGElement.parentNode.getBoundingClientRect(); this.setState({mx:e.clientX-b.left,my:e.clientY-b.top}); },
+      onMouseLeave:()=>this.setState({mapHover:null}),
+      onClick:()=>{ if(r.id&&r.id!=='sfz') this.setState({view:'zvaz',zvaz:r.id,drill:null}); } }));
+    const svg=h('svg',{viewBox:this.D().map.viewBox, style:{width:'100%',height:'auto',display:'block'}},paths);
+    const tip= hv? h('div',{style:{position:'absolute',left:Math.min(this.state.mx+14,320),top:this.state.my+10,pointerEvents:'none',
+        background:INK,color:'#fff',padding:'8px 11px',borderRadius:10,fontSize:12.5,fontWeight:600,boxShadow:'0 8px 24px rgba(0,0,0,.22)',zIndex:5,whiteSpace:'nowrap'}},[
+        h('div',{key:'n',style:{fontWeight:700}},hv.name),
+        h('div',{key:'v',style:{color:'#a9c0ff',marginTop:2}}, (METRICS.find(m=>m.k===this.state.mapMetric)||{}).label+': '+this.fmt(hv.value)) ]):null;
+    // legend
+    const legend=h('div',{style:{display:'flex',alignItems:'center',gap:10,marginTop:6,color:MUT,fontSize:11.5}},[
+      h('span',{key:'a'},this.fmt(min)),
+      h('div',{key:'b',style:{flex:1,height:8,borderRadius:5,background:`linear-gradient(90deg, ${this.lerpColor('#dbe6ff',BLUE,0.15)}, ${BLUE})`}}),
+      h('span',{key:'c'},this.fmt(max)) ]);
+    return h('div',{style:{position:'relative'}},[svg,tip,legend]);
+  }
+  metricTabs(current,onPick,list){
+    return h('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}}, (list||METRICS).map(m=>{
+      const a=m.k===current;
+      return h('button',{key:m.k,onClick:()=>onPick(m.k),style:{padding:'7px 12px',borderRadius:20,fontSize:12.5,fontWeight:700,
+        border:'1px solid '+(a?BLUE:'#dcdfe4'),color:a?'#fff':INK,background:a?BLUE:'#fff'}},m.label); }));
+  }
+  levelToggle(current,onPick,opts){
+    return h('div',{style:{display:'inline-flex',background:'#eceef1',borderRadius:11,padding:3}}, opts.map(o=>{
+      const a=o===current; return h('button',{key:o,onClick:()=>onPick(o),style:{padding:'7px 14px',borderRadius:8,fontSize:12.5,fontWeight:700,
+        color:a?INK:MUT,background:a?'#fff':'transparent',boxShadow:a?'0 1px 3px rgba(0,0,0,.1)':'none'}},o); }));
+  }
+  leaderboard(){
+    const regs=this.mapRegions().filter(r=>r.value>0).sort((a,b)=>b.value-a.value).slice(0,10);
+    const max=Math.max(...regs.map(r=>r.value),1);
+    return h('div',{style:{display:'flex',flexDirection:'column',gap:9}}, regs.map((r,i)=>
+      h('button',{key:r.id||i,onClick:()=>{ if(r.id&&r.id!=='sfz') this.setState({view:'zvaz',zvaz:r.id,drill:null}); },
+        style:{display:'grid',gridTemplateColumns:'20px 1fr auto',gap:10,alignItems:'center',textAlign:'left',
+        background: this.state.mapHover&&this.state.mapHover.id===r.id?'#f3f6ff':'transparent',borderRadius:8,padding:'3px 4px'},
+        onMouseEnter:()=>this.setState({mapHover:r}),onMouseLeave:()=>this.setState({mapHover:null})},[
+        h('span',{key:'r',style:{fontSize:12,fontWeight:700,color:MUT,fontVariantNumeric:'tabular-nums'}},i+1),
+        h('div',{key:'b'},[
+          h('div',{key:'n',style:{fontSize:12.5,fontWeight:600,marginBottom:4,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',maxWidth:220}},r.name),
+          h('div',{key:'bar',style:{height:7,borderRadius:5,background:'#eceef1',overflow:'hidden'}},
+            h('div',{style:{height:'100%',width:(r.value/max*100)+'%',background:BLUE,borderRadius:5,transition:'width .4s'}})) ]),
+        h('span',{key:'v',style:{fontSize:13,fontWeight:800,fontVariantNumeric:'tabular-nums'}},this.fmt(r.value)) ]) ));
+  }
+
+  // ================= SPARKLINE =================
+  sparkline(vals,w,hh,col){
+    const max=Math.max(...vals,1),min=Math.min(...vals,0);
+    const pts=vals.map((v,i)=>[ (i/(vals.length-1))*w, hh-((v-min)/(max-min||1))*hh ]);
+    const d='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L');
+    const area=d+` L${w} ${hh} L0 ${hh} Z`;
+    const last=pts[pts.length-1];
+    return h('svg',{viewBox:`0 0 ${w} ${hh}`,style:{width:'100%',height:hh,display:'block',overflow:'visible'}},[
+      h('path',{key:'a',d:area,fill:(col||BLUE)+'18'}),
+      h('path',{key:'l',d,fill:'none',stroke:col||BLUE,strokeWidth:2,strokeLinejoin:'round',strokeLinecap:'round'}),
+      h('circle',{key:'c',cx:last[0],cy:last[1],r:3,fill:col||BLUE}) ]);
+  }
+
+  // ================= SCREEN: DOMOV =================
+  screenDomov(){
+    const D=this.D(); const tr=this.trendRow(this.state.season)||{}; const pv=this.prevSeason(this.state.season);
+    const osoby=(tr.osoby)||D.national.osoby;
+    const hero=h('div',{style:{background:'linear-gradient(120deg,#0a2a8f 0%,#1450df 60%,#2f6bff 100%)',color:'#fff',borderRadius:20,padding:'clamp(26px,4vw,46px)',position:'relative',overflow:'hidden'}},[
+      h('div',{key:'g',style:{position:'absolute',right:-80,top:-80,width:340,height:340,borderRadius:'50%',background:'radial-gradient(circle,rgba(255,255,255,.16),transparent 70%)'}}),
+      h('div',{key:'k',style:{position:'relative'}},[
+        this.pill('Sezóna '+this.state.season+' · celé Slovensko','#ffffff'),
+        h('h1',{key:'t',style:{margin:'16px 0 0',fontFamily:"'Archivo Expanded',Archivo,sans-serif",fontSize:'clamp(28px,4.6vw,52px)',fontWeight:800,letterSpacing:'-.02em',lineHeight:1.03,maxWidth:760}},'Slovenský futbal v číslach'),
+        h('p',{key:'p',style:{margin:'14px 0 0',fontSize:'clamp(14px,1.6vw,17px)',lineHeight:1.5,maxWidth:600,color:'rgba(255,255,255,.86)'}},'Interaktívny prehľad všetkých troch úrovní futbalovej pyramídy — SFZ, 4 regionálne a 38 oblastných zväzov. Klikni do mapy a preskúmaj svoj región.') ]) ]);
+    const kpis=h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:14,marginTop:20}},
+      KPI_DEFS.map(def=>{ const cur=(tr.kpi||{})[def.k]; const prev=pv?(pv.kpi||{})[def.k]:null;
+        return this.card([
+          h('div',{key:'l',style:{fontSize:11.5,fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:MUT}},def.label),
+          h('div',{key:'v',style:{fontSize:'clamp(24px,3vw,32px)',fontWeight:800,letterSpacing:'-.02em',margin:'8px 0 6px',fontVariantNumeric:'tabular-nums'}},this.fmt(cur)),
+          this.deltaEl(cur,prev,def.good) ],{padding:'16px 16px 15px'}); }) );
+    // map card
+    const mapCard=this.card([
+      h('div',{key:'h',style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:14,flexWrap:'wrap',marginBottom:14}},[
+        h('div',{key:'t'},[ this.kicker('Mapa Slovenska'),
+          h('div',{key:'s',style:{fontSize:19,fontWeight:800,marginTop:6}}, (METRICS.find(m=>m.k===this.state.mapMetric)||{}).label+' podľa zväzov') ]),
+        this.levelToggle(this.state.mapLevel,(v)=>this.setState({mapLevel:v}),['SFZ','RFZ','ObFZ']) ]),
+      this.metricTabs(this.state.mapMetric,(k)=>this.setState({mapMetric:k})),
+      h('div',{key:'m',style:{marginTop:14}},this.renderMap()) ],{padding:20});
+    const boardCard=this.card([
+      h('div',{key:'t',style:{marginBottom:14}},[ this.kicker('Rebríček'),
+        h('div',{key:'s',style:{fontSize:19,fontWeight:800,marginTop:6}},'Najviac '+((METRICS.find(m=>m.k===this.state.mapMetric)||{}).label||'').toLowerCase()) ]),
+      this.leaderboard() ],{padding:20});
+    const grid=h('div',{style:{display:'grid',gridTemplateColumns:this.narrow()?'1fr':'minmax(0,1.6fr) minmax(260px,1fr)',gap:16,marginTop:34,alignItems:'start'}},[mapCard,boardCard]);
+    // osoby small multiples
+    const trend=D.nationalTrend.filter(t=>(t.osoby&&t.osoby.hraci>5000));
+    const osobyStrip=h('div',{style:{marginTop:34}},[
+      this.sectionHead('Osoby vo futbale','Ľudia okolo lopty', 'Unikátne registrované osoby v jednotlivých úlohách za sezónu '+this.state.season+' a ich vývoj za '+trend.length+' sezón.'),
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:14}},
+        ROLES.map(role=>{ const vals=trend.map(t=>t.osoby[role.k]||0); const cur=osoby[role.k]||0; const prev=vals.length>1?vals[vals.length-2]:null;
+          return this.card([
+            h('div',{key:'l',style:{fontSize:12,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:MUT}},role.label),
+            h('div',{key:'v',style:{fontSize:26,fontWeight:800,margin:'6px 0 2px',fontVariantNumeric:'tabular-nums'}},this.fmt(cur)),
+            h('div',{key:'d',style:{marginBottom:10}},this.deltaEl(cur,prev,true)),
+            this.sparkline(vals,180,42, role.k==='hraci'?BLUE:'#2f9bff') ],{padding:16}); }) ) ]);
+    // sunburst
+    const filterRoot=(root)=>{ const sel=this.state.sports; if(!root) return root; return {name:root.name, children:(root.children||[]).filter(c=>(c.name==='Futbal'&&sel.futbal)||(c.name==='Futsal'&&sel.futsal))}; };
+    const toggleSport=(k)=>{ const s=Object.assign({},this.state.sports); const other=k==='futbal'?'futsal':'futbal'; if(s[k]&&!s[other]) return; s[k]=!s[k]; this.setState({sports:s}); };
+    const sportPill=(k,label)=>{ const a=this.state.sports[k]; return h('button',{key:k,onClick:()=>toggleSport(k),style:{padding:'6px 14px',borderRadius:20,fontSize:12.5,fontWeight:700,border:'1px solid '+(a?BLUE:'#dcdfe4'),color:a?'#fff':INK,background:a?BLUE:'#fff'}},[a?'✓ ':'',label]); };
+    const filterPills=h('div',{style:{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap',margin:'2px 0 18px'}},[
+      h('span',{key:'sl',style:{fontSize:12.5,fontWeight:700,color:MUT}},'Šport:'),
+      sportPill('futbal','Futbal'), sportPill('futsal','Futsal'),
+      h('span',{key:'sp',style:{width:1,height:20,background:'#e0e3e7',margin:'0 4px'}}),
+      h('span',{key:'gl',style:{fontSize:12.5,fontWeight:700,color:MUT}},'Pohlavie:'),
+      ...[['all','Všetci'],['M','Muži'],['F','Ženy']].map(o=>{ const a=this.state.sbGender===o[0];
+        return h('button',{key:o[0],onClick:()=>this.setState({sbGender:o[0]}),style:{padding:'6px 14px',borderRadius:20,fontSize:12.5,fontWeight:700,border:'1px solid '+(a?BLUE:'#dcdfe4'),color:a?'#fff':INK,background:a?BLUE:'#fff'}},o[1]); }),
+      h('span',{key:'n',style:{fontSize:12,color:MUT}},'Pohlavie sa vzťahuje na sunburst súťaží.') ]);
+    const sutazeCard=this.card([
+      h('div',{key:'t'},[this.kicker('Súťaže — štruktúra pyramídy'),
+        h('div',{key:'d',style:{fontSize:13,color:MUT,margin:'8px 0 2px'}},'Zápasy podľa odvetvia a riadiaceho zväzu (SFZ → RFZ → ObFZ). Prejdi myšou po prstencoch.')]),
+      this.renderSun(filterRoot(D.national.sunburstSutaze),{hoverKey:'sbHover',unit:'zápasov',valueFn:(n)=>this.state.sbGender==='all'?n.value:((n.pohlavie&&n.pohlavie[this.state.sbGender])||0),colorFn:(n,d,p)=>this.sutazeColor(n,d,p)}),
+      this.legendRow([['Futbal',BLUE],['Bratislavský FZ',REGION.bfz],['Západoslovenský FZ',REGION.zsfz],['Stredoslovenský FZ',REGION.ssfz],['Východoslovenský FZ',REGION.vsfz],['SFZ vlastné','#7a44e0'],['Futsal',RED]]) ],{padding:20});
+    const osobyCard=this.card([
+      h('div',{key:'t'},[this.kicker('Osoby — úroveň, rola a vek'),
+        h('div',{key:'d',style:{fontSize:13,color:MUT,margin:'8px 0 2px'}},'Osoby podľa odvetvia → úrovne (SFZ/RFZ/ObFZ) → roly → vekovej úrovne.')]),
+      this.renderSun(this.buildOsobyUroven(filterRoot(D.national.sunburstOsoby)),{depths:4,hoverKey:'sbHover2',unit:'osôb',colorFn:(n,d,p)=>this.osobyColor(n,d,p)}),
+      this.legendRow([['Futbal',BLUE],['SFZ','#1450df'],['RFZ','#12a06b'],['ObFZ','#f0961b'],['Futsal',RED]]),
+      h('div',{key:'ph',style:{marginTop:12,fontSize:11.5,color:MUT,lineHeight:1.5,background:'#fff7ed',border:'1px solid #fed7aa',borderRadius:10,padding:'9px 12px'}},[h('strong',{key:'s',style:{color:'#b45309'}},'Placeholder: '),'Rozdelenie osôb podľa úrovne (SFZ/RFZ/ObFZ) je ilustračné. Reálne čísla dodá ETL agregát osôb per úroveň × rola × vek.']) ],{padding:20});
+    const sun=h('div',{style:{marginTop:34}},[
+      this.sectionHead('Celoslovenský súhrn','Kde sa hrajú zápasy a kto ich tvorí','Dva pohľady na celý slovenský futbal — geografická štruktúra súťaží a rozdelenie osôb podľa rolí a veku.'),
+      filterPills,
+      h('div',{style:{display:'grid',gridTemplateColumns:this.narrow()?'1fr':'1fr 1fr',gap:16,alignItems:'start'}},[sutazeCard,osobyCard]) ]);
+    const srDem=D.demografia&&D.demografia.sr;
+    const pyrSR=srDem? h('div',{style:{marginTop:34}},[
+      this.sectionHead('Veková štruktúra SR','Veková pyramída — celé Slovensko','Všetky registrované osoby podľa veku a pohlavia, súčet 43 zväzov, sezóna '+this.state.season+'. Prepni rolu.'),
+      this.card([ h('div',{key:'p',style:{marginBottom:16}},this.rolePills(this.state.pyrRoleSR,(k)=>this.setState({pyrRoleSR:k}))), this.renderPyramid(srDem,this.state.season,this.state.pyrRoleSR) ],{padding:20}) ]):null;
+    return this.wrap([hero,kpis,grid,osobyStrip,sun,pyrSR].filter(Boolean));
+  }
+
+  // ================= SUNBURST =================
+  childrenOf(n){ let c=n.children; while(c&&c.length===1&&c[0].children) c=c[0].children; return c; }
+  valueOf(n){ if(n.value!=null) return n.value; const c=this.childrenOf(n); return c?c.reduce((s,x)=>s+this.valueOf(x),0):0; }
+  renderSun(root,opts){
+    if(!root) return null;
+    const self=this, cx=200,cy=200; const depths=opts.depths||3;
+    const rIn=52, rOut=192, gap=2, w=(rOut-rIn)/depths; const rings={};
+    for(let d=1;d<=depths;d++){ rings[d]={r0:rIn+(d-1)*w, r1:rIn+d*w-gap}; }
+    const vf=opts.valueFn||(n=>n.value);
+    function valOf(n){ if(n.value!=null) return vf(n)||0; const c=self.childrenOf(n); return c?c.reduce((s,x)=>s+valOf(x),0):0; }
+    const total=valOf(root); const arcs=[];
+    function walk(node,depth,a0,a1,parentCol){
+      if(depth>depths) return; const kids=self.childrenOf(node); if(!kids) return;
+      const tot=kids.reduce((s,k)=>s+valOf(k),0)||1; let a=a0;
+      kids.forEach(k=>{ const v=valOf(k); const span=(a1-a0)*(v/tot); const b=a+span;
+        const col=opts.colorFn(k,depth,parentCol); const ring=rings[depth];
+        if(ring&&(b-a)>0.004&&v>0) arcs.push({d:self.arcPath(cx,cy,ring.r0,ring.r1,a-Math.PI/2,b-Math.PI/2),col,name:k.name,value:v,pct:v/total*100});
+        walk(k,depth+1,a,b,col); a=b; });
+    }
+    walk(root,1,0,Math.PI*2,BLUE);
+    const hv=this.state[opts.hoverKey];
+    const paths=arcs.map((s,i)=>h('path',{key:i,d:s.d,fill:s.col,stroke:'#fff',strokeWidth:1.2,
+      opacity: hv?(hv.name===s.name?1:0.32):1, style:{transition:'opacity .12s',cursor:'default'},
+      onMouseEnter:()=>this.setState({[opts.hoverKey]:s}),onMouseLeave:()=>this.setState({[opts.hoverKey]:null})}));
+    const cMain=hv?(hv.name.length>24?hv.name.slice(0,22)+'…':hv.name):(opts.centerLabel||'Spolu');
+    const cVal=hv?this.fmt(hv.value):this.fmt(total);
+    const cSub=hv?this.fmt1(hv.pct)+' %':(opts.unit||'');
+    return h('svg',{viewBox:'0 0 400 400',style:{width:'100%',maxWidth:430,height:'auto',display:'block',margin:'0 auto'}},[
+      ...paths,
+      h('text',{key:'c1',x:cx,y:cy-6,textAnchor:'middle',style:{fontSize:12,fill:MUT,fontWeight:600}},cMain),
+      h('text',{key:'c2',x:cx,y:cy+18,textAnchor:'middle',style:{fontSize:24,fontWeight:800,fill:INK}},cVal),
+      h('text',{key:'c3',x:cx,y:cy+36,textAnchor:'middle',style:{fontSize:11,fill:MUT}},cSub) ]);
+  }
+  sutazeColor(node,depth,parentCol){
+    if(depth===1) return node.name==='Futsal'?RED:BLUE;
+    if(depth===2){ const id=node.id; if(REGION[id]) return REGION[id]; if(/vlastné/i.test(node.name)) return '#7a44e0'; return parentCol; }
+    return this.lerpColor(parentCol,'#ffffff',0.45);
+  }
+  osobyColor(node,depth,parentCol){
+    const LV={'SFZ':'#1450df','RFZ':'#12a06b','ObFZ':'#f0961b'};
+    if(depth===1) return node.name==='Futsal'?RED:BLUE;
+    if(depth===2) return LV[node.name]||parentCol;
+    if(depth===3) return this.lerpColor(parentCol,'#ffffff',0.34);
+    return this.lerpColor(parentCol,'#ffffff',0.6);
+  }
+  buildOsobyUroven(sb){
+    if(!sb||!sb.children) return sb;
+    const SHARES={Futbal:{SFZ:0.06,RFZ:0.34,ObFZ:0.60}, Futsal:{SFZ:1,RFZ:0,ObFZ:0}};
+    const kids=sb.children.map(odv=>{ const sh=SHARES[odv.name]||{SFZ:1,RFZ:0,ObFZ:0}; const roles=odv.children||[];
+      const urovne=['SFZ','RFZ','ObFZ'].map(lvl=>({name:lvl, children: roles.map(rola=>({name:rola.name, children:(rola.children||[]).map(age=>({name:age.name, value:Math.round((age.value||0)*(sh[lvl]||0))}))}))}));
+      return {name:odv.name, children:urovne}; });
+    return {name:sb.name, children:kids};
+  }
+  legendRow(items){ return h('div',{style:{display:'flex',flexWrap:'wrap',gap:'8px 16px',justifyContent:'center',marginTop:10}}, items.map((r,i)=>
+    h('div',{key:i,style:{display:'flex',alignItems:'center',gap:7,fontSize:12.5,color:INK}},[
+      h('span',{key:'s',style:{width:11,height:11,borderRadius:3,background:r[1]}}), h('span',{key:'l'},r[0]) ]) )); }
+
+  rolePills(current,onPick){ return h('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}}, ROLES.map(r=>{ const a=r.k===current;
+    return h('button',{key:r.k,onClick:()=>onPick(r.k),style:{padding:'6px 12px',borderRadius:18,fontSize:12.5,fontWeight:700,cursor:'pointer',border:'1px solid '+(a?BLUE:'#dcdfe4'),color:a?'#fff':INK,background:a?BLUE:'#fff'}},r.label); })); }
+  renderPyramid(demo,season,role){
+    if(!demo||!demo.sezony||!demo.sezony[season]) return h('div',{style:{color:MUT,fontSize:13,padding:'12px 4px'}},'Pre sezónu '+season+' nie sú demografické dáta (dostupné do 2025/2026).');
+    const node=demo.sezony[season][role]; if(!node||!node.roky) return h('div',{style:{color:MUT,fontSize:13,padding:'12px 4px'}},'Táto rola nemá v danej sezóne dáta.');
+    const endY=parseInt(season.split('/')[1],10);
+    const bins=[['50+',50,200],['40–49',40,49],['35–39',35,39],['30–34',30,34],['25–29',25,29],['20–24',20,24],['16–19',16,19],['13–15',13,15],['10–12',10,12],['6–9',6,9],['≤5',0,5]];
+    const rows=bins.map(b=>{ let m=0,f=0; for(const yr in node.roky){ const age=endY-parseInt(yr,10); if(age>=b[1]&&age<=b[2]){ m+=node.roky[yr].M||0; f+=node.roky[yr].F||0; } } return {label:b[0],m,f}; });
+    const max=Math.max(...rows.map(r=>Math.max(r.m,r.f)),1);
+    const totM=rows.reduce((s,r)=>s+r.m,0), totF=rows.reduce((s,r)=>s+r.f,0);
+    const header=h('div',{style:{display:'grid',gridTemplateColumns:'1fr 58px 1fr',alignItems:'center',gap:6,marginBottom:8,fontSize:12,fontWeight:700}},[
+      h('div',{key:'m',style:{textAlign:'right',color:BLUE}},'Muži · '+this.fmt(totM)),
+      h('div',{key:'c',style:{textAlign:'center',color:MUT,fontSize:10.5,fontWeight:600}},'vek'),
+      h('div',{key:'f',style:{color:RED}},'Ženy · '+this.fmt(totF)) ]);
+    const body=rows.map((r,i)=>h('div',{key:i,style:{display:'grid',gridTemplateColumns:'1fr 58px 1fr',alignItems:'center',gap:6,padding:'2px 0'}},[
+      h('div',{key:'l',style:{display:'flex',alignItems:'center',justifyContent:'flex-end',gap:8}},[
+        h('span',{key:'v',style:{fontSize:11,color:MUT,fontVariantNumeric:'tabular-nums'}}, r.m?this.fmt(r.m):''),
+        h('div',{key:'b',style:{height:16,width:(r.m/max*100)+'%',minWidth:r.m?3:0,background:BLUE,borderRadius:'4px 0 0 4px',transition:'width .3s'}}) ]),
+      h('div',{key:'c',style:{textAlign:'center',fontSize:11.5,fontWeight:700,color:INK}}, r.label),
+      h('div',{key:'rt',style:{display:'flex',alignItems:'center',gap:8}},[
+        h('div',{key:'b',style:{height:16,width:(r.f/max*100)+'%',minWidth:r.f?3:0,background:RED,borderRadius:'0 4px 4px 0',transition:'width .3s'}}),
+        h('span',{key:'v',style:{fontSize:11,color:MUT,fontVariantNumeric:'tabular-nums'}}, r.f?this.fmt(r.f):'') ]) ]));
+    const bez=node.bezUdajov||0; const note=bez? h('div',{key:'n',style:{marginTop:10,fontSize:11.5,color:MUT}},this.fmt(bez)+' osôb bez uvedeného dátumu narodenia / pohlavia nie je v pyramíde zahrnutých.'):null;
+    return h('div',{},[header,...body,note]);
+  }
+
+  renderSeasonPicker(seasonOpts){
+    const cur=this.state.season, open=this.state.seasonOpen;
+    const panel= open? [
+      h('div',{key:'ov',onClick:()=>this.setState({seasonOpen:false}),style:{position:'fixed',inset:0,zIndex:44}}),
+      h('div',{key:'pn',style:{position:'absolute',right:0,top:'calc(100% + 6px)',width:152,maxHeight:320,overflowY:'auto',background:'#fff',border:'1px solid '+LINE,borderRadius:12,boxShadow:'0 16px 40px rgba(11,10,10,.16)',zIndex:45,padding:6}},
+        seasonOpts.map(s=>{ const a=s===cur; return h('button',{key:s,onClick:()=>this.setState({season:s,seasonOpen:false}),onMouseEnter:e=>e.currentTarget.style.background=a?'#eef3ff':'#f2f6ff',onMouseLeave:e=>e.currentTarget.style.background=a?'#eef3ff':'transparent',style:{display:'block',width:'100%',textAlign:'left',padding:'8px 11px',borderRadius:8,fontSize:13.5,fontWeight:a?800:600,color:a?BLUE:INK,background:a?'#eef3ff':'transparent',cursor:'pointer',fontVariantNumeric:'tabular-nums'}},s); }) ) ]:[];
+    return h('div',{style:{position:'relative'}},[
+      h('button',{key:'tg',onClick:()=>this.setState({seasonOpen:!open}),style:{display:'inline-flex',alignItems:'center',gap:10,border:'1px solid #dfe2e7',background:'#fff',borderRadius:11,padding:'8px 12px',boxShadow:'0 1px 2px rgba(11,10,10,.04)',cursor:'pointer'}},[
+        h('span',{key:'l',style:{fontSize:10.5,fontWeight:700,letterSpacing:'.16em',textTransform:'uppercase',color:MUT}},'Sezóna'),
+        h('span',{key:'v',style:{fontSize:13.5,fontWeight:800,color:INK,fontVariantNumeric:'tabular-nums'}},cur),
+        h('span',{key:'c',style:{color:MUT,fontSize:10,transform:open?'rotate(180deg)':'none',transition:'transform .15s'}},'▾') ]),
+      ...panel ]);
+  }
+
+  // ================= SCREEN: ZVAZ =================
+  renderZvazPicker(){
+    const D=this.D(); const cur=(D.zvazy||[]).find(z=>z.id===this.state.zvaz)||{};
+    const q=(this.state.zvazQuery||'').trim(); const norm=s=>(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const match=z=>!q||norm(z.nazov).includes(norm(q));
+    const pick=id=>this.setState({zvaz:id,drill:null,zvazPickerOpen:false,zvazQuery:''});
+    const iSt=(active,indent)=>({display:'flex',alignItems:'center',width:'100%',textAlign:'left',padding:indent?'7px 12px 7px 28px':'8px 12px',fontSize:13.5,fontWeight:active?800:500,color:active?BLUE:INK,background:active?'#eef3ff':'transparent',borderRadius:8,cursor:'pointer'});
+    const hov=(e,on,active)=>{ e.currentTarget.style.background=on?'#f2f6ff':(active?'#eef3ff':'transparent'); };
+    const rows=[]; const sfz=(D.zvazy||[]).find(z=>z.uroven==='SFZ');
+    if(sfz&&match(sfz)){ const a=this.state.zvaz===sfz.id; rows.push(h('button',{key:'sfz',onClick:()=>pick(sfz.id),onMouseEnter:e=>hov(e,1,a),onMouseLeave:e=>hov(e,0,a),style:iSt(a)},sfz.nazov)); }
+    ['bfz','zsfz','ssfz','vsfz'].forEach(rid=>{ const rfz=(D.zvazy||[]).find(z=>z.id===rid); if(!rfz) return;
+      const kids=(D.zvazy||[]).filter(z=>z.uroven==='ObFZ'&&z.rfz===rid).sort((x,y)=>x.nazov.localeCompare(y.nazov,'sk'));
+      const kidsF=kids.filter(match); if(!match(rfz)&&kidsF.length===0) return;
+      const ar=this.state.zvaz===rid;
+      rows.push(h('button',{key:rid,onClick:()=>pick(rid),onMouseEnter:e=>hov(e,1,ar),onMouseLeave:e=>hov(e,0,ar),style:Object.assign(iSt(ar),{fontWeight:800,borderTop:'1px solid #f0f1f4',marginTop:4})},[h('span',{key:'d',style:{width:8,height:8,borderRadius:2,background:REGION[rid],marginRight:8,flex:'0 0 auto'}}),rfz.nazov]));
+      (q?kidsF:kids).forEach(k=>{ const ak=this.state.zvaz===k.id; rows.push(h('button',{key:k.id,onClick:()=>pick(k.id),onMouseEnter:e=>hov(e,1,ak),onMouseLeave:e=>hov(e,0,ak),style:iSt(ak,true)},k.nazov)); });
+    });
+    const panel=this.state.zvazPickerOpen?[
+      h('div',{key:'ov',onClick:()=>this.setState({zvazPickerOpen:false}),style:{position:'fixed',inset:0,zIndex:40}}),
+      h('div',{key:'pn',style:{position:'absolute',right:0,top:'calc(100% + 6px)',width:320,maxWidth:'88vw',background:'#fff',border:'1px solid '+LINE,borderRadius:14,boxShadow:'0 16px 44px rgba(11,10,10,.18)',zIndex:41,overflow:'hidden'}},[
+        h('div',{key:'s',style:{padding:10,borderBottom:'1px solid '+LINE}}, h('input',{type:'text',autoFocus:true,value:this.state.zvazQuery||'',placeholder:'Hľadať zväz…',onChange:e=>this.setState({zvazQuery:e.target.value}),style:{width:'100%',border:'1px solid #d9dce1',borderRadius:9,padding:'9px 11px',fontSize:13.5,fontFamily:'inherit',outline:'none',boxSizing:'border-box'}})),
+        h('div',{key:'l',style:{maxHeight:360,overflowY:'auto',padding:8}}, rows.length?rows:h('div',{style:{padding:'16px 12px',color:MUT,fontSize:13}},'Žiadny zväz nezodpovedá hľadaniu.')) ]) ]:[];
+    return h('div',{style:{position:'relative',marginLeft:'auto'}},[
+      h('div',{key:'lb',style:{fontSize:11,fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:MUT,marginBottom:6}},'Vybrať iný zväz'),
+      h('button',{key:'tg',onClick:()=>this.setState({zvazPickerOpen:!this.state.zvazPickerOpen}),style:{display:'flex',alignItems:'center',gap:12,minWidth:262,justifyContent:'space-between',border:'1px solid #d9dce1',background:'#fff',borderRadius:10,padding:'10px 12px',fontSize:14,fontWeight:700,color:INK,cursor:'pointer'}},[h('span',{key:'n',style:{whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},cur.nazov||'Vyber zväz'),h('span',{key:'c',style:{color:MUT,fontSize:11}},'▾')]),
+      ...panel ]);
+  }
+  getProfile(){ const D=this.D(); const key=this.state.zvaz+'@'+this.state.season;
+    if(D.profiles[key]) return {p:D.profiles[key],full:true};
+    // fallback from latest available profile of that zvaz
+    const anyKey=Object.keys(D.profiles).find(k=>k.startsWith(this.state.zvaz+'@'));
+    if(anyKey) return {p:D.profiles[anyKey],full:true,season:anyKey.split('@')[1]};
+    // fallback from porovnania/obfzLatest row
+    const row=(D.obfzLatest?.zvazy||[]).find(r=>r.id===this.state.zvaz) || (D.rfzPorov['2025/2026']||[]).find(r=>r.id===this.state.zvaz);
+    return {row,full:false};
+  }
+  screenZvaz(){
+    const D=this.D(); const z=(D.zvazy||[]).find(x=>x.id===this.state.zvaz)||{}; const pr=this.getProfile();
+    const back=h('button',{onClick:()=>this.setState({view:'domov'}),style:{display:'inline-flex',alignItems:'center',gap:7,color:MUT,fontSize:13,fontWeight:600,marginBottom:14}},['← Späť na mapu']);
+    const zvazSel=this.renderZvazPicker();
+    const head=h('div',{style:{display:'flex',gap:16,alignItems:'flex-end',flexWrap:'wrap',marginBottom:8}},[
+      h('div',{key:'a'},[
+        this.pill(z.uroven||'Zväz', z.rfz?REGION[z.rfz]:BLUE),
+        h('h1',{key:'n',style:{margin:'12px 0 0',fontSize:'clamp(24px,3.4vw,38px)',fontWeight:800,letterSpacing:'-.02em'}},z.nazov||this.state.zvaz),
+        z.rfz?h('div',{key:'r',style:{color:MUT,fontSize:14,marginTop:4}},'Región: '+(RFZ_LABEL[z.rfz]||z.rfz)):null ]),
+      zvazSel ]);
+    if(!pr.full && !pr.row){ return this.wrap([back,head,this.card(h('div',{style:{padding:8,color:MUT}},'Pre tento zväz zatiaľ nie je v ukážke načítaný detailný profil.'),{padding:20})]); }
+    if(!pr.full){ const r=pr.row;
+      const kd=[['zapasy','Zápasy'],['druzstva','Družstvá'],['goly','Góly'],['divaci','Diváci'],['zlteKarty','Žlté karty'],['cerveneKarty','Červené karty']];
+      return this.wrap([back,head,
+        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:14,marginTop:18}},
+          kd.map(d=>this.card([h('div',{key:'l',style:{fontSize:11.5,fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:MUT}},d[1]),
+            h('div',{key:'v',style:{fontSize:30,fontWeight:800,marginTop:8,fontVariantNumeric:'tabular-nums'}},this.fmt(r[d[0]]))],{padding:16})) ) ]);
+    }
+    const p=pr.p; const seasonUsed=pr.season||this.state.season;
+    const prevKey=this.state.zvaz+'@'+(this.prevSeason(seasonUsed)||{}).sezona;
+    const pp=D.profiles[prevKey];
+    // KPI
+    const kpiDefs=[['sutaze','Súťaže',true],['zapasy','Zápasy',true],['druzstva','Družstvá',true],['goly','Góly',true],['divaci','Diváci',true],['zlteKarty','Žlté karty',false],['cerveneKarty','Červené karty',false]];
+    const kpis=h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:14,marginTop:18}},
+      kpiDefs.map(d=>{ const cur=p.kpi[d[0]], prev=pp?pp.kpi[d[0]]:null;
+        return this.card([h('div',{key:'l',style:{fontSize:11.5,fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:MUT}},d[1]),
+          h('div',{key:'v',style:{fontSize:'clamp(22px,2.6vw,30px)',fontWeight:800,margin:'8px 0 6px',fontVariantNumeric:'tabular-nums'}},this.fmt(cur)),
+          this.deltaEl(cur,prev,d[2]) ],{padding:16}); }) );
+    // categories grouped bars with drill
+    const cats=p.kategorie||{};
+    const groupData=GROUPS.map(g=>{ const c=g.cats.filter(k=>cats[k]); const zap=c.reduce((s,k)=>s+(cats[k].zapasy||0),0);
+      const dr=c.reduce((s,k)=>s+(cats[k].druzstva||0),0); const gl=c.reduce((s,k)=>s+(cats[k].goly||0),0);
+      return {key:g.key,cats:c,zapasy:zap,druzstva:dr,goly:gl}; }).filter(g=>g.zapasy>0||g.druzstva>0);
+    const maxZap=Math.max(...groupData.map(g=>g.zapasy),1);
+    const catCard=this.card([
+      h('div',{key:'h',style:{marginBottom:16}},[this.kicker('Vekové kategórie'),
+        h('div',{key:'s',style:{fontSize:19,fontWeight:800,marginTop:6}},'Zápasy podľa kategórií'),
+        h('div',{key:'d',style:{color:MUT,fontSize:13,marginTop:4}},'Klikni na kategóriu pre rozpad na konkrétne vekové úrovne.')]),
+      h('div',{key:'b',style:{display:'flex',flexDirection:'column',gap:12}}, groupData.map(g=>{
+        const open=this.state.drill===g.key;
+        return h('div',{key:g.key},[
+          h('button',{onClick:()=>this.setState({drill:open?null:g.key}),style:{width:'100%',textAlign:'left',display:'grid',gridTemplateColumns:'120px 1fr 70px',gap:12,alignItems:'center'}},[
+            h('div',{key:'n',style:{fontSize:13.5,fontWeight:700,color:GROUP_COLOR[g.key]}},[g.key, h('span',{key:'x',style:{color:MUT,fontWeight:500,marginLeft:6,fontSize:11}}, open?'▲':'▼')]),
+            h('div',{key:'bar',style:{height:22,borderRadius:6,background:'#eceef1',overflow:'hidden'}},
+              h('div',{style:{height:'100%',width:(g.zapasy/maxZap*100)+'%',background:GROUP_COLOR[g.key],borderRadius:6,transition:'width .4s'}})),
+            h('div',{key:'v',style:{textAlign:'right',fontSize:14,fontWeight:800,fontVariantNumeric:'tabular-nums'}},this.fmt(g.zapasy)) ]),
+          open? h('div',{style:{margin:'10px 0 4px',paddingLeft:132,display:'flex',flexDirection:'column',gap:7}}, g.cats.map(c=>{
+            const cm=Math.max(...g.cats.map(k=>cats[k].zapasy||0),1);
+            return h('div',{key:c,style:{display:'grid',gridTemplateColumns:'52px 1fr 60px 60px',gap:10,alignItems:'center',fontSize:12}},[
+              h('span',{key:'c',style:{fontWeight:700,color:MUT}},c==='ADULTS'?'Dosp.':c),
+              h('div',{key:'b',style:{height:9,borderRadius:5,background:'#f0f1f4',overflow:'hidden'}},h('div',{style:{height:'100%',width:((cats[c].zapasy||0)/cm*100)+'%',background:GROUP_COLOR[g.key],opacity:.65,borderRadius:5}})),
+              h('span',{key:'z',style:{textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums'}},this.fmt(cats[c].zapasy)),
+              h('span',{key:'d',style:{textAlign:'right',color:MUT,fontVariantNumeric:'tabular-nums'}},this.fmt(cats[c].druzstva)+' dr.') ]); })):null ]);
+      })) ],{padding:20});
+    // osoby
+    const os=p.osoby||{};
+    const osCards=h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:14}},
+      ROLES.filter(r=>os[r.k]).map(r=>{ const grp=os[r.k]; const byGroup=GROUPS.map(g=>({key:g.key,val:g.cats.reduce((s,k)=>s+((grp.poKategorii||{})[k]||0),0)})).filter(x=>x.val>0);
+        const mx=Math.max(...byGroup.map(x=>x.val),1);
+        return this.card([
+          h('div',{key:'l',style:{fontSize:12,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:MUT}},r.label),
+          h('div',{key:'v',style:{fontSize:28,fontWeight:800,margin:'6px 0 12px',fontVariantNumeric:'tabular-nums'}},this.fmt(grp.unikatni)),
+          h('div',{key:'g',style:{display:'flex',flexDirection:'column',gap:6}}, byGroup.map(x=>
+            h('div',{key:x.key,style:{display:'grid',gridTemplateColumns:'70px 1fr 42px',gap:8,alignItems:'center',fontSize:11.5}},[
+              h('span',{key:'k',style:{color:MUT,fontWeight:600}},x.key),
+              h('div',{key:'b',style:{height:7,borderRadius:4,background:'#eceef1',overflow:'hidden'}},h('div',{style:{height:'100%',width:(x.val/mx*100)+'%',background:GROUP_COLOR[x.key],borderRadius:4}})),
+              h('span',{key:'v',style:{textAlign:'right',fontWeight:700,fontVariantNumeric:'tabular-nums'}},this.fmt(x.val)) ]) )) ],{padding:18}); }) );
+    const osSection=h('div',{style:{marginTop:34}},[ this.sectionHead('Osoby v súťažiach','Ľudia v zväze','Unikátne osoby podľa úlohy a vekovej kategórie. Súčet po kategóriách môže prevyšovať počet unikátnych osôb (viacnásobné pôsobenie).'), osCards ]);
+    const note = p.methodologyFlags? h('div',{style:{marginTop:26,color:MUT,fontSize:12,lineHeight:1.6}},[
+      h('strong',{key:'s',style:{color:INK}},'Metodika: '),
+      'Započítané sú len uzavreté zápasy (closed). Pokrytie divákov ~'+Math.round((p.methodologyFlags.divaciPokrytie||0)*100)+' %. Súčet osôb po kategóriách môže prevyšovať počet unikátnych osôb.' ]):null;
+    const dataNote = (seasonUsed!==this.state.season)? h('div',{style:{marginTop:14}},this.pill('Zobrazená sezóna '+seasonUsed+' (ukážkové dáta)',RED)):null;
+    const dem=D.demografia&&D.demografia[this.state.zvaz];
+    const pyrCard=dem? h('div',{style:{marginTop:34}},[
+      this.sectionHead('Veková štruktúra','Veková pyramída','Registrované osoby podľa veku a pohlavia v sezóne '+this.state.season+'. Prepni rolu.'),
+      this.card([ h('div',{key:'p',style:{marginBottom:16}},this.rolePills(this.state.pyrRole,(k)=>this.setState({pyrRole:k}))), this.renderPyramid(dem,this.state.season,this.state.pyrRole) ],{padding:20}) ]):null;
+    return this.wrap([back,head,dataNote,kpis,
+      h('div',{style:{marginTop:34,display:'grid',gridTemplateColumns:'minmax(0,1fr)',gap:16}},[catCard]),
+      osSection,pyrCard,note].filter(Boolean));
+  }
+
+  // ================= SCREEN: POROVNANIA =================
+  screenPorovnania(){
+    const D=this.D(); const lvl=this.state.porovLevel;
+    const rows = lvl==='RFZ' ? (D.rfzPorov[this.state.season]||D.rfzPorov['2025/2026']||[]).map(r=>Object.assign({},r)) : (D.obfzLatest?.zvazy||[]).map(r=>Object.assign({},r));
+    const cols=[
+      {k:'nazov',label:'Zväz',num:false},
+      {k:'zapasy',label:'Zápasy'},{k:'druzstva',label:'Družstvá'},{k:'goly',label:'Góly'},
+      {k:'divaci',label:'Diváci'},{k:'hraci',label:'Hráči'},
+      {k:'golyNaZapas',label:'Góly/zápas',dec:true},{k:'divaciNaZapas',label:'Diváci/zápas',dec:true},
+      {k:'zlteKarty',label:'ŽK'},{k:'cerveneKarty',label:'ČK'} ];
+    const sk=this.state.sortKey, sd=this.state.sortDir;
+    rows.sort((a,b)=>{ const va=a[sk],vb=b[sk]; if(typeof va==='string') return sd*va.localeCompare(vb,'sk'); return sd*((va||0)-(vb||0)); });
+    const maxByCol={}; cols.forEach(c=>{ if(c.k!=='nazov') maxByCol[c.k]=Math.max(...rows.map(r=>r[c.k]||0),1); });
+    const header=h('tr',{}, cols.map(c=>{ const active=sk===c.k;
+      return h('th',{key:c.k,onClick:()=>this.setState({sortKey:c.k,sortDir: active? -sd : (c.num===false?1:-1)}),
+        style:{position:'sticky',top:0,background:'#fff',padding:'12px 12px',textAlign:c.num===false?'left':'right',fontSize:11,fontWeight:700,letterSpacing:'.05em',textTransform:'uppercase',color:active?BLUE:MUT,cursor:'pointer',borderBottom:'2px solid '+LINE,whiteSpace:'nowrap'}},
+        [c.label, active?h('span',{key:'x',style:{marginLeft:4}}, sd<0?'▼':'▲'):null]); }));
+    const body=rows.map((r,i)=>h('tr',{key:r.id||i,style:{cursor:'pointer',background: i%2?'#fafbfc':'#fff'},
+      onClick:()=>this.setState({view:'zvaz',zvaz:r.id,drill:null}),
+      onMouseEnter:e=>e.currentTarget.style.background='#f2f6ff',onMouseLeave:e=>e.currentTarget.style.background=i%2?'#fafbfc':'#fff'},
+      cols.map(c=>{ if(c.k==='nazov') return h('td',{key:c.k,style:{padding:'11px 12px',fontSize:13,fontWeight:600,whiteSpace:'nowrap'}},[
+          h('span',{key:'d',style:{display:'inline-block',width:8,height:8,borderRadius:2,marginRight:8,background: lvl==='RFZ'?(REGION[r.id]||BLUE):(REGION[(D.zvazy.find(z=>z.id===r.id)||{}).rfz]||GREY)}}),
+          r.nazov]);
+        const v=r[c.k]; const val=c.dec?this.fmt1(v):this.fmt(v);
+        return h('td',{key:c.k,style:{padding:'11px 12px',textAlign:'right',fontSize:13,fontWeight: sk===c.k?800:600,fontVariantNumeric:'tabular-nums',color: sk===c.k?INK:'#33373d'}},val); }) ));
+    const table=this.card(h('div',{style:{overflowX:'auto'}}, h('table',{style:{width:'100%',borderCollapse:'collapse',minWidth:820}},[h('thead',{key:'h'},header),h('tbody',{key:'b'},body)])),{padding:0,overflow:'hidden'});
+    const bumpCard=this.card([
+      h('div',{key:'h',style:{display:'flex',justifyContent:'space-between',gap:14,flexWrap:'wrap',alignItems:'flex-start',marginBottom:14}},[
+        h('div',{key:'t'},[this.kicker('Vývoj poradia · bump chart'),
+          h('div',{key:'s',style:{fontSize:19,fontWeight:800,marginTop:6}},'Poradie regionálnych zväzov v čase')]),
+        this.metricTabs(this.state.bumpMetric,(k)=>this.setState({bumpMetric:k}),[
+          {k:'divaciNaZapas',label:'Diváci/zápas'},{k:'golyNaZapas',label:'Góly/zápas'},{k:'hraci',label:'Hráči'},{k:'zapasy',label:'Zápasy'},{k:'divaci',label:'Diváci'}]) ]),
+      this.renderBump() ],{padding:20});
+    return this.wrap([
+      this.sectionHead('Porovnania a radenie','Ktorý zväz vedie?','Zoraď zväzy podľa ľubovoľného ukazovateľa. Klikni na riadok pre profil zväzu.'),
+      h('div',{style:{marginBottom:16}},this.levelToggle(lvl,(v)=>this.setState({porovLevel:v,sortKey:'zapasy',sortDir:-1,compare:[]}),['RFZ','ObFZ'])),
+      this.renderCompare(rows),
+      table,
+      h('div',{style:{marginTop:34}},bumpCard) ]);
+  }
+  renderCompare(rows){
+    const all=rows.slice();
+    const top3=all.slice().sort((a,b)=>(b.zapasy||0)-(a.zapasy||0)).slice(0,3).map(r=>r.id);
+    let sel=this.state.compare.filter(id=>all.some(r=>r.id===id));
+    if(sel.length<2) sel=top3;
+    const toggle=(id)=>{ let base=sel.slice();
+      if(base.includes(id)){ if(base.length>2) base=base.filter(x=>x!==id); }
+      else if(base.length<5) base=[...base,id];
+      this.setState({compare:base}); };
+    const chips=h('div',{style:{display:'flex',gap:8,flexWrap:'wrap',marginBottom:20}}, all.map((r,i)=>{
+      const a=sel.includes(r.id); const ci=sel.indexOf(r.id);
+      return h('button',{key:r.id,onClick:()=>toggle(r.id),style:{padding:'8px 13px',borderRadius:22,fontSize:12.5,fontWeight:700,
+        border:'1px solid '+(a?(COMPARE_COLORS[ci]||BLUE):'#dcdfe4'),color:a?'#fff':INK,background:a?(COMPARE_COLORS[ci]||BLUE):'#fff',transition:'all .12s'}},r.nazov); }));
+    const legend=h('div',{style:{display:'flex',gap:16,flexWrap:'wrap',justifyContent:'center',marginBottom:6}}, sel.map((id,i)=>{
+      const r=all.find(x=>x.id===id)||{}; return h('div',{key:id,style:{display:'flex',alignItems:'center',gap:7,fontSize:13,fontWeight:600}},[
+        h('span',{key:'s',style:{width:16,height:10,borderRadius:3,background:COMPARE_COLORS[i]}}), r.nazov ]); }));
+    return h('div',{style:{marginTop:38,marginBottom:34}},[
+      this.sectionHead('Priame porovnanie','Priame porovnanie zväzov','Vyber 2–5 zväzov. Radar zobrazuje hodnoty normalizované na maximum úrovne (100 % = najlepší zväz v danej metrike); skutočné hodnoty v tooltipe.'),
+      h('div',{key:'ch',style:{marginTop:16}},chips),
+      this.card([legend, this.renderRadar(all,sel)],{padding:'22px 20px'}) ]);
+  }
+  renderRadar(all,sel){
+    const metrics=RADAR, n=metrics.length;
+    const max={}; metrics.forEach(m=>max[m.k]=Math.max(...all.map(r=>r[m.k]||0),1));
+    const byId={}; all.forEach(r=>byId[r.id]=r);
+    const cx=230,cy=215,R=140;
+    const ang=i=>-Math.PI/2 + i*2*Math.PI/n;
+    const pt=(r,i)=>this.polar(cx,cy,r,ang(i));
+    const rings=[0.25,0.5,0.75,1].map((t,ri)=>{
+      const pts=metrics.map((m,i)=>pt(R*t,i)); const d='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L')+'Z';
+      return h('path',{key:'r'+ri,d,fill:ri===3?'none':'none',stroke:'#e3e6ea',strokeWidth:1}); });
+    const axes=metrics.map((m,i)=>{ const p=pt(R,i); return h('line',{key:'a'+i,x1:cx,y1:cy,x2:p[0],y2:p[1],stroke:'#e3e6ea',strokeWidth:1}); });
+    const labels=metrics.map((m,i)=>{ const p=pt(R+22,i); const a=ang(i);
+      const anchor=Math.abs(Math.cos(a))<0.3?'middle':(Math.cos(a)>0?'start':'end');
+      return h('text',{key:'l'+i,x:p[0],y:p[1]+4,textAnchor:anchor,style:{fontSize:12,fontWeight:600,fill:MUT}},m.label); });
+    const polys=sel.map((id,si)=>{ const r=byId[id]; if(!r) return null; const col=COMPARE_COLORS[si];
+      const pts=metrics.map((m,i)=>{ const v=(r[m.k]||0)/max[m.k]; return pt(R*v,i); });
+      const d='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L')+'Z';
+      return h('g',{key:id},[
+        h('path',{key:'f',d,fill:col+'20',stroke:col,strokeWidth:2.5,strokeLinejoin:'round'}),
+        ...pts.map((p,i)=>h('circle',{key:i,cx:p[0],cy:p[1],r:4,fill:col,stroke:'#fff',strokeWidth:1.5},
+          h('title',{},(r.nazov)+' · '+metrics[i].label+': '+ (metrics[i].k==='golyNaZapas'||metrics[i].k==='divaciNaZapas'? this.fmt1(r[metrics[i].k]) : this.fmt(r[metrics[i].k]))))) ]); });
+    return h('svg',{viewBox:'0 0 460 440',style:{width:'100%',maxWidth:520,height:'auto',display:'block',margin:'0 auto'}},[...rings,...axes,...labels,...polys]);
+  }
+  renderBump(){
+    const D=this.D(); const metric=this.state.bumpMetric;
+    const seasons=Object.keys(D.rfzPorov).filter(s=>D.rfzPorov[s]&&D.rfzPorov[s].length===4);
+    seasons.sort();
+    const ids=['bfz','zsfz','ssfz','vsfz'];
+    const W=Math.max(720,seasons.length*70), H=250, padL=20, padR=150, padT=24, padB=34;
+    const innerW=W-padL-padR, innerH=H-padT-padB;
+    const x=i=>padL+(i/(seasons.length-1))*innerW;
+    const y=rank=>padT+((rank-1)/3)*innerH;
+    const ranking={}; ids.forEach(id=>ranking[id]=[]);
+    seasons.forEach((s,si)=>{ const rows=D.rfzPorov[s].slice().sort((a,b)=>(b[metric]||0)-(a[metric]||0));
+      rows.forEach((r,ri)=>{ ranking[r.id] && ranking[r.id].push({si,rank:ri+1,val:r[metric]}); }); });
+    const lines=ids.map(id=>{ const pts=ranking[id]; if(!pts.length) return null;
+      const d='M'+pts.map(p=>x(p.si)+' '+y(p.rank)).join(' L');
+      const last=pts[pts.length-1];
+      return h('g',{key:id},[
+        h('path',{key:'l',d,fill:'none',stroke:REGION[id],strokeWidth:3,strokeLinejoin:'round',strokeLinecap:'round',opacity:.92}),
+        ...pts.map((p,i)=>h('circle',{key:i,cx:x(p.si),cy:y(p.rank),r:4.5,fill:'#fff',stroke:REGION[id],strokeWidth:2.5})),
+        h('text',{key:'t',x:x(last.si)+12,y:y(last.rank)+4,style:{fontSize:12,fontWeight:700,fill:REGION[id]}},RFZ_LABEL[id]) ]); });
+    const gridY=[1,2,3,4].map(r=>h('g',{key:r},[
+      h('line',{x1:padL,y1:y(r),x2:padL+innerW,y2:y(r),stroke:LINE,strokeWidth:1}),
+      h('text',{x:padL-6,y:y(r)+4,textAnchor:'end',style:{fontSize:11,fill:MUT,fontWeight:600}},r+'.') ]));
+    const xlabels=seasons.map((s,i)=> (i%2===0||i===seasons.length-1)? h('text',{key:s,x:x(i),y:H-8,textAnchor:'middle',style:{fontSize:10,fill:MUT}},s.slice(2)):null);
+    return h('div',{style:{overflowX:'auto'}}, h('svg',{viewBox:`0 0 ${W} ${H}`,style:{width:'100%',minWidth:W>820?W:720,height:'auto',display:'block'}},[...gridY,...xlabels,...lines]));
+  }
+
+  // ================= SCREEN: DEMOGRAFIA =================
+  screenDemografia(){
+    const D=this.D();
+    const trendNat=D.nationalTrend.filter(t=>t.osoby&&t.osoby.hraci>5000);
+    const role=this.state.demoRole; const roleLabel=(ROLES.find(r=>r.k===role)||{}).label;
+    const srDem=D.demografia&&D.demografia.sr;
+    const levelOfAge=a=>a>=19?'ADULTS':('U'+String(Math.min(Math.max(a+1,7),19)).padStart(2,'0'));
+    const PAL=['#1450df','#ec1c24','#12a06b','#f0961b','#7a44e0','#2f9bff','#d6336c','#0a7d63','#b45309','#0891b2','#8b5cf6','#65a30d','#5b6470'];
+    const endYOf=s=>parseInt(s.split('/')[1],10);
+    // seasons + present levels/groups (from latest SR season)
+    let seasons=srDem?Object.keys(srDem.sezony).filter(s=>{const n=srDem.sezony[s][role]; return n&&n.roky&&(n.sUdajmi||0)>300;}):[];
+    const presentSet=new Set(); if(seasons.length){ const ls=seasons[seasons.length-1]; const n=srDem.sezony[ls][role]; const ey=endYOf(ls); for(const yr in n.roky) presentSet.add(levelOfAge(ey-parseInt(yr,10))); }
+    const orderedLevels=[]; GROUPS.forEach(g=>g.cats.forEach(k=>{ if(presentSet.has(k)) orderedLevels.push({k,group:g.key}); }));
+    const presentGroups=GROUPS.filter(g=>g.cats.some(k=>presentSet.has(k)));
+    const catOf=k=>GROUPS.find(g=>g.key===k);
+    const labelOf=k=>k==='ADULTS'?'Dospelí (ADULTS)':k;
+    const seriesLabel=k=>catOf(k)?k:labelOf(k);
+    // selected series (default = category lines)
+    const sel=this.state.demoSel; const seriesKeys= sel.length? sel : presentGroups.map(g=>g.key);
+    const valFor=(n,ey,key)=>{ const cat=catOf(key); const cats=cat?cat.cats:null; let v=0; for(const yr in n.roky){ const lvl=levelOfAge(ey-parseInt(yr,10)); if(cat?cats.includes(lvl):lvl===key) v+=(n.roky[yr].M||0)+(n.roky[yr].F||0)+(n.roky[yr].N||0); } return v; };
+    const series=seriesKeys.map((key,i)=>({key,label:seriesLabel(key),color: catOf(key)?GROUP_COLOR[key]:PAL[i%PAL.length],
+      points: seasons.map(s=>valFor(srDem.sezony[s][role],endYOf(s),key)) }));
+    // ---- pills ----
+    const toggle=k=>{ let b=sel.slice(); b.includes(k)?b=b.filter(x=>x!==k):b.push(k); this.setState({demoSel:b}); };
+    const pS=(a,c)=>({padding:'7px 13px',borderRadius:20,fontSize:12.5,fontWeight:700,cursor:'pointer',border:'1px solid '+(a?(c||BLUE):'#dcdfe4'),color:a?'#fff':INK,background:a?(c||BLUE):'#fff'});
+    const pSm=(a,c)=>({padding:'5px 11px',borderRadius:16,fontSize:12,fontWeight:700,cursor:'pointer',border:'1px solid '+(a?(c||BLUE):'#dcdfe4'),color:a?'#fff':(c||INK),background:a?(c||BLUE):'#fff'});
+    const groupPills=h('div',{style:{display:'flex',gap:8,flexWrap:'wrap',marginBottom:9}}, [h('button',{key:'all',onClick:()=>this.setState({demoSel:[]}),style:pS(sel.length===0)},'Kategórie (všetky)')].concat(
+      presentGroups.map(g=>h('button',{key:g.key,onClick:()=>toggle(g.key),style:pS(seriesKeys.includes(g.key),GROUP_COLOR[g.key])},g.key))));
+    const levelPills=h('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}}, orderedLevels.map(l=>h('button',{key:l.k,onClick:()=>toggle(l.k),style:pSm(sel.includes(l.k),GROUP_COLOR[l.group])},l.k==='ADULTS'?'Dospelí':l.k)));
+    const filterUI=h('div',{style:{margin:'14px 0 2px'}},[
+      h('div',{key:'h',style:{fontSize:11.5,fontWeight:700,color:MUT,marginBottom:8}},'Zobraz čiary podľa kategórií a vekových úrovní:'),
+      groupPills,levelPills]);
+    // ---- multi-line chart ----
+    const W=880,H=330,padL=58,padR=20,padT=16,padB=40; const iw=W-padL-padR, ih=H-padT-padB;
+    const allV=series.reduce((a,s)=>a.concat(s.points),[0]); const max=Math.max(...allV,1)*1.08;
+    const x=i=>padL+(seasons.length<=1?iw/2:(i/(seasons.length-1))*iw); const y=v=>padT+ih-(v/max)*ih;
+    const ticks=4; const yticks=Array.from({length:ticks+1},(_,i)=>{ const v=max/ticks*i; return h('g',{key:i},[
+      h('line',{x1:padL,y1:y(v),x2:padL+iw,y2:y(v),stroke:LINE,strokeWidth:1}),
+      h('text',{x:padL-8,y:y(v)+4,textAnchor:'end',style:{fontSize:10,fill:MUT}},this.fmt(v)) ]); });
+    const xlab=seasons.map((s,i)=>(i%2===0||i===seasons.length-1)?h('text',{key:i,x:x(i),y:H-12,textAnchor:'middle',style:{fontSize:10,fill:MUT}},s.slice(2)):null);
+    const lines=series.map(se=>{ const d='M'+se.points.map((v,i)=>x(i)+' '+y(v)).join(' L');
+      return h('g',{key:se.key},[
+        h('path',{d,fill:'none',stroke:se.color,strokeWidth:2.6,strokeLinejoin:'round',strokeLinecap:'round'}),
+        ...se.points.map((v,i)=>h('circle',{key:i,cx:x(i),cy:y(v),r:3,fill:'#fff',stroke:se.color,strokeWidth:1.8},h('title',{},se.label+' · '+seasons[i]+': '+this.fmt(v)))) ]); });
+    const legend=h('div',{style:{display:'flex',flexWrap:'wrap',gap:'8px 18px',marginTop:12}}, series.map(se=>{
+      const last=se.points[se.points.length-1], prev=se.points.length>1?se.points[se.points.length-2]:null;
+      return h('div',{key:se.key,style:{display:'flex',alignItems:'center',gap:8,fontSize:12.5}},[
+        h('span',{key:'c',style:{width:14,height:4,borderRadius:2,background:se.color}}),
+        h('span',{key:'l',style:{fontWeight:700}},se.label),
+        h('span',{key:'v',style:{color:MUT,fontVariantNumeric:'tabular-nums'}},this.fmt(last)) ]); }));
+    const lineCard=this.card([
+      h('div',{key:'h'},[this.kicker('10-ročný trend · vekové úrovne'),
+        h('div',{key:'s',style:{fontSize:'clamp(20px,2.6vw,26px)',fontWeight:800,marginTop:6}},roleLabel+' vo futbale na Slovensku'),
+        h('div',{key:'d',style:{color:MUT,fontSize:13,marginTop:4}},'Každá vybraná kategória či veková úroveň je samostatná čiara. Osoby podľa veku (rok narodenia), súčet 43 zväzov.')]),
+      this.metricTabs(role,(k)=>this.setState({demoRole:k}),ROLES),
+      filterUI,
+      seasons.length? h('svg',{key:'svg',viewBox:`0 0 ${W} ${H}`,style:{width:'100%',height:'auto',display:'block',marginTop:12}},[...yticks,...xlab,...lines])
+        : h('div',{key:'no',style:{padding:'30px 4px',color:MUT}},'Demografické dáta nie sú dostupné.'),
+      legend ],{padding:20});
+    // ---- breakdown current (last) season: value per selected series ----
+    let ageCard=null;
+    if(seasons.length){ const ls=seasons[seasons.length-1]; const n=srDem.sezony[ls][role]; const ey=endYOf(ls);
+      let rlt=0; for(const yr in n.roky) rlt+=(n.roky[yr].M||0)+(n.roky[yr].F||0)+(n.roky[yr].N||0); rlt=rlt||1;
+      const bd=series.map(se=>({label:se.label,color:se.color,val:se.points[se.points.length-1]})); const mx=Math.max(...bd.map(b=>b.val),1);
+      const bars=h('div',{style:{display:'flex',flexDirection:'column',gap:9}}, bd.map((b,i)=>
+        h('div',{key:i,style:{display:'grid',gridTemplateColumns:'150px 1fr 128px',gap:12,alignItems:'center'}},[
+          h('span',{key:'k',style:{fontSize:12.5,fontWeight:700,color:b.color,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},b.label),
+          h('div',{key:'b',style:{height:18,borderRadius:6,background:'#eceef1',overflow:'hidden'}},h('div',{style:{height:'100%',width:(b.val/mx*100)+'%',background:b.color,borderRadius:6,transition:'width .3s'}})),
+          h('span',{key:'v',style:{textAlign:'right',fontSize:12.5,fontWeight:800,fontVariantNumeric:'tabular-nums'}},this.fmt(b.val)+' · '+this.fmt1(b.val/rlt*100)+' %') ]) ));
+      ageCard=this.card([
+        h('div',{key:'h',style:{marginBottom:14}},[this.kicker('Aktuálna sezóna · '+ls),
+          h('div',{key:'s',style:{fontSize:19,fontWeight:800,marginTop:6}},roleLabel+' podľa vybraných úrovní'),
+          h('div',{key:'d',style:{fontSize:12.5,color:MUT,marginTop:4}},'Posledná sezóna pre čiary vyššie. Podiel z osôb roly s uvedeným vekom.')]),
+        bars ],{padding:20});
+    }
+    const sm=h('div',{style:{marginTop:16,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(170px,1fr))',gap:14}},
+      ROLES.map(r=>{ const vv=trendNat.map(t=>t.osoby[r.k]||0); const active=r.k===role;
+        return h('button',{key:r.k,onClick:()=>this.setState({demoRole:r.k}),style:{textAlign:'left'}},
+          this.card([
+            h('div',{key:'l',style:{fontSize:11.5,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:active?BLUE:MUT}},r.label),
+            h('div',{key:'v',style:{fontSize:22,fontWeight:800,margin:'4px 0 8px',fontVariantNumeric:'tabular-nums'}},this.fmt(vv[vv.length-1])),
+            this.sparkline(vv,170,36,active?BLUE:'#9aa1ab') ],{padding:14,borderColor:active?BLUE:LINE,borderWidth:active?2:1,borderStyle:'solid'})); }) );
+    return this.wrap([
+      this.sectionHead('Demografia osôb','Ako rastie futbalová komunita','Vývoj počtu registrovaných osôb v slovenskom futbale — porovnaj vekové kategórie a úrovne ako samostatné čiary.'),
+      lineCard,
+      h('div',{style:{marginTop:16,display:'grid',gridTemplateColumns:'minmax(0,1fr)',gap:16}},[ageCard].filter(Boolean)),
+      sm ]);
+  }
+
+  // ================= SCREEN: PROJEKTY =================
+  vBars(data,color,unit){
+    const W=Math.max(560,data.length*78),H=210,padB=34,padT=22,padL=8; const iw=W-padL*2, bw=Math.min(46,iw/data.length*0.62);
+    const max=Math.max(...data.map(d=>d.value),1);
+    const step=iw/data.length;
+    const bars=data.map((d,i)=>{ const bh=(d.value/max)*(H-padB-padT); const x=padL+step*i+step/2; const y=H-padB-bh;
+      return h('g',{key:i},[
+        h('rect',{x:x-bw/2,y,width:bw,height:Math.max(bh,1),rx:5,fill:color,opacity:d.dim?0.35:1}),
+        h('text',{x,y:y-6,textAnchor:'middle',style:{fontSize:11.5,fontWeight:800,fill:INK}},this.fmt(d.value)),
+        h('text',{x,y:H-16,textAnchor:'middle',style:{fontSize:10.5,fill:MUT}},d.label) ]); });
+    return h('div',{style:{overflowX:'auto'}},h('svg',{viewBox:`0 0 ${W} ${H}`,style:{width:'100%',minWidth:W>560?W:520,height:'auto',display:'block'}},bars));
+  }
+  donut(parts,centerLabel){
+    const total=parts.reduce((s,p)=>s+p.value,0)||1; const cx=90,cy=90,r0=52,r1=84; let a=-Math.PI/2; const arcs=[];
+    parts.forEach((p,i)=>{ const span=(p.value/total)*Math.PI*2; if(span>0.001) arcs.push(h('path',{key:i,d:this.arcPath(cx,cy,r0,r1,a,a+span),fill:p.color})); a+=span; });
+    return h('div',{style:{display:'flex',alignItems:'center',gap:20,flexWrap:'wrap'}},[
+      h('svg',{key:'s',viewBox:'0 0 180 180',style:{width:150,height:150,flex:'0 0 auto'}},[...arcs,
+        h('text',{key:'t',x:cx,y:cy-2,textAnchor:'middle',style:{fontSize:22,fontWeight:800,fill:INK}},this.fmt(total)),
+        h('text',{key:'l',x:cx,y:cy+16,textAnchor:'middle',style:{fontSize:10.5,fill:MUT}},centerLabel||'') ]),
+      h('div',{key:'lg',style:{display:'flex',flexDirection:'column',gap:9}}, parts.map((p,i)=>
+        h('div',{key:i,style:{display:'flex',alignItems:'center',gap:9,fontSize:13}},[
+          h('span',{key:'c',style:{width:12,height:12,borderRadius:3,background:p.color}}),
+          h('span',{key:'l',style:{fontWeight:600}},p.label),
+          h('span',{key:'v',style:{color:MUT,fontVariantNumeric:'tabular-nums'}},this.fmt(p.value)+' · '+this.fmt1(p.value/total*100)+' %') ]) )) ]);
+  }
+  screenProjekty(){
+    const D=this.D(); const idx=D.projektyIndex||[]; const sel=this.state.projekt; const proj=D.projekty[sel];
+    const tabs=h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))',gap:14,marginBottom:30}},
+      idx.map(p=>{ const a=p.id===sel; return h('button',{key:p.id,onClick:()=>this.setState({projekt:p.id}),style:{textAlign:'left'}},
+        this.card([
+          h('div',{key:'n',style:{fontSize:16,fontWeight:800,color:a?BLUE:INK}},p.nazov),
+          h('div',{key:'d',style:{fontSize:12.5,color:MUT,marginTop:6,lineHeight:1.45}},p.popis),
+          h('div',{key:'s',style:{marginTop:12,fontSize:11.5,fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase',color:MUT}},p.sezony.length+' sezón · posl. '+this.fmt(p.poslednaDeti)+' detí') ],
+          {padding:18,borderColor:a?BLUE:LINE,borderWidth:a?2:1,borderStyle:'solid'})); }));
+    const seasons=Object.keys(proj.sezony);
+    const withData=seasons.filter(s=>proj.sezony[s].deti>0);
+    const latest=withData.length?withData[withData.length-1]:seasons[seasons.length-1];
+    const cur=proj.sezony[latest];
+    const kpis=h('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(150px,1fr))',gap:14}},
+      [['deti','Zapojené deti'],['skoly','Školy / kluby'],['timy','Tímy / skupiny']].map(d=>this.card([
+        h('div',{key:'l',style:{fontSize:11.5,fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:MUT}},d[1]),
+        h('div',{key:'v',style:{fontSize:30,fontWeight:800,marginTop:8,fontVariantNumeric:'tabular-nums'}},this.fmt(cur[d[0]])) ],{padding:16})));
+    const detiTrend=this.card([
+      h('div',{key:'h',style:{marginBottom:8}},[this.kicker('Vývoj v čase'),
+        h('div',{key:'s',style:{fontSize:19,fontWeight:800,marginTop:6}},'Zapojené deti podľa sezón')]),
+      this.vBars(seasons.map(s=>({label:s.slice(2),value:proj.sezony[s].deti,dim:proj.sezony[s].deti===0})),'#1450df') ],{padding:20});
+    // gender + age of latest with data
+    let genderAge=null;
+    if(cur.deti>0){
+      const g=this.donut([{label:'Chlapci',value:cur.pohlavie.M||0,color:BLUE},{label:'Dievčatá',value:cur.pohlavie.F||0,color:RED}].concat((cur.pohlavie.N? [{label:'Neurčené',value:cur.pohlavie.N,color:GREY}]:[])),'detí '+latest);
+      // age bars 2..14 stacked M/F
+      const ages=Object.keys(cur.vek||{}).map(Number).filter(a=>a>=2&&a<=14).sort((a,b)=>a-b);
+      const maxA=Math.max(...ages.map(a=>{ const v=cur.vek[a]; return (v.M||0)+(v.F||0)+(v.N||0); }),1);
+      const AW=Math.max(360,ages.length*40),AH=180,pb=26,pt=10; const stepA=(AW-16)/ages.length;
+      const ageBars=ages.map((ag,i)=>{ const v=cur.vek[ag]; const m=v.M||0,f=v.F||0; const tot=m+f; const x=8+stepA*i+stepA/2; const bw=Math.min(24,stepA*0.6);
+        const th=(tot/maxA)*(AH-pb-pt); const mh=(m/(tot||1))*th; const y0=AH-pb;
+        return h('g',{key:ag},[
+          h('rect',{x:x-bw/2,y:y0-mh,width:bw,height:Math.max(mh,0.5),fill:BLUE}),
+          h('rect',{x:x-bw/2,y:y0-th,width:bw,height:Math.max(th-mh,0),fill:RED}),
+          h('text',{x,y:AH-14,textAnchor:'middle',style:{fontSize:10,fill:MUT}},ag) ]); });
+      const ageSvg=h('div',{style:{overflowX:'auto'}},h('svg',{viewBox:`0 0 ${AW} ${AH}`,style:{width:'100%',minWidth:AW>420?AW:360,height:'auto',display:'block'}},ageBars));
+      genderAge=h('div',{style:{display:'grid',gridTemplateColumns:this.narrow()?'1fr':'minmax(260px,1fr) minmax(320px,1.4fr)',gap:16,marginTop:16}},[
+        this.card([h('div',{key:'h',style:{marginBottom:14}},[this.kicker('Pohlavie'),h('div',{key:'s',style:{fontSize:18,fontWeight:800,marginTop:6}},'Chlapci a dievčatá')]),g],{padding:20}),
+        this.card([h('div',{key:'h',style:{marginBottom:6}},[this.kicker('Vek účastníkov · '+latest),h('div',{key:'s',style:{fontSize:18,fontWeight:800,marginTop:6}},'Rozloženie podľa veku (rokov)')]),
+          h('div',{key:'lg',style:{display:'flex',gap:16,margin:'8px 0 4px',fontSize:12.5}},[
+            h('span',{key:'m',style:{display:'flex',alignItems:'center',gap:6}},[h('span',{key:'d',style:{width:11,height:11,borderRadius:3,background:BLUE}}),'Chlapci']),
+            h('span',{key:'f',style:{display:'flex',alignItems:'center',gap:6}},[h('span',{key:'d',style:{width:11,height:11,borderRadius:3,background:RED}}),'Dievčatá']) ]),
+          ageSvg],{padding:20}) ]);
+    } else {
+      genderAge=h('div',{style:{marginTop:16}},this.card(h('div',{style:{color:MUT,fontSize:14,lineHeight:1.5}},'Menný zoznam účastníkov tohto programu je v systéme evidovaný len na úrovni škôl a tímov; individuálne počty detí (pohlavie, vek) budú dostupné od sezóny 2026/2027.'),{padding:20}));
+    }
+    const note=h('div',{style:{marginTop:26,color:MUT,fontSize:12,lineHeight:1.6}},[
+      h('strong',{key:'s',style:{color:INK}},'Metodika: '),'Deti = počet detí v súpiskách tímov (nie zápasy). Školy = unikátne školy/kluby, tímy = počet skupín. Zdroj: sportnet.online.']);
+    return this.wrap([
+      this.sectionHead('Grassroots','Projekty pre najmenších','Školské a náborové programy SFZ, ktoré privádzajú deti k futbalu — mimo súťažných zápasov.'),
+      tabs,
+      h('div',{style:{marginBottom:16}},[
+        h('h3',{key:'t',style:{margin:'0 0 4px',fontSize:22,fontWeight:800}},proj.nazov),
+        h('p',{key:'p',style:{margin:0,color:MUT,fontSize:14,maxWidth:640,lineHeight:1.5}},proj.popis) ]),
+      kpis,
+      h('div',{style:{marginTop:16}},detiTrend),
+      genderAge,
+      note ]);
+  }
+
+  renderVals(){
+    if(!this.state.ready){ return { screen: h('div',{style:{maxWidth:1240,margin:'0 auto',padding:'80px 24px',color:MUT,fontSize:15}},'Načítavam dáta…'),
+      navItems:[], seasonOpts:[], season:this.state.season, updatedDate:'', headerControls:null, goHome:()=>{}, onSeason:()=>{} }; }
+    const D=this.D();
+    const views=[['domov','Prehľad'],['zvaz','Profil zväzu'],['porovnania','Porovnania'],['demografia','Demografia'],['projekty','Projekty']];
+    const navItems=views.map(v=>({key:v[0],label:v[1],style:this.navStyle(this.state.view===v[0]),onClick:()=>this.setState({view:v[0]})}));
+    const seasonOpts=D.nationalTrend.filter(t=>(t.kpi&&t.kpi.zapasy>3000)).map(t=>t.sezona).reverse();
+    let screen;
+    if(this.state.view==='domov') screen=this.screenDomov();
+    else if(this.state.view==='zvaz') screen=this.screenZvaz();
+    else if(this.state.view==='porovnania') screen=this.screenPorovnania();
+    else if(this.state.view==='demografia') screen=this.screenDemografia();
+    else screen=this.screenProjekty();
+    const mobile=(this.state.vw||1200)<760;
+    const chev="url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%236c7178' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>\")";
+    const seasonSelect=this.renderSeasonPicker(seasonOpts);
+    let headerControls;
+    if(!mobile){
+      headerControls=h('div',{style:{display:'flex',alignItems:'center',gap:18,marginLeft:'auto',flexWrap:'wrap'}},[
+        h('nav',{key:'n',style:{display:'flex',gap:4}}, navItems.map(n=>h('button',{key:n.key,onClick:n.onClick,style:n.style},n.label))), seasonSelect ]);
+    } else {
+      headerControls=h('div',{style:{marginLeft:'auto',position:'relative'}},[
+        h('button',{key:'burger','aria-label':'Menu',onClick:()=>this.setState({menuOpen:!this.state.menuOpen}),style:{width:44,height:40,display:'flex',alignItems:'center',justifyContent:'center',border:'1px solid #d9dce1',borderRadius:10,background:'#fff',fontSize:19,color:INK}}, this.state.menuOpen?'✕':'☰'),
+        this.state.menuOpen? h('div',{key:'ov',onClick:()=>this.setState({menuOpen:false}),style:{position:'fixed',inset:0,zIndex:40}}):null,
+        this.state.menuOpen? h('div',{key:'pn',style:{position:'absolute',right:0,top:'calc(100% + 8px)',width:250,maxWidth:'86vw',background:'#fff',border:'1px solid '+LINE,borderRadius:14,boxShadow:'0 16px 44px rgba(11,10,10,.18)',zIndex:41,padding:10,display:'flex',flexDirection:'column',gap:4}},[
+          ...navItems.map(n=>h('button',{key:n.key,onClick:()=>this.setState({view:n.key,menuOpen:false}),style:{textAlign:'left',padding:'12px 12px',borderRadius:9,fontSize:15,fontWeight:700,color:this.state.view===n.key?'#fff':INK,background:this.state.view===n.key?BLUE:'transparent'}},n.label)),
+          h('div',{key:'sep',style:{height:1,background:LINE,margin:'6px 2px'}}),
+          h('div',{key:'ssm',style:{padding:'6px 6px 4px'}},seasonSelect) ]):null ]);
+    }
+    return {
+      screen, navItems, seasonOpts, season:this.state.season, headerControls,
+      updatedDate: new Date(D.generatedAt||Date.now()).toLocaleDateString('sk-SK'),
+      goHome:()=>this.setState({view:'domov'}),
+      onSeason:(e)=>this.setState({season:e.target.value}) };
+  }
+}
+</script>
+</body>
+</html>

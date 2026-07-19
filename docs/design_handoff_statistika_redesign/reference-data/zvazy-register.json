@@ -1,0 +1,92 @@
+{
+  "generatedAt": "2026-07-12",
+  "note": "Register overený dotazom na competitions (sezóny 2024/2025 + 2025/2026). appSpace sa NIKDY nehádá — len z tohto registra. geoName odkazuje na názov polygónu vo web/assets/geo/mapa.json.",
+  "sfz": [
+    { "id": "sfz", "nazov": "Slovenský futbalový zväz", "appSpaces": ["futbalsfz.sk", "ulk.futbalnet.sk"], "uroven": "SFZ", "geoName": null, "poznamka": "ulk.futbalnet.sk = Únia ligových klubov (Niké liga, najvyššia súťaž mužov). Rozhodnutie 12.7.2026 (Ján Letko): patrí pod SFZ pohľad. Ak má zväz jeden appSpace, je v poli appSpace; ak viac, v poli appSpaces." }
+  ],
+  "rfz": [
+    { "id": "bfz",  "nazov": "Bratislavský futbalový zväz",   "appSpace": "BFZ",  "uroven": "RFZ", "geoName": "BA" },
+    { "id": "zsfz", "nazov": "Západoslovenský futbalový zväz", "appSpace": "ZsFZ", "uroven": "RFZ", "geoName": "ZsFZ" },
+    { "id": "ssfz", "nazov": "Stredoslovenský futbalový zväz", "appSpace": "SsFZ", "uroven": "RFZ", "geoName": "SsFZ" },
+    { "id": "vsfz", "nazov": "Východoslovenský futbalový zväz", "appSpace": "VsFZ", "uroven": "RFZ", "geoName": "VsFZ" }
+  ],
+  "obfz": [
+    { "id": "obfz-bratislava-mesto",  "nazov": "ObFZ Bratislava-mesto",  "appSpace": "BA-mesto",  "rfz": "bfz", "geoName": "ObFZ Bratislava - mesto" },
+    { "id": "obfz-bratislava-vidiek", "nazov": "ObFZ Bratislava-vidiek", "appSpace": "BA-vidiek", "rfz": "bfz", "geoName": "ObFZ Bratislava - vidiek" },
+
+    { "id": "obfz-trnava",             "nazov": "ObFZ Trnava",             "appSpace": "ObFZ-Trnava",                          "rfz": "zsfz", "geoName": "ObFZ Trnava" },
+    { "id": "obfz-dunajska-streda",    "nazov": "ObFZ Dunajská Streda",    "appSpace": "obfz-dunajska-streda",                 "rfz": "zsfz", "geoName": "ObFZ Dunajská Streda" },
+    { "id": "obfz-galanta",            "nazov": "ObFZ Galanta",            "appSpace": "obfz-galanta.futbalnet.sk",            "rfz": "zsfz", "geoName": "ObFZ Galanta" },
+    { "id": "obfz-senica",             "nazov": "ObFZ Senica",             "appSpace": "obfz-senica.futbalnet.sk",             "rfz": "zsfz", "geoName": "ObFZ Senica" },
+    { "id": "obfz-trencin",            "nazov": "ObFZ Trenčín",            "appSpace": "ObFZTrencin",                          "rfz": "zsfz", "geoName": "ObFZ Trenčín" },
+    { "id": "obfz-prievidza",          "nazov": "ObFZ Prievidza",          "appSpace": "obfz-prievidza",                       "rfz": "zsfz", "geoName": "ObFZ Prievidza" },
+    { "id": "obfz-povazska-bystrica",  "nazov": "ObFZ Považská Bystrica",  "appSpace": "obfz-povazska-bystrica.futbalnet.sk",  "rfz": "zsfz", "geoName": "ObFZ Považská Bystrica" },
+    { "id": "obfz-nitra",              "nazov": "ObFZ Nitra",              "appSpace": "obfz-nitra.futbalnet.sk",              "rfz": "zsfz", "geoName": "ObFZ Nitra" },
+    { "id": "obfz-nove-zamky",         "nazov": "ObFZ Nové Zámky",         "appSpace": "ObFZ-Nove-Zamky",                      "rfz": "zsfz", "geoName": "ObFZ Nové Zámky" },
+    { "id": "obfz-levice",             "nazov": "ObFZ Levice",             "appSpace": "obfz-levice.futbalnet.sk",             "rfz": "zsfz", "geoName": "ObFZ Levice" },
+    { "id": "obfz-komarno",            "nazov": "ObFZ Komárno",            "appSpace": "obfz-komarno.futbalnet.sk",            "rfz": "zsfz", "geoName": "ObFZ Komárno" },
+    { "id": "obfz-topolcany",          "nazov": "ObFZ Topoľčany",          "appSpace": "obfz-topolcany.futbalnet.sk",          "rfz": "zsfz", "geoName": "ObFZ Topoľčany" },
+
+    { "id": "obfz-zilina",             "nazov": "ObFZ Žilina",             "appSpace": "obfz-zilina",                          "rfz": "ssfz", "geoName": "ObFZ Žilina" },
+    { "id": "obfz-kysuc",              "nazov": "ObFZ Kysúc",              "appSpace": "obfz-kysuc.futbalnet.sk",              "rfz": "ssfz", "geoName": "ObFZ Kysúc" },
+    { "id": "ofz-orava",               "nazov": "Oravský futbalový zväz",  "appSpace": "oravsky-futbalovy-zvaz.futbalnet.sk",  "rfz": "ssfz", "geoName": "OFZ (ObFZ DK)" },
+    { "id": "lfz-liptov",              "nazov": "Liptovský futbalový zväz","appSpace": "lfz-liptovsky-mikulas.futbalnet.sk",   "rfz": "ssfz", "geoName": "LFZ" },
+    { "id": "tfz-turiec",              "nazov": "Turčiansky futbalový zväz","appSpace": "TFZ",                                 "rfz": "ssfz", "geoName": "Turčiansky futbalový zväz" },
+    { "id": "obfz-banska-bystrica",    "nazov": "ObFZ Banská Bystrica",    "appSpace": "ObFZ-Banska-Bystrica",                 "rfz": "ssfz", "geoName": "ObFZ BB" },
+    { "id": "obfz-zvolen",             "nazov": "ObFZ Zvolen",             "appSpace": "obfz-zvolen.futbalnet.sk",             "rfz": "ssfz", "geoName": "ObFZ Zvolen" },
+    { "id": "obfz-ziar-nad-hronom",    "nazov": "ObFZ Žiar nad Hronom",    "appSpace": "obfz-ziar-nad-hronom.futbalnet.sk",    "rfz": "ssfz", "geoName": "ObFZ Žiar nad Hronom" },
+    { "id": "obfz-lucenec",            "nazov": "ObFZ Lučenec",            "appSpace": "obfz-lucenec.futbalnet.sk",            "rfz": "ssfz", "geoName": "ObFZ Lučenec" },
+    { "id": "obfz-velky-krtis",        "nazov": "ObFZ Veľký Krtíš",        "appSpace": "obfz-velky-krtis.futbalnet.sk",        "rfz": "ssfz", "geoName": "ObFZ VK" },
+    { "id": "obfz-rimavska-sobota",    "nazov": "ObFZ Rimavská Sobota",    "appSpace": "obfz-rimavska-sobota.futbalnet.sk",    "rfz": "ssfz", "geoName": "ObFZ Rimavská Sobota" },
+
+    { "id": "obfz-kosice-okolie",      "nazov": "ObFZ Košice-okolie",      "appSpace": "ObFZ-KE-okolie",                       "rfz": "vsfz", "geoName": "ObFZ Košice - okolie" },
+    { "id": "mfz-kosice",              "nazov": "Mestský FZ Košice",       "appSpace": "MFZ-Kosice",                           "rfz": "vsfz", "geoName": "ObFZ Košice - mesto" },
+    { "id": "obfz-presov",             "nazov": "ObFZ Prešov",             "appSpace": "ObFZ-Presov",                          "rfz": "vsfz", "geoName": "ObFZ Prešov" },
+    { "id": "pfz-poprad",              "nazov": "Podtatranský futbalový zväz", "appSpace": "ObFZ-Poprad",                      "rfz": "vsfz", "geoName": "Podtatranský futbalový zväz" },
+    { "id": "sofz-spisska-nova-ves",   "nazov": "Spišský oblastný futbalový zväz", "appSpace": "sofz-spisska-nova-ves.futbalnet.sk", "rfz": "vsfz", "geoName": "SOFZ" },
+    { "id": "obfz-stara-lubovna",      "nazov": "ObFZ Stará Ľubovňa",      "appSpace": "obfz-stara-lubovna.futbalnet.sk",      "rfz": "vsfz", "geoName": "ObFZ Stara Lubovna" },
+    { "id": "obfz-bardejov",           "nazov": "ObFZ Bardejov",           "appSpace": "obfz-bardejov.futbalnet.sk",           "rfz": "vsfz", "geoName": "ObFZ Bardejov" },
+    { "id": "oofz-svidnik",            "nazov": "Ondavský oblastný futbalový zväz", "appSpace": "ondavsky-futbalovy-zvaz.futbalnet.sk", "rfz": "vsfz", "geoName": "Ondavský oblastný futbalový zväz" },
+    { "id": "obfz-humenne",            "nazov": "ObFZ Humenné",            "appSpace": "obfz-humenne.futbalnet.sk",            "rfz": "vsfz", "geoName": "ObFZ Humenné" },
+    { "id": "obfz-vranov-nad-toplou",  "nazov": "ObFZ Vranov nad Topľou",  "appSpace": "obfz-vranov-nad-toplou.futbalnet.sk",  "rfz": "vsfz", "geoName": "Obfz Vranov nad Topľou" },
+    { "id": "obfz-michalovce",         "nazov": "ObFZ Michalovce",         "appSpace": "obfz-michalovce",                      "rfz": "vsfz", "geoName": "ObFZ Michalovce" },
+    { "id": "obfz-trebisov",           "nazov": "ObFZ Trebišov",           "appSpace": "obfz-trebisov.futbalnet.sk",           "rfz": "vsfz", "geoName": "ObFZ Trebišov" },
+    { "id": "obfz-roznava",            "nazov": "ObFZ Rožňava",            "appSpace": "obfz-roznava.futbalnet.sk",            "rfz": "vsfz", "geoName": "ObFZ Rožňava" }
+  ],
+  "futsal": {
+    "appSpace": "futsalslovakia.sk",
+    "patriPod": "sfz",
+    "sportSector": "futsal",
+    "poznamka": "Futsal patrí priamo pod SFZ (rozhodnutie Ján Letko, 12. 7. 2026). Šport/odvetvie je systémová premenná — viď etl/config/sporty.json. MVP generuje odvetvie futbal; futsal je pripravené rozšírenie (run.py --sport-sector futsal --zvaz sfz)."
+  },
+  "projekty": {
+    "appSpaces": ["disney", "kruzkymcd", "dajmespolugol"],
+    "zoznam": [
+      {
+        "id": "dajmespolugol",
+        "appSpace": "dajmespolugol",
+        "nazov": "Dajme spolu gól",
+        "popis": "Grassroots program SFZ pre najmenších — zapájanie detí z materských a základných škôl do futbalu.",
+        "vynechatSezony": ["2018/2019"]
+      },
+      {
+        "id": "kruzkymcd",
+        "appSpace": "kruzkymcd",
+        "nazov": "Futbalové krúžky McDonald's",
+        "popis": "Futbalové krúžky na školách (projekt ukončený).",
+        "vynechatSezony": []
+      },
+      {
+        "id": "disney",
+        "appSpace": "disney",
+        "nazov": "Disney Playmakers",
+        "popis": "Program zameraný na zapájanie detí do futbalu; plná evidencia účastníkov od sezóny 2026/2027.",
+        "vynechatSezony": []
+      }
+    ],
+    "poznamka": "SFZ grassroots projekty — samostatná časť štatistík 'Projekty' (ETL etl/projekty.py z competitions, nie matches — dáta sú súpisky/deti, nie zápasy). Rozhodnutia PO 19. 7. 2026: dajmespolugol bez 2018/2019; kruzkymcd ukončený; disney plné dáta od 2026/2027."
+  },
+  "mimoRegistra": {
+    "test / issf_club_12878 / fk-trnavka.futbalnet.sk": "Testovacie a klubové priestory — vylúčené z ETL."
+  }
+}
