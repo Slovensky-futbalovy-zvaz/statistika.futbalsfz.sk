@@ -50,27 +50,34 @@
 :root {
   color-scheme: light;
 }
-body {
-  font-family: var(--font-sans);
-  color: var(--color-ink);
-  background: var(--color-bg);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+
+/* Základné element-pravidlá patria do @layer base, aby ich utility triedy
+   (napr. text-white na <a> v aktívnom menu) mohli prebiť. Bez toho by
+   nezaložené `a{color}` prebíjalo Tailwind utility vrstvu. */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a {
+    color: var(--color-sfz-blue);
+    text-decoration: none;
+  }
+  a:hover {
+    color: #0f3ab3;
+  }
+  ::selection {
+    background: var(--color-sfz-blue);
+    color: #fff;
+  }
 }
+
 .tnum {
   font-variant-numeric: tabular-nums;
 }
 .font-display {
   font-family: var(--font-display);
-}
-a {
-  color: var(--color-sfz-blue);
-  text-decoration: none;
-}
-a:hover {
-  color: #0f3ab3;
-}
-::selection {
-  background: var(--color-sfz-blue);
-  color: #fff;
 }

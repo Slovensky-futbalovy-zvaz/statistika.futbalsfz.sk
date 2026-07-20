@@ -4,7 +4,7 @@ import KlubyView from '../../components/KlubyView.tsx';
 import { getKluby } from '../../lib/data';
 
 const kluby = getKluby();
-const sezona = kluby[0]?.sezony?.[0];
+const sezona = kluby[0]?.sezony?.[kluby[0].sezony.length - 1];
 ---
 
 <Base title="Kluby">
@@ -12,8 +12,9 @@ const sezona = kluby[0]?.sezony?.[0];
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Kluby</div>
     <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Kluby slovenského futbalu</h1>
     <p class="mt-2 max-w-2xl text-muted">
-      {kluby.length} klubov s aspoň jedným odohraným zápasom{sezona ? ` v sezóne ${sezona}` : ''}.
-      Hľadaj klub, filtruj podľa úrovne alebo zoraď tabuľku; klik otvorí profil klubu.
+      Účinkovanie klubu naprieč všetkými súťažami na Slovensku v jednej sezóne{sezona ? ` (${sezona})` : ''} —
+      zápasy, družstvá, góly, diváci a osoby po vekových kategóriách. Vyhľadaj klub, filtruj podľa úrovne
+      alebo prepni radenie; klik otvorí profil klubu.
     </p>
   </header>
 

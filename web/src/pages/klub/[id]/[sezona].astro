@@ -23,6 +23,9 @@ const predosly = predoslaSezona ? getKlub(id!, predoslaSezona) : undefined;
 const klubyItems = getKluby().map((k) => ({ id: k.id, nazov: k.nazov, zvazNazov: k.zvazNazov, uroven: k.uroven, sezony: k.sezony }));
 const zvaz = klub.zvaz ? getZvaz(klub.zvaz) : undefined;
 
+const REGION_FARBA: Record<string, string> = { sfz: '#7a44e0', bfz: '#1450df', zsfz: '#2f9bff', ssfz: '#12a06b', vsfz: '#f0961b' };
+const pilulkaFarba = REGION_FARBA[klub.zvaz ?? ''] ?? (klub.uroven === 'ObFZ' ? '#f0961b' : '#1450df');
+
 const kpiKarty = [
   { label: 'Zápasy', hodnota: klub.kpi.zapasy, predch: predosly?.kpi.zapasy, good: true },
   { label: 'Družstvá', hodnota: klub.kpi.druzstva, predch: predosly?.kpi.druzstva, good: true },
@@ -52,15 +55,17 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
 
   <header class="mb-6 flex flex-wrap items-start justify-between gap-4">
     <div>
-      <span class="inline-block rounded-full px-3 py-0.5 text-xs font-bold" style="background:#eef3ff; color:var(--color-sfz-blue);">Klub</span>
+      <span class="inline-block rounded-full px-3 py-0.5 text-xs font-bold" style={`background:${pilulkaFarba}1f; color:${pilulkaFarba};`}>{klub.uroven || 'Klub'}</span>
       <h1 class="mt-2 font-extrabold tracking-tight" style="font-size:clamp(26px,4vw,44px); line-height:1.05;">{klub.nazov}</h1>
-      {
-        zvaz && (
-          <p class="mt-1 text-muted text-sm">
-            Zväz: <a href={`/zvaz/${zvaz.id}`} class="text-sfz-blue hover:underline">{zvaz.nazov}</a> · sezóna {sezona}
-          </p>
-        )
-      }
+      <p class="mt-1 text-muted text-sm">
+        {
+          zvaz ? (
+            <>Riadiaci zväz: <a href={`/zvaz/${zvaz.id}`} class="font-semibold text-sfz-blue hover:underline">{zvaz.nazov}</a> ↗ · sezóna {sezona}</>
+          ) : (
+            <>Sezóna {sezona}</>
+          )
+        }
+      </p>
     </div>
     <div>
       <div class="text-xs font-semibold uppercase tracking-wider text-muted mb-1 text-right">Vybrať iný klub</div>

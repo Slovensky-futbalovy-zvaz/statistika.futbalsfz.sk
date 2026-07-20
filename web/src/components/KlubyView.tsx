@@ -1,100 +1,119 @@
 import { useMemo, useState } from 'react';
-import { fmt, fmt1, bezDiakritiky } from '../lib/format';
+import { fmt, bezDiakritiky } from '../lib/format';
 import type { KlubIndexPolozka } from '../lib/data';
 
 interface Props {
   kluby: KlubIndexPolozka[];
 }
 
-const STLPCE = [
-  { key: 'zapasy', label: 'Zápasy', f: 0 },
-  { key: 'hraci', label: 'Hráči', f: 0 },
-];
-
 const REGION: Record<string, string> = { sfz: '#7a44e0', bfz: '#1450df', zsfz: '#2f9bff', ssfz: '#12a06b', vsfz: '#f0961b' };
+const SORTY: { key: 'zapasy' | 'hraci'; label: string }[] = [
+  { key: 'zapasy', label: 'Podľa zápasov' },
+  { key: 'hraci', label: 'Podľa hráčov' },
+];
+const UROVNE = ['Všetky', 'SFZ', 'RFZ', 'ObFZ'];
 
-/** Zoznam klubov — search (bez diakritiky) + filter úrovne + zoraditeľná tabuľka. */
+/** Zoznam klubov ako rebríček s pruhmi (dizajn podľa vzoru): poradie · názov+zväz ·
+ *  farebný pruh podľa regiónu · hodnota · šípka. Search + segment úrovne + sort pilulky. */
 export default function KlubyView({ kluby }: Props) {
   const [q, setQ] = useState('');
-  const [uroven, setUroven] = useState<string>('VSETKY');
-  const [sortKey, setSortKey] = useState('zapasy');
-  const [sortDir, setSortDir] = useState<1 | -1>(-1);
+  const [uroven, setUroven] = useState('Všetky');
+  const [sortKey, setSortKey] = useState<'zapasy' | 'hraci'>('zapasy');
 
   const filter = bezDiakritiky(q.trim());
-  const urovne = ['VSETKY', 'SFZ', 'RFZ', 'ObFZ'];
 
   const rows = useMemo(() => {
-    let r = kluby;
-    if (uroven !== 'VSETKY') r = r.filter((k) => k.uroven === uroven);
-    if (filter) r = r.filter((k) => bezDiakritiky(k.nazov).includes(filter) || bezDiakritiky(k.zvazNazov).includes(filter));
-    r = [...r].sort((a, b) => (((a as unknown as Record<string, number>)[sortKey]) - ((b as unknown as Record<string, number>)[sortKey])) * sortDir);
-    return r.slice(0, 200);
-  }, [kluby, uroven, filter, sortKey, sortDir]);
+    let r = kluby.filter(
+      (k) =>
+        (uroven === 'Všetky' || k.uroven === uroven) &&
+        (!filter || bezDiakritiky(k.nazov).includes(filter) || bezDiakritiky(k.zvazNazov).includes(filter)),
+    );
+    r = [...r].sort((a, b) => ((b[sortKey] as number) || 0) - ((a[sortKey] as number) || 0));
+    return r;
+  }, [kluby, uroven, filter, sortKey]);
+
+  const max = Math.max(...rows.map((r) => (r[sortKey] as number) || 0), 1);
 
   const klubUrl = (k: KlubIndexPolozka) => {
     const s = k.sezony?.[k.sezony.length - 1];
     return s ? `/klub/${k.id}/${s.replace('/', '-')}` : `/klub/${k.id}`;
   };
 
-  function sort(k: string) {
-    if (k === sortKey) setSortDir((d) => (d === -1 ? 1 : -1));
-    else { setSortKey(k); setSortDir(-1); }
-  }
-
-  const pill = (aktiv: boolean): React.CSSProperties => ({
-    padding: '5px 14px', borderRadius: 9, fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer',
-    background: aktiv ? 'var(--color-card)' : 'transparent', color: aktiv ? 'var(--color-sfz-blue)' : 'var(--color-muted)', boxShadow: aktiv ? 'var(--shadow-card)' : 'none',
+  const segBtn = (active: boolean): React.CSSProperties => ({
+    padding: '7px 14px', borderRadius: 8, fontSize: 12.5, fontWeight: 700, border: 'none', cursor: 'pointer',
+    color: active ? 'var(--color-ink)' : 'var(--color-muted)', background: active ? '#fff' : 'transparent',
+    boxShadow: active ? '0 1px 3px rgba(0,0,0,.1)' : 'none',
+  });
+  const sortBtn = (active: boolean): React.CSSProperties => ({
+    padding: '7px 12px', borderRadius: 20, fontSize: 12.5, fontWeight: 700, cursor: 'pointer',
+    border: '1px solid ' + (active ? 'var(--color-sfz-blue)' : '#dcdfe4'),
+    color: active ? '#fff' : 'var(--color-ink)', background: active ? 'var(--color-sfz-blue)' : '#fff',
   });
 
   return (
     <div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', marginBottom: 16 }}>
-        <div style={{ display: 'inline-flex', background: 'var(--color-track)', borderRadius: 12, padding: 3 }}>
-          {urovne.map((u) => (
-            <button key={u} type="button" style={pill(uroven === u)} onClick={() => setUroven(u)}>{u === 'VSETKY' ? 'Všetky' : u}</button>
-          ))}
-        </div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', margin: '4px 0 18px' }}>
         <input
+          type="text"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Hľadať klub…"
-          style={{ flex: 1, minWidth: 200, padding: '9px 12px', borderRadius: 10, border: '1px solid var(--color-line)', fontSize: 14, outline: 'none' }}
+          placeholder="Hľadať klub alebo zväz…"
+          style={{ flex: '1 1 240px', minWidth: 200, border: '1px solid #d9dce1', borderRadius: 10, padding: '10px 13px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
         />
+        <div style={{ display: 'inline-flex', background: 'var(--color-track)', borderRadius: 11, padding: 3 }}>
+          {UROVNE.map((u) => (
+            <button key={u} type="button" style={segBtn(uroven === u)} onClick={() => setUroven(u)}>{u}</button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {SORTY.map((s) => (
+            <button key={s.key} type="button" style={sortBtn(sortKey === s.key)} onClick={() => setSortKey(s.key)}>{s.label}</button>
+          ))}
+        </div>
       </div>
 
-      <div className="border border-line" style={{ background: 'var(--color-card)', borderRadius: 16, padding: 18, boxShadow: 'var(--shadow-card)', overflowX: 'auto' }}>
-        <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ textAlign: 'left', color: 'var(--color-muted)', borderBottom: '1px solid var(--color-line)' }}>
-              <th style={{ padding: '8px 16px 8px 0', fontWeight: 600 }}>Klub</th>
-              <th style={{ padding: '8px 8px', fontWeight: 600 }}>Zväz</th>
-              {STLPCE.map((s) => (
-                <th key={s.key} style={{ padding: '8px 8px', fontWeight: 600, textAlign: 'right', cursor: 'pointer', color: s.key === sortKey ? 'var(--color-sfz-blue)' : undefined }} onClick={() => sort(s.key)}>
-                  {s.label} {s.key === sortKey ? (sortDir === -1 ? '▼' : '▲') : ''}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((k, i) => (
-              <tr key={k.id} style={{ borderBottom: '1px solid var(--color-line)', cursor: 'pointer', background: i % 2 ? 'rgba(0,0,0,.015)' : undefined }} onClick={() => (window.location.href = klubUrl(k))}>
-                <td style={{ padding: '8px 16px 8px 0' }}>
-                  <span style={{ display: 'inline-block', width: 9, height: 9, borderRadius: 3, background: REGION[k.zvaz ?? ''] ?? '#c7ccd2', marginRight: 8 }} />
-                  <a href={klubUrl(k)} style={{ color: 'var(--color-sfz-blue)' }} onClick={(e) => e.stopPropagation()}>{k.nazov}</a>
-                </td>
-                <td style={{ padding: '8px 8px', color: 'var(--color-muted)' }}>{k.zvazNazov}</td>
-                {STLPCE.map((s) => (
-                  <td key={s.key} className="tnum" style={{ padding: '8px 8px', textAlign: 'right' }}>
-                    {s.f ? fmt1((k as unknown as Record<string, number>)[s.key]) : fmt((k as unknown as Record<string, number>)[s.key])}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <p style={{ marginTop: 12, fontSize: 12, color: 'var(--color-muted)' }}>
-          Zobrazených {rows.length} z {kluby.length} klubov. Použi vyhľadávanie alebo filter úrovne na zúženie; klik na riadok otvorí profil.
-        </p>
+      <div className="border border-line" style={{ background: 'var(--color-card)', borderRadius: 16, boxShadow: 'var(--shadow-card)', overflow: 'hidden' }}>
+        {rows.length ? (
+          rows.map((r, i) => {
+            const v = (r[sortKey] as number) || 0;
+            return (
+              <a
+                key={r.id}
+                href={klubUrl(r)}
+                style={{
+                  display: 'grid', gridTemplateColumns: '28px 1fr 130px 80px 16px', gap: 12, alignItems: 'center',
+                  padding: '11px 16px', background: i % 2 ? '#fafbfc' : '#fff',
+                  borderBottom: i < rows.length - 1 ? '1px solid var(--color-line)' : 'none', color: 'inherit',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#f2f6ff')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = i % 2 ? '#fafbfc' : '#fff')}
+              >
+                <span className="tnum" style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--color-muted)' }}>{i + 1}</span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: 8, color: 'var(--color-ink)' }}>
+                    <span style={{ width: 9, height: 9, borderRadius: 2, background: REGION[r.zvaz ?? ''] ?? '#bbbdbf', flex: '0 0 auto' }} />
+                    {r.nazov}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--color-muted)', marginTop: 3, marginLeft: 17, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {(r.uroven || '') + ' · ' + r.zvazNazov}
+                  </div>
+                </div>
+                <div style={{ height: 8, borderRadius: 5, background: '#eceef1', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${(v / max) * 100}%`, background: REGION[r.zvaz ?? ''] ?? 'var(--color-sfz-blue)', borderRadius: 5 }} />
+                </div>
+                <span className="tnum" style={{ textAlign: 'right', fontSize: 14, fontWeight: 800, color: 'var(--color-ink)' }}>{fmt(v)}</span>
+                <span style={{ color: '#c4c8ce', fontSize: 13, textAlign: 'right' }}>›</span>
+              </a>
+            );
+          })
+        ) : (
+          <div style={{ padding: '26px 16px', color: 'var(--color-muted)', fontSize: 14 }}>Žiadny klub nezodpovedá hľadaniu.</div>
+        )}
+      </div>
+
+      <div style={{ marginTop: 14, fontSize: 12, color: 'var(--color-muted)', lineHeight: 1.5, background: '#eff4ff', border: '1px solid #cfe0ff', borderRadius: 10, padding: '11px 14px' }}>
+        <strong style={{ color: 'var(--color-sfz-blue)' }}>Zobrazených {fmt(rows.length)} z {fmt(kluby.length)} klubov. </strong>
+        Klub = organizácia naprieč všetkými súťažami v SR (sezóna {kluby[0]?.sezony?.[kluby[0].sezony.length - 1] ?? '2025/2026'}). Klik otvorí profil klubu.
       </div>
     </div>
   );
