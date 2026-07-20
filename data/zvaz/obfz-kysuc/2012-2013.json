@@ -2,12 +2,13 @@
   "zvaz": "obfz-kysuc",
   "sezona": "2012/2013",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-20T14:59:03+02:00",
+  "generatedAt": "2026-07-20T22:10:38+02:00",
   "methodologyFlags": {
     "zapasy": "len closed:true",
     "divaciPokrytie": 1.0,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
-    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
+    "kontumovanePoznamka": "kpi.kontumovane = počet zápasov s contumation.isContumated=True. Sú súčasťou kpi.zapasy (closed:true zahŕňa aj kontumované zápasy), nie sú z neho odpočítané."
   },
   "kpi": {
     "sutaze": 1,
@@ -16,7 +17,8 @@
     "goly": 659,
     "divaci": 17744,
     "zlteKarty": 611,
-    "cerveneKarty": 27
+    "cerveneKarty": 27,
+    "kontumovane": 0
   },
   "kategorie": {
     "ADULTS": {

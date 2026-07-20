@@ -266,6 +266,21 @@ def pocet_sutazi(app_spaces, season_variants, sport_sector="futbal"):
     ]
 
 
+def kontumovane_pocet(app_spaces, season_variants, sport_sector="futbal"):
+    """Počet kontumovaných zápasov — doplnková KPI karta (#kontumácie), NEODPOČÍTAVA sa
+    z celkového kpi.zapasy (closed:true ich už zahŕňa, kontumácia zápas štandardne
+    uzatvára). POZOR: matches.state == 'KONTUMOVANY' sa v praxi takmer nikdy nenastavuje
+    (overené 20. 7. 2026: SFZ 2025/2026, 8065 uzavretých zápasov — všetky state:null,
+    napriek tomu 13 s contumation.isContumated:true). Skutočný a dokumentovaný príznak
+    kontumácie je contumation.isContumated (viď Sportnet docs: match-scoring-and-contumation).
+    """
+    return [
+        _match_stage(app_spaces, season_variants, sport_sector),
+        {"$match": {"contumation.isContumated": True}},
+        {"$count": "kontumovane"},
+    ]
+
+
 def druzstva(app_spaces, season_variants, sport_sector="futbal", part_map=None):
     """Unikátne družstvá (organization.name) po kategóriách — len s ≥1 uzavretým zápasom."""
     return [

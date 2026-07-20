@@ -2,12 +2,13 @@
   "zvaz": "obfz-bratislava-vidiek",
   "sezona": "2023/2024",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-20T13:40:34+02:00",
+  "generatedAt": "2026-07-20T22:03:42+02:00",
   "methodologyFlags": {
     "zapasy": "len closed:true",
     "divaciPokrytie": 0.946,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
-    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
+    "kontumovanePoznamka": "kpi.kontumovane = počet zápasov s contumation.isContumated=True. Sú súčasťou kpi.zapasy (closed:true zahŕňa aj kontumované zápasy), nie sú z neho odpočítané."
   },
   "kpi": {
     "sutaze": 6,
@@ -16,7 +17,8 @@
     "goly": 3352,
     "divaci": 42806,
     "zlteKarty": 1002,
-    "cerveneKarty": 32
+    "cerveneKarty": 32,
+    "kontumovane": 6
   },
   "kategorie": {
     "ADULTS": {

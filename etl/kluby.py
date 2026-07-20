@@ -76,6 +76,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             "protocol.events.eventType": 1, "protocol.events.team": 1, "protocol.audience": 1,
             "nominations.teamId": 1, "nominations.athletes.sportnetUser._id": 1,
             "nominations.crew.sportnetUser._id": 1, "nominations.crew.position": 1,
+            "contumation.isContumated": 1,
         },
         no_cursor_timeout=True,
     )
@@ -92,6 +93,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
                 "hraci": {"unik": set(), "kat": {}},   # cat → set(pid)
                 "treneri": {"unik": set(), "kat": {}},
                 "realizacnyTim": {"unik": set(), "kat": {}},
+                "kontumovane": 0,  # #kontumácie: počet zápasov klubu s contumation.isContumated=True
             }
         return k
 
@@ -116,6 +118,8 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             k["appSpaceCount"][aps] = k["appSpaceCount"].get(aps, 0) + 1
             kc = k["kat"].setdefault(cat, {"zapasy": 0, "druzstva": set(), "goly": 0, "zlte": 0, "cervene": 0, "divaci": 0, "divaciPokrytych": 0})
             kc["zapasy"] += 1
+            if (m.get("contumation") or {}).get("isContumated"):
+                k["kontumovane"] += 1
             kc["druzstva"].add(tid)
             if isinstance(audience, int) and 0 <= audience < 200000:
                 kc["divaci"] += audience
@@ -187,6 +191,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             "divaci": sum(c["divaci"] for c in kategorie.values()),
             "zlteKarty": sum(c["zlte"] for c in kategorie.values()),
             "cerveneKarty": sum(c["cervene"] for c in kategorie.values()),
+            "kontumovane": k["kontumovane"],
         }
 
         def osoba(o):
@@ -201,6 +206,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
                 "zapasy": "len closed:true; klub = teams.organization._id",
                 "divaciPokrytie": round(pokrytych / zapasy, 3) if zapasy else 0.0,
                 "poznamka": "Góly/karty priradené tímu klubu z protocol.events; osoby = hráči (nominations) a tréneri (crew) klubu. Rozhodcovia/delegáti nie sú klubové.",
+            "kontumovanePoznamka": "kpi.kontumovane = počet zápasov klubu s contumation.isContumated=True. Sú súčasťou kpi.zapasy (closed:true zahŕňa aj kontumované zápasy), nie sú z neho odpočítané.",
             },
             "kpi": kpi,
             "kategorie": kategorie,

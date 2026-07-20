@@ -2,12 +2,13 @@
   "zvaz": "mfz-kosice",
   "sezona": "2016/2017",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-20T15:51:32+02:00",
+  "generatedAt": "2026-07-20T22:13:52+02:00",
   "methodologyFlags": {
     "zapasy": "len closed:true",
     "divaciPokrytie": 0.986,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
-    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
+    "kontumovanePoznamka": "kpi.kontumovane = počet zápasov s contumation.isContumated=True. Sú súčasťou kpi.zapasy (closed:true zahŕňa aj kontumované zápasy), nie sú z neho odpočítané."
   },
   "kpi": {
     "sutaze": 1,
@@ -16,7 +17,8 @@
     "goly": 365,
     "divaci": 3490,
     "zlteKarty": 115,
-    "cerveneKarty": 1
+    "cerveneKarty": 1,
+    "kontumovane": 5
   },
   "kategorie": {
     "ADULTS": {

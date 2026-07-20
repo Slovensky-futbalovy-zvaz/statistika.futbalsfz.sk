@@ -2,12 +2,13 @@
   "zvaz": "bfz",
   "sezona": "2012/2013",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-20T12:29:15+02:00",
+  "generatedAt": "2026-07-20T21:50:33+02:00",
   "methodologyFlags": {
     "zapasy": "len closed:true",
     "divaciPokrytie": 0.889,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
-    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
+    "kontumovanePoznamka": "kpi.kontumovane = počet zápasov s contumation.isContumated=True. Sú súčasťou kpi.zapasy (closed:true zahŕňa aj kontumované zápasy), nie sú z neho odpočítané."
   },
   "kpi": {
     "sutaze": 13,
@@ -16,7 +17,8 @@
     "goly": 5658,
     "divaci": 110492,
     "zlteKarty": 2627,
-    "cerveneKarty": 106
+    "cerveneKarty": 106,
+    "kontumovane": 31
   },
   "kategorie": {
     "ADULTS": {

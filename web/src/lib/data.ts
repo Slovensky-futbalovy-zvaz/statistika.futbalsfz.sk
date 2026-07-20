@@ -29,6 +29,7 @@ export interface Kpi {
   divaci: number;
   zlteKarty: number;
   cerveneKarty: number;
+  kontumovane?: number; // #kontumácie: počet zápasov s contumation.isContumated=true, súčasť zapasy (nie odpočítané)
 }
 
 export interface Kategoria {

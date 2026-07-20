@@ -251,6 +251,11 @@ def vygeneruj(
     )
     pocet_sutazi = sutaze_raw[0]["sutaze"] if sutaze_raw else 0
 
+    kontum_raw = agreguj(
+        db, pipelines.kontumovane_pocet(spaces, varianty, sport_sector), "kontumovane"
+    )
+    kontumovane = kontum_raw[0]["kontumovane"] if kontum_raw else 0
+
     druz = {r["_id"]: r["druzstva"] for r in druz_raw}
     kategorie = {}
     for r in kat_raw:
@@ -287,6 +292,10 @@ def vygeneruj(
                 "súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom "
                 "sa v družstvách počíta v oboch pohlaviach."
             ),
+            "kontumovanePoznamka": (
+                "kpi.kontumovane = počet zápasov s contumation.isContumated=True. Sú súčasťou "
+                "kpi.zapasy (closed:true zahŕňa aj kontumované zápasy), nie sú z neho odpočítané."
+            ),
         },
         "kpi": {
             "sutaze": pocet_sutazi,
@@ -296,6 +305,7 @@ def vygeneruj(
             "divaci": sum(k["divaci"] for k in kategorie.values()),
             "zlteKarty": sum(k["zlte"] for k in kategorie.values()),
             "cerveneKarty": sum(k["cervene"] for k in kategorie.values()),
+            "kontumovane": kontumovane,
         },
         "kategorie": kategorie,
         "pohlavie": _zloz_pohlavie(kat_g_raw, druz_g_raw),
