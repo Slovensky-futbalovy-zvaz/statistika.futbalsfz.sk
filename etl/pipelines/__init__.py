@@ -303,6 +303,22 @@ def treneri(app_spaces, season_variants, coach_positions, sport_sector="futbal",
     ]
 
 
+def realizacny_tim(app_spaces, season_variants, coach_positions, sport_sector="futbal", part_map=None):
+    """Realizačný tím z nominations.crew — pozície MIMO trénerských
+    (vedúci družstva `manager`, lekár `doctor`, masér `masseur`, fyzioterapeut
+    `physiotherapist`, zástupca klubu `club_representative`, usporiadateľ
+    `security_manager` a pod.). Tréneri sa počítajú samostatne (funkcia `treneri`)."""
+    return [
+        _match_stage(app_spaces, season_variants, sport_sector),
+        {"$project": {"teams": 1, "nominations": 1}},
+        {"$unwind": "$nominations"},
+        {"$unwind": "$nominations.crew"},
+        {"$match": {"nominations.crew.position": {"$nin": coach_positions, "$exists": True, "$ne": None}}},
+        {"$project": {"pid": "$nominations.crew.sportnetUser._id", "cat": {"$ifNull": [_NOMINATION_CAT, cat_fallback_expr(part_map) or None]}}},
+        *_PERSON_FACET,
+    ]
+
+
 def osoby_managers(app_spaces, season_variants, rozhodca_labels, delegat_labels, personal_labels, sport_sector="futbal", part_map=None):
     """Rozhodcovia, delegáti a personál z managers[] (roly z roly.json).
 

@@ -50,7 +50,8 @@ const kpiKarty = [
 
 // osoby ako karty — unikátni + rozpad po 4 skupinách
 const osobaLabel: Record<string, string> = {
-  hraci: 'Hráči', treneri: 'Tréneri', rozhodcovia: 'Rozhodcovia', delegati: 'Delegáti', personal: 'Personál',
+  hraci: 'Hráči', treneri: 'Tréneri', realizacnyTim: 'Realizačný tím',
+  rozhodcovia: 'Rozhodcovia', delegati: 'Delegáti', personal: 'Personál',
 };
 function rozpadSkupin(poKat: Record<string, number>) {
   return GROUPS.map((g) => ({

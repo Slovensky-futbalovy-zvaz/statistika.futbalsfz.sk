@@ -25,6 +25,15 @@
     "coach_goalkeepers",
     "conditioning_coach"
   ],
+  "realizacnyTimCrewPositions": [
+    "manager",
+    "doctor",
+    "masseur",
+    "physiotherapist",
+    "club_representative",
+    "security_manager"
+  ],
+  "realizacnyTimNote": "Realizačný tím = všetky pozície nominations.crew MIMO treneriCrewPositions. ETL nefiltruje na tento zoznam (berie doplnok k trénerským pozíciám), zoznam je len dokumentačný — overené na sezóne 2025/2026. 'manager' = vedúci družstva (NIE tréner). Rozhodol: Ján Letko, 2026-07-20.",
   "rozhodnutia": {
     "2026-07-12-var-roly": "Videorozhodca, Asistent videorozhodcu a Replay Operátor patria medzi rozhodcov (vyskytujú sa prakticky len na futbalsfz.sk + ulk.futbalnet.sk). Rozhodol: Ján Letko.",
     "2026-07-12-delegati": "Delegát stretnutia a Pozorovateľ rozhodcov tvoria spolu skupinu 'delegati' (často tá istá osoba — unikáty to ošetria). Rozhodol: Ján Letko.",

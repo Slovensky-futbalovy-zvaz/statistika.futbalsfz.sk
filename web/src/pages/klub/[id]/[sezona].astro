@@ -47,7 +47,7 @@ const kpiKarty = [
   { label: 'Červené karty', hodnota: klub.kpi.cerveneKarty, predch: predosly?.kpi.cerveneKarty, good: false },
 ];
 
-const osobaLabel: Record<string, string> = { hraci: 'Hráči', treneri: 'Tréneri' };
+const osobaLabel: Record<string, string> = { hraci: 'Hráči', treneri: 'Tréneri', realizacnyTim: 'Realizačný tím' };
 function rozpadSkupin(poKat: Record<string, number>) {
   return GROUPS.map((g) => ({ key: g.key, color: g.color, hodnota: g.cats.reduce((s, c) => s + (poKat[c] ?? 0), 0) })).filter((r) => r.hodnota > 0);
 }

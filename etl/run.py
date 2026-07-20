@@ -222,6 +222,11 @@ def vygeneruj(
         pipelines.treneri(spaces, varianty, roly["treneriCrewPositions"], sport_sector, part_map),
         "treneri",
     )
+    realizacny_raw = agreguj(
+        db,
+        pipelines.realizacny_tim(spaces, varianty, roly["treneriCrewPositions"], sport_sector, part_map),
+        "realizacnyTim",
+    )
     rd_raw = agreguj(
         db,
         pipelines.osoby_managers(
@@ -297,6 +302,7 @@ def vygeneruj(
         "osoby": {
             "hraci": _facet_osoby(hraci_raw),
             "treneri": _facet_osoby(treneri_raw),
+            "realizacnyTim": _facet_osoby(realizacny_raw),
             "rozhodcovia": _facet_osoby(rd_raw, "rozhodcovia"),
             "delegati": _facet_osoby(rd_raw, "delegati"),
             "personal": _facet_osoby(rd_raw, "personal"),

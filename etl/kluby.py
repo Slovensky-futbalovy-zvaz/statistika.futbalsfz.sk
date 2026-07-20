@@ -65,8 +65,9 @@ def klub_id_slug(org_id: str) -> str:
     return f"klub-{m.group(1)}" if m else re.sub(r"[^a-z0-9]+", "-", (org_id or "").lower()).strip("-")
 
 
-def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: dict) -> tuple[dict, list]:
+def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: dict, coach_positions: list[str]) -> tuple[dict, list]:
     as2z = appspace_na_zvaz(zvazy)
+    coach_set = set(coach_positions)
     cur = db.matches.find(
         {"closed": True, "season.name": {"$in": varianty}, "rules.sport_sector": sport_sector},
         {
@@ -74,7 +75,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             "teams._id": 1, "teams.organization._id": 1, "teams.organization.name": 1, "teams.ageCategory": 1,
             "protocol.events.eventType": 1, "protocol.events.team": 1, "protocol.audience": 1,
             "nominations.teamId": 1, "nominations.athletes.sportnetUser._id": 1,
-            "nominations.crew.sportnetUser._id": 1,
+            "nominations.crew.sportnetUser._id": 1, "nominations.crew.position": 1,
         },
         no_cursor_timeout=True,
     )
@@ -90,6 +91,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
                 "kat": {},  # cat → {zapasy,druzstva:set(teamId),goly,zlte,cervene,divaci,divaciPokrytych}
                 "hraci": {"unik": set(), "kat": {}},   # cat → set(pid)
                 "treneri": {"unik": set(), "kat": {}},
+                "realizacnyTim": {"unik": set(), "kat": {}},
             }
         return k
 
@@ -149,9 +151,11 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
                     k["hraci"]["kat"].setdefault(cat, set()).add(pid)
             for c in (nom.get("crew") or []):
                 pid = ((c.get("sportnetUser") or {}).get("_id"))
-                if pid:
-                    k["treneri"]["unik"].add(pid)
-                    k["treneri"]["kat"].setdefault(cat, set()).add(pid)
+                if not pid:
+                    continue
+                grp = k["treneri"] if c.get("position") in coach_set else k["realizacnyTim"]
+                grp["unik"].add(pid)
+                grp["kat"].setdefault(cat, set()).add(pid)
 
     # zloženie výstupov
     index_kluby = []
@@ -194,7 +198,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             },
             "kpi": kpi,
             "kategorie": kategorie,
-            "osoby": {"hraci": osoba(k["hraci"]), "treneri": osoba(k["treneri"])},
+            "osoby": {"hraci": osoba(k["hraci"]), "treneri": osoba(k["treneri"]), "realizacnyTim": osoba(k["realizacnyTim"])},
         }
         index_kluby.append({
             "id": slug, "nazov": k["nazov"], "zvaz": zv["id"], "zvazNazov": zv["nazov"],
@@ -226,6 +230,8 @@ def main() -> int:
 
     zvazy = load_json(CONFIG / "zvazy.json")
     sezony = load_json(CONFIG / "sezony.json")
+    roly = load_json(CONFIG / "roly.json")
+    coach_positions = roly["treneriCrewPositions"]
 
     if args.vsetky:
         zoznam = list(sezony["kanonicke"])
@@ -243,7 +249,7 @@ def main() -> int:
     for sez in zoznam:
         varianty = sezona_varianty(sezony, sez)
         log.info("=== kluby %s [%s] ===", sez, args.sport_sector)
-        profily, index_kluby = vygeneruj(db, sez, varianty, args.sport_sector, zvazy)
+        profily, index_kluby = vygeneruj(db, sez, varianty, args.sport_sector, zvazy, coach_positions)
 
         slug_sez = sez.replace("/", "-")
         for kid, doc in profily.items():
