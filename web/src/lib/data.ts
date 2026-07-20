@@ -414,6 +414,15 @@ export function getKluby(): KlubIndexPolozka[] {
   return fs.existsSync(p) ? readJson<{ kluby: KlubIndexPolozka[] }>(p).kluby : [];
 }
 
+/** Metadáta indexu klubov (referenčná sezóna rebríčka + zoznam všetkých sezón). Pre kozmetický
+ *  badge 'SEZÓNA X' v hlavičke /kluby (#4 klubový plán) — bez reálneho per-sezónneho filtra. */
+export function getKlubyIndexMeta(): { sezona: string; sezony: string[]; generatedAt: string } | undefined {
+  const p = path.join(KLUBY, 'index.json');
+  if (!fs.existsSync(p)) return undefined;
+  const raw = readJson<{ sezona: string; sezony: string[]; generatedAt: string }>(p);
+  return { sezona: raw.sezona, sezony: raw.sezony, generatedAt: raw.generatedAt };
+}
+
 /** Sezóny dostupné pre klub (VŠETKY — podľa súborov RRRR-RRRR.json). Používa sa na
  *  medziročné porovnanie (predošlá sezóna sa číta z dátového súboru, aj keď nemá stránku). */
 export function getKlubSezony(id: string): string[] {

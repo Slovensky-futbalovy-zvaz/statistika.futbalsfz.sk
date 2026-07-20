@@ -1,10 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import KlubyView from '../../components/KlubyView.tsx';
-import { getKluby } from '../../lib/data';
+import { getKluby, getKlubyIndexMeta } from '../../lib/data';
 
 const kluby = getKluby();
-const sezona = kluby[0]?.sezony?.[kluby[0].sezony.length - 1];
+const klubyMeta = getKlubyIndexMeta();
+const sezona = klubyMeta?.sezona;
 
 const popis = `Zoznam ${kluby.length} klubov slovenského futbalu${sezona ? ` (sezóna ${sezona})` : ''} — účinkovanie klubu naprieč všetkými súťažami: zápasy, družstvá, góly, diváci a osoby po vekových kategóriách. Vyhľadávanie, filter úrovne a rebríček.`;
 const breadcrumb = {
@@ -24,14 +25,26 @@ const breadcrumb = {
   keywords="futbalové kluby Slovensko, kluby SFZ, klubové štatistiky, zápasy klubu, hráči klubu"
   jsonLd={[breadcrumb]}
 >
-  <header class="mb-6">
-    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Kluby</div>
-    <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Kluby slovenského futbalu</h1>
-    <p class="mt-2 max-w-2xl text-muted">
-      Účinkovanie klubu naprieč všetkými súťažami na Slovensku v jednej sezóne{sezona ? ` (${sezona})` : ''} —
-      zápasy, družstvá, góly, diváci a osoby po vekových kategóriách. Vyhľadaj klub, filtruj podľa úrovne
-      alebo prepni radenie; klik otvorí profil klubu.
-    </p>
+  <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Kluby</div>
+      <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Kluby slovenského futbalu</h1>
+      <p class="mt-2 max-w-2xl text-muted">
+        Účinkovanie klubu naprieč všetkými súťažami na Slovensku v jednej sezóne{sezona ? ` (${sezona})` : ''} —
+        zápasy, družstvá, góly, diváci a osoby po vekových kategóriách. Vyhľadaj klub, filtruj podľa úrovne
+        alebo prepni radenie; klik otvorí profil klubu.
+      </p>
+    </div>
+    {
+      sezona && (
+        <span
+          class="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 text-xs font-bold text-ink shrink-0"
+          style="background:var(--color-card);"
+        >
+          <span class="text-muted" style="font-size:10px; letter-spacing:.14em;">SEZÓNA</span> {sezona}
+        </span>
+      )
+    }
   </header>
 
   {

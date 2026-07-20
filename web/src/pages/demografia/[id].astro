@@ -16,6 +16,13 @@ const z = getZvaz(id!);
 if (!z) throw new Error(`Zväz ${id} nie je v index.json`);
 const demo = getDemografia(z.id);
 const vsetkyZvazy = getZvazy().map((zz) => ({ id: zz.id, nazov: zz.nazov, uroven: zz.uroven, rfz: zz.rfz }));
+// Kozmetický badge 'OBDOBIE' v hlavičke (#4 klubový plán) — pozri demografia/index.astro.
+const sezonyListZvaz = demo ? Object.keys(demo.sezony).sort() : [];
+const obdobieZvaz = sezonyListZvaz.length
+  ? sezonyListZvaz.length > 1
+    ? `${sezonyListZvaz[0]}–${sezonyListZvaz[sezonyListZvaz.length - 1]}`
+    : sezonyListZvaz[0]
+  : undefined;
 ---
 
 <Base title={`Demografia — ${z.nazov}`} description={`Demografia zväzu ${z.nazov} — vývoj počtu registrovaných osôb podľa veku, pohlavia a rolí v slovenskom futbale.`} image="/og/demografia.png">
@@ -24,6 +31,16 @@ const vsetkyZvazy = getZvazy().map((zz) => ({ id: zz.id, nazov: zz.nazov, uroven
       <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Demografia osôb · {z.uroven}</div>
       <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">{z.nazov}</h1>
       <p class="mt-1 text-sm"><a href="/demografia" class="text-sfz-blue hover:underline">← Celé Slovensko</a></p>
+      {
+        obdobieZvaz && (
+          <span
+            class="mt-3 inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 text-xs font-bold text-ink"
+            style="background:var(--color-card);"
+          >
+            <span class="text-muted" style="font-size:10px; letter-spacing:.14em;">OBDOBIE</span> {obdobieZvaz}
+          </span>
+        )
+      }
     </div>
     <div>
       <div class="text-xs font-semibold uppercase tracking-wider text-muted mb-1 text-right">Vybrať iný zväz</div>

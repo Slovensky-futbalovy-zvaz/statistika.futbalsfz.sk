@@ -5,6 +5,16 @@ import { getProjektyIndex, getProjekt } from '../lib/data';
 
 const index = getProjektyIndex();
 const projekty = index.map((p) => getProjekt(p.id)!).filter(Boolean);
+// Kozmetický badge 'OBDOBIE' v hlavičke (#4 klubový plán) — stránka zobrazuje trend cez
+// všetky sezóny naraz (nie per-sezónny filter), rozsah je zjednotenie sezón všetkých projektov.
+const vsetkySezonyProjektov = new Set<string>();
+projekty.forEach((p) => Object.keys(p.sezony).forEach((s) => vsetkySezonyProjektov.add(s)));
+const zoznamSezonProjektov = Array.from(vsetkySezonyProjektov).sort();
+const obdobieProjekty = zoznamSezonProjektov.length
+  ? zoznamSezonProjektov.length > 1
+    ? `${zoznamSezonProjektov[0]}–${zoznamSezonProjektov[zoznamSezonProjektov.length - 1]}`
+    : zoznamSezonProjektov[0]
+  : undefined;
 ---
 
 <Base
@@ -13,12 +23,24 @@ const projekty = index.map((p) => getProjekt(p.id)!).filter(Boolean);
   image="/og/projekty.png"
   keywords="grassroots futbal, Dajme spolu gól, školský futbal, SFZ projekty pre deti"
 >
-  <header class="mb-6">
-    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Grassroots</div>
-    <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Projekty pre najmenších</h1>
-    <p class="mt-2 max-w-2xl text-muted">
-      Školské a náborové programy SFZ, ktoré privádzajú deti k futbalu — mimo súťažných zápasov.
-    </p>
+  <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
+    <div>
+      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Grassroots</div>
+      <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Projekty pre najmenších</h1>
+      <p class="mt-2 max-w-2xl text-muted">
+        Školské a náborové programy SFZ, ktoré privádzajú deti k futbalu — mimo súťažných zápasov.
+      </p>
+    </div>
+    {
+      obdobieProjekty && (
+        <span
+          class="inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 text-xs font-bold text-ink shrink-0"
+          style="background:var(--color-card);"
+        >
+          <span class="text-muted" style="font-size:10px; letter-spacing:.14em;">OBDOBIE</span> {obdobieProjekty}
+        </span>
+      )
+    }
   </header>
 
   {
