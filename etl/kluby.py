@@ -208,7 +208,12 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--sezona", default="2025/2026")
+    ap.add_argument("--sezona", default="2025/2026", help="jedna sezóna (ak nie je --vsetky/--sezony)")
+    ap.add_argument("--sezony", help="čiarkou oddelený zoznam sezón, napr. 2024/2025,2025/2026")
+    ap.add_argument("--vsetky", action="store_true", help="všetky kanonické sezóny zo sezony.json")
+    ap.add_argument("--index-sezona", default="2025/2026",
+                    help="referenčná sezóna pre rebríček v index.json (číselné hodnoty riadku); "
+                         "pole 'sezony' obsahuje všetky dostupné sezóny klubu")
     ap.add_argument("--sport-sector", default="futbal")
     ap.add_argument("--mongodb-uri")
     ap.add_argument("--out", default=str(REPO / "data"))
@@ -221,22 +226,54 @@ def main() -> int:
 
     zvazy = load_json(CONFIG / "zvazy.json")
     sezony = load_json(CONFIG / "sezony.json")
-    varianty = sezona_varianty(sezony, args.sezona)
 
-    log.info("=== kluby %s [%s] ===", args.sezona, args.sport_sector)
-    profily, index_kluby = vygeneruj(db, args.sezona, varianty, args.sport_sector, zvazy)
+    if args.vsetky:
+        zoznam = list(sezony["kanonicke"])
+    elif args.sezony:
+        zoznam = [s.strip() for s in args.sezony.split(",") if s.strip()]
+    else:
+        zoznam = [args.sezona]
 
     out = Path(args.out)
-    slug = args.sezona.replace("/", "-")
-    for kid, doc in profily.items():
-        d = out / "klub" / kid
-        d.mkdir(parents=True, exist_ok=True)
-        with open(d / f"{slug}.json", "w", encoding="utf-8") as f:
-            json.dump(doc, f, ensure_ascii=False, separators=(",", ":"))
+    # akumulátor pre zjednotený index naprieč sezónami
+    riadky_podla_slug: dict[str, dict[str, dict]] = {}   # slug → {sezona → index_row}
+    sezony_podla_slug: dict[str, set] = {}
+    nazov_podla_slug: dict[str, str] = {}
+
+    for sez in zoznam:
+        varianty = sezona_varianty(sezony, sez)
+        log.info("=== kluby %s [%s] ===", sez, args.sport_sector)
+        profily, index_kluby = vygeneruj(db, sez, varianty, args.sport_sector, zvazy)
+
+        slug_sez = sez.replace("/", "-")
+        for kid, doc in profily.items():
+            d = out / "klub" / kid
+            d.mkdir(parents=True, exist_ok=True)
+            with open(d / f"{slug_sez}.json", "w", encoding="utf-8") as f:
+                json.dump(doc, f, ensure_ascii=False, separators=(",", ":"))
+
+        for row in index_kluby:
+            slug = row["id"]
+            riadky_podla_slug.setdefault(slug, {})[sez] = row
+            sezony_podla_slug.setdefault(slug, set()).add(sez)
+            nazov_podla_slug[slug] = row["nazov"]
+        log.info("   %s: %d klubov", sez, len(index_kluby))
+
+    # zjednotený index: riadok z referenčnej sezóny (inak najnovšia dostupná), sezony = všetky
+    index_kluby = []
+    for slug, per_sez in riadky_podla_slug.items():
+        sez_list = sorted(sezony_podla_slug[slug])
+        ref = args.index_sezona if args.index_sezona in per_sez else sez_list[-1]
+        row = dict(per_sez[ref])
+        row["sezony"] = sez_list
+        index_kluby.append(row)
+    index_kluby.sort(key=lambda x: -x["zapasy"])
+
     (out / "kluby").mkdir(parents=True, exist_ok=True)
     with open(out / "kluby" / "index.json", "w", encoding="utf-8") as f:
-        json.dump({"generatedAt": teraz(), "sezona": args.sezona, "kluby": index_kluby}, f, ensure_ascii=False, indent=1)
-    log.info("OK — %d klubov, profily v data/klub/*/%s.json", len(index_kluby), slug)
+        json.dump({"generatedAt": teraz(), "sezona": args.index_sezona,
+                   "sezony": zoznam, "kluby": index_kluby}, f, ensure_ascii=False, indent=1)
+    log.info("OK — %d klubov (index ref %s), sezóny: %s", len(index_kluby), args.index_sezona, ", ".join(zoznam))
     return 0
 
 
