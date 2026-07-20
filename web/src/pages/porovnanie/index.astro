@@ -19,7 +19,15 @@ const urovne = [
 ];
 ---
 
-<Base title="Porovnania" sezony={sezony.map((s) => s.replace('-', '/'))} aktualnaSezona={sezonaSlug.replace('-', '/')} seasonHrefTemplate={`/porovnanie/${uroven}/{sezona}`}>
+<Base
+  title="Porovnania zväzov"
+  description="Porovnanie regionálnych (RFZ) a oblastných (ObFZ) zväzov slovenského futbalu — zoraditeľné rebríčky, radar priameho porovnania a vývoj poradia v čase. Zápasy, góly, diváci, hráči a ďalšie ukazovatele."
+  image="/og/porovnanie.png"
+  keywords="porovnanie zväzov, rebríček RFZ, ObFZ štatistiky, futbal Slovensko porovnanie"
+  sezony={sezony.map((s) => s.replace('-', '/'))}
+  aktualnaSezona={sezonaSlug.replace('-', '/')}
+  seasonHrefTemplate={`/porovnanie/${uroven}/{sezona}`}
+>
   <header class="mb-6">
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Porovnania a radenie</div>
     <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(21px,2.4vw,28px);">Ktorý zväz vedie?</h1>

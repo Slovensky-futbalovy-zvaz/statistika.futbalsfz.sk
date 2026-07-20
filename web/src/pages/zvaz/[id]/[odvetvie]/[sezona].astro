@@ -27,9 +27,12 @@ const sezony = sezonyOdvetvia(z, odvetvie!);
 const idxSezony = sezony.indexOf(sezona);
 const predoslaSezona = idxSezony > 0 ? sezony[idxSezony - 1] : undefined;
 const predosly = predoslaSezona ? getProfilOdvetvie(z.id, predoslaSezona, odvetvie!) : undefined;
+
+const odvLabel = odvetvie === 'futsal' ? 'futsal' : odvetvie;
+const popis = `${z.nazov} — ${odvLabel}, štatistiky sezóny ${sezona}: zápasy, góly, družstvá a osoby po vekových kategóriách.`;
 ---
 
-<Base title={`${z.nazov} — ${odvetvie} ${sezona}`}>
+<Base title={`${z.nazov} — ${odvetvie} ${sezona}`} description={popis} image="/og/zvaz.png">
   <SezonaProfil
     z={z}
     sezona={sezona}

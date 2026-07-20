@@ -26,6 +26,17 @@ const zvaz = klub.zvaz ? getZvaz(klub.zvaz) : undefined;
 const REGION_FARBA: Record<string, string> = { sfz: '#7a44e0', bfz: '#1450df', zsfz: '#2f9bff', ssfz: '#12a06b', vsfz: '#f0961b' };
 const pilulkaFarba = REGION_FARBA[klub.zvaz ?? ''] ?? (klub.uroven === 'ObFZ' ? '#f0961b' : '#1450df');
 
+const popis = `${klub.nazov} — štatistiky sezóny ${sezona}: ${fmt(klub.kpi.zapasy)} zápasov, ${fmt(klub.kpi.goly)} gólov, ${fmt(klub.osoby?.hraci?.unikatni ?? 0)} hráčov. Účinkovanie klubu naprieč všetkými súťažami${zvaz ? ` pod zväzom ${zvaz.nazov}` : ''}.`;
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Prehľad', item: 'https://statistika.futbalsfz.sk/' },
+    { '@type': 'ListItem', position: 2, name: 'Kluby', item: 'https://statistika.futbalsfz.sk/kluby' },
+    { '@type': 'ListItem', position: 3, name: klub.nazov, item: `https://statistika.futbalsfz.sk/klub/${id}/${sezonaUrl}` },
+  ],
+};
+
 const kpiKarty = [
   { label: 'Zápasy', hodnota: klub.kpi.zapasy, predch: predosly?.kpi.zapasy, good: true },
   { label: 'Družstvá', hodnota: klub.kpi.druzstva, predch: predosly?.kpi.druzstva, good: true },
@@ -50,7 +61,7 @@ const CARD = 'border border-line';
 const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);';
 ---
 
-<Base title={`${klub.nazov} — ${sezona}`}>
+<Base title={`${klub.nazov} — ${sezona}`} description={popis} image="/og/kluby.png" jsonLd={[breadcrumb]}>
   <p class="mb-3 text-sm"><a href="/kluby" class="text-sfz-blue hover:underline">← Kluby</a></p>
 
   <header class="mb-6 flex flex-wrap items-start justify-between gap-4">
@@ -73,15 +84,15 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
     </div>
   </header>
 
-  {
-    sezony.length > 1 && (
-      <div class="mb-6 flex flex-wrap gap-1.5">
-        {sezony.slice().reverse().map((s) => (
-          <a href={`/klub/${id}/${s.replace('/', '-')}`} class:list={['rounded-md border px-2 py-0.5 text-sm', s === sezona ? 'border-sfz-blue bg-sfz-blue text-white font-semibold' : 'border-black/10 text-sfz-blue hover:bg-black/5']}>{s}</a>
-        ))}
-      </div>
-    )
-  }
+  <div class="mb-6 flex flex-wrap items-center gap-1.5">
+    <span class="mr-1 text-xs font-semibold uppercase tracking-wider text-muted">Sezóna:</span>
+    {
+      sezony.slice().reverse().map((s) => (
+        <a href={`/klub/${id}/${s.replace('/', '-')}`} class:list={['rounded-md border px-2 py-0.5 text-sm', s === sezona ? 'border-sfz-blue bg-sfz-blue text-white font-semibold' : 'border-black/10 text-sfz-blue hover:bg-black/5']}>{s}</a>
+      ))
+    }
+    {sezony.length <= 1 && <span class="text-xs text-muted">(zatiaľ jedna sezóna; historické pribudnú)</span>}
+  </div>
 
   <section class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
     {

@@ -3,7 +3,7 @@
 // Renderuje redizajnovaný SezonaProfil pre najnovšiu futbalovú sezónu (s medziročným porovnaním).
 import Base from '../../layouts/Base.astro';
 import SezonaProfil from '../../components/SezonaProfil.astro';
-import { getZvazy, getZvaz, getProfil } from '../../lib/data';
+import { getZvazy, getZvaz, getProfil, fmt } from '../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -24,9 +24,22 @@ const profil = sezona ? getProfil(z.id, sezona) : undefined;
 const idxSezony = sezona ? z.sezony.indexOf(sezona) : -1;
 const predoslaSezona = idxSezony > 0 ? z.sezony[idxSezony - 1] : undefined;
 const predosly = predoslaSezona ? getProfil(z.id, predoslaSezona) : undefined;
+
+const popis = profil
+  ? `${z.nazov} (${z.uroven}) — štatistiky sezóny ${sezona}: ${fmt(profil.kpi.zapasy)} zápasov, ${fmt(profil.kpi.goly)} gólov, ${fmt(profil.osoby?.hraci?.unikatni ?? 0)} hráčov. Kategórie, osoby a veková štruktúra.`
+  : `${z.nazov} (${z.uroven}) — profil zväzu v portáli Štatistiky slovenského futbalu.`;
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Prehľad', item: 'https://statistika.futbalsfz.sk/' },
+    { '@type': 'ListItem', position: 2, name: 'Profil zväzu', item: 'https://statistika.futbalsfz.sk/zvaz/sfz' },
+    { '@type': 'ListItem', position: 3, name: z.nazov, item: `https://statistika.futbalsfz.sk/zvaz/${z.id}` },
+  ],
+};
 ---
 
-<Base title={z.nazov}>
+<Base title={z.nazov} description={popis} image="/og/zvaz.png" jsonLd={[breadcrumb]}>
   {
     sezona && profil ? (
       <SezonaProfil

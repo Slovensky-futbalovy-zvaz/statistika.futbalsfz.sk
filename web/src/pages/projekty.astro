@@ -7,7 +7,12 @@ const index = getProjektyIndex();
 const projekty = index.map((p) => getProjekt(p.id)!).filter(Boolean);
 ---
 
-<Base title="Projekty">
+<Base
+  title="Grassroots projekty pre deti"
+  description="Grassroots projekty Slovenského futbalového zväzu, ktoré privádzajú deti k futbalu mimo súťažných zápasov — Dajme spolu gól, Školský pohár McDonald's a ďalšie. Zapojené deti, školy a tímy po sezónach."
+  image="/og/projekty.png"
+  keywords="grassroots futbal, Dajme spolu gól, školský futbal, SFZ projekty pre deti"
+>
   <header class="mb-6">
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Grassroots</div>
     <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Projekty pre najmenších</h1>

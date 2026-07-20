@@ -5,9 +5,25 @@ import { getKluby } from '../../lib/data';
 
 const kluby = getKluby();
 const sezona = kluby[0]?.sezony?.[kluby[0].sezony.length - 1];
+
+const popis = `Zoznam ${kluby.length} klubov slovenského futbalu${sezona ? ` (sezóna ${sezona})` : ''} — účinkovanie klubu naprieč všetkými súťažami: zápasy, družstvá, góly, diváci a osoby po vekových kategóriách. Vyhľadávanie, filter úrovne a rebríček.`;
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Prehľad', item: 'https://statistika.futbalsfz.sk/' },
+    { '@type': 'ListItem', position: 2, name: 'Kluby', item: 'https://statistika.futbalsfz.sk/kluby' },
+  ],
+};
 ---
 
-<Base title="Kluby">
+<Base
+  title="Kluby slovenského futbalu"
+  description={popis}
+  image="/og/kluby.png"
+  keywords="futbalové kluby Slovensko, kluby SFZ, klubové štatistiky, zápasy klubu, hráči klubu"
+  jsonLd={[breadcrumb]}
+>
   <header class="mb-6">
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Kluby</div>
     <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Kluby slovenského futbalu</h1>

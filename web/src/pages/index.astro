@@ -66,13 +66,54 @@ const osobyKarty = roly.map((r) => {
 
 const mapData = getMapData(aktualna);
 const srDemo = getSumarDemografia();
+
+// SEO: popis + FAQ (viditeľné aj ako FAQPage structured data)
+const popis = `Slovenský futbal v číslach za sezónu ${aktualna}: ${fmt(kpiKarty[1]?.hodnota ?? 0)} odohraných zápasov, ${fmt(kpiKarty[3]?.hodnota ?? 0)} gólov a ${fmt(kpiKarty[4]?.hodnota ?? 0)} divákov naprieč SFZ, 4 regionálnymi (RFZ) a 38 oblastnými (ObFZ) zväzmi. Interaktívna mapa, rebríčky, demografia a projekty.`;
+const faq = [
+  {
+    q: 'Čo je portál Štatistiky slovenského futbalu?',
+    a: 'Verejný štatistický portál Slovenského futbalového zväzu (SFZ), ktorý prehľadne sprístupňuje čísla o slovenskom futbale — zápasy, góly, diváci, karty, kluby aj registrované osoby — na všetkých troch úrovniach pyramídy: SFZ, 4 regionálne (RFZ) a 38 oblastných (ObFZ) zväzov.',
+  },
+  {
+    q: 'Odkiaľ pochádzajú dáta?',
+    a: 'Dáta pochádzajú z platformy sportnet.online, ktorá eviduje súťaže, zápasy a osoby slovenského futbalu. Publikujú sa výhradne agregované počty; portál neuvádza mená osôb.',
+  },
+  {
+    q: 'Aké súťaže a zväzy portál pokrýva?',
+    a: 'Pokrýva približne 400 súťaží riadených SFZ, regionálnymi a oblastnými zväzmi — futbal aj futsal, všetky vekové kategórie (dospelí, dorast, žiaci, prípravky) a obe pohlavia.',
+  },
+  {
+    q: 'Ako sa počítajú zápasy a diváci?',
+    a: 'Do štatistík sa započítavajú len uzavreté (odohrané a uzatvorené) zápasy. Diváci vychádzajú z vyplnených zápisov o stretnutí, preto je pri nich uvedené percentuálne pokrytie.',
+  },
+  {
+    q: 'Čo znamená „sezóna" 2025/2026?',
+    a: 'Súťažná sezóna trvá od 1. júla jedného roka do 30. júna nasledujúceho roka, preto sa označuje v tvare rok/rok, napríklad 2025/2026.',
+  },
+];
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
 const KICKER = 'text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue';
 const H2 = 'font-extrabold tracking-tight';
 const CARD = 'border border-line';
 const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);';
 ---
 
-<Base sezony={sezony} aktualnaSezona={aktualna}>
+<Base
+  description={popis}
+  image="/og/prehlad.png"
+  keywords="štatistiky slovenský futbal, SFZ, RFZ, ObFZ, futbalové štatistiky, zápasy, góly, diváci, kluby, futbalová pyramída"
+  jsonLd={[faqLd]}
+  sezony={sezony}
+  aktualnaSezona={aktualna}
+>
   <!-- Hero -->
   <section class="relative overflow-hidden text-white" style="border-radius:20px; padding:clamp(26px,4vw,46px); background:linear-gradient(120deg,#0a2a8f,#1450df 60%,#2f6bff);">
     <div aria-hidden="true" style="position:absolute; right:-80px; top:-80px; width:320px; height:320px; border-radius:9999px; background:radial-gradient(circle,rgba(255,255,255,.25),transparent 70%);"></div>
@@ -175,4 +216,26 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       </section>
     )
   }
+
+  <!-- O portáli + FAQ (SEO + AI) -->
+  <section class="mt-12">
+    <div class={KICKER}>O portáli</div>
+    <h2 class={H2} style="font-size:clamp(21px,2.4vw,28px); margin:2px 0 8px;">Často kladené otázky</h2>
+    <p class="text-muted mb-6 max-w-3xl">
+      <strong class="text-ink">Štatistiky slovenského futbalu</strong> sú verejný portál Slovenského
+      futbalového zväzu. Prehľadne sprístupňujú čísla o slovenskom futbale na všetkých troch úrovniach
+      pyramídy — SFZ, štyri regionálne (RFZ) a 38 oblastných (ObFZ) zväzov — za jednotlivé sezóny.
+      Zdrojom dát je platforma sportnet.online; publikujú sa výhradne agregované počty.
+    </p>
+    <div class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+      {
+        faq.map((f) => (
+          <div class={CARD} style={CARD_STYLE}>
+            <h3 class="font-bold text-ink" style="font-size:15px;">{f.q}</h3>
+            <p class="mt-1.5 text-sm text-muted" style="line-height:1.55;">{f.a}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
 </Base>
