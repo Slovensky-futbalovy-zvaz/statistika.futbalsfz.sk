@@ -278,6 +278,22 @@ export function getDemografia(id: string): Demografia | undefined {
   return fs.existsSync(p) ? readJson<Demografia>(p) : undefined;
 }
 
+// ---- Demografia klubu (#37 klubový plán) — etl/demografia_klub.py -> data/demografia-klub ----
+export interface DemografiaKlub {
+  klub: string;
+  sportSector: string;
+  generatedAt: string;
+  methodologyFlags: Record<string, unknown>;
+  sezony: Record<string, Record<string, DemoRola>>;
+}
+const DEMOGRAFIA_KLUB = path.join(DATA, 'demografia-klub');
+
+/** Demografia klubu, ak existuje (súbor môže chýbať — vyžaduje samostatný ETL beh). */
+export function getDemografiaKlub(id: string): DemografiaKlub | undefined {
+  const p = path.join(DEMOGRAFIA_KLUB, id + '.json');
+  return fs.existsSync(p) ? readJson<DemografiaKlub>(p) : undefined;
+}
+
 // ---- Celoslovenský sumár (etl/sumar.py → data/sumar) ----
 
 export interface SunburstUzol {

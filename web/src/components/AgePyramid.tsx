@@ -4,7 +4,9 @@ import { fmt, endYear } from '../lib/format';
 import { ROLA_LABEL, ROLY_PORADIE } from '../lib/palette';
 
 interface Props {
-  demo: Demografia;
+  // Pick<...> namiesto celeho Demografia — umoznuje znovupouzitie aj pre
+  // DemografiaKlub (#37), ktora ma odlisny id field (klub, nie zvaz).
+  demo: Pick<Demografia, 'sezony'>;
   sezona?: string; // ak nie je, použije sa posledná
 }
 

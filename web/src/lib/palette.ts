@@ -94,8 +94,9 @@ export const METRICS7: Metric[] = [
 export const ROLA_LABEL: Record<string, string> = {
   hraci: 'Hráči',
   treneri: 'Tréneri',
+  realizacnyTim: 'Realizačný tím',
   rozhodcovia: 'Rozhodcovia',
   delegati: 'Delegáti',
   personal: 'Personál',
 };
-export const ROLY_PORADIE = ['hraci', 'treneri', 'rozhodcovia', 'delegati', 'personal'];
+export const ROLY_PORADIE = ['hraci', 'treneri', 'realizacnyTim', 'rozhodcovia', 'delegati', 'personal'];

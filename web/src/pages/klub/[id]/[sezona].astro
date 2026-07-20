@@ -2,9 +2,10 @@
 import Base from '../../../layouts/Base.astro';
 import CategoryDrill from '../../../components/CategoryDrill.tsx';
 import KlubPicker from '../../../components/KlubPicker.tsx';
+import AgePyramid from '../../../components/AgePyramid.tsx';
 import { fmt, delta } from '../../../lib/format';
 import { GROUPS } from '../../../lib/palette';
-import { getKlubyPaths, getKlub, getKlubSezony, getKlubSezonyPaged, getKluby, getZvaz, odvetviaKlubu, ODVETVIE_LABEL } from '../../../lib/data';
+import { getKlubyPaths, getKlub, getKlubSezony, getKlubSezonyPaged, getKluby, getZvaz, odvetviaKlubu, ODVETVIE_LABEL, getDemografiaKlub } from '../../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -31,6 +32,7 @@ const predosly = predoslaSezona ? getKlub(id!, predoslaSezona) : undefined;
 
 const klubyItems = getKluby().map((k) => ({ id: k.id, nazov: k.nazov, zvazNazov: k.zvazNazov, uroven: k.uroven, sezony: k.sezony }));
 const zvaz = klub.zvaz ? getZvaz(klub.zvaz) : undefined;
+const demoKlub = getDemografiaKlub(id!);
 
 const REGION_FARBA: Record<string, string> = { sfz: '#7a44e0', bfz: '#1450df', zsfz: '#2f9bff', ssfz: '#12a06b', vsfz: '#f0961b' };
 const pilulkaFarba = REGION_FARBA[klub.zvaz ?? ''] ?? (klub.uroven === 'ObFZ' ? '#f0961b' : '#1450df');
@@ -172,6 +174,17 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
             </div>
           ))}
         </div>
+      </section>
+    )
+  }
+
+  {
+    demoKlub && (
+      <section class="mt-8 border border-line" style={CS}>
+        <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Veková štruktúra</div>
+        <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Veková pyramída klubu</h2>
+        <p class="text-sm text-muted mb-3">Registrované osoby klubu podľa veku a pohlavia v sezóne {sezona}. Prepni rolu.</p>
+        <AgePyramid client:visible demo={demoKlub} sezona={sezona} />
       </section>
     )
   }
