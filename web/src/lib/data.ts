@@ -373,6 +373,7 @@ export interface KlubIndexPolozka {
   sezony: string[];
   zapasy: number;
   hraci: number;
+  odvetvia?: Record<string, string[]>; // napr. { futsal: ["2014/2015", ...] } (data/kluby/{sektor}-index.json)
 }
 export interface Klub {
   klub: string;
@@ -431,6 +432,36 @@ export function getKlubSezonyPaged(id: string): string[] {
 export function getKlub(id: string, sezona: string): Klub | undefined {
   const p = path.join(KLUB, id, sezona.replace('/', '-') + '.json');
   return fs.existsSync(p) ? readJson<Klub>(p) : undefined;
+}
+
+// ---- Kluby: odvetvia mimo futbalu (napr. futsal) — etl/kluby.py --sport-sector,
+// data/kluby/{sektor}-index.json + data/klub/{id}/{sezona}-{sektor}.json ----
+
+/** Index klubov pre dané odvetvie mimo futbalu (napr. futsal). */
+export function getKlubyOdvetvie(sektor: string): { id: string; nazov: string; zvaz: string | null; zvazNazov: string; uroven: string; sezony: string[] }[] {
+  const p = path.join(KLUBY, `${sektor}-index.json`);
+  if (!fs.existsSync(p)) return [];
+  const raw = readJson<{ kluby: { id: string; nazov: string; zvaz: string | null; uroven: string; sezony: string[] }[] }>(p);
+  return raw.kluby.map((k) => ({ ...k, zvazNazov: k.zvaz ? (getZvaz(k.zvaz)?.nazov ?? k.zvaz) : '?' }));
+}
+
+/** Načíta profil klubu za sezónu pre iné odvetvie než futbal (RRRR-RRRR-{sektor}.json). */
+export function getKlubProfilOdvetvie(id: string, sezona: string, sektor: string): Klub | undefined {
+  const p = path.join(KLUB, id, `${sezona.replace('/', '-')}-${sektor}.json`);
+  return fs.existsSync(p) ? readJson<Klub>(p) : undefined;
+}
+
+const KLUB_ODVETVIA_MIMO_FUTBALU = ['futsal'];
+
+/** Odvetvia dostupné pre klub (futbal ak má stránky v okne, plus nájdené v {sektor}-index.json). */
+export function odvetviaKlubu(id: string, sezonyFutbal: string[]): { odvetvie: string; sezony: string[] }[] {
+  const vysledok: { odvetvie: string; sezony: string[] }[] = [];
+  if (sezonyFutbal.length) vysledok.push({ odvetvie: 'futbal', sezony: sezonyFutbal });
+  for (const sektor of KLUB_ODVETVIA_MIMO_FUTBALU) {
+    const zaznam = getKlubyOdvetvie(sektor).find((k) => k.id === id);
+    if (zaznam) vysledok.push({ odvetvie: sektor, sezony: zaznam.sezony });
+  }
+  return vysledok;
 }
 
 /** Zoznam (klub, sezóna) pre getStaticPaths — len sezóny v okne (posledných 6). */

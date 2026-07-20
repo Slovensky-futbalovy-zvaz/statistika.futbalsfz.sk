@@ -163,7 +163,13 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
     for oid, k in kluby.items():
         slug = klub_id_slug(oid)
         primarny_aps = max(k["appSpaceCount"], key=k["appSpaceCount"].get)
-        zv = as2z.get(primarny_aps, {"id": None, "nazov": "?", "uroven": "?"})
+        if sport_sector != "futbal":
+            # Futsal (a dalsie odvetvia mimo futbalu) nemaju riadiaci appSpace podla
+            # regionu - cele odvetvie zije priamo pod SFZ (zhodne s etl/run.py).
+            sfz_cfg = next((zz for zz in zvazy.get("sfz", []) if zz["id"] == "sfz"), None)
+            zv = {"id": "sfz", "nazov": sfz_cfg["nazov"] if sfz_cfg else "Slovensky futbalovy zvaz", "uroven": "SFZ"}
+        else:
+            zv = as2z.get(primarny_aps, {"id": None, "nazov": "?", "uroven": "?"})
 
         kategorie = {}
         for cat, kc in k["kat"].items():
@@ -243,17 +249,40 @@ def main() -> int:
     out = Path(args.out)
 
     # 1) prepočet profilov pre zadané sezóny (píše data/klub/{id}/{sezona}.json)
+    odv_existing: dict[str, dict] = {}
+    if args.sport_sector != "futbal":
+        odv_index_path = out / "kluby" / f"{args.sport_sector}-index.json"
+        if odv_index_path.exists():
+            for row in load_json(odv_index_path).get("kluby", []):
+                odv_existing[row["id"]] = row
     for sez in zoznam:
         varianty = sezona_varianty(sezony, sez)
         log.info("=== kluby %s [%s] ===", sez, args.sport_sector)
         profily, index_kluby = vygeneruj(db, sez, varianty, args.sport_sector, zvazy, coach_positions)
         slug_sez = sez.replace("/", "-")
+        suffix = "" if args.sport_sector == "futbal" else f"-{args.sport_sector}"
         for kid, doc in profily.items():
             d = out / "klub" / kid
             d.mkdir(parents=True, exist_ok=True)
-            with open(d / f"{slug_sez}.json", "w", encoding="utf-8") as f:
+            with open(d / f"{slug_sez}{suffix}.json", "w", encoding="utf-8") as f:
                 json.dump(doc, f, ensure_ascii=False, separators=(",", ":"))
+            if args.sport_sector != "futbal":
+                row = odv_existing.setdefault(kid, {"id": kid, "nazov": doc["nazov"], "zvaz": doc["zvaz"], "uroven": doc["uroven"], "sezony": []})
+                row["nazov"] = doc["nazov"]
+                row["zvaz"] = doc["zvaz"]
+                row["uroven"] = doc["uroven"]
+                if sez not in row["sezony"]:
+                    row["sezony"].append(sez)
+                row["sezony"].sort()
         log.info("   %s: %d klubov", sez, len(index_kluby))
+    if args.sport_sector != "futbal":
+        (out / "kluby").mkdir(parents=True, exist_ok=True)
+        with open(out / "kluby" / f"{args.sport_sector}-index.json", "w", encoding="utf-8") as f:
+            json.dump({"generatedAt": teraz(), "sektor": args.sport_sector,
+                       "kluby": sorted(odv_existing.values(), key=lambda r: r["id"])},
+                      f, ensure_ascii=False, indent=1)
+        log.info("OK - %s index: %d klubov (spracovane: %s)", args.sport_sector, len(odv_existing), ", ".join(zoznam))
+        return 0
 
     # 2) index prestavaný SKENOM DISKU — robustné pre plný aj týždenný (current-season)
     #    beh: zoznam sezón klubu = všetky súbory na disku; riadok rebríčka = referenčná
