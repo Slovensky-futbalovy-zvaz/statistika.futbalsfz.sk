@@ -226,6 +226,26 @@ export function sezonyUrovne(urovenSlug: string): string[] {
     .reverse();
 }
 
+/** Posledná KOMPLETNÁ sezóna (slug RRRR-RRRR) — najnovšia s aspoň polovicou max. objemu zápasov.
+ *  Vynechá práve začatú sezónu (napr. 2026/2027 po 1. 7.). */
+export function poslednaKompletnaSlug(): string {
+  const sez = getSumarSezony();
+  if (!sez.length) return '';
+  const maxZ = Math.max(...sez.map((s) => getSumar(s).kpi.zapasy));
+  const komplet = sez.filter((s) => getSumar(s).kpi.zapasy >= maxZ * 0.5);
+  return (komplet[komplet.length - 1] ?? sez[sez.length - 1]).replace('/', '-');
+}
+
+/** Cieľová sezóna pri prepnutí úrovne v Porovnaniach: zachovaj aktuálnu ak ju cieľová
+ *  úroveň má, inak posledná kompletná, inak najnovšia dostupná. */
+export function porovnanieCielovaSlug(cielovaUroven: string, aktualnaSlug: string): string {
+  const dostupne = sezonyUrovne(cielovaUroven); // zostupne
+  if (dostupne.includes(aktualnaSlug)) return aktualnaSlug;
+  const komplet = poslednaKompletnaSlug();
+  if (komplet && dostupne.includes(komplet)) return komplet;
+  return dostupne[0] ?? aktualnaSlug;
+}
+
 // ---- F5: demografia osôb ----
 
 export interface DemoRola {

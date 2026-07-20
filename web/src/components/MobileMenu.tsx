@@ -65,11 +65,11 @@ export default function MobileMenu({ polozky }: Props) {
               style={{
                 display: 'block',
                 padding: '10px 12px',
-                borderRadius: 8,
+                borderRadius: 9,
                 fontSize: 15,
-                fontWeight: p.aktivna ? 700 : 500,
-                color: p.aktivna ? 'var(--color-sfz-blue)' : 'var(--color-ink)',
-                background: p.aktivna ? '#eef3ff' : 'transparent',
+                fontWeight: 700,
+                color: p.aktivna ? '#fff' : 'var(--color-ink)',
+                background: p.aktivna ? 'var(--color-sfz-blue)' : 'transparent',
               }}
             >
               {p.label}

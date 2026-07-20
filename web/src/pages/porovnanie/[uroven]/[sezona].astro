@@ -2,7 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import PorovnanieView from '../../../components/PorovnanieView.astro';
 import BumpChart from '../../../components/BumpChart.tsx';
-import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne, getBumpDataRfz } from '../../../lib/data';
+import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne, getBumpDataRfz, porovnanieCielovaSlug } from '../../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -17,10 +17,6 @@ const urovne = [
   { slug: 'rfz', label: 'RFZ' },
   { slug: 'obfz', label: 'ObFZ' },
 ];
-// pri prepnutí úrovne skoč na jej najnovšiu sezónu
-function najnovsiaSlug(slug: string): string {
-  return sezonyUrovne(slug)[0];
-}
 ---
 
 <Base
@@ -42,7 +38,7 @@ function najnovsiaSlug(slug: string): string {
       {
         urovne.map((u) => (
           <a
-            href={u.slug === uroven ? `/porovnanie/${u.slug}/${sezonaSlug}` : `/porovnanie/${u.slug}/${najnovsiaSlug(u.slug)}`}
+            href={u.slug === uroven ? `/porovnanie/${u.slug}/${sezonaSlug}` : `/porovnanie/${u.slug}/${porovnanieCielovaSlug(u.slug, sezonaSlug!)}`}
             class:list={[
               'rounded-[9px] px-3.5 py-1 text-sm font-bold',
               u.slug === uroven ? 'bg-card text-sfz-blue shadow-sm' : 'text-muted',

@@ -42,14 +42,16 @@ const maPicker = sezony && sezony.length > 0 && aktualnaSezona;
     </a>
 
     <!-- desktop nav -->
-    <nav class="hidden md:flex items-center gap-5 text-sm">
+    <nav class="hidden md:flex items-center gap-1.5 text-sm">
       {
         items.map((it) => (
           <a
             href={it.href}
             class:list={[
-              'hover:text-sfz-blue',
-              it.aktivna ? 'text-sfz-blue font-semibold' : 'text-ink',
+              'rounded-[10px] px-3.5 py-2 font-bold transition-colors',
+              it.aktivna
+                ? 'bg-sfz-blue text-white'
+                : 'text-ink hover:bg-black/[0.05]',
             ]}
           >
             {it.label}

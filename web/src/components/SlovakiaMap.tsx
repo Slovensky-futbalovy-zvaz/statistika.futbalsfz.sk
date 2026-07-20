@@ -47,44 +47,64 @@ export default function SlovakiaMap({ mapData }: Props) {
     color: active ? '#fff' : 'var(--color-ink)',
   });
 
+  const metricLabel = METRICS.find((m) => m.k === metric)?.label ?? '';
+  const cardStyle: React.CSSProperties = {
+    background: 'var(--color-card)',
+    border: '1px solid var(--color-line)',
+    borderRadius: 16,
+    padding: 20,
+    boxShadow: 'var(--shadow-card)',
+  };
+  const KICK: React.CSSProperties = {
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '.14em',
+    textTransform: 'uppercase',
+    color: 'var(--color-sfz-blue)',
+  };
+  const TITLE: React.CSSProperties = { fontSize: 19, fontWeight: 800, margin: '4px 0 14px' };
+
   return (
     <div>
-      {/* ovládanie */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', marginBottom: 14 }}>
-        <div style={{ display: 'inline-flex', background: 'var(--color-track)', borderRadius: 12, padding: 3 }}>
-          {(['SFZ', 'RFZ', 'ObFZ'] as Level[]).map((l) => (
-            <button
-              key={l}
-              type="button"
-              onClick={() => setLevel(l)}
-              style={{
-                padding: '5px 14px',
-                borderRadius: 9,
-                fontSize: 13,
-                fontWeight: 700,
-                border: 'none',
-                cursor: 'pointer',
-                background: level === l ? 'var(--color-card)' : 'transparent',
-                color: level === l ? 'var(--color-sfz-blue)' : 'var(--color-muted)',
-                boxShadow: level === l ? 'var(--shadow-card)' : 'none',
-              }}
-            >
-              {l}
-            </button>
-          ))}
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-          {METRICS.map((m) => (
-            <button key={m.k} type="button" onClick={() => setMetric(m.k)} style={pill(metric === m.k)}>
-              {m.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <div className="map-grid" style={{ display: 'grid', gap: 16, gridTemplateColumns: 'minmax(0,1.6fr) minmax(0,1fr)', alignItems: 'start' }}>
+        {/* MAPA — vlastná karta */}
+        <div style={cardStyle}>
+          <div style={KICK}>Mapa Slovenska</div>
+          <div style={TITLE}>{metricLabel} podľa zväzov</div>
+          {/* ovládanie */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', marginBottom: 14 }}>
+            <div style={{ display: 'inline-flex', background: 'var(--color-track)', borderRadius: 12, padding: 3 }}>
+              {(['SFZ', 'RFZ', 'ObFZ'] as Level[]).map((l) => (
+                <button
+                  key={l}
+                  type="button"
+                  onClick={() => setLevel(l)}
+                  style={{
+                    padding: '5px 14px',
+                    borderRadius: 9,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: level === l ? 'var(--color-card)' : 'transparent',
+                    color: level === l ? 'var(--color-sfz-blue)' : 'var(--color-muted)',
+                    boxShadow: level === l ? 'var(--shadow-card)' : 'none',
+                  }}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {METRICS.map((m) => (
+                <button key={m.k} type="button" onClick={() => setMetric(m.k)} style={pill(metric === m.k)}>
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      <div style={{ display: 'grid', gap: 20, gridTemplateColumns: 'minmax(0,1.6fr) minmax(0,1fr)' }} className="map-grid">
-        {/* mapa */}
-        <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative' }}>
           <svg viewBox={mapData.viewBox} style={{ width: '100%', height: 'auto' }}>
             {level === 'SFZ' ? (
               <path
@@ -155,13 +175,12 @@ export default function SlovakiaMap({ mapData }: Props) {
               {hover.name}: <b className="tnum">{fmt(hover.value)}</b>
             </div>
           )}
-        </div>
-
-        {/* rebríček */}
-        <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--color-muted)', marginBottom: 10 }}>
-            {level === 'SFZ' ? 'Slovensko spolu' : `Rebríček · ${METRICS.find((m) => m.k === metric)?.label}`}
           </div>
+        </div>
+        {/* REBRÍČEK — vlastná karta */}
+        <div style={cardStyle}>
+          <div style={KICK}>Rebríček</div>
+          <div style={TITLE}>{level === 'SFZ' ? 'Slovensko spolu' : `Najviac ${metricLabel.toLowerCase()}`}</div>
           {level === 'SFZ' ? (
             <div className="tnum" style={{ fontSize: 34, fontWeight: 800 }}>{fmt(sfzVal)}</div>
           ) : (

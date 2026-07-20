@@ -2,16 +2,12 @@
 import Base from '../../layouts/Base.astro';
 import PorovnanieView from '../../components/PorovnanieView.astro';
 import BumpChart from '../../components/BumpChart.tsx';
-import { getPorovnanie, sezonyUrovne, getBumpDataRfz, getSumarSezony, getSumar } from '../../lib/data';
+import { getPorovnanie, sezonyUrovne, getBumpDataRfz, poslednaKompletnaSlug, porovnanieCielovaSlug } from '../../lib/data';
 
 // /porovnanie = plné porovnanie pre default úroveň RFZ + posledná KOMPLETNÁ sezóna
 const uroven = 'rfz';
 const rfzSez = sezonyUrovne('rfz'); // zostupne
-// posledná kompletná = najnovšia sezóna s aspoň polovicou max. objemu (vynechá práve začatú)
-const sumSez = getSumarSezony();
-const maxZ = Math.max(...sumSez.map((s) => getSumar(s).kpi.zapasy));
-const kompletne = sumSez.filter((s) => getSumar(s).kpi.zapasy >= maxZ * 0.5);
-const kompletnaSlug = (kompletne[kompletne.length - 1] ?? sumSez[sumSez.length - 1]).replace('/', '-');
+const kompletnaSlug = poslednaKompletnaSlug();
 const sezonaSlug = rfzSez.includes(kompletnaSlug) ? kompletnaSlug : rfzSez[0];
 const porovnanie = getPorovnanie(uroven, sezonaSlug);
 const sezony = sezonyUrovne(uroven);
@@ -21,9 +17,6 @@ const urovne = [
   { slug: 'rfz', label: 'RFZ' },
   { slug: 'obfz', label: 'ObFZ' },
 ];
-function najnovsiaSlug(slug: string): string {
-  return sezonyUrovne(slug)[0];
-}
 ---
 
 <Base title="Porovnania" sezony={sezony.map((s) => s.replace('-', '/'))} aktualnaSezona={sezonaSlug.replace('-', '/')} seasonHrefTemplate={`/porovnanie/${uroven}/{sezona}`}>
@@ -40,7 +33,7 @@ function najnovsiaSlug(slug: string): string {
       {
         urovne.map((u) => (
           <a
-            href={u.slug === uroven ? '/porovnanie' : `/porovnanie/${u.slug}/${najnovsiaSlug(u.slug)}`}
+            href={u.slug === uroven ? '/porovnanie' : `/porovnanie/${u.slug}/${porovnanieCielovaSlug(u.slug, sezonaSlug)}`}
             class:list={[
               'rounded-[9px] px-3.5 py-1 text-sm font-bold',
               u.slug === uroven ? 'bg-card text-sfz-blue shadow-sm' : 'text-muted',

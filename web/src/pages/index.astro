@@ -106,13 +106,9 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     }
   </section>
 
-  <!-- Mapa + rebríček -->
+  <!-- Mapa + rebríček (dve samostatné karty) -->
   <section class="mt-10">
-    <div class={CARD} style={CARD_STYLE}>
-      <div class={KICKER}>Mapa Slovenska</div>
-      <h2 class={H2} style="font-size:20px; margin:2px 0 12px;">Zápasy a rebríček zväzov</h2>
-      <SlovakiaMap client:load mapData={mapData} />
-    </div>
+    <SlovakiaMap client:load mapData={mapData} />
   </section>
 
   <!-- Osoby vo futbale -->
