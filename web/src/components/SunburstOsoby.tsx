@@ -66,6 +66,9 @@ export default function SunburstOsoby({ strom }: Props) {
           </span>
         ))}
       </div>
+      <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
+        Kruhy zvnútra von: odvetvie → úroveň (SFZ/RFZ/ObFZ) → rola → veková úroveň.
+      </p>
     </div>
   );
 }

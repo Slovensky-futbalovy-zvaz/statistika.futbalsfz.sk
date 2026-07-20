@@ -108,6 +108,25 @@ export default function SunburstSutaze({ strom }: Props) {
         </div>
       </div>
       <div ref={el} style={{ width: '100%', height: 420 }} role="img" aria-label="Sunburst súťaží" />
+      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
+        {[
+          { label: 'Futbal', color: '#1450df' },
+          { label: 'Futsal', color: '#ec1c24' },
+          { label: 'SFZ', color: '#7a44e0' },
+          { label: 'Bratislavský FZ', color: REGION.bfz },
+          { label: 'Západoslovenský FZ', color: REGION.zsfz },
+          { label: 'Stredoslovenský FZ', color: REGION.ssfz },
+          { label: 'Východoslovenský FZ', color: REGION.vsfz },
+        ].map((it) => (
+          <span key={it.label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ width: 10, height: 10, borderRadius: 3, background: it.color, display: 'inline-block' }} />
+            {it.label}
+          </span>
+        ))}
+      </div>
+      <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
+        Kruhy zvnútra von: odvetvie → SFZ → RFZ → ObFZ → súťaž.
+      </p>
     </div>
   );
 }
