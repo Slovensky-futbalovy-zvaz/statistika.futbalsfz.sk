@@ -2,7 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import PorovnanieView from '../../../components/PorovnanieView.astro';
 import BumpChart from '../../../components/BumpChart.tsx';
-import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne, getBumpDataRfz, porovnanieCielovaSlug } from '../../../lib/data';
+import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne, getBumpDataRfz, porovnanieCielovaSlug, porovnanieKlubyDefaultSlug } from '../../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -12,10 +12,12 @@ const { uroven, sezona: sezonaSlug } = Astro.params;
 const porovnanie = getPorovnanie(uroven!, sezonaSlug!);
 const sezony = sezonyUrovne(uroven!);
 const bump = getBumpDataRfz();
+const klubySlug = porovnanieKlubyDefaultSlug();
 
 const urovne = [
-  { slug: 'rfz', label: 'RFZ' },
-  { slug: 'obfz', label: 'ObFZ' },
+  { slug: 'rfz', label: 'RFZ', href: null as string | null },
+  { slug: 'obfz', label: 'ObFZ', href: null as string | null },
+  ...(klubySlug ? [{ slug: 'kluby', label: 'Kluby', href: `/porovnanie/kluby/${klubySlug}` }] : []),
 ];
 ---
 
@@ -40,7 +42,7 @@ const urovne = [
       {
         urovne.map((u) => (
           <a
-            href={u.slug === uroven ? `/porovnanie/${u.slug}/${sezonaSlug}` : `/porovnanie/${u.slug}/${porovnanieCielovaSlug(u.slug, sezonaSlug!)}`}
+            href={u.href ?? (u.slug === uroven ? `/porovnanie/${u.slug}/${sezonaSlug}` : `/porovnanie/${u.slug}/${porovnanieCielovaSlug(u.slug, sezonaSlug!)}`)}
             class:list={[
               'rounded-[9px] px-3.5 py-1 text-sm font-bold',
               u.slug === uroven ? 'bg-card text-sfz-blue shadow-sm' : 'text-muted',

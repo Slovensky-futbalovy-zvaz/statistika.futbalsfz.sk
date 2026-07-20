@@ -452,6 +452,59 @@ export function klubyZvazu(zvazId: string): KlubIndexPolozka[] {
   return getKluby().filter((k) => k.zvaz === zvazId);
 }
 
+// ---- Kluby: priame porovnanie (etl/porovnania_kluby.py → data/porovnania/kluby) ----
+
+export interface PorovnanieKlubRiadok {
+  id: string;
+  nazov: string;
+  zvaz: string | null;
+  zvazNazov: string;
+  uroven: string;
+  zapasy: number;
+  druzstva: number;
+  goly: number;
+  divaci: number;
+  zlteKarty: number;
+  cerveneKarty: number;
+  hraci: number;
+  treneri: number;
+  realizacnyTim: number;
+  golyNaZapas: number;
+  divaciNaZapas: number;
+  kat: Record<string, { zapasy: number; druzstva: number; goly: number; divaci: number; hraci: number }>;
+}
+
+export interface PorovnanieKluby {
+  sezona: string;
+  generatedAt: string;
+  pocetKlubov: number;
+  kluby: PorovnanieKlubRiadok[];
+}
+
+const POROVNANIA_KLUBY = path.join(DATA, 'porovnania', 'kluby');
+
+/** Sezóny (slugy RRRR-RRRR, vzostupne), pre ktoré existuje porovnanie klubov. */
+export function getPorovnanieKlubySezony(): string[] {
+  if (!fs.existsSync(POROVNANIA_KLUBY)) return [];
+  return fs
+    .readdirSync(POROVNANIA_KLUBY)
+    .filter((f) => f.endsWith('.json'))
+    .map((f) => f.replace('.json', ''))
+    .sort();
+}
+
+export function getPorovnanieKluby(sezonaSlug: string): PorovnanieKluby {
+  return readJson<PorovnanieKluby>(path.join(POROVNANIA_KLUBY, sezonaSlug + '.json'));
+}
+
+/** Východisková sezóna pre odkaz na porovnanie klubov (posledná kompletná, inak najnovšia dostupná). */
+export function porovnanieKlubyDefaultSlug(): string {
+  const dostupne = getPorovnanieKlubySezony(); // vzostupne
+  if (!dostupne.length) return '';
+  const komplet = poslednaKompletnaSlug();
+  return dostupne.includes(komplet) ? komplet : dostupne[dostupne.length - 1];
+}
+
 // ---- Mapové dáta pre choropleth (redizajn) ----
 
 export interface MapRegion {

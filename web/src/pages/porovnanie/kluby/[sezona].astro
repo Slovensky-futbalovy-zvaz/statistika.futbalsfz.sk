@@ -1,0 +1,62 @@
+---
+import Base from '../../../layouts/Base.astro';
+import KlubyPorovnanieView from '../../../components/KlubyPorovnanieView.tsx';
+import { getPorovnanieKlubySezony, getPorovnanieKluby, poslednaKompletnaSlug } from '../../../lib/data';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = () =>
+  getPorovnanieKlubySezony().map((sezona) => ({ params: { sezona } }));
+
+const { sezona: sezonaSlug } = Astro.params;
+const sezony = getPorovnanieKlubySezony(); // vzostupne, RRRR-RRRR
+const meta = getPorovnanieKluby(sezonaSlug!);
+const zvazSlug = poslednaKompletnaSlug();
+
+const urovne = [
+  { slug: 'rfz', label: 'RFZ', href: `/porovnanie/rfz/${zvazSlug}` },
+  { slug: 'obfz', label: 'ObFZ', href: `/porovnanie/obfz/${zvazSlug}` },
+  { slug: 'kluby', label: 'Kluby', href: null },
+];
+---
+
+<Base
+  title={`Porovnanie klubov ${meta.sezona}`}
+  description={`Priame porovnanie klubov slovenského futbalu v sezóne ${meta.sezona} — vyhľadaj a porovnaj 2–5 z ${meta.pocetKlubov} klubov podľa zápasov, gólov, divákov, hráčov a vekových kategórií.`}
+  image="/og/porovnanie.png"
+  keywords="porovnanie klubov, futbal Slovensko kluby, štatistiky klubu, priame porovnanie klubov"
+  sezony={sezony.map((s) => s.replace('-', '/'))}
+  aktualnaSezona={sezonaSlug!.replace('-', '/')}
+  seasonHrefTemplate={`/porovnanie/kluby/{sezona}`}
+>
+  <header class="mb-6">
+    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Porovnania a radenie</div>
+    <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(21px,2.4vw,28px);">Priame porovnanie klubov</h1>
+    <p class="mt-1 text-muted">
+      Sezóna {meta.sezona} · {meta.pocetKlubov} klubov s odohraným zápasom. Vyhľadaj klub nižšie a porovnaj.
+    </p>
+  </header>
+
+  <div class="flex flex-wrap items-center gap-2 mb-6">
+    <div class="inline-flex rounded-xl p-[3px]" style="background:var(--color-track);">
+      {
+        urovne.map((u) =>
+          u.href ? (
+            <a href={u.href} class="rounded-[9px] px-3.5 py-1 text-sm font-bold text-muted">
+              {u.label}
+            </a>
+          ) : (
+            <span class="rounded-[9px] px-3.5 py-1 text-sm font-bold bg-card text-sfz-blue shadow-sm">{u.label}</span>
+          ),
+        )
+      }
+    </div>
+  </div>
+
+  <KlubyPorovnanieView client:load sezonaSlug={sezonaSlug} />
+
+  <p class="mt-8 text-xs text-muted">
+    Generované {meta.generatedAt} · len uzavreté zápasy · zoznam obsahuje kluby zo všetkých úrovní (SFZ/RFZ/ObFZ)
+    s aspoň 1 odohraným zápasom v danej sezóne. Zoznam sa natiahne pri otvorení stránky (samostatný dátový súbor,
+    nie je súčasťou HTML).
+  </p>
+</Base>

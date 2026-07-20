@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import PorovnanieView from '../../components/PorovnanieView.astro';
 import BumpChart from '../../components/BumpChart.tsx';
-import { getPorovnanie, sezonyUrovne, getBumpDataRfz, poslednaKompletnaSlug, porovnanieCielovaSlug } from '../../lib/data';
+import { getPorovnanie, sezonyUrovne, getBumpDataRfz, poslednaKompletnaSlug, porovnanieCielovaSlug, porovnanieKlubyDefaultSlug } from '../../lib/data';
 
 // /porovnanie = plné porovnanie pre default úroveň RFZ + posledná KOMPLETNÁ sezóna
 const uroven = 'rfz';
@@ -12,10 +12,12 @@ const sezonaSlug = rfzSez.includes(kompletnaSlug) ? kompletnaSlug : rfzSez[0];
 const porovnanie = getPorovnanie(uroven, sezonaSlug);
 const sezony = sezonyUrovne(uroven);
 const bump = getBumpDataRfz();
+const klubySlug = porovnanieKlubyDefaultSlug();
 
 const urovne = [
-  { slug: 'rfz', label: 'RFZ' },
-  { slug: 'obfz', label: 'ObFZ' },
+  { slug: 'rfz', label: 'RFZ', href: null as string | null },
+  { slug: 'obfz', label: 'ObFZ', href: null as string | null },
+  ...(klubySlug ? [{ slug: 'kluby', label: 'Kluby', href: `/porovnanie/kluby/${klubySlug}` }] : []),
 ];
 ---
 
@@ -41,7 +43,7 @@ const urovne = [
       {
         urovne.map((u) => (
           <a
-            href={u.slug === uroven ? '/porovnanie' : `/porovnanie/${u.slug}/${porovnanieCielovaSlug(u.slug, sezonaSlug)}`}
+            href={u.href ?? (u.slug === uroven ? '/porovnanie' : `/porovnanie/${u.slug}/${porovnanieCielovaSlug(u.slug, sezonaSlug)}`)}
             class:list={[
               'rounded-[9px] px-3.5 py-1 text-sm font-bold',
               u.slug === uroven ? 'bg-card text-sfz-blue shadow-sm' : 'text-muted',
