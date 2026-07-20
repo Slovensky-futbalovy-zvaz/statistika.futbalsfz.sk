@@ -47,9 +47,10 @@ export default function MobileMenu({ polozky }: Props) {
         <div
           style={{
             position: 'absolute',
-            right: 0,
+            left: 0,
             top: 'calc(100% + 8px)',
             width: 240,
+            maxWidth: 'calc(100vw - 32px)',
             background: 'var(--color-card)',
             border: '1px solid var(--color-line)',
             borderRadius: 12,
