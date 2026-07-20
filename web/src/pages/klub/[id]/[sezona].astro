@@ -88,9 +88,9 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
       kpiKarty.map((k) => {
         const d = delta(k.hodnota, k.predch, k.good);
         return (
-          <div class={CARD} style={CS}>
+          <div class={CARD} style={CS + ' container-type:inline-size;'}>
             <div class="text-[11px] font-bold uppercase tracking-wider text-muted">{k.label}</div>
-            <div class="tnum mt-1.5 font-extrabold" style="font-size:clamp(22px,2.6vw,30px);">{fmt(k.hodnota)}</div>
+            <div class="tnum mt-1.5 font-extrabold" style="font-size:clamp(20px,16cqi,30px); line-height:1.05; white-space:nowrap;">{fmt(k.hodnota)}</div>
             {d && (
               <div class="mt-1 text-xs"><span class="tnum font-semibold" style={`color:${d.color};`}>{d.arrow} {d.text}</span><span class="text-muted"> medziročne</span></div>
             )}

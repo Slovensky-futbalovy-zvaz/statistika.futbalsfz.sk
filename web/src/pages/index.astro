@@ -92,9 +92,9 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
   <section class="mt-8 grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
     {
       kpiKarty.map((k) => (
-        <div class={CARD} style={CARD_STYLE}>
+        <div class={CARD} style={CARD_STYLE + ' container-type:inline-size;'}>
           <div class="text-[11px] font-bold uppercase tracking-wider text-muted">{k.label}</div>
-          <div class="tnum mt-1.5 font-extrabold" style="font-size:clamp(24px,3vw,32px);">{fmt(k.hodnota)}</div>
+          <div class="tnum mt-1.5 font-extrabold" style="font-size:clamp(20px,17cqi,32px); line-height:1.05; white-space:nowrap;">{fmt(k.hodnota)}</div>
           {k.d && (
             <div class="mt-1 text-xs">
               <span class="tnum font-semibold" style={`color:${k.d.color};`}>{k.d.arrow} {k.d.text}</span>
