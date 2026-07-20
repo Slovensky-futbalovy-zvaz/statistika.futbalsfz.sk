@@ -48,6 +48,17 @@ def sezony_zvazu(out_dir: Path, zvaz_id: str) -> list[str]:
 def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
     kpi = profil["kpi"]
     zapasy = kpi.get("zapasy", 0) or 0
+    # rozpad po vekových úrovniach (na filtre priameho porovnania na webe)
+    hraci_kat = profil.get("osoby", {}).get("hraci", {}).get("poKategorii", {}) or {}
+    kat = {}
+    for lvl, k in (profil.get("kategorie") or {}).items():
+        kat[lvl] = {
+            "zapasy": k.get("zapasy", 0),
+            "druzstva": k.get("druzstva", 0),
+            "goly": k.get("goly", 0),
+            "divaci": k.get("divaci", 0),
+            "hraci": hraci_kat.get(lvl, 0),
+        }
     r = {
         "id": zvaz["id"],
         "nazov": zvaz["nazov"],
@@ -60,6 +71,7 @@ def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
         "hraci": profil.get("osoby", {}).get("hraci", {}).get("unikatni", 0),
         "golyNaZapas": round(kpi.get("goly", 0) / zapasy, 2) if zapasy else 0.0,
         "divaciNaZapas": round(kpi.get("divaci", 0) / zapasy, 1) if zapasy else 0.0,
+        "kat": kat,
     }
     if rfz_skratka:
         r["rfz"] = rfz_skratka

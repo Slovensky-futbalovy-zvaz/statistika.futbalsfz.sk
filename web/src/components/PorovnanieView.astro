@@ -28,10 +28,10 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Priame porovnanie</div>
     <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Priame porovnanie zväzov</h2>
     <p class="text-sm text-muted mb-3">
-      Vyber 2–5 zväzov. Radar normalizuje na maximum úrovne (100 % = najlepší zväz v metrike);
-      skutočné hodnoty v tooltipe.
+      Vyber 2–5 zväzov a voliteľne filter podľa vekovej kategórie alebo úrovne. Radar normalizuje na
+      maximum úrovne (100 % = najlepší zväz v metrike); skutočné hodnoty v tooltipe.
     </p>
-    <div class="vyber flex flex-wrap gap-1.5 mb-4" role="group" aria-label="Výber zväzov na porovnanie">
+    <div class="vyber flex flex-wrap gap-1.5 mb-3" role="group" aria-label="Výber zväzov na porovnanie">
       {
         rows.map((r) => (
           <button type="button" data-zvaz={r.id} class="vyber-chip rounded-full border px-3 py-1 text-sm font-semibold text-ink hover:bg-black/5" style="border-color:#dcdfe4;">
@@ -40,6 +40,7 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         ))
       }
     </div>
+    <div class="porov-filter flex flex-wrap items-center gap-1.5 mb-4 text-sm" role="group" aria-label="Filter podľa kategórie a úrovne"></div>
     <div class="radar w-full hidden" style="height: 420px;" role="img" aria-label="Radarové porovnanie vybraných zväzov"></div>
     <p class="radar-hint text-sm text-muted">Vyber aspoň 2 zväzy.</p>
   </section>
@@ -146,8 +147,32 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       { k: 'golyNaZapas', label: 'Góly/zápas' }, { k: 'divaci', label: 'Diváci' },
       { k: 'hraci', label: 'Hráči' }, { k: 'goly', label: 'Góly' }, { k: 'druzstva', label: 'Družstvá' },
     ];
-    const maxima: Record<string, number> = {};
-    for (const m of RADAR) maxima[m.k] = Math.max(...rows.map((r) => (r[m.k] as number) || 0), 1);
+    // ---- filtre podľa vekovej kategórie / úrovne ----
+    const GROUPS: { key: string; cats: string[] }[] = [
+      { key: 'Dospelí', cats: ['ADULTS'] },
+      { key: 'Dorast', cats: ['U19', 'U18', 'U17', 'U16'] },
+      { key: 'Žiaci', cats: ['U15', 'U14', 'U13', 'U12'] },
+      { key: 'Prípravky', cats: ['U11', 'U10', 'U09', 'U08', 'U07'] },
+    ];
+    const LVL_ORDER = ['ADULTS', 'U19', 'U18', 'U17', 'U16', 'U15', 'U14', 'U13', 'U12', 'U11', 'U10', 'U09', 'U08', 'U07'];
+    const pritomne = (() => {
+      const s = new Set<string>();
+      for (const r of rows) for (const l of Object.keys((r.kat as Record<string, unknown>) || {})) s.add(l);
+      return LVL_ORDER.filter((l) => s.has(l));
+    })();
+    let subset: string[] | null = null; // null = celý zväz (súčty)
+    function rowMetric(r: Row, k: string): number {
+      if (!subset) return (r[k] as number) || 0;
+      const kat = (r.kat as Record<string, Record<string, number>>) || {};
+      let z = 0, g = 0, dv = 0, dr = 0, h = 0;
+      for (const l of subset) { const c = kat[l]; if (!c) continue; z += c.zapasy || 0; g += c.goly || 0; dv += c.divaci || 0; dr += c.druzstva || 0; h += c.hraci || 0; }
+      switch (k) {
+        case 'zapasy': return z; case 'goly': return g; case 'divaci': return dv;
+        case 'druzstva': return dr; case 'hraci': return h;
+        case 'golyNaZapas': return z ? g / z : 0; case 'divaciNaZapas': return z ? dv / z : 0;
+        default: return 0;
+      }
+    }
 
     const radarEl = root.querySelector<HTMLElement>('.radar')!;
     const hintEl = root.querySelector<HTMLElement>('.radar-hint')!;
@@ -169,6 +194,9 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       radarEl.classList.toggle('hidden', !on);
       hintEl.classList.toggle('hidden', on);
       if (!on) return;
+      // maximá per aktuálny filter (normalizácia na najlepší zväz v danej metrike)
+      const maxima: Record<string, number> = {};
+      for (const m of RADAR) maxima[m.k] = Math.max(...rows.map((r) => rowMetric(r, m.k)), 1);
       radar.setOption({
         legend: { top: 0, data: vyber.map((r) => r.nazov as string) },
         color: vyber.map((_, i) => PALETTE[i % PALETTE.length]),
@@ -176,11 +204,11 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
           trigger: 'item',
           formatter: (p: { dataIndex: number; value: number[] }) => {
             const r = vyber[p.dataIndex];
-            return `<b>${r.nazov}</b><br/>` + RADAR.map((m, i) => `${m.label}: <b>${fmtVal(r[m.k] as number, m.k.includes('Zapas') ? 1 : 0)}</b> (${Math.round(p.value[i])} %)`).join('<br/>');
+            return `<b>${r.nazov}</b><br/>` + RADAR.map((m, i) => `${m.label}: <b>${fmtVal(rowMetric(r, m.k), m.k.includes('Zapas') ? 1 : 0)}</b> (${Math.round(p.value[i])} %)`).join('<br/>');
           },
         },
         radar: { indicator: RADAR.map((m) => ({ name: m.label, max: 100 })), radius: '62%', axisName: { fontSize: 11, color: '#475569' } },
-        series: [{ type: 'radar', data: vyber.map((r, i) => ({ name: r.nazov as string, value: RADAR.map((m) => (((r[m.k] as number) || 0) / maxima[m.k]) * 100), itemStyle: { color: PALETTE[i % PALETTE.length] }, areaStyle: { opacity: 0.12 } })) }],
+        series: [{ type: 'radar', data: vyber.map((r, i) => ({ name: r.nazov as string, value: RADAR.map((m) => (rowMetric(r, m.k) / maxima[m.k]) * 100), itemStyle: { color: PALETTE[i % PALETTE.length] }, areaStyle: { opacity: 0.12 } })) }],
       }, true);
       radar.resize();
     }
@@ -195,6 +223,47 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     chips.forEach((btn) => btn.addEventListener('click', () => toggleChip(btn)));
     chips.slice(0, 3).forEach((btn) => { poradie.push(btn.dataset.zvaz!); });
     chips.forEach(stylChipu);
+
+    // ---- filter UI: Kategória (skupiny) + Úroveň (Ux) ----
+    const filterEl = root.querySelector<HTMLElement>('.porov-filter')!;
+    const fbtns: { el: HTMLButtonElement; sub: string[] | null }[] = [];
+    function mkLabel(t: string) {
+      const s = document.createElement('span');
+      s.textContent = t; s.className = 'text-muted'; s.style.margin = '0 4px 0 6px';
+      filterEl.appendChild(s);
+    }
+    function mkBtn(label: string, sub: string[] | null) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = label;
+      b.className = 'rounded-full border px-3 py-0.5 font-semibold';
+      b.style.borderColor = '#dcdfe4'; b.style.color = 'var(--color-ink)';
+      b.addEventListener('click', () => {
+        subset = sub;
+        fbtns.forEach((f) => {
+          const on = f.sub === sub;
+          f.el.style.background = on ? 'var(--color-sfz-blue)' : '';
+          f.el.style.color = on ? '#fff' : 'var(--color-ink)';
+          f.el.style.borderColor = on ? 'var(--color-sfz-blue)' : '#dcdfe4';
+        });
+        renderRadar();
+      });
+      filterEl.appendChild(b);
+      fbtns.push({ el: b, sub });
+    }
+    mkLabel('Kategória:');
+    mkBtn('Celý zväz', null);
+    for (const g of GROUPS) {
+      const cats = g.cats.filter((c) => pritomne.includes(c));
+      if (cats.length) mkBtn(g.key, cats);
+    }
+    const ux = pritomne.filter((l) => l !== 'ADULTS');
+    if (ux.length) {
+      mkLabel('Úroveň:');
+      for (const l of ux) mkBtn(l, [l]);
+    }
+    // default aktívny = Celý zväz
+    if (fbtns[0]) { fbtns[0].el.style.background = 'var(--color-sfz-blue)'; fbtns[0].el.style.color = '#fff'; fbtns[0].el.style.borderColor = 'var(--color-sfz-blue)'; }
+
     renderRadar();
     new ResizeObserver(() => radar.resize()).observe(radarEl);
   }
