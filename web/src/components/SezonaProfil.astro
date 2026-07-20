@@ -7,7 +7,7 @@ import ZvazPicker from './ZvazPicker.tsx';
 import AgePyramid from './AgePyramid.tsx';
 import { fmt, delta } from '../lib/format';
 import { sezonyOdvetvia, odvetviaZvazu, ODVETVIE_LABEL, getZvazy, getDemografia, klubyZvazu } from '../lib/data';
-import { GROUPS } from '../lib/palette';
+import { GROUPS, REGION, RFZ_LABEL, RFZ_OF_GEONAME } from '../lib/palette';
 import type { Profil, ZvazIndex } from '../lib/data';
 
 interface Props {
@@ -71,6 +71,10 @@ const odvetvieLabel = ODVETVIE_LABEL[odvetvie] ?? odvetvie;
 const urovenFarba: Record<string, string> = {
   SFZ: 'var(--color-sfz-blue)', RFZ: 'var(--color-good)', ObFZ: '#f0961b',
 };
+// Farba pilulky a názov regiónu (podľa vzoru): RFZ = vlastná farba, ObFZ = farba materského RFZ.
+const regionId = z.uroven === 'RFZ' ? z.id : z.uroven === 'ObFZ' ? (RFZ_OF_GEONAME[z.rfz ?? ''] ?? '') : '';
+const pilulkaFarba = REGION[regionId] ?? '#1450df';
+const regionLabel = regionId ? RFZ_LABEL[regionId] : undefined;
 const sezonyOdv = sezonyOdvetvia(z, odvetvie);
 ---
 
@@ -79,14 +83,15 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
 <header class="mb-6 flex flex-wrap items-start justify-between gap-4">
   <div>
     <span
-      class="inline-block rounded-full px-3 py-0.5 text-xs font-bold"
-      style={`background:#eef3ff; color:${z.uroven === 'ObFZ' ? '#b45309' : 'var(--color-sfz-blue)'};`}
+      class="inline-block rounded-full px-3 py-0.5 text-xs font-bold uppercase tracking-wider"
+      style={`background:${pilulkaFarba}1f; color:${pilulkaFarba};`}
     >
       {z.uroven}
     </span>
     <h1 class="mt-2 font-extrabold tracking-tight" style="font-size:clamp(28px,4.4vw,48px); line-height:1.05;">
       {z.nazov}
     </h1>
+    {regionLabel && <p class="mt-1 text-sm text-muted">Región: {regionLabel}</p>}
     {
       prepinacOdvetvi.length > 1 && (
         <div class="mt-3 flex flex-wrap gap-1.5">

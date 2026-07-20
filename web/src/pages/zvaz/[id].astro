@@ -1,162 +1,44 @@
 ---
+// /zvaz/{id} — kanonický profil zväzu (cieľ menu „Profil zväzu" a klikov v mape).
+// Renderuje redizajnovaný SezonaProfil pre najnovšiu futbalovú sezónu (s medziročným porovnaním).
 import Base from '../../layouts/Base.astro';
-import DemografiaTrend from '../../components/DemografiaTrend.astro';
-import VekovaPyramida from '../../components/VekovaPyramida.astro';
-import ZvazPicker from '../../components/ZvazPicker.tsx';
-import {
-  getZvazy,
-  getZvaz,
-  najnovsiaSezona,
-  getProfil,
-  fmt,
-  getDemografia,
-  ROLY_PORADIE,
-  ROLA_LABEL,
-} from '../../lib/data';
+import SezonaProfil from '../../components/SezonaProfil.astro';
+import { getZvazy, getZvaz, getProfil } from '../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
   getZvazy().map((z) => ({ params: { id: z.id } }));
 
-const vsetkyZvazy = getZvazy().map((zz) => ({ id: zz.id, nazov: zz.nazov, uroven: zz.uroven, rfz: zz.rfz }));
-
 const { id } = Astro.params;
 const z = getZvaz(id!);
-if (!z) {
-  throw new Error(`Zväz ${id} nie je v index.json`);
-}
-const sezona = najnovsiaSezona(z);
+if (!z) throw new Error(`Zväz ${id} nie je v index.json`);
+
+// Default = posledná KOMPLETNÁ sezóna zväzu (aspoň polovica max. objemu zápasov),
+// aby kanonický profil neukazoval práve začatú sezónu (napr. 2026/2027) takmer prázdnu.
+const profily = z.sezony.map((s) => ({ s, p: getProfil(z.id, s) }));
+const maxZ = Math.max(...profily.map((x) => x.p?.kpi.zapasy ?? 0), 1);
+const kompletne = profily.filter((x) => (x.p?.kpi.zapasy ?? 0) >= maxZ * 0.5);
+const sezona = (kompletne.length ? kompletne[kompletne.length - 1].s : z.sezony[z.sezony.length - 1]);
 const profil = sezona ? getProfil(z.id, sezona) : undefined;
 
-// F5 demografia (ak existuje) — trend počtu osôb po rolách za sezóny
-const demo = getDemografia(z.id);
-const demoSezony = demo ? Object.keys(demo.sezony).sort() : [];
-const demoSerie = demo
-  ? ROLY_PORADIE.map((rola) => ({
-      name: ROLA_LABEL[rola],
-      data: demoSezony.map((s) => demo.sezony[s]?.[rola]?.osoby ?? 0),
-    })).filter((s) => s.data.some((v) => v > 0))
-  : [];
-
-const kpiKarty = profil
-  ? [
-      { label: 'Zápasy', hodnota: profil.kpi.zapasy },
-      { label: 'Družstvá', hodnota: profil.kpi.druzstva },
-      { label: 'Góly', hodnota: profil.kpi.goly },
-      { label: 'Hráči', hodnota: profil.osoby?.hraci?.unikatni ?? 0 },
-      { label: 'Diváci', hodnota: profil.kpi.divaci },
-      { label: 'Žlté karty', hodnota: profil.kpi.zlteKarty },
-      { label: 'Červené karty', hodnota: profil.kpi.cerveneKarty },
-    ]
-  : [];
-
-const futsalSezony = z.odvetvia?.futsal ?? [];
+const idxSezony = sezona ? z.sezony.indexOf(sezona) : -1;
+const predoslaSezona = idxSezony > 0 ? z.sezony[idxSezony - 1] : undefined;
+const predosly = predoslaSezona ? getProfil(z.id, predoslaSezona) : undefined;
 ---
 
 <Base title={z.nazov}>
-  <p class="mb-2 text-sm">
-    <a href="/" class="text-sfz-blue hover:underline">← Späť na mapu</a>
-  </p>
-
-  <header class="mb-6 flex flex-wrap items-start justify-between gap-3">
-    <div>
-      <div class="text-xs font-semibold uppercase tracking-wider text-muted">{z.uroven}</div>
-      <h1 class="text-3xl font-extrabold tracking-tight">{z.nazov}</h1>
-      {sezona && <p class="mt-1 text-muted">Sezóna {sezona} · futbal</p>}
-    </div>
-    <ZvazPicker client:load zvazy={vsetkyZvazy} aktualne={z.id} />
-  </header>
-
   {
-    profil ? (
-      <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        {kpiKarty.map((k) => (
-          <div class="rounded-xl border border-black/10 p-4">
-            <div class="text-2xl font-extrabold tabular-nums">{fmt(k.hodnota)}</div>
-            <div class="text-sm text-sfz-muted">{k.label}</div>
-          </div>
-        ))}
-      </section>
+    sezona && profil ? (
+      <SezonaProfil
+        z={z}
+        sezona={sezona}
+        odvetvie="futbal"
+        profil={profil}
+        predoslaSezona={predoslaSezona}
+        predosly={predosly}
+      />
     ) : (
-      <p class="text-sfz-muted">Pre tento zväz zatiaľ nie sú dostupné žiadne sezónne dáta.</p>
+      <p class="text-muted">Pre tento zväz zatiaľ nie sú dostupné žiadne sezónne dáta.</p>
     )
   }
-
-  <section class="mt-8">
-    <h2 class="text-sm font-semibold uppercase tracking-wider text-sfz-muted mb-2">
-      Dostupné sezóny (futbal)
-    </h2>
-    <div class="flex flex-wrap gap-1.5">
-      {
-        z.sezony
-          .slice()
-          .reverse()
-          .map((s) => (
-            <a
-              href={`/zvaz/${z.id}/${s.replace('/', '-')}`}
-              class:list={[
-                'rounded-md border px-2 py-0.5 text-sm',
-                s === sezona
-                  ? 'border-sfz-blue text-sfz-blue font-semibold'
-                  : 'border-black/10 text-sfz-blue hover:bg-black/5',
-              ]}
-            >
-              {s}
-            </a>
-          ))
-      }
-    </div>
-  </section>
-
-  {
-    futsalSezony.length > 0 && (
-      <section class="mt-6">
-        <h2 class="text-sm font-semibold uppercase tracking-wider text-sfz-muted mb-2">
-          Futsal · {futsalSezony.length} sezón
-        </h2>
-        <div class="flex flex-wrap gap-1.5">
-          {futsalSezony
-            .slice()
-            .reverse()
-            .map((s) => (
-              <a
-                href={`/zvaz/${z.id}/futsal/${s.replace('/', '-')}`}
-                class="rounded-md border border-black/10 px-2 py-0.5 text-sm text-sfz-blue hover:bg-black/5"
-              >
-                {s}
-              </a>
-            ))}
-        </div>
-      </section>
-    )
-  }
-
-  {
-    demo && demoSezony.length > 0 && (
-      <section class="mt-10">
-        <h2 class="text-lg font-bold mb-1">Demografia — trend osôb</h2>
-        <p class="text-sm text-sfz-muted mb-3">
-          Počet osôb podľa roly za {demoSezony.length} sezón (hráči, tréneri, rozhodcovia, delegáti, personál).
-        </p>
-        <DemografiaTrend sezony={demoSezony} serie={demoSerie} />
-      </section>
-    )
-  }
-
-  {
-    demo && demoSezony.length > 0 && (
-      <section class="mt-10">
-        <h2 class="text-lg font-bold mb-1">Veková pyramída</h2>
-        <p class="text-sm text-sfz-muted mb-3">
-          Vek × pohlavie podľa roly a sezóny (vek k záveru sezóny). Muži vľavo, ženy vpravo; osoby
-          bez dátumu narodenia sú mimo pyramídy (uvedené v poznámke).
-        </p>
-        <VekovaPyramida demo={demo} />
-      </section>
-    )
-  }
-
-  <p class="mt-10 text-xs text-sfz-muted">
-    Dáta generované {profil?.generatedAt ?? '—'} · len uzavreté zápasy.
-  </p>
 </Base>
