@@ -47,7 +47,7 @@ export default function MobileMenu({ polozky }: Props) {
         <div
           style={{
             position: 'absolute',
-            left: 0,
+            right: 0,
             top: 'calc(100% + 8px)',
             width: 240,
             maxWidth: 'calc(100vw - 32px)',
