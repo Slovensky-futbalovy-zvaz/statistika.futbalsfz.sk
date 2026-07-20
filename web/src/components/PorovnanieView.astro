@@ -34,7 +34,7 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     <div class="vyber flex flex-wrap gap-1.5 mb-4" role="group" aria-label="Výber zväzov na porovnanie">
       {
         rows.map((r) => (
-          <button type="button" data-zvaz={r.id} class="vyber-chip rounded-full border border-black/10 px-3 py-0.5 text-sm text-sfz-blue hover:bg-black/5">
+          <button type="button" data-zvaz={r.id} class="vyber-chip rounded-full border px-3 py-1 text-sm font-semibold text-ink hover:bg-black/5" style="border-color:#dcdfe4;">
             {r.nazov}
           </button>
         ))
@@ -153,16 +153,25 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     const hintEl = root.querySelector<HTMLElement>('.radar-hint')!;
     const chips = [...root.querySelectorAll<HTMLButtonElement>('.vyber-chip')];
     const radar = echarts.init(radarEl, undefined, { renderer: 'canvas' });
-    const vybrane = new Set<string>();
+    const poradie: string[] = []; // poradie výberu = index farby (zhodné s radarom)
 
+    function stylChipu(btn: HTMLButtonElement) {
+      const idx = poradie.indexOf(btn.dataset.zvaz!);
+      const on = idx >= 0;
+      const col = on ? PALETTE[idx % PALETTE.length] : '';
+      btn.style.background = on ? col : '';
+      btn.style.borderColor = on ? col : '#dcdfe4';
+      btn.style.color = on ? '#fff' : '';
+    }
     function renderRadar() {
-      const vyber = rows.filter((r) => vybrane.has(r.id as string));
+      const vyber = poradie.map((id) => rows.find((r) => (r.id as string) === id)).filter(Boolean) as Row[];
       const on = vyber.length >= 2;
       radarEl.classList.toggle('hidden', !on);
       hintEl.classList.toggle('hidden', on);
       if (!on) return;
       radar.setOption({
         legend: { top: 0, data: vyber.map((r) => r.nazov as string) },
+        color: vyber.map((_, i) => PALETTE[i % PALETTE.length]),
         tooltip: {
           trigger: 'item',
           formatter: (p: { dataIndex: number; value: number[] }) => {
@@ -177,18 +186,16 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     }
     function toggleChip(btn: HTMLButtonElement) {
       const id = btn.dataset.zvaz!;
-      if (vybrane.has(id)) vybrane.delete(id);
-      else { if (vybrane.size >= 5) return; vybrane.add(id); }
-      const on = vybrane.has(id);
-      btn.classList.toggle('bg-sfz-blue', on);
-      btn.classList.toggle('text-white', on);
-      btn.classList.toggle('border-sfz-blue', on);
-      btn.classList.toggle('font-semibold', on);
-      btn.classList.toggle('text-sfz-blue', !on);
+      const i = poradie.indexOf(id);
+      if (i >= 0) poradie.splice(i, 1);
+      else { if (poradie.length >= 5) return; poradie.push(id); }
+      chips.forEach(stylChipu); // prefarbi všetky (poradie sa mohlo posunúť)
       renderRadar();
     }
     chips.forEach((btn) => btn.addEventListener('click', () => toggleChip(btn)));
-    chips.slice(0, 3).forEach((btn) => toggleChip(btn));
+    chips.slice(0, 3).forEach((btn) => { poradie.push(btn.dataset.zvaz!); });
+    chips.forEach(stylChipu);
+    renderRadar();
     new ResizeObserver(() => radar.resize()).observe(radarEl);
   }
 </script>
