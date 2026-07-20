@@ -119,22 +119,6 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
   </div>
 </header>
 
-<!-- sezóny -->
-<div class="mb-6 flex flex-wrap gap-1.5">
-  {
-    sezonyOdv.slice().reverse().map((s) => (
-      <a
-        href={sezonaUrl(odvetvie, s)}
-        class:list={[
-          'rounded-md border px-2 py-0.5 text-sm',
-          s === sezona ? 'border-sfz-blue bg-sfz-blue text-white font-semibold' : 'border-black/10 text-sfz-blue hover:bg-black/5',
-        ]}
-      >
-        {s}
-      </a>
-    ))
-  }
-</div>
 
 <!-- KPI karty (bez ikon, s medziročne) -->
 <section class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">

@@ -32,7 +32,15 @@ const breadcrumb = {
 };
 ---
 
-<Base title={`${z.nazov} — ${sezona}`} description={popis} image="/og/zvaz.png" jsonLd={[breadcrumb]}>
+<Base
+  title={`${z.nazov} — ${sezona}`}
+  description={popis}
+  image="/og/zvaz.png"
+  jsonLd={[breadcrumb]}
+  sezony={z.sezony}
+  aktualnaSezona={sezona}
+  seasonHrefTemplate={`/zvaz/${z.id}/{sezona}`}
+>
   <SezonaProfil
     z={z}
     sezona={sezona}

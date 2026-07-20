@@ -32,7 +32,14 @@ const odvLabel = odvetvie === 'futsal' ? 'futsal' : odvetvie;
 const popis = `${z.nazov} — ${odvLabel}, štatistiky sezóny ${sezona}: zápasy, góly, družstvá a osoby po vekových kategóriách.`;
 ---
 
-<Base title={`${z.nazov} — ${odvetvie} ${sezona}`} description={popis} image="/og/zvaz.png">
+<Base
+  title={`${z.nazov} — ${odvetvie} ${sezona}`}
+  description={popis}
+  image="/og/zvaz.png"
+  sezony={sezony}
+  aktualnaSezona={sezona}
+  seasonHrefTemplate={`/zvaz/${z.id}/${odvetvie}/{sezona}`}
+>
   <SezonaProfil
     z={z}
     sezona={sezona}
