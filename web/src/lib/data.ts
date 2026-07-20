@@ -397,7 +397,8 @@ export function getKluby(): KlubIndexPolozka[] {
   return fs.existsSync(p) ? readJson<{ kluby: KlubIndexPolozka[] }>(p).kluby : [];
 }
 
-/** Sezóny dostupné pre klub (podľa súborov RRRR-RRRR.json). */
+/** Sezóny dostupné pre klub (VŠETKY — podľa súborov RRRR-RRRR.json). Používa sa na
+ *  medziročné porovnanie (predošlá sezóna sa číta z dátového súboru, aj keď nemá stránku). */
 export function getKlubSezony(id: string): string[] {
   const d = path.join(KLUB, id);
   if (!fs.existsSync(d)) return [];
@@ -408,20 +409,39 @@ export function getKlubSezony(id: string): string[] {
     .sort();
 }
 
+/** Okno sezón, pre ktoré sa GENERUJÚ stránky klubov (posledných 6 kanonických =
+ *  2021/22–2026/27). Staršie dáta ostávajú pre medziročné porovnanie, ale bez vlastnej stránky.
+ *  Vracia slugy (RRRR-RRRR). */
+export function klubWindowSlugy(): string[] {
+  const p = path.join(KLUBY, 'index.json');
+  const all = fs.existsSync(p) ? readJson<{ sezony?: string[] }>(p).sezony ?? [] : [];
+  return all.slice(-6).map((s) => s.replace('/', '-'));
+}
+
+/** Sezóny klubu, ktoré majú stránku (prienik dostupných sezón a okna).
+ *  Ak klub nemá žiadnu sezónu v okne (zanikol pred oknom), dostane aspoň svoju najnovšiu. */
+export function getKlubSezonyPaged(id: string): string[] {
+  const okno = new Set(klubWindowSlugy());
+  const all = getKlubSezony(id);
+  const win = all.filter((s) => okno.has(s.replace('/', '-')));
+  if (win.length) return win;
+  return all.length ? [all[all.length - 1]] : [];
+}
+
 export function getKlub(id: string, sezona: string): Klub | undefined {
   const p = path.join(KLUB, id, sezona.replace('/', '-') + '.json');
   return fs.existsSync(p) ? readJson<Klub>(p) : undefined;
 }
 
-/** Zoznam (klub, sezóna) pre getStaticPaths. */
+/** Zoznam (klub, sezóna) pre getStaticPaths — len sezóny v okne (posledných 6). */
 export function getKlubyPaths(): { id: string; sezonaSlug: string }[] {
   const res: { id: string; sezonaSlug: string }[] = [];
   if (!fs.existsSync(KLUB)) return res;
   for (const id of fs.readdirSync(KLUB)) {
     const d = path.join(KLUB, id);
     if (!fs.statSync(d).isDirectory()) continue;
-    for (const f of fs.readdirSync(d)) {
-      if (/^\d{4}-\d{4}\.json$/.test(f)) res.push({ id, sezonaSlug: f.replace('.json', '') });
+    for (const s of getKlubSezonyPaged(id)) {
+      res.push({ id, sezonaSlug: s.replace('/', '-') });
     }
   }
   return res;

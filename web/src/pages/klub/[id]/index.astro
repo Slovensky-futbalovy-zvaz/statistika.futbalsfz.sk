@@ -1,7 +1,7 @@
 ---
 // Presmerovanie /klub/{id} → najnovšia sezóna klubu (/klub/{id}/{sezona}).
 // Tabuľka klubov aj KlubPicker odkazujú na /klub/{id} bez sezóny.
-import { getKlubyPaths, getKlubSezony } from '../../../lib/data';
+import { getKlubyPaths, getKlubSezonyPaged } from '../../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () => {
@@ -10,7 +10,7 @@ export const getStaticPaths: GetStaticPaths = () => {
 };
 
 const { id } = Astro.params;
-const sezony = getKlubSezony(id!);
+const sezony = getKlubSezonyPaged(id!); // len stránkované sezóny
 const posledna = sezony[sezony.length - 1];
 const ciel = posledna ? `/klub/${id}/${posledna.replace('/', '-')}` : '/kluby';
 return Astro.redirect(ciel, 302);
