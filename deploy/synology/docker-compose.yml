@@ -1,0 +1,9 @@
+services:
+  etl:
+    build: .
+    image: sfz-etl:latest
+    env_file: .env # obsahuje MONGODB_URI (a voliteľne SEZONA) — NEcommitovať
+    volumes:
+      - ./repo:/work/repo # perzistentný klon repa (rýchly pull namiesto re-clonu)
+      - ./keys:/keys:ro # SSH deploy key: ./keys/deploy_key (read-write kľúč pre push)
+    # Spúšťa sa jednorazovo: docker compose run --rm etl
