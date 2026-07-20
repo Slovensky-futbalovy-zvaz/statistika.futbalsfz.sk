@@ -241,45 +241,65 @@ def main() -> int:
         zoznam = [args.sezona]
 
     out = Path(args.out)
-    # akumulátor pre zjednotený index naprieč sezónami
-    riadky_podla_slug: dict[str, dict[str, dict]] = {}   # slug → {sezona → index_row}
-    sezony_podla_slug: dict[str, set] = {}
-    nazov_podla_slug: dict[str, str] = {}
 
+    # 1) prepočet profilov pre zadané sezóny (píše data/klub/{id}/{sezona}.json)
     for sez in zoznam:
         varianty = sezona_varianty(sezony, sez)
         log.info("=== kluby %s [%s] ===", sez, args.sport_sector)
         profily, index_kluby = vygeneruj(db, sez, varianty, args.sport_sector, zvazy, coach_positions)
-
         slug_sez = sez.replace("/", "-")
         for kid, doc in profily.items():
             d = out / "klub" / kid
             d.mkdir(parents=True, exist_ok=True)
             with open(d / f"{slug_sez}.json", "w", encoding="utf-8") as f:
                 json.dump(doc, f, ensure_ascii=False, separators=(",", ":"))
-
-        for row in index_kluby:
-            slug = row["id"]
-            riadky_podla_slug.setdefault(slug, {})[sez] = row
-            sezony_podla_slug.setdefault(slug, set()).add(sez)
-            nazov_podla_slug[slug] = row["nazov"]
         log.info("   %s: %d klubov", sez, len(index_kluby))
 
-    # zjednotený index: riadok z referenčnej sezóny (inak najnovšia dostupná), sezony = všetky
+    # 2) index prestavaný SKENOM DISKU — robustné pre plný aj týždenný (current-season)
+    #    beh: zoznam sezón klubu = všetky súbory na disku; riadok rebríčka = referenčná
+    #    sezóna (inak najnovšia dostupná). Kluby neaktívne v spracovanej sezóne sa nestratia.
+    zvaz_nazov: dict[str, str] = {}
+    for grp in ("sfz", "rfz", "obfz"):
+        for z in zvazy.get(grp, []):
+            zvaz_nazov[z["id"]] = z["nazov"]
+
     index_kluby = []
-    for slug, per_sez in riadky_podla_slug.items():
-        sez_list = sorted(sezony_podla_slug[slug])
-        ref = args.index_sezona if args.index_sezona in per_sez else sez_list[-1]
-        row = dict(per_sez[ref])
-        row["sezony"] = sez_list
-        index_kluby.append(row)
+    vsetky_sez: set[str] = set()
+    klub_dir = out / "klub"
+    for kid in (sorted(os.listdir(klub_dir)) if klub_dir.exists() else []):
+        d = klub_dir / kid
+        if not d.is_dir():
+            continue
+        subory = sorted(f[:-5] for f in os.listdir(d) if re.fullmatch(r"\d{4}-\d{4}\.json", f))
+        if not subory:
+            continue
+        sez_list = [s.replace("-", "/") for s in subory]
+        vsetky_sez.update(sez_list)
+        ref_slug = args.index_sezona.replace("/", "-")
+        if ref_slug not in subory:
+            ref_slug = subory[-1]
+        try:
+            p = load_json(d / f"{ref_slug}.json")
+        except Exception:
+            continue
+        index_kluby.append({
+            "id": kid,
+            "nazov": p.get("nazov", kid),
+            "zvaz": p.get("zvaz"),
+            "zvazNazov": zvaz_nazov.get(p.get("zvaz"), p.get("zvaz") or "?"),
+            "uroven": p.get("uroven", "?"),
+            "sezony": sez_list,
+            "zapasy": p.get("kpi", {}).get("zapasy", 0),
+            "hraci": p.get("osoby", {}).get("hraci", {}).get("unikatni", 0),
+        })
     index_kluby.sort(key=lambda x: -x["zapasy"])
 
     (out / "kluby").mkdir(parents=True, exist_ok=True)
     with open(out / "kluby" / "index.json", "w", encoding="utf-8") as f:
         json.dump({"generatedAt": teraz(), "sezona": args.index_sezona,
-                   "sezony": zoznam, "kluby": index_kluby}, f, ensure_ascii=False, indent=1)
-    log.info("OK — %d klubov (index ref %s), sezóny: %s", len(index_kluby), args.index_sezona, ", ".join(zoznam))
+                   "sezony": sorted(vsetky_sez), "kluby": index_kluby}, f, ensure_ascii=False, indent=1)
+    log.info("OK — %d klubov (index ref %s, sken disku), spracované: %s",
+             len(index_kluby), args.index_sezona, ", ".join(zoznam))
     return 0
 
 

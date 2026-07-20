@@ -1,0 +1,58 @@
+name: Týždenná aktualizácia štatistík
+
+on:
+  schedule:
+    - cron: "0 3 * * 1" # pondelok 03:00 UTC (~04:00/05:00 CET)
+  workflow_dispatch:
+    inputs:
+      sezona:
+        description: "Kanonická sezóna (napr. 2025/2026). Prázdne = podľa dátumu."
+        required: false
+        default: ""
+
+concurrency:
+  group: tyzdenna-aktualizacia
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Inštalácia závislostí
+        run: pip install pymongo certifi
+
+      - name: ETL — týždenná aktualizácia (aktuálna sezóna)
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        run: |
+          export SSL_CERT_FILE="$(python -c 'import certifi; print(certifi.where())')"
+          SEZ="${{ github.event.inputs.sezona }}"
+          if [ -n "$SEZ" ]; then
+            python etl/tyzdenna.py --sezona "$SEZ"
+          else
+            python etl/tyzdenna.py
+          fi
+
+      - name: Commit + push zmenených dát
+        run: |
+          git config user.name "SFZ ETL bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "Žiadne zmeny dát — preskakujem commit."
+          else
+            git commit -m "Týždenná aktualizácia štatistík ($(date +%Y-%m-%d))"
+            git push
+          fi
