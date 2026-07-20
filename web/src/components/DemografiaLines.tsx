@@ -57,7 +57,7 @@ export default function DemografiaLines({ demo }: Props) {
     chart.current.setOption(
       {
         legend: { top: 0, type: 'scroll', textStyle: { fontSize: 11 } },
-        tooltip: { trigger: 'axis' },
+        tooltip: { trigger: 'axis', confine: true },
         grid: { left: 48, right: 16, top: 40, bottom: 46 },
         xAxis: { type: 'category', data: sezony, axisLabel: { fontSize: 10, rotate: 45 } },
         yAxis: { type: 'value' },
@@ -77,7 +77,7 @@ export default function DemografiaLines({ demo }: Props) {
     const posledna = sezony[sezony.length - 1];
     barChart.current.setOption(
       {
-        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, confine: true },
         grid: { left: 8, right: 16, top: 12, bottom: 8, containLabel: true },
         xAxis: { type: 'value' },
         yAxis: { type: 'category', data: sel, axisLabel: { fontSize: 11 } },

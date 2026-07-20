@@ -35,7 +35,7 @@ export default function SunburstOsoby({ strom }: Props) {
 
     chart.current.setOption(
       {
-        tooltip: { formatter: (p: { name: string; value: number }) => `${p.name}: <b>${fmt(p.value || 0)}</b>` },
+        tooltip: { confine: true, formatter: (p: { name: string; value: number }) => `${p.name}: <b>${fmt(p.value || 0)}</b>` },
         series: [
           {
             type: 'sunburst',

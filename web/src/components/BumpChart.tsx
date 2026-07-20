@@ -49,7 +49,7 @@ export default function BumpChart({ bump }: Props) {
     chart.current.setOption(
       {
         legend: { top: 0, textStyle: { fontSize: 11 } },
-        tooltip: { trigger: 'axis' },
+        tooltip: { trigger: 'axis', confine: true },
         grid: { left: 40, right: 16, top: 40, bottom: 40 },
         xAxis: { type: 'category', data: bump.sezony, axisLabel: { fontSize: 10, rotate: 45 } },
         yAxis: {

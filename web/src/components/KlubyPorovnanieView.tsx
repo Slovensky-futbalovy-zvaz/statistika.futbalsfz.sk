@@ -117,6 +117,7 @@ export default function KlubyPorovnanieView({ sezonaSlug }: Props) {
         color: vyber.map((_, i) => PALETTE[i % PALETTE.length]),
         tooltip: {
           trigger: 'item',
+          confine: true,
           formatter: (p: { dataIndex: number; value: number[] }) => {
             const r = vyber[p.dataIndex];
             return (

@@ -63,7 +63,7 @@ export default function KlubPicker({ kluby, aktualne, hrefTemplate = '/klub/{id}
         <span style={{ color: 'var(--color-muted)' }}>▾</span>
       </button>
       {open && (
-        <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 6px)', width: 340, maxHeight: 460, overflowY: 'auto', background: 'var(--color-card)', border: '1px solid var(--color-line)', borderRadius: 12, boxShadow: 'var(--shadow-pop)', padding: 8, zIndex: 60 }}>
+        <div style={{ position: 'absolute', left: 0, top: 'calc(100% + 6px)', width: 340, maxWidth: 'calc(100vw - 48px)', maxHeight: 460, overflowY: 'auto', background: 'var(--color-card)', border: '1px solid var(--color-line)', borderRadius: 12, boxShadow: 'var(--shadow-pop)', padding: 8, zIndex: 60 }}>
           <input
             autoFocus
             value={q}

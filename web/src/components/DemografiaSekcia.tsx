@@ -64,7 +64,7 @@ export default function DemografiaSekcia({ demo }: Props) {
     }));
     lineChart.current.setOption(
       {
-        tooltip: { trigger: 'axis' },
+        tooltip: { trigger: 'axis', confine: true },
         grid: { left: 8, right: 16, top: 16, bottom: 40, containLabel: true },
         xAxis: { type: 'category', data: sezony, axisLabel: { fontSize: 10, rotate: 45, color: '#6c7178' }, axisLine: { lineStyle: { color: '#e7e9ec' } } },
         yAxis: { type: 'value', splitLine: { lineStyle: { color: '#eceef1' } }, axisLabel: { color: '#6c7178' } },

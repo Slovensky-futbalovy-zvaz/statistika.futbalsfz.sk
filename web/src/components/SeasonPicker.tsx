@@ -57,7 +57,10 @@ export default function SeasonPicker({ sezony, aktualna, hrefTemplate }: Props) 
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span style={{ color: 'var(--color-muted)', fontSize: 10, letterSpacing: '.14em', fontWeight: 700 }}>
+        <span
+          className="hidden sm:inline"
+          style={{ color: 'var(--color-muted)', fontSize: 10, letterSpacing: '.14em', fontWeight: 700 }}
+        >
           SEZÓNA
         </span>
         {sel}
@@ -79,6 +82,7 @@ export default function SeasonPicker({ sezony, aktualna, hrefTemplate }: Props) 
             overflowY: 'auto',
             zIndex: 60,
             minWidth: 160,
+            maxWidth: 'calc(100vw - 32px)',
           }}
         >
           {zoradene.map((s) => (

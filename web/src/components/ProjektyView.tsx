@@ -35,7 +35,7 @@ export default function ProjektyView({ projekty }: Props) {
     if (trendEl.current) {
       if (!trendCh.current) trendCh.current = echarts.init(trendEl.current, undefined, { renderer: 'canvas' });
       trendCh.current.setOption({
-        tooltip: { trigger: 'axis' },
+        tooltip: { trigger: 'axis', confine: true },
         grid: { left: 8, right: 8, top: 30, bottom: 24, containLabel: true },
         xAxis: { type: 'category', data: sezony.map((x) => x.replace('20', '').replace('/20', '/')), axisLabel: { fontSize: 11, color: '#6c7178' }, axisLine: { lineStyle: { color: '#e7e9ec' } } },
         yAxis: { type: 'value', splitLine: { lineStyle: { color: '#eceef1' } }, axisLabel: { show: false } },
@@ -47,7 +47,7 @@ export default function ProjektyView({ projekty }: Props) {
       if (!donutCh.current) donutCh.current = echarts.init(donutEl.current, undefined, { renderer: 'canvas' });
       const m = s.pohlavie.M ?? 0, f = s.pohlavie.F ?? 0;
       donutCh.current.setOption({
-        tooltip: { trigger: 'item', formatter: (x: { name: string; value: number; percent: number }) => `${x.name}: <b>${fmt(x.value)}</b> (${x.percent}%)` },
+        tooltip: { trigger: 'item', confine: true, formatter: (x: { name: string; value: number; percent: number }) => `${x.name}: <b>${fmt(x.value)}</b> (${x.percent}%)` },
         series: [{
           type: 'pie', radius: ['58%', '82%'], center: ['50%', '50%'], label: { show: false },
           data: [{ name: 'Chlapci', value: m, itemStyle: { color: '#1450df' } }, { name: 'Dievčatá', value: f, itemStyle: { color: '#ec1c24' } }],
@@ -60,7 +60,7 @@ export default function ProjektyView({ projekty }: Props) {
       if (!vekCh.current) vekCh.current = echarts.init(vekEl.current, undefined, { renderer: 'canvas' });
       const veky = Object.keys(s.vek).sort((a, b) => +a - +b);
       vekCh.current.setOption({
-        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, confine: true },
         legend: { top: 0, data: ['Chlapci', 'Dievčatá'], textStyle: { fontSize: 11 } },
         grid: { left: 8, right: 8, top: 30, bottom: 20, containLabel: true },
         xAxis: { type: 'category', data: veky, axisLabel: { fontSize: 10, color: '#6c7178' }, axisLine: { lineStyle: { color: '#e7e9ec' } } },

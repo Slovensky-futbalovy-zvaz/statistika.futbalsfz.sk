@@ -100,9 +100,10 @@ export default function ZvazPicker({ zvazy, aktualne, hrefTemplate = '/zvaz/{id}
         <div
           style={{
             position: 'absolute',
-            right: 0,
+            left: 0,
             top: 'calc(100% + 6px)',
             width: 320,
+            maxWidth: 'calc(100vw - 48px)',
             maxHeight: 440,
             overflowY: 'auto',
             background: 'var(--color-card)',
