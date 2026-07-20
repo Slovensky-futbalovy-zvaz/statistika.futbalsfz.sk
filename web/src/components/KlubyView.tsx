@@ -81,8 +81,8 @@ export default function KlubyView({ kluby }: Props) {
                 key={r.id}
                 href={klubUrl(r)}
                 style={{
-                  display: 'grid', gridTemplateColumns: '28px 1fr 130px 80px 16px', gap: 12, alignItems: 'center',
-                  padding: '11px 16px', background: i % 2 ? '#fafbfc' : '#fff',
+                  display: 'grid', gridTemplateColumns: '26px minmax(0,1fr) auto 14px', gap: 10, alignItems: 'center',
+                  padding: '11px 14px', background: i % 2 ? '#fafbfc' : '#fff',
                   borderBottom: i < rows.length - 1 ? '1px solid var(--color-line)' : 'none', color: 'inherit',
                 }}
                 onMouseEnter={(e) => (e.currentTarget.style.background = '#f2f6ff')}
@@ -92,16 +92,16 @@ export default function KlubyView({ kluby }: Props) {
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: 8, color: 'var(--color-ink)' }}>
                     <span style={{ width: 9, height: 9, borderRadius: 2, background: REGION[r.zvaz ?? ''] ?? '#bbbdbf', flex: '0 0 auto' }} />
-                    {r.nazov}
+                    <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.nazov}</span>
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--color-muted)', marginTop: 3, marginLeft: 17, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {(r.uroven || '') + ' · ' + r.zvazNazov}
                   </div>
+                  <div style={{ height: 6, borderRadius: 4, background: '#eceef1', overflow: 'hidden', marginTop: 6, marginLeft: 17 }}>
+                    <div style={{ height: '100%', width: `${(v / max) * 100}%`, background: REGION[r.zvaz ?? ''] ?? 'var(--color-sfz-blue)', borderRadius: 4 }} />
+                  </div>
                 </div>
-                <div style={{ height: 8, borderRadius: 5, background: '#eceef1', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${(v / max) * 100}%`, background: REGION[r.zvaz ?? ''] ?? 'var(--color-sfz-blue)', borderRadius: 5 }} />
-                </div>
-                <span className="tnum" style={{ textAlign: 'right', fontSize: 14, fontWeight: 800, color: 'var(--color-ink)' }}>{fmt(v)}</span>
+                <span className="tnum" style={{ textAlign: 'right', fontSize: 14, fontWeight: 800, color: 'var(--color-ink)', whiteSpace: 'nowrap' }}>{fmt(v)}</span>
                 <span style={{ color: '#c4c8ce', fontSize: 13, textAlign: 'right' }}>›</span>
               </a>
             );

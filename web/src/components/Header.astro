@@ -70,19 +70,15 @@ const maPicker = sezony && sezony.length > 0 && aktualnaSezona;
       }
     </nav>
 
-    <!-- mobile -->
-    <div class="md:hidden flex items-center gap-2">
-      {
-        maPicker && (
-          <SeasonPicker
-            client:load
-            sezony={sezony}
-            aktualna={aktualnaSezona}
-            hrefTemplate={seasonHrefTemplate}
-          />
-        )
-      }
-      <MobileMenu client:load polozky={items} />
+    <!-- mobile: sezóna je teraz vnútri hamburgera (menej preplnená hlavička, panel sa neoreže) -->
+    <div class="md:hidden flex items-center">
+      <MobileMenu
+        client:load
+        polozky={items}
+        sezony={maPicker ? sezony : undefined}
+        aktualna={maPicker ? aktualnaSezona : undefined}
+        hrefTemplate={seasonHrefTemplate}
+      />
     </div>
   </div>
 </header>

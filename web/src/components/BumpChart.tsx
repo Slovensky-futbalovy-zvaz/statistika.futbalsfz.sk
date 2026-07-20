@@ -48,9 +48,9 @@ export default function BumpChart({ bump }: Props) {
     if (!chart.current) chart.current = echarts.init(el.current, undefined, { renderer: 'canvas' });
     chart.current.setOption(
       {
-        legend: { top: 0, textStyle: { fontSize: 11 } },
+        legend: { type: 'scroll', top: 0, textStyle: { fontSize: 11 }, itemWidth: 18, itemGap: 8 },
         tooltip: { trigger: 'axis', confine: true },
-        grid: { left: 40, right: 16, top: 40, bottom: 40 },
+        grid: { left: 40, right: 16, top: 96, bottom: 44 },
         xAxis: { type: 'category', data: bump.sezony, axisLabel: { fontSize: 10, rotate: 45 } },
         yAxis: {
           type: 'value',
