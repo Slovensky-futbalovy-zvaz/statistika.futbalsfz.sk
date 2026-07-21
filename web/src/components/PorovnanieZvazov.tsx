@@ -41,7 +41,7 @@ const CAS_METRIKY: { k: string; label: string; fixed: number }[] = [
 
 const LVL_ORDER = ['ADULTS', 'U19', 'U18', 'U17', 'U16', 'U15', 'U14', 'U13', 'U12', 'U11', 'U10', 'U09', 'U08', 'U07'];
 // metriky bez vekového rozpadu v dátach (zatiaľ len súčty za celý zväz)
-const CAT_NEPODPOROVANE = new Set(['sutaze']);
+const CAT_NEPODPOROVANE = new Set<string>([]);
 
 const CARD: React.CSSProperties = {
   background: 'var(--color-card)',
@@ -345,7 +345,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
           <div style={KICK}>Vývoj v čase</div>
           <h2 style={H2}>Vývoj v čase</h2>
           <p style={P}>
-            Reálne hodnoty vybraných zväzov naprieč {bump.sezony.length} sezónami. Vyber metriku{subset ? ' (filter vekovej kategórie z priameho porovnania sa uplatní; Súťaže ho zatiaľ nepodporujú)' : ''}:
+            Reálne hodnoty vybraných zväzov naprieč {bump.sezony.length} sezónami. Vyber metriku{subset ? ' (filter vekovej kategórie z priameho porovnania sa uplatní)' : ''}:
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
             {CAS_METRIKY.map((m) => {

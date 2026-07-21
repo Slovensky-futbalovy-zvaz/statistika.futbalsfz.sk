@@ -61,6 +61,7 @@ def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
     kat = {}
     for lvl, k in (profil.get("kategorie") or {}).items():
         kat[lvl] = {
+            "sutaze": k.get("sutaze", 0),
             "zapasy": k.get("zapasy", 0),
             "druzstva": k.get("druzstva", 0),
             "goly": k.get("goly", 0),
