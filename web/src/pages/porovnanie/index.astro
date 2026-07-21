@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PorovnanieView from '../../components/PorovnanieView.astro';
-import BumpChart from '../../components/BumpChart.tsx';
 import { getPorovnanie, sezonyUrovne, getBumpDataRfz, poslednaKompletnaSlug, porovnanieCielovaSlug, porovnanieKlubyDefaultSlug } from '../../lib/data';
 
 // /porovnanie = plné porovnanie pre default úroveň RFZ + posledná KOMPLETNÁ sezóna
@@ -56,21 +55,8 @@ const urovne = [
     </div>
   </div>
 
-  <PorovnanieView porovnanie={porovnanie} />
+  <PorovnanieView porovnanie={porovnanie} bump={uroven === 'rfz' ? bump : undefined} />
 
-  {
-    bump.sezony.length > 1 && (
-      <section class="mt-12">
-        <h2 class="text-lg font-bold mb-1">Vývoj poradia RFZ v čase</h2>
-        <p class="text-sm text-muted mb-3">
-          Poradie 4 regionálnych zväzov naprieč {bump.sezony.length} sezónami podľa zvolenej metriky (1. = najlepší).
-        </p>
-        <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
-          <BumpChart client:visible bump={bump} />
-        </div>
-      </section>
-    )
-  }
 
   <p class="mt-8 text-xs text-muted">
     Generované {porovnanie.generatedAt} · len uzavreté zápasy · historicky môžu byť „družstvá" nižšie

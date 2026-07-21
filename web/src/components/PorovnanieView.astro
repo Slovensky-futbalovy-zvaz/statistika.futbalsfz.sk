@@ -1,10 +1,12 @@
 ---
-import type { Porovnanie } from '../lib/data';
+import type { Porovnanie, BumpData } from '../lib/data';
+import BumpChart from './BumpChart.tsx';
 
 interface Props {
   porovnanie: Porovnanie;
+  bump?: BumpData;
 }
-const { porovnanie } = Astro.props;
+const { porovnanie, bump } = Astro.props;
 const rows = porovnanie.zvazy;
 
 const stlpce = [
@@ -44,6 +46,19 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     <div class="radar w-full hidden" style="height: 420px;" role="img" aria-label="Radarové porovnanie vybraných zväzov"></div>
     <p class="radar-hint text-sm text-muted">Vyber aspoň 2 zväzy.</p>
   </section>
+
+  {
+    bump && bump.sezony.length > 1 && (
+      <section class={CARD} style={`${CARD_STYLE} margin-top:18px;`}>
+        <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vývoj v čase</div>
+        <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Vývoj poradia RFZ v čase</h2>
+        <p class="text-sm text-muted mb-3">
+          Poradie 4 regionálnych zväzov naprieč {bump.sezony.length} sezónami podľa zvolenej metriky (1. = najlepší).
+        </p>
+        <BumpChart client:visible bump={bump} />
+      </section>
+    )
+  }
 
   <!-- zoraditeľná tabuľka -->
   <section class={CARD} style={`${CARD_STYLE} margin-top:18px;`}>
