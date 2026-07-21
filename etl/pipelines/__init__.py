@@ -266,6 +266,29 @@ def pocet_sutazi(app_spaces, season_variants, sport_sector="futbal"):
     ]
 
 
+def pocet_sutazi_kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None):
+    """Počet súťaží po vekových kategóriách = distinct competition._id na kategóriu.
+    Kategória zápasu cez _cat_zapas (rovnako ako v kategorie())."""
+    return [
+        _match_stage(app_spaces, season_variants, sport_sector),
+        {"$project": {"cat": _cat_zapas(part_map), "comp": "$competition._id"}},
+        {"$group": {"_id": {"cat": "$cat", "comp": "$comp"}}},
+        {"$group": {"_id": "$_id.cat", "sutaze": {"$sum": 1}}},
+        {"$sort": {"_id": 1}},
+    ]
+
+
+def kontumovane_kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None):
+    """Počet kontumovaných zápasov (contumation.isContumated) po vekových kategóriách."""
+    return [
+        _match_stage(app_spaces, season_variants, sport_sector),
+        {"$match": {"contumation.isContumated": True}},
+        {"$project": {"cat": _cat_zapas(part_map)}},
+        {"$group": {"_id": "$cat", "kontumovane": {"$sum": 1}}},
+        {"$sort": {"_id": 1}},
+    ]
+
+
 def kontumovane_pocet(app_spaces, season_variants, sport_sector="futbal"):
     """Počet kontumovaných zápasov — doplnková KPI karta (#kontumácie), NEODPOČÍTAVA sa
     z celkového kpi.zapasy (closed:true ich už zahŕňa, kontumácia zápas štandardne

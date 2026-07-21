@@ -41,6 +41,8 @@ const CAS_METRIKY: { k: string; label: string; fixed: number }[] = [
 ];
 
 const LVL_ORDER = ['ADULTS', 'U19', 'U18', 'U17', 'U16', 'U15', 'U14', 'U13', 'U12', 'U11', 'U10', 'U09', 'U08', 'U07'];
+// metriky bez vekového rozpadu v dátach (zatiaľ len súčty za celý zväz)
+const CAT_NEPODPOROVANE = new Set(['sutaze', 'kontumovane']);
 
 const CARD: React.CSSProperties = {
   background: 'var(--color-card)',
@@ -170,6 +172,23 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
     }
     if (!lineCh.current) lineCh.current = echarts.init(lineEl.current, undefined, { renderer: 'canvas' });
     const fixed = CAS_METRIKY.find((m) => m.k === metric)?.fixed ?? 0;
+    const catHodnota = (sez: string, id: string, m: string): number | null => {
+      if (!subset) {
+        const v = bump.hodnoty[sez]?.[id]?.[m];
+        return v == null ? null : v;
+      }
+      // metriky bez vekového rozpadu → celý zväz (pill je aj tak zablokovaný)
+      if (CAT_NEPODPOROVANE.has(m)) {
+        const v = bump.hodnoty[sez]?.[id]?.[m];
+        return v == null ? null : v;
+      }
+      const katS = bump.kat?.[sez]?.[id];
+      if (!katS) return null;
+      const suma = (mm: string) => subset.reduce((acc, c) => acc + (katS[c]?.[mm] ?? 0), 0);
+      if (m === 'golyNaZapas') { const z = suma('zapasy'); return z ? suma('goly') / z : 0; }
+      if (m === 'divaciNaZapas') { const z = suma('zapasy'); return z ? suma('divaci') / z : 0; }
+      return suma(m);
+    };
     const series = vyber.map((id, i) => {
       const z = bump.zvazy.find((x) => x.id === id);
       return {
@@ -179,10 +198,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
         lineStyle: { width: 2.5 },
         itemStyle: { color: PALETTE[i % PALETTE.length] },
         connectNulls: false,
-        data: bump.sezony.map((s) => {
-          const v = bump.hodnoty[s]?.[id]?.[metric];
-          return v === undefined || v === null ? null : v;
-        }),
+        data: bump.sezony.map((s) => catHodnota(s, id, metric)),
       };
     });
     lineCh.current.setOption(
@@ -204,7 +220,12 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
     const ro = new ResizeObserver(() => lineCh.current?.resize());
     ro.observe(lineEl.current);
     return () => ro.disconnect();
-  }, [vyber, vybrane.length, metric, bump, maSezony]);
+  }, [vyber, vybrane.length, metric, subset, bump, maSezony]);
+
+  // ak je zvolená kategória a metrika nemá vekový rozpad, prepni na Zápasy
+  useEffect(() => {
+    if (subset !== null && CAT_NEPODPOROVANE.has(metric)) setMetric('zapasy');
+  }, [subset, metric]);
 
   function toggle(id: string) {
     setVyber((cur) =>
@@ -325,14 +346,24 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
           <div style={KICK}>Vývoj v čase</div>
           <h2 style={H2}>Vývoj v čase</h2>
           <p style={P}>
-            Reálne hodnoty vybraných zväzov naprieč {bump.sezony.length} sezónami. Vyber metriku:
+            Reálne hodnoty vybraných zväzov naprieč {bump.sezony.length} sezónami. Vyber metriku{subset ? ' (filter vekovej kategórie z priameho porovnania sa uplatní; Súťaže a Kontumované ho zatiaľ nepodporujú)' : ''}:
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
-            {CAS_METRIKY.map((m) => (
-              <button key={m.k} type="button" style={pill(metric === m.k)} onClick={() => setMetric(m.k)}>
-                {m.label}
-              </button>
-            ))}
+            {CAS_METRIKY.map((m) => {
+              const dis = subset !== null && CAT_NEPODPOROVANE.has(m.k);
+              return (
+                <button
+                  key={m.k}
+                  type="button"
+                  disabled={dis}
+                  title={dis ? 'Táto metrika zatiaľ nemá vekový rozpad — zruš filter kategórie' : undefined}
+                  style={{ ...pill(metric === m.k), ...(dis ? { opacity: 0.4, cursor: 'not-allowed' } : {}) }}
+                  onClick={() => { if (!dis) setMetric(m.k); }}
+                >
+                  {m.label}
+                </button>
+              );
+            })}
           </div>
           {vybrane.length ? (
             <div ref={lineEl} style={{ width: '100%', height: 400 }} role="img" aria-label="Vývoj vybraných zväzov v čase" />

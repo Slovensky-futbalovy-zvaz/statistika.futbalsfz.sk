@@ -256,6 +256,15 @@ def vygeneruj(
     )
     kontumovane = kontum_raw[0]["kontumovane"] if kontum_raw else 0
 
+    sutaze_kat_raw = agreguj(
+        db, pipelines.pocet_sutazi_kategorie(spaces, varianty, sport_sector, part_map), "pocet-sutazi-kat"
+    )
+    kontum_kat_raw = agreguj(
+        db, pipelines.kontumovane_kategorie(spaces, varianty, sport_sector, part_map), "kontumovane-kat"
+    )
+    sut_map = {(x["_id"] or "NEZNAMA"): x["sutaze"] for x in sutaze_kat_raw}
+    kon_map = {(x["_id"] or "NEZNAMA"): x["kontumovane"] for x in kontum_kat_raw}
+
     druz = {r["_id"]: r["druzstva"] for r in druz_raw}
     kategorie = {}
     for r in kat_raw:
@@ -268,6 +277,8 @@ def vygeneruj(
             "cervene": r["cervene"],
             "divaci": r["divaci"],
             "divaciPokrytych": r["divaciPokrytych"],
+            "sutaze": sut_map.get(cat, 0),
+            "kontumovane": kon_map.get(cat, 0),
         }
     kategorie = validate.zorad_kategorie(kategorie)
 

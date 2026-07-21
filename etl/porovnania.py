@@ -48,8 +48,16 @@ def sezony_zvazu(out_dir: Path, zvaz_id: str) -> list[str]:
 def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
     kpi = profil["kpi"]
     zapasy = kpi.get("zapasy", 0) or 0
-    # rozpad po vekových úrovniach (na filtre priameho porovnania na webe)
-    hraci_kat = profil.get("osoby", {}).get("hraci", {}).get("poKategorii", {}) or {}
+    # rozpad po vekových úrovniach (na filtre priameho porovnania + graf vývoja na webe)
+    osoby_pk = profil.get("osoby", {}) or {}
+    def _pk(role):
+        return (osoby_pk.get(role, {}) or {}).get("poKategorii", {}) or {}
+    hraci_kat = _pk("hraci")
+    treneri_kat = _pk("treneri")
+    rozhodcovia_kat = _pk("rozhodcovia")
+    realizacny_kat = _pk("realizacnyTim")
+    delegati_kat = _pk("delegati")
+    personal_kat = _pk("personal")
     kat = {}
     for lvl, k in (profil.get("kategorie") or {}).items():
         kat[lvl] = {
@@ -57,7 +65,14 @@ def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
             "druzstva": k.get("druzstva", 0),
             "goly": k.get("goly", 0),
             "divaci": k.get("divaci", 0),
+            "zlteKarty": k.get("zlte", 0),
+            "cerveneKarty": k.get("cervene", 0),
             "hraci": hraci_kat.get(lvl, 0),
+            "treneri": treneri_kat.get(lvl, 0),
+            "rozhodcovia": rozhodcovia_kat.get(lvl, 0),
+            "realizacnyTim": realizacny_kat.get(lvl, 0),
+            "delegati": delegati_kat.get(lvl, 0),
+            "personal": personal_kat.get(lvl, 0),
         }
     osoby = profil.get("osoby", {}) or {}
     r = {

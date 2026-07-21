@@ -193,18 +193,21 @@ export interface BumpData {
   sezony: string[]; // vzostupne
   zvazy: { id: string; nazov: string }[];
   hodnoty: Record<string, Record<string, Record<string, number>>>; // sezona → id → metrika → hodnota
+  // sezona → id → kategória (ADULTS/U19…) → metrika → hodnota (pre vekový filter grafu vývoja)
+  kat: Record<string, Record<string, Record<string, Record<string, number>>>>;
 }
 
 /** Dáta pre bump chart poradia zväzov v čase pre danú úroveň (všetky sezóny úrovne). */
 function getBumpData(urovenSlug: string): BumpData {
   const dir = path.join(POROVNANIA, urovenSlug);
-  if (!fs.existsSync(dir)) return { sezony: [], zvazy: [], hodnoty: {} };
+  if (!fs.existsSync(dir)) return { sezony: [], zvazy: [], hodnoty: {}, kat: {} };
   const sezony = fs
     .readdirSync(dir)
     .filter((f) => f.endsWith('.json'))
     .map((f) => f.replace('.json', ''))
     .sort();
   const hodnoty: BumpData['hodnoty'] = {};
+  const kat: BumpData['kat'] = {};
   const zvazMap = new Map<string, string>();
   const metriky = [
     'sutaze', 'zapasy', 'druzstva', 'kontumovane', 'goly', 'zlteKarty', 'cerveneKarty',
@@ -215,17 +218,21 @@ function getBumpData(urovenSlug: string): BumpData {
     const por = getPorovnanie(urovenSlug, slug);
     const sezona = slug.replace('-', '/');
     hodnoty[sezona] = {};
+    kat[sezona] = {};
     for (const r of por.zvazy) {
       zvazMap.set(r.id, r.nazov);
       hodnoty[sezona][r.id] = Object.fromEntries(
         metriky.map((m) => [m, (r as unknown as Record<string, number>)[m] ?? 0]),
       );
+      const rkat = (r as unknown as { kat?: Record<string, Record<string, number>> }).kat;
+      if (rkat) kat[sezona][r.id] = rkat;
     }
   }
   return {
     sezony: sezony.map((s) => s.replace('-', '/')),
     zvazy: [...zvazMap.entries()].map(([id, nazov]) => ({ id, nazov })),
     hodnoty,
+    kat,
   };
 }
 
