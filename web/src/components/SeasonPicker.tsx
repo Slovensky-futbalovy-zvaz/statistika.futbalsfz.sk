@@ -12,7 +12,7 @@ export default function SeasonPicker({ sezony, aktualna, hrefTemplate }: Props) 
   const [open, setOpen] = useState(false);
   const [sel, setSel] = useState(aktualna);
   const ref = useRef<HTMLDivElement>(null);
-  const zoradene = [...sezony].reverse(); // najnovšia hore
+  const zoradene = [...sezony].sort((a, b) => b.localeCompare(a)); // vždy zostupne: najnovšia hore
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {

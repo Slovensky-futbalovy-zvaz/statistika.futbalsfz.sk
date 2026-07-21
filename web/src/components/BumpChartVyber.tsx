@@ -21,7 +21,7 @@ const METRIKY = [
   { k: 'zapasy', label: 'Zápasy' },
   { k: 'divaci', label: 'Diváci' },
 ];
-const MAX_VYBER = 5;
+const MAX_VYBER = 13;
 
 /** Bump chart poradia vybraných ObFZ v čase. Poradie sa počíta spomedzi VŠETKÝCH zväzov
  *  úrovne (1 = najlepší), zobrazia sa len vybrané (2–5) čiary. */
@@ -134,7 +134,7 @@ export default function BumpChartVyber({ bump, defaultVyber = [] }: Props) {
         ))}
       </div>
       <div style={{ fontSize: 11.5, color: 'var(--color-muted)', marginBottom: 6 }}>
-        Vyber 2–5 zväzov (max {MAX_VYBER}); poradie je spomedzi všetkých {pocet} zväzov úrovne.
+        Vyber 2–{MAX_VYBER} zväzov (napr. všetky ObFZ jedného RFZ); poradie je spomedzi všetkých {pocet} zväzov úrovne.
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
         {bump.zvazy.map((z) => {

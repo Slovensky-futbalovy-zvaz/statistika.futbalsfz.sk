@@ -20,7 +20,7 @@ export default function MobileMenu({ polozky, sezony, aktualna, hrefTemplate }: 
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const maSezony = Array.isArray(sezony) && sezony.length > 0 && !!aktualna;
-  const sezonyZoradene = maSezony ? [...(sezony as string[])].reverse() : [];
+  const sezonyZoradene = maSezony ? [...(sezony as string[])].sort((a, b) => b.localeCompare(a)) : [];
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
