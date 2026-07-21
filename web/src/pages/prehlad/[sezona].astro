@@ -1,0 +1,18 @@
+---
+import Prehlad from '../../components/Prehlad.astro';
+import { getSumarSezony } from '../../lib/data';
+
+export function getStaticPaths() {
+  return getSumarSezony().map((s) => ({
+    params: { sezona: s.replace('/', '-') },
+    props: { sezonaKanon: s },
+  }));
+}
+
+interface Props {
+  sezonaKanon: string;
+}
+const { sezonaKanon } = Astro.props;
+---
+
+<Prehlad sezona={sezonaKanon} />
