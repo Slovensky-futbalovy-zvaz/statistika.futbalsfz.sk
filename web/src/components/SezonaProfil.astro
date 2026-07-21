@@ -5,8 +5,9 @@
 import CategoryDrill from './CategoryDrill.tsx';
 import ZvazPicker from './ZvazPicker.tsx';
 import AgePyramid from './AgePyramid.tsx';
+import RfzObfzMapa from './RfzObfzMapa.tsx';
 import { fmt, delta } from '../lib/format';
-import { sezonyOdvetvia, odvetviaZvazu, ODVETVIE_LABEL, getZvazy, getDemografia, klubyZvazu } from '../lib/data';
+import { sezonyOdvetvia, odvetviaZvazu, ODVETVIE_LABEL, getZvazy, getDemografia, klubyZvazu, getObfzMapaPreRfz } from '../lib/data';
 import { GROUPS, REGION, RFZ_LABEL, RFZ_OF_GEONAME } from '../lib/palette';
 import type { Profil, ZvazIndex } from '../lib/data';
 
@@ -24,6 +25,7 @@ const vsetkyZvazy = getZvazy().map((zz) => ({ id: zz.id, nazov: zz.nazov, uroven
 const demo = odvetvie === 'futbal' ? getDemografia(z.id) : undefined;
 const klubyPodZvazom = odvetvie === 'futbal' ? klubyZvazu(z.id).slice(0, 8) : [];
 const klubyPocet = odvetvie === 'futbal' ? klubyZvazu(z.id).length : 0;
+const obfzMapa = z.uroven === 'RFZ' && odvetvie === 'futbal' ? getObfzMapaPreRfz(z.id, sezona) : undefined;
 
 function sezonaUrl(o: string, s: string): string {
   const slug = s.replace('/', '-');
@@ -190,6 +192,19 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
       <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Veková pyramída</h2>
       <p class="text-sm text-muted mb-3">Registrované osoby podľa veku a pohlavia v sezóne {sezona}. Prepni rolu.</p>
       <AgePyramid client:visible demo={demo} sezona={sezona} />
+    </section>
+  )
+}
+
+{
+  obfzMapa && obfzMapa.regions.length > 0 && (
+    <section class="mt-8">
+      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Mapa regiónu</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">ObFZ pod týmto RFZ</h2>
+      <p class="text-sm text-muted mb-3">
+        Oblastné futbalové zväzy patriace pod {z.nazov} v sezóne {sezona}. Klikni na oblasť na mape alebo na položku rebríčka pre profil ObFZ.
+      </p>
+      <RfzObfzMapa client:visible mapa={obfzMapa} />
     </section>
   )
 }

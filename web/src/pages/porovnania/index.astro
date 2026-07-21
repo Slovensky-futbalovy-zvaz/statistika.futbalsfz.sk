@@ -16,7 +16,7 @@ const klubySlug = porovnanieKlubyDefaultSlug();
 const urovne = [
   { slug: 'rfz', label: 'RFZ', href: null as string | null },
   { slug: 'obfz', label: 'ObFZ', href: null as string | null },
-  ...(klubySlug ? [{ slug: 'kluby', label: 'Kluby', href: `/porovnanie/kluby/${klubySlug}` }] : []),
+  ...(klubySlug ? [{ slug: 'kluby', label: 'Kluby', href: `/porovnania/kluby/${klubySlug}` }] : []),
 ];
 ---
 
@@ -27,7 +27,7 @@ const urovne = [
   keywords="porovnanie zväzov, rebríček RFZ, ObFZ štatistiky, futbal Slovensko porovnanie"
   sezony={sezony.map((s) => s.replace('-', '/'))}
   aktualnaSezona={sezonaSlug.replace('-', '/')}
-  seasonHrefTemplate={`/porovnanie/${uroven}/{sezona}`}
+  seasonHrefTemplate={`/porovnania/${uroven}/{sezona}`}
 >
   <header class="mb-6">
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Porovnania a radenie</div>
@@ -42,7 +42,7 @@ const urovne = [
       {
         urovne.map((u) => (
           <a
-            href={u.href ?? (u.slug === uroven ? '/porovnanie' : `/porovnanie/${u.slug}/${porovnanieCielovaSlug(u.slug, sezonaSlug)}`)}
+            href={u.href ?? (u.slug === uroven ? '/porovnania' : `/porovnania/${u.slug}/${porovnanieCielovaSlug(u.slug, sezonaSlug)}`)}
             class:list={[
               'rounded-[9px] px-3.5 py-1 text-sm font-bold',
               u.slug === uroven ? 'bg-card text-sfz-blue shadow-sm' : 'text-muted',

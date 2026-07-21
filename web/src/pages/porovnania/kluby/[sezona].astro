@@ -13,8 +13,8 @@ const meta = getPorovnanieKluby(sezonaSlug!);
 const zvazSlug = poslednaKompletnaSlug();
 
 const urovne = [
-  { slug: 'rfz', label: 'RFZ', href: `/porovnanie/rfz/${zvazSlug}` },
-  { slug: 'obfz', label: 'ObFZ', href: `/porovnanie/obfz/${zvazSlug}` },
+  { slug: 'rfz', label: 'RFZ', href: `/porovnania/rfz/${zvazSlug}` },
+  { slug: 'obfz', label: 'ObFZ', href: `/porovnania/obfz/${zvazSlug}` },
   { slug: 'kluby', label: 'Kluby', href: null },
 ];
 ---
@@ -26,7 +26,7 @@ const urovne = [
   keywords="porovnanie klubov, futbal Slovensko kluby, štatistiky klubu, priame porovnanie klubov"
   sezony={sezony.map((s) => s.replace('-', '/'))}
   aktualnaSezona={sezonaSlug!.replace('-', '/')}
-  seasonHrefTemplate={`/porovnanie/kluby/{sezona}`}
+  seasonHrefTemplate={`/porovnania/kluby/{sezona}`}
 >
   <header class="mb-6">
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Porovnania a radenie</div>

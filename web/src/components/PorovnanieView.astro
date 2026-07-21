@@ -1,15 +1,14 @@
 ---
 import type { Porovnanie, BumpData } from '../lib/data';
-import BumpChart from './BumpChart.tsx';
-import BumpChartVyber from './BumpChartVyber.tsx';
+import PorovnanieZvazov from './PorovnanieZvazov.tsx';
 
 interface Props {
   porovnanie: Porovnanie;
   bump?: BumpData;
-  bumpLabel?: string;
+  bumpLabel?: string; // ponechané pre kompatibilitu (nevyužité)
   bumpVyberDefault?: string[];
 }
-const { porovnanie, bump, bumpLabel, bumpVyberDefault } = Astro.props;
+const { porovnanie, bump, bumpVyberDefault } = Astro.props;
 const rows = porovnanie.zvazy;
 
 const stlpce = [
@@ -23,48 +22,21 @@ const stlpce = [
   { key: 'zlteKarty', label: 'ŽK', fixed: 0 },
   { key: 'cerveneKarty', label: 'ČK', fixed: 0 },
 ];
+
+// predvolený výber pre zjednotený komponent: buď dodaný (ObFZ top 4), inak top 4 podľa zápasov
+const defaultVyber =
+  bumpVyberDefault ??
+  [...rows].sort((a, b) => b.zapasy - a.zapasy).slice(0, 4).map((r) => r.id);
+
 const CARD = 'border border-line';
 const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);';
 ---
 
 <div data-porovnanie data-rows={JSON.stringify(rows)} data-stlpce={JSON.stringify(stlpce)}>
-  <!-- priame porovnanie (radar) -->
-  <section class={CARD} style={CARD_STYLE}>
-    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Priame porovnanie</div>
-    <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Priame porovnanie zväzov</h2>
-    <p class="text-sm text-muted mb-3">
-      Vyber 2–5 zväzov a voliteľne filter podľa vekovej kategórie alebo úrovne. Radar normalizuje na
-      maximum úrovne (100 % = najlepší zväz v metrike); skutočné hodnoty v tooltipe.
-    </p>
-    <div class="vyber flex flex-wrap gap-1.5 mb-3" role="group" aria-label="Výber zväzov na porovnanie">
-      {
-        rows.map((r) => (
-          <button type="button" data-zvaz={r.id} class="vyber-chip rounded-full border px-3 py-1 text-sm font-semibold text-ink hover:bg-black/5" style="border-color:#dcdfe4;">
-            {r.nazov}
-          </button>
-        ))
-      }
-    </div>
-    <div class="porov-filter flex flex-wrap items-center gap-1.5 mb-4 text-sm" role="group" aria-label="Filter podľa kategórie a úrovne"></div>
-    <div class="radar w-full hidden" style="height: 420px;" role="img" aria-label="Radarové porovnanie vybraných zväzov"></div>
-    <p class="radar-hint text-sm text-muted">Vyber aspoň 2 zväzy.</p>
-  </section>
-
   {
-    bump && bump.sezony.length > 1 && (
-      <section class={CARD} style={`${CARD_STYLE} margin-top:18px;`}>
-        <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vývoj v čase</div>
-        <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Vývoj poradia {bumpLabel ?? 'RFZ'} v čase</h2>
-        <p class="text-sm text-muted mb-3">
-          {bumpVyberDefault
-           ? `Vyber 2–13 zväzov; ich poradie spomedzi všetkých ${bump.zvazy.length} zväzov úrovne naprieč ${bump.sezony.length} sezónami (1. = najlepší).`
-           : `Poradie ${bump.zvazy.length} regionálnych zväzov naprieč ${bump.sezony.length} sezónami podľa zvolenej metriky (1. = najlepší).`}
-        </p>
-        {bumpVyberDefault
-          ? <BumpChartVyber client:visible bump={bump} defaultVyber={bumpVyberDefault} />
-          : <BumpChart client:visible bump={bump} />}
-      </section>
-    )
+    bump && bump.zvazy.length ? (
+      <PorovnanieZvazov client:visible rows={rows} bump={bump} defaultVyber={defaultVyber} />
+    ) : null
   }
 
   <!-- zoraditeľná tabuľka -->
@@ -96,15 +68,8 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
 </div>
 
 <script>
-  import * as echarts from 'echarts/core';
-  import { RadarChart } from 'echarts/charts';
-  import { TooltipComponent, LegendComponent } from 'echarts/components';
-  import { CanvasRenderer } from 'echarts/renderers';
-  echarts.use([RadarChart, TooltipComponent, LegendComponent, CanvasRenderer]);
-
   const REGION: Record<string, string> = { bfz: '#1450df', zsfz: '#2f9bff', ssfz: '#12a06b', vsfz: '#f0961b' };
   const RFZ_SKR: Record<string, string> = { BFZ: 'bfz', ZsFZ: 'zsfz', SsFZ: 'ssfz', VsFZ: 'vsfz' };
-  const PALETTE = ['#1450df', '#ec1c24', '#12a06b', '#f0961b', '#7a44e0'];
   const nf = new Intl.NumberFormat('sk-SK');
   const nf1 = new Intl.NumberFormat('sk-SK', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
@@ -157,136 +122,13 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       th.addEventListener('click', () => {
         const k = th.dataset.sort!;
         if (k === sortKey) sortDir = sortDir === -1 ? 1 : -1;
-        else { sortKey = k; sortDir = -1; }
+        else {
+          sortKey = k;
+          sortDir = -1;
+        }
         renderTabulka();
       }),
     );
     renderTabulka();
-
-    // ---- radar 2–5 zväzov ----
-    const RADAR = [
-      { k: 'zapasy', label: 'Zápasy' }, { k: 'divaciNaZapas', label: 'Diváci/zápas' },
-      { k: 'golyNaZapas', label: 'Góly/zápas' }, { k: 'divaci', label: 'Diváci' },
-      { k: 'hraci', label: 'Hráči' }, { k: 'goly', label: 'Góly' }, { k: 'druzstva', label: 'Družstvá' },
-    ];
-    // ---- filtre podľa vekovej kategórie / úrovne ----
-    const GROUPS: { key: string; cats: string[] }[] = [
-      { key: 'Dospelí', cats: ['ADULTS'] },
-      { key: 'Dorast', cats: ['U19', 'U18', 'U17', 'U16'] },
-      { key: 'Žiaci', cats: ['U15', 'U14', 'U13', 'U12'] },
-      { key: 'Prípravky', cats: ['U11', 'U10', 'U09', 'U08', 'U07'] },
-    ];
-    const LVL_ORDER = ['ADULTS', 'U19', 'U18', 'U17', 'U16', 'U15', 'U14', 'U13', 'U12', 'U11', 'U10', 'U09', 'U08', 'U07'];
-    const pritomne = (() => {
-      const s = new Set<string>();
-      for (const r of rows) for (const l of Object.keys((r.kat as Record<string, unknown>) || {})) s.add(l);
-      return LVL_ORDER.filter((l) => s.has(l));
-    })();
-    let subset: string[] | null = null; // null = celý zväz (súčty)
-    function rowMetric(r: Row, k: string): number {
-      if (!subset) return (r[k] as number) || 0;
-      const kat = (r.kat as Record<string, Record<string, number>>) || {};
-      let z = 0, g = 0, dv = 0, dr = 0, h = 0;
-      for (const l of subset) { const c = kat[l]; if (!c) continue; z += c.zapasy || 0; g += c.goly || 0; dv += c.divaci || 0; dr += c.druzstva || 0; h += c.hraci || 0; }
-      switch (k) {
-        case 'zapasy': return z; case 'goly': return g; case 'divaci': return dv;
-        case 'druzstva': return dr; case 'hraci': return h;
-        case 'golyNaZapas': return z ? g / z : 0; case 'divaciNaZapas': return z ? dv / z : 0;
-        default: return 0;
-      }
-    }
-
-    const radarEl = root.querySelector<HTMLElement>('.radar')!;
-    const hintEl = root.querySelector<HTMLElement>('.radar-hint')!;
-    const chips = [...root.querySelectorAll<HTMLButtonElement>('.vyber-chip')];
-    const radar = echarts.init(radarEl, undefined, { renderer: 'canvas' });
-    const poradie: string[] = []; // poradie výberu = index farby (zhodné s radarom)
-
-    function stylChipu(btn: HTMLButtonElement) {
-      const idx = poradie.indexOf(btn.dataset.zvaz!);
-      const on = idx >= 0;
-      const col = on ? PALETTE[idx % PALETTE.length] : '';
-      btn.style.background = on ? col : '';
-      btn.style.borderColor = on ? col : '#dcdfe4';
-      btn.style.color = on ? '#fff' : '';
-    }
-    function renderRadar() {
-      const vyber = poradie.map((id) => rows.find((r) => (r.id as string) === id)).filter(Boolean) as Row[];
-      const on = vyber.length >= 2;
-      radarEl.classList.toggle('hidden', !on);
-      hintEl.classList.toggle('hidden', on);
-      if (!on) return;
-      // maximá per aktuálny filter (normalizácia na najlepší zväz v danej metrike)
-      const maxima: Record<string, number> = {};
-      for (const m of RADAR) maxima[m.k] = Math.max(...rows.map((r) => rowMetric(r, m.k)), 1);
-      radar.setOption({
-        legend: { top: 0, data: vyber.map((r) => r.nazov as string) },
-        color: vyber.map((_, i) => PALETTE[i % PALETTE.length]),
-        tooltip: {
-          trigger: 'item',
-          formatter: (p: { dataIndex: number; value: number[] }) => {
-            const r = vyber[p.dataIndex];
-            return `<b>${r.nazov}</b><br/>` + RADAR.map((m, i) => `${m.label}: <b>${fmtVal(rowMetric(r, m.k), m.k.includes('Zapas') ? 1 : 0)}</b> (${Math.round(p.value[i])} %)`).join('<br/>');
-          },
-        },
-        radar: { indicator: RADAR.map((m) => ({ name: m.label, max: 100 })), radius: '62%', axisName: { fontSize: 11, color: '#475569' } },
-        series: [{ type: 'radar', data: vyber.map((r, i) => ({ name: r.nazov as string, value: RADAR.map((m) => (rowMetric(r, m.k) / maxima[m.k]) * 100), itemStyle: { color: PALETTE[i % PALETTE.length] }, areaStyle: { opacity: 0.12 } })) }],
-      }, true);
-      radar.resize();
-    }
-    function toggleChip(btn: HTMLButtonElement) {
-      const id = btn.dataset.zvaz!;
-      const i = poradie.indexOf(id);
-      if (i >= 0) poradie.splice(i, 1);
-      else { if (poradie.length >= 5) return; poradie.push(id); }
-      chips.forEach(stylChipu); // prefarbi všetky (poradie sa mohlo posunúť)
-      renderRadar();
-    }
-    chips.forEach((btn) => btn.addEventListener('click', () => toggleChip(btn)));
-    chips.slice(0, 3).forEach((btn) => { poradie.push(btn.dataset.zvaz!); });
-    chips.forEach(stylChipu);
-
-    // ---- filter UI: Kategória (skupiny) + Úroveň (Ux) ----
-    const filterEl = root.querySelector<HTMLElement>('.porov-filter')!;
-    const fbtns: { el: HTMLButtonElement; sub: string[] | null }[] = [];
-    function mkLabel(t: string) {
-      const s = document.createElement('span');
-      s.textContent = t; s.className = 'text-muted'; s.style.margin = '0 4px 0 6px';
-      filterEl.appendChild(s);
-    }
-    function mkBtn(label: string, sub: string[] | null) {
-      const b = document.createElement('button');
-      b.type = 'button'; b.textContent = label;
-      b.className = 'rounded-full border px-3 py-0.5 font-semibold';
-      b.style.borderColor = '#dcdfe4'; b.style.color = 'var(--color-ink)';
-      b.addEventListener('click', () => {
-        subset = sub;
-        fbtns.forEach((f) => {
-          const on = f.sub === sub;
-          f.el.style.background = on ? 'var(--color-sfz-blue)' : '';
-          f.el.style.color = on ? '#fff' : 'var(--color-ink)';
-          f.el.style.borderColor = on ? 'var(--color-sfz-blue)' : '#dcdfe4';
-        });
-        renderRadar();
-      });
-      filterEl.appendChild(b);
-      fbtns.push({ el: b, sub });
-    }
-    mkLabel('Kategória:');
-    mkBtn('Celý zväz', null);
-    for (const g of GROUPS) {
-      const cats = g.cats.filter((c) => pritomne.includes(c));
-      if (cats.length) mkBtn(g.key, cats);
-    }
-    const ux = pritomne.filter((l) => l !== 'ADULTS');
-    if (ux.length) {
-      mkLabel('Úroveň:');
-      for (const l of ux) mkBtn(l, [l]);
-    }
-    // default aktívny = Celý zväz
-    if (fbtns[0]) { fbtns[0].el.style.background = 'var(--color-sfz-blue)'; fbtns[0].el.style.color = '#fff'; fbtns[0].el.style.borderColor = 'var(--color-sfz-blue)'; }
-
-    renderRadar();
-    new ResizeObserver(() => radar.resize()).observe(radarEl);
   }
 </script>

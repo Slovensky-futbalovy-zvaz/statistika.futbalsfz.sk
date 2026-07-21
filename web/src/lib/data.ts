@@ -141,13 +141,20 @@ export interface PorovnanieRiadok {
   id: string;
   nazov: string;
   rfz?: string;
+  sutaze?: number;
   zapasy: number;
   druzstva: number;
+  kontumovane?: number;
   goly: number;
   divaci: number;
   zlteKarty: number;
   cerveneKarty: number;
   hraci: number;
+  treneri?: number;
+  rozhodcovia?: number;
+  realizacnyTim?: number;
+  delegati?: number;
+  personal?: number;
   golyNaZapas: number;
   divaciNaZapas: number;
 }
@@ -199,7 +206,11 @@ function getBumpData(urovenSlug: string): BumpData {
     .sort();
   const hodnoty: BumpData['hodnoty'] = {};
   const zvazMap = new Map<string, string>();
-  const metriky = ['zapasy', 'divaci', 'hraci', 'golyNaZapas', 'divaciNaZapas'];
+  const metriky = [
+    'sutaze', 'zapasy', 'druzstva', 'kontumovane', 'goly', 'zlteKarty', 'cerveneKarty',
+    'hraci', 'treneri', 'rozhodcovia', 'realizacnyTim', 'delegati', 'personal',
+    'divaci', 'golyNaZapas', 'divaciNaZapas',
+  ];
   for (const slug of sezony) {
     const por = getPorovnanie(urovenSlug, slug);
     const sezona = slug.replace('-', '/');
@@ -640,4 +651,34 @@ export function getMapData(sezona: string): MapData {
   }
 
   return { viewBox: mapa.viewBox, slovensko: mapa.slovensko, rfz, obfz, sfz, nazvy };
+}
+
+// ---- Mapa ObFZ pre detail RFZ (len ObFZ patriace pod daný RFZ) ----
+export interface RfzObfzMapa {
+  viewBox: string;
+  slovensko: string;
+  regions: MapRegion[];
+}
+
+/** Choropleth dáta iba pre ObFZ patriace pod daný RFZ (za sezónu). */
+export function getObfzMapaPreRfz(rfzId: string, sezona: string): RfzObfzMapa {
+  const slug = sezona.replace('/', '-');
+  const mapa = readJson<{ viewBox: string; slovensko: string; obfz: { name: string; path: string }[] }>(
+    path.join(process.cwd(), 'assets', 'geo', 'mapa.json'),
+  );
+  const geo = geoNameToId();
+  const nazvy: Record<string, string> = Object.fromEntries(getZvazy().map((z) => [z.id, z.nazov]));
+  const cfg = readJson<Record<string, Array<{ id: string; rfz?: string }>>>(
+    path.join(CONFIG, 'zvazy.json'),
+  );
+  const obfzRfz: Record<string, string> = {};
+  for (const oo of cfg.obfz ?? []) if (oo.rfz) obfzRfz[oo.id] = oo.rfz;
+  const vals = porovnanieValues('obfz', slug);
+  const regions: MapRegion[] = mapa.obfz
+    .map((oo) => {
+      const id = geo[oo.name];
+      return { id, name: nazvy[id] ?? oo.name, path: oo.path, values: vals[id] ?? {} };
+    })
+    .filter((r) => r.id && obfzRfz[r.id] === rfzId);
+  return { viewBox: mapa.viewBox, slovensko: mapa.slovensko, regions };
 }
