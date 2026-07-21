@@ -1,12 +1,15 @@
 ---
 import type { Porovnanie, BumpData } from '../lib/data';
 import BumpChart from './BumpChart.tsx';
+import BumpChartVyber from './BumpChartVyber.tsx';
 
 interface Props {
   porovnanie: Porovnanie;
   bump?: BumpData;
+  bumpLabel?: string;
+  bumpVyberDefault?: string[];
 }
-const { porovnanie, bump } = Astro.props;
+const { porovnanie, bump, bumpLabel, bumpVyberDefault } = Astro.props;
 const rows = porovnanie.zvazy;
 
 const stlpce = [
@@ -51,11 +54,15 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     bump && bump.sezony.length > 1 && (
       <section class={CARD} style={`${CARD_STYLE} margin-top:18px;`}>
         <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vývoj v čase</div>
-        <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Vývoj poradia RFZ v čase</h2>
+        <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Vývoj poradia {bumpLabel ?? 'RFZ'} v čase</h2>
         <p class="text-sm text-muted mb-3">
-          Poradie 4 regionálnych zväzov naprieč {bump.sezony.length} sezónami podľa zvolenej metriky (1. = najlepší).
+          {bumpVyberDefault
+           ? `Vyber 2–5 zväzov; ich poradie spomedzi všetkých ${bump.zvazy.length} zväzov úrovne naprieč ${bump.sezony.length} sezónami (1. = najlepší).`
+           : `Poradie ${bump.zvazy.length} regionálnych zväzov naprieč ${bump.sezony.length} sezónami podľa zvolenej metriky (1. = najlepší).`}
         </p>
-        <BumpChart client:visible bump={bump} />
+        {bumpVyberDefault
+          ? <BumpChartVyber client:visible bump={bump} defaultVyber={bumpVyberDefault} />
+          : <BumpChart client:visible bump={bump} />}
       </section>
     )
   }

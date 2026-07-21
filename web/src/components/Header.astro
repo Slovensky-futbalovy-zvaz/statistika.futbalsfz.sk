@@ -12,7 +12,7 @@ const { pathname, sezony, aktualnaSezona, seasonHrefTemplate } = Astro.props;
 
 const nav = [
   { href: '/', label: 'Prehľad', match: (p: string) => p === '/' },
-  { href: '/zvaz/sfz', label: 'Profil zväzu', match: (p: string) => p.startsWith('/zvaz') },
+  { href: '/zvaz/sfz', label: 'Zväzy', match: (p: string) => p.startsWith('/zvaz') },
   { href: '/kluby', label: 'Kluby', match: (p: string) => p.startsWith('/kluby') || p.startsWith('/klub/') },
   { href: '/porovnanie', label: 'Porovnania', match: (p: string) => p.startsWith('/porovnanie') },
   { href: '/demografia', label: 'Demografia', match: (p: string) => p.startsWith('/demografia') },

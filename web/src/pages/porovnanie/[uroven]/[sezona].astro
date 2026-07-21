@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import PorovnanieView from '../../../components/PorovnanieView.astro';
-import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne, getBumpDataRfz, porovnanieCielovaSlug, porovnanieKlubyDefaultSlug } from '../../../lib/data';
+import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne, getBumpDataRfz, getBumpDataObfz, porovnanieCielovaSlug, porovnanieKlubyDefaultSlug } from '../../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -10,7 +10,16 @@ export const getStaticPaths: GetStaticPaths = () =>
 const { uroven, sezona: sezonaSlug } = Astro.params;
 const porovnanie = getPorovnanie(uroven!, sezonaSlug!);
 const sezony = sezonyUrovne(uroven!);
-const bump = getBumpDataRfz();
+const bump = uroven === 'obfz' ? getBumpDataObfz() : getBumpDataRfz();
+const bumpLabel = uroven === 'obfz' ? 'ObFZ' : 'RFZ';
+const poslBump = bump.sezony[bump.sezony.length - 1];
+const bumpVyberDefault =
+  uroven === 'obfz' && poslBump
+    ? Object.entries(bump.hodnoty[poslBump] ?? {})
+        .sort((a, b) => ((b[1] as Record<string, number>).zapasy ?? 0) - ((a[1] as Record<string, number>).zapasy ?? 0))
+        .slice(0, 4)
+        .map(([id]) => id)
+    : undefined;
 const klubySlug = porovnanieKlubyDefaultSlug();
 
 const urovne = [
@@ -54,7 +63,7 @@ const urovne = [
     </div>
   </div>
 
-  <PorovnanieView porovnanie={porovnanie} bump={uroven === 'rfz' ? bump : undefined} />
+  <PorovnanieView porovnanie={porovnanie} bump={bump} bumpLabel={bumpLabel} bumpVyberDefault={bumpVyberDefault} />
 
 
   <p class="mt-8 text-xs text-sfz-muted">

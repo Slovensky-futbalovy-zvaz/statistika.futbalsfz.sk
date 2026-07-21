@@ -188,9 +188,9 @@ export interface BumpData {
   hodnoty: Record<string, Record<string, Record<string, number>>>; // sezona → id → metrika → hodnota
 }
 
-/** Dáta pre bump chart poradia RFZ v čase (všetky RFZ sezóny). */
-export function getBumpDataRfz(): BumpData {
-  const dir = path.join(POROVNANIA, 'rfz');
+/** Dáta pre bump chart poradia zväzov v čase pre danú úroveň (všetky sezóny úrovne). */
+function getBumpData(urovenSlug: string): BumpData {
+  const dir = path.join(POROVNANIA, urovenSlug);
   if (!fs.existsSync(dir)) return { sezony: [], zvazy: [], hodnoty: {} };
   const sezony = fs
     .readdirSync(dir)
@@ -201,7 +201,7 @@ export function getBumpDataRfz(): BumpData {
   const zvazMap = new Map<string, string>();
   const metriky = ['zapasy', 'divaci', 'hraci', 'golyNaZapas', 'divaciNaZapas'];
   for (const slug of sezony) {
-    const por = getPorovnanie('rfz', slug);
+    const por = getPorovnanie(urovenSlug, slug);
     const sezona = slug.replace('-', '/');
     hodnoty[sezona] = {};
     for (const r of por.zvazy) {
@@ -216,6 +216,16 @@ export function getBumpDataRfz(): BumpData {
     zvazy: [...zvazMap.entries()].map(([id, nazov]) => ({ id, nazov })),
     hodnoty,
   };
+}
+
+/** Bump chart poradia RFZ v čase (4 regionálne zväzy). */
+export function getBumpDataRfz(): BumpData {
+  return getBumpData('rfz');
+}
+
+/** Bump chart poradia ObFZ v čase (38 oblastných zväzov; na frontende výber 2–5). */
+export function getBumpDataObfz(): BumpData {
+  return getBumpData('obfz');
 }
 
 /** Sezóny dostupné pre danú úroveň (zostupne), na prepínač. */
