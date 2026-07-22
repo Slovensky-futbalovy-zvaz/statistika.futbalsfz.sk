@@ -42,6 +42,23 @@ def _event_count(event_type: str) -> dict:
     }
 
 
+#: Stav zápasu: ISSF import (__issfMatchStatus) s fallbackom na natívne pole `state`.
+_STATUS_EXPR = {"$ifNull": ["$__issfMatchStatus", "$state"]}
+
+#: Príznak administratívne ukončeného zápasu BEZ reálneho zápisu o stretnutí:
+#: kontumácia / odstúpené družstvo, ktoré sa fyzicky nehralo — žiadne udalosti
+#: v protokole a žiadna zaznamenaná návštevnosť. Takéto zápasy sa NEZAPOČÍTAVAJÚ
+#: do „odohraných“ (kpi.zapasy). Reálne odohrané kontumácie/odstúpenia (majú
+#: protokol/divákov) ostávajú započítané. Definícia a validácia: docs/metodika.md.
+_ADMIN_NEODOHRANY_EXPR = {
+    "$and": [
+        {"$in": [_STATUS_EXPR, ["KONTUMOVANY", "ODSTUPENE_DRUZSTVO"]]},
+        {"$eq": [{"$size": {"$ifNull": ["$protocol.events", []]}}, 0]},
+        {"$eq": [{"$convert": {"input": "$protocol.audience", "to": "double", "onError": 0, "onNull": 0}}, 0]},
+    ]
+}
+
+
 def cat_fallback_expr(part_map: dict | None):
     """Fallback vekovej kategórie z časti súťaže (competitions.parts[].rules.category).
 
@@ -151,8 +168,12 @@ _PERSON_FACET = [
 def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None, corrections=None):
     """Zápasy, góly, karty a diváci po vekových kategóriách.
 
-    divaciPokrytych = počet zápasov s vyplneným protocol.audience (vrátane 0);
-    {$gt: [x, null]} je v BSON poradí typov true pre každú ne-null hodnotu.
+    zapasy = REÁLNE ODOHRANÉ = closed:true bez administratívnych kontumácií/
+    odstúpení bez zápisu (viď _ADMIN_NEODOHRANY_EXPR, docs/metodika.md).
+    uzatvorene = všetky closed:true (pôvodná báza, pre transparentnosť).
+    administrativne = kontumácie/odstúpenia bez reálneho odohratia (odpočítané zo `zapasy`).
+    kontumovane/odstupene = doplnkové kategórie (__issfMatchStatus) so split *Admin.
+    divaciPokrytych = počet zápasov s vyplneným protocol.audience (vrátane 0).
     Diváci prechádzajú korekčnou vrstvou (audience_expr).
     """
     return [
@@ -160,6 +181,8 @@ def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None,
         {
             "$project": {
                 "cat": _cat_zapas(part_map),
+                "status": _STATUS_EXPR,
+                "admin": _ADMIN_NEODOHRANY_EXPR,
                 "goly": _event_count("goal"),
                 "zlte": _event_count("yellow_card"),
                 "cervene": _event_count("red_card"),
@@ -169,7 +192,13 @@ def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None,
         {
             "$group": {
                 "_id": "$cat",
-                "zapasy": {"$sum": 1},
+                "zapasy": {"$sum": {"$cond": ["$admin", 0, 1]}},
+                "uzatvorene": {"$sum": 1},
+                "administrativne": {"$sum": {"$cond": ["$admin", 1, 0]}},
+                "kontumovane": {"$sum": {"$cond": [{"$eq": ["$status", "KONTUMOVANY"]}, 1, 0]}},
+                "kontumovaneAdmin": {"$sum": {"$cond": [{"$and": [{"$eq": ["$status", "KONTUMOVANY"]}, "$admin"]}, 1, 0]}},
+                "odstupene": {"$sum": {"$cond": [{"$eq": ["$status", "ODSTUPENE_DRUZSTVO"]}, 1, 0]}},
+                "odstupeneAdmin": {"$sum": {"$cond": [{"$and": [{"$eq": ["$status", "ODSTUPENE_DRUZSTVO"]}, "$admin"]}, 1, 0]}},
                 "goly": {"$sum": "$goly"},
                 "zlte": {"$sum": "$zlte"},
                 "cervene": {"$sum": "$cervene"},
@@ -184,9 +213,9 @@ def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None,
 def kategorie_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_map=None, corrections=None):
     """Zápasy, góly, karty a diváci po pohlaví × vekovej kategórii.
 
-    Pohlavie výhradne z časti súťaže (gender_expr); zápas patrí práve jednej
-    časti → súčty M+F+NEURCENE presne sedia na celkové KPI (regresná kotva).
-    Diváci prechádzajú korekčnou vrstvou (audience_expr) — rovnako ako v `kategorie`.
+    zapasy = reálne odohrané (bez administratívnych kontumácií/odstúpení bez
+    zápisu), rovnako ako v `kategorie` → súčty M+F+NEURCENE sedia na KPI.
+    Pohlavie výhradne z časti súťaže (gender_expr). Diváci cez audience_expr.
     """
     g = gender_expr(part_map)
     return [
@@ -195,6 +224,7 @@ def kategorie_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_
             "$project": {
                 "gender": g if g is not None else {"$literal": None},
                 "cat": _cat_zapas(part_map),
+                "admin": _ADMIN_NEODOHRANY_EXPR,
                 "goly": _event_count("goal"),
                 "zlte": _event_count("yellow_card"),
                 "cervene": _event_count("red_card"),
@@ -204,7 +234,7 @@ def kategorie_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_
         {
             "$group": {
                 "_id": {"gender": "$gender", "cat": "$cat"},
-                "zapasy": {"$sum": 1},
+                "zapasy": {"$sum": {"$cond": ["$admin", 0, 1]}},
                 "goly": {"$sum": "$goly"},
                 "zlte": {"$sum": "$zlte"},
                 "cervene": {"$sum": "$cervene"},

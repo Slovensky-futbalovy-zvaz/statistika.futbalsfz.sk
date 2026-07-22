@@ -251,26 +251,19 @@ def vygeneruj(
     )
     pocet_sutazi = sutaze_raw[0]["sutaze"] if sutaze_raw else 0
 
-    kontum_raw = agreguj(
-        db, pipelines.kontumovane_pocet(spaces, varianty, sport_sector), "kontumovane"
-    )
-    kontumovane = kontum_raw[0]["kontumovane"] if kontum_raw else 0
-
     sutaze_kat_raw = agreguj(
         db, pipelines.pocet_sutazi_kategorie(spaces, varianty, sport_sector, part_map), "pocet-sutazi-kat"
     )
-    kontum_kat_raw = agreguj(
-        db, pipelines.kontumovane_kategorie(spaces, varianty, sport_sector, part_map), "kontumovane-kat"
-    )
     sut_map = {(x["_id"] or "NEZNAMA"): x["sutaze"] for x in sutaze_kat_raw}
-    kon_map = {(x["_id"] or "NEZNAMA"): x["kontumovane"] for x in kontum_kat_raw}
 
     druz = {r["_id"]: r["druzstva"] for r in druz_raw}
     kategorie = {}
     for r in kat_raw:
         cat = r["_id"] if r["_id"] else "NEZNAMA"
         kategorie[cat] = {
-            "zapasy": r["zapasy"],
+            "zapasy": r["zapasy"],                       # reálne odohrané (bez admin.)
+            "uzatvorene": r.get("uzatvorene", r["zapasy"]),  # všetky closed:true
+            "administrativne": r.get("administrativne", 0),  # kontum./odstúp. bez zápisu
             "druzstva": druz.get(r["_id"], 0),
             "goly": r["goly"],
             "zlte": r["zlte"],
@@ -278,11 +271,20 @@ def vygeneruj(
             "divaci": r["divaci"],
             "divaciPokrytych": r["divaciPokrytych"],
             "sutaze": sut_map.get(cat, 0),
-            "kontumovane": kon_map.get(cat, 0),
+            "kontumovane": r.get("kontumovane", 0),
+            "kontumovaneAdmin": r.get("kontumovaneAdmin", 0),
+            "odstupene": r.get("odstupene", 0),
+            "odstupeneAdmin": r.get("odstupeneAdmin", 0),
         }
     kategorie = validate.zorad_kategorie(kategorie)
 
     zapasy = sum(k["zapasy"] for k in kategorie.values())
+    uzatvorene = sum(k["uzatvorene"] for k in kategorie.values())
+    administrativne = sum(k["administrativne"] for k in kategorie.values())
+    kontumovane = sum(k["kontumovane"] for k in kategorie.values())
+    kontumovaneAdmin = sum(k["kontumovaneAdmin"] for k in kategorie.values())
+    odstupene = sum(k["odstupene"] for k in kategorie.values())
+    odstupeneAdmin = sum(k["odstupeneAdmin"] for k in kategorie.values())
     pokrytych = sum(k["divaciPokrytych"] for k in kategorie.values())
 
     doc = {
@@ -291,7 +293,7 @@ def vygeneruj(
         "sportSector": sport_sector,
         "generatedAt": datetime.now(timezone(timedelta(hours=2))).isoformat(timespec="seconds"),
         "methodologyFlags": {
-            "zapasy": "len closed:true",
+            "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
             "divaciPokrytie": round(pokrytych / zapasy, 3) if zapasy else 0.0,
             "osobyPoznamka": (
                 "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb "
@@ -304,19 +306,33 @@ def vygeneruj(
                 "sa v družstvách počíta v oboch pohlaviach."
             ),
             "kontumovanePoznamka": (
-                "kpi.kontumovane = počet zápasov s contumation.isContumated=True. Sú súčasťou "
-                "kpi.zapasy (closed:true zahŕňa aj kontumované zápasy), nie sú z neho odpočítané."
+                "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, "
+                "fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna "
+                "časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná "
+                "z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true."
+            ),
+            "administrativnePoznamka": (
+                "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho "
+                "odohratia (žiadne udalosti v protokole a žiadna návštevnosť). "
+                "kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
             ),
         },
         "kpi": {
             "sutaze": pocet_sutazi,
             "zapasy": zapasy,
+            "uzatvorene": uzatvorene,
+            "administrativne": administrativne,
             "druzstva": sum(k["druzstva"] for k in kategorie.values()),
             "goly": sum(k["goly"] for k in kategorie.values()),
             "divaci": sum(k["divaci"] for k in kategorie.values()),
             "zlteKarty": sum(k["zlte"] for k in kategorie.values()),
             "cerveneKarty": sum(k["cervene"] for k in kategorie.values()),
             "kontumovane": kontumovane,
+            "kontumovaneAdmin": kontumovaneAdmin,
+            "kontumovaneOdohrane": kontumovane - kontumovaneAdmin,
+            "odstupene": odstupene,
+            "odstupeneAdmin": odstupeneAdmin,
+            "odstupeneOdohrane": odstupene - odstupeneAdmin,
         },
         "kategorie": kategorie,
         "pohlavie": _zloz_pohlavie(kat_g_raw, druz_g_raw),
