@@ -4,6 +4,20 @@ Aktuálny stav úloh projektu statistika.futbalsfz.sk. Udržiava sa priebežne v
 
 **Stav k:** 19. 7. 2026 (session: vizuálny redizajn podľa design handoff — React islands)
 
+## Odohraté zápasy — vylúčenie administratívnych kontumácií/odstúpení (22. 7. 2026)
+
+Rozhodnutie PO + implementácia (ADR-0008, metodika). „Odohraté zápasy" = uzatvorené − administratívne kontumácie/odstúpenia bez zápisu (bez udalostí a bez divákov).
+
+- [x] ETL zväzy (pipelines, run.py) + kluby (kluby.py): reálne odohrané + doplnkové KPI (uzatvorene/administrativne/kontumovane/odstupene so split).
+- [x] Prepočet všetkých sezón 2012/2013–2026/2027 — zväzy, kluby, futsal + odvodené (sumar, porovnania).
+- [x] Web: stránka Dokumentácia + menu, FAQ prepísané, karta Odstúpené, metodické poznámky.
+- [x] Nový runner `etl/prepocet.sh` (zväz×sezóna + kluby + futsal).
+- [x] Build 10 948 strán, 0 chýb; commitnuté do main.
+- [ ] (voliteľné) Klubové stránky na všetky sezóny (`getKlubSezonyPaged` okno) — zatiaľ posledné sezóny.
+- [ ] (budúce) Explicitný ISSF príznak „zápis podaný" namiesto proxy.
+
+Dopad 2025/2026: 63 943 uzatvorených → 60 958 odohraných (2 985 administratívnych, ≈ 4,7 %).
+
 ## Redizajn 2026 (design_handoff_statistika_redesign) — 19. 7. 2026
 
 Kompletný vizuálny redizajn portálu podľa handoffu. **React islands** (ADR-0007), brand tokeny z `theme.css`, Archivo fonty, kontajner 1240px. Fázy:
