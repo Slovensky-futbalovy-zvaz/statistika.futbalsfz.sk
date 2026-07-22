@@ -145,6 +145,19 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
 </section>
 {predoslaSezona && <p class="mt-2 text-xs text-muted">Medziročná zmena oproti sezóne {predoslaSezona}.</p>}
 
+{
+  obfzMapa && obfzMapa.regions.length > 0 && (
+    <section class="mt-8">
+      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Mapa regiónu</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">ObFZ pod týmto RFZ</h2>
+      <p class="text-sm text-muted mb-3">
+        Oblastné futbalové zväzy patriace pod {z.nazov} v sezóne {sezona}. Klikni na oblasť na mape alebo na položku rebríčka pre profil ObFZ.
+      </p>
+      <RfzObfzMapa client:visible mapa={obfzMapa} />
+    </section>
+  )
+}
+
 <!-- zápasy podľa kategórií -->
 <section class="mt-8 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
   <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vekové kategórie</div>
@@ -192,19 +205,6 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
       <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Veková pyramída</h2>
       <p class="text-sm text-muted mb-3">Registrované osoby podľa veku a pohlavia v sezóne {sezona}. Prepni rolu.</p>
       <AgePyramid client:visible demo={demo} sezona={sezona} />
-    </section>
-  )
-}
-
-{
-  obfzMapa && obfzMapa.regions.length > 0 && (
-    <section class="mt-8">
-      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Mapa regiónu</div>
-      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">ObFZ pod týmto RFZ</h2>
-      <p class="text-sm text-muted mb-3">
-        Oblastné futbalové zväzy patriace pod {z.nazov} v sezóne {sezona}. Klikni na oblasť na mape alebo na položku rebríčka pre profil ObFZ.
-      </p>
-      <RfzObfzMapa client:visible mapa={obfzMapa} />
     </section>
   )
 }
