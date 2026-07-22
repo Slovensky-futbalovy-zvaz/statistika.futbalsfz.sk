@@ -2,54 +2,85 @@
   "zvaz": "sfz",
   "sezona": "2019/2020",
   "sportSector": "futsal",
-  "generatedAt": "2026-07-20T16:49:46+02:00",
+  "generatedAt": "2026-07-22T20:54:50+02:00",
   "methodologyFlags": {
-    "zapasy": "len closed:true",
-    "divaciPokrytie": 0.944,
+    "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
+    "divaciPokrytie": 1.0,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
-    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach."
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
+    "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
+    "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
   },
   "kpi": {
     "sutaze": 4,
-    "zapasy": 252,
+    "zapasy": 238,
+    "uzatvorene": 252,
+    "administrativne": 14,
     "druzstva": 0,
     "goly": 1853,
     "divaci": 20286,
     "zlteKarty": 321,
-    "cerveneKarty": 18
+    "cerveneKarty": 18,
+    "kontumovane": 1,
+    "kontumovaneAdmin": 0,
+    "kontumovaneOdohrane": 1,
+    "odstupene": 14,
+    "odstupeneAdmin": 14,
+    "odstupeneOdohrane": 0
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 133,
+      "zapasy": 119,
+      "uzatvorene": 133,
+      "administrativne": 14,
       "druzstva": 0,
       "goly": 1104,
       "zlte": 182,
       "cervene": 9,
       "divaci": 15995,
-      "divaciPokrytych": 119
+      "divaciPokrytych": 119,
+      "sutaze": 2,
+      "kontumovane": 1,
+      "kontumovaneAdmin": 0,
+      "odstupene": 14,
+      "odstupeneAdmin": 14
     },
     "U20": {
       "zapasy": 77,
+      "uzatvorene": 77,
+      "administrativne": 0,
       "druzstva": 0,
       "goly": 486,
       "zlte": 88,
       "cervene": 7,
       "divaci": 2768,
-      "divaciPokrytych": 77
+      "divaciPokrytych": 77,
+      "sutaze": 1,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 0,
+      "odstupeneAdmin": 0
     },
     "U17": {
       "zapasy": 42,
+      "uzatvorene": 42,
+      "administrativne": 0,
       "druzstva": 0,
       "goly": 263,
       "zlte": 51,
       "cervene": 2,
       "divaci": 1523,
-      "divaciPokrytych": 42
+      "divaciPokrytych": 42,
+      "sutaze": 1,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 0,
+      "odstupeneAdmin": 0
     }
   },
   "pohlavie": {
     "M": {
-      "zapasy": 196,
+      "zapasy": 182,
       "druzstva": 25,
       "goly": 1415,
       "divaci": 18321,
@@ -57,7 +88,7 @@
       "cerveneKarty": 16,
       "kategorie": {
         "ADULTS": {
-          "zapasy": 77,
+          "zapasy": 63,
           "druzstva": 8,
           "goly": 666,
           "zlte": 145,

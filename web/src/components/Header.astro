@@ -17,6 +17,7 @@ const nav = [
   { href: '/porovnania', label: 'Porovnania', match: (p: string) => p.startsWith('/porovnania') },
   { href: '/demografia', label: 'Demografia', match: (p: string) => p.startsWith('/demografia') },
   { href: '/projekty', label: 'Projekty', match: (p: string) => p.startsWith('/projekty') },
+  { href: '/dokumentacia', label: 'Dokumentácia', match: (p: string) => p.startsWith('/dokumentacia') },
 ];
 const items = nav.map((n) => ({ href: n.href, label: n.label, aktivna: n.match(pathname) }));
 const maPicker = sezony && sezony.length > 0 && aktualnaSezona;

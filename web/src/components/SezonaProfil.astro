@@ -49,6 +49,7 @@ const kpiKarty = [
   { label: 'Žlté karty', hodnota: profil.kpi.zlteKarty, predch: predosly?.kpi.zlteKarty, good: false },
   { label: 'Červené karty', hodnota: profil.kpi.cerveneKarty, predch: predosly?.kpi.cerveneKarty, good: false },
   { label: 'Kontumované', hodnota: profil.kpi.kontumovane, predch: predosly?.kpi.kontumovane, good: false },
+  { label: 'Odstúpené', hodnota: profil.kpi.odstupene, predch: predosly?.kpi.odstupene, good: false },
 ].filter((k) => k.hodnota !== undefined) as { label: string; hodnota: number; predch?: number; good: boolean }[];
 
 // osoby ako karty — unikátni + rozpad po 4 skupinách
@@ -226,10 +227,10 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
 }
 
 <p class="mt-8 text-xs text-muted">
-  <b>Metodika:</b> započítané sú len uzavreté zápasy (closed). Góly a karty z udalostí v zápisoch;
+  <b>Metodika:</b> „Zápasy" = reálne odohrané — uzavreté zápasy (closed) bez administratívnych kontumácií a odstúpení bez zápisu. Góly a karty z udalostí v zápisoch;
   diváci z vyplnených protokolov (pokrytie {Math.round(((profil.methodologyFlags?.divaciPokrytie as number) ?? 0) * 100)} %).
   {profil.kpi.kontumovane !== undefined && (
-    <span> Kontumované = počet kontumovaných zápasov; sú súčasťou počtu Zápasy (nie sú z neho odpočítané).</span>
+    <span> Kontumované a Odstúpené sa vykazujú samostatne; ich administratívna časť (bez zápisu) nie je zarátaná do počtu Zápasy.</span>
   )}
   Súčet osôb po kategóriách môže prevyšovať počet unikátnych osôb. Dáta generované {profil.generatedAt}.
 </p>

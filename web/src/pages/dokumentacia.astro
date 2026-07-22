@@ -1,0 +1,130 @@
+---
+import Base from '../layouts/Base.astro';
+
+const dokLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: 'Dokumentácia a metodika výpočtov',
+  inLanguage: 'sk-SK',
+  about: 'Metodika štatistík slovenského futbalu',
+  publisher: { '@type': 'SportsOrganization', name: 'Slovenský futbalový zväz' },
+};
+
+const KICKER = 'text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue';
+const H2 = 'font-extrabold tracking-tight';
+const CARD = 'border border-line';
+const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);';
+---
+
+<Base
+  title="Dokumentácia a metodika"
+  description="Ako vznikajú čísla na portáli Štatistiky slovenského futbalu — zdroj dát, definície ukazovateľov a presné pravidlá výpočtu, napríklad ako sa počítajú odohraté zápasy a ako sa nakladá s kontumáciami a odstúpenými družstvami."
+  keywords="metodika futbalové štatistiky, ako sa počítajú zápasy, kontumácia, odstúpené družstvo, SFZ dokumentácia"
+  jsonLd={[dokLd]}
+>
+  <header class="mb-6">
+    <div class={KICKER}>O portáli</div>
+    <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Dokumentácia a metodika</h1>
+    <p class="mt-2 max-w-3xl text-muted">
+      Táto stránka vysvetľuje, odkiaľ pochádzajú dáta a ako presne sa počítajú ukazovatele
+      na portáli. Cieľom je, aby boli čísla overiteľné a jednoznačné.
+    </p>
+  </header>
+
+  <!-- Zdroj dát -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Zdroj dát</div>
+      <h2 class={H2} style="font-size:20px; margin:4px 0 8px;">Odkiaľ pochádzajú čísla</h2>
+      <p class="text-muted" style="line-height:1.6;">
+        Zdrojom je platforma <strong class="text-ink">sportnet.online</strong>, do ktorej sa dáta
+        prenášajú z pôvodného systému ISSF/Futbalnet. Portál publikuje výhradne <strong class="text-ink">agregované
+        počty</strong> — neuvádza mená osôb. Dáta sa spracúvajú dávkovo (predgenerované súbory),
+        verejný web nemá priamy prístup k databáze.
+      </p>
+    </div>
+  </section>
+
+  <!-- Sezóna -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Sezóna</div>
+      <h2 class={H2} style="font-size:20px; margin:4px 0 8px;">Čo znamená „sezóna 2025/2026"</h2>
+      <p class="text-muted" style="line-height:1.6;">
+        Súťažná sezóna trvá od 1. júla jedného roka do 30. júna nasledujúceho roka, preto sa
+        označuje v tvare rok/rok, napríklad <span class="tnum">2025/2026</span>.
+      </p>
+    </div>
+  </section>
+
+  <!-- Odohraté zápasy -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Kľúčový ukazovateľ</div>
+      <h2 class={H2} style="font-size:20px; margin:4px 0 8px;">Ako sa počítajú „Odohraté zápasy"</h2>
+      <p class="text-muted" style="line-height:1.6;">
+        Do štatistík vstupujú len <strong class="text-ink">uzatvorené</strong> zápasy (uzavretý zápis
+        o stretnutí). Kontumácia však zápas uzatvára automaticky — preto medzi uzatvorenými sú aj
+        zápasy, ktoré sa <strong class="text-ink">fyzicky nikdy neodohrali</strong> (administratívna
+        kontumácia alebo odstúpené družstvo: technický výsledok, žiadny priebeh v zápise, žiadni diváci).
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        Preto <strong class="text-ink">„Odohraté zápasy" = uzatvorené zápasy mínus administratívne
+        ukončené bez zápisu</strong>. Reálne odohraný zápas, ktorý bol dodatočne kontumovaný
+        (má priebeh alebo návštevnosť), zostáva započítaný — vylučujú sa len administratívne
+        prípady bez odohratia.
+      </p>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-sm" style="border-collapse:collapse;">
+          <thead>
+            <tr class="text-left text-muted">
+              <th style="padding:6px 10px; border-bottom:1px solid var(--color-line);">Ukazovateľ</th>
+              <th style="padding:6px 10px; border-bottom:1px solid var(--color-line);">Význam</th>
+            </tr>
+          </thead>
+          <tbody class="text-ink">
+            <tr><td style="padding:6px 10px; border-bottom:1px solid var(--color-line);"><strong>Odohraté zápasy</strong></td><td style="padding:6px 10px; border-bottom:1px solid var(--color-line);">reálne odohrané zápasy (hlavné číslo)</td></tr>
+            <tr><td style="padding:6px 10px; border-bottom:1px solid var(--color-line);">Uzatvorené</td><td style="padding:6px 10px; border-bottom:1px solid var(--color-line);">všetky uzavreté zápasy vrátane administratívnych</td></tr>
+            <tr><td style="padding:6px 10px; border-bottom:1px solid var(--color-line);">Kontumované</td><td style="padding:6px 10px; border-bottom:1px solid var(--color-line);">z toho kontumácie (samostatne, so split odohrané/administratívne)</td></tr>
+            <tr><td style="padding:6px 10px; border-bottom:1px solid var(--color-line);">Odstúpené</td><td style="padding:6px 10px; border-bottom:1px solid var(--color-line);">z toho odstúpené družstvá (samostatne, so split)</td></tr>
+            <tr><td style="padding:6px 10px;">Administratívne</td><td style="padding:6px 10px;">kontumácie/odstúpenia bez odohratia — odpočítané z „Odohratých"</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-sm text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Príklad (ObFZ Nitra, 2025/2026):</strong> 2 786 uzatvorených zápasov,
+        z toho 155 administratívnych bez odohratia → <span class="tnum">2 631</span> reálne odohratých.
+        Rovnaké pravidlo platí pre všetky zväzy a sezóny.
+      </p>
+    </div>
+  </section>
+
+  <!-- Diváci -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Návštevnosť</div>
+      <h2 class={H2} style="font-size:20px; margin:4px 0 8px;">Diváci a pokrytie</h2>
+      <p class="text-muted" style="line-height:1.6;">
+        Diváci vychádzajú z návštevnosti vyplnenej v zápise o stretnutí. Keďže nie každý zápis má
+        údaj vyplnený, pri návštevnosti sa uvádza <strong class="text-ink">percentuálne pokrytie</strong>
+        (podiel zápasov s vyplnenou návštevnosťou).
+      </p>
+    </div>
+  </section>
+
+  <!-- Kategórie a pohlavie -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Členenie</div>
+      <h2 class={H2} style="font-size:20px; margin:4px 0 8px;">Vekové kategórie a pohlavie</h2>
+      <p class="text-muted" style="line-height:1.6;">
+        Zápasy a osoby sa členia podľa vekových kategórií (dospelí, dorast, žiaci, prípravky) a podľa
+        pohlavia. Súčty po kategóriách aj po pohlaví sa rovnajú celkovým číslam daného zväzu a sezóny.
+      </p>
+    </div>
+  </section>
+
+  <p class="text-sm text-muted">
+    Máte otázku k metodike? Napíšte na <a href="mailto:jan.letko@futbalsfz.sk" class="text-sfz-blue font-semibold">jan.letko@futbalsfz.sk</a>.
+  </p>
+</Base>

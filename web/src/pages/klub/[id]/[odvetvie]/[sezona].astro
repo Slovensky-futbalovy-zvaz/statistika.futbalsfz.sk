@@ -80,6 +80,9 @@ const kpiKarty = [
   ...(klub.kpi.kontumovane !== undefined
     ? [{ label: 'Kontumované', hodnota: klub.kpi.kontumovane, predch: predosly?.kpi.kontumovane, good: false }]
     : []),
+  ...(klub.kpi.odstupene !== undefined
+    ? [{ label: 'Odstúpené', hodnota: klub.kpi.odstupene, predch: predosly?.kpi.odstupene, good: false }]
+    : []),
 ];
 
 const osobaLabel: Record<string, string> = { hraci: 'Hráči', treneri: 'Tréneri', realizacnyTim: 'Realizačný tím' };
@@ -214,6 +217,6 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
   }
 
   <p class="mt-8 text-xs text-muted">
-    <b>Metodika:</b> len uzavreté zápasy; klub = organizácia (`teams.organization`). Góly a karty priradené tímu klubu z protokolu; osoby = hráči a tréneri klubu (rozhodcovia/delegáti nie sú klubové). Diváci = návštevnosť zápasov klubu (pokrytie {Math.round(((klub.methodologyFlags?.divaciPokrytie as number) ?? 0) * 100)} %). {klub.kpi.kontumovane !== undefined && <span>Kontumované = počet kontumovaných zápasov; sú súčasťou počtu Zápasy (nie sú odpočítané). </span>}Dáta generované {klub.generatedAt}.
+    <b>Metodika:</b> „Zápasy" = reálne odohrané — uzavreté zápasy bez administratívnych kontumácií/odstúpení bez zápisu; klub = organizácia (`teams.organization`). Góly a karty priradené tímu klubu z protokolu; osoby = hráči a tréneri klubu (rozhodcovia/delegáti nie sú klubové). Diváci = návštevnosť zápasov klubu (pokrytie {Math.round(((klub.methodologyFlags?.divaciPokrytie as number) ?? 0) * 100)} %). {klub.kpi.kontumovane !== undefined && <span>Kontumované a Odstúpené sa vykazujú samostatne; ich administratívna časť (bez zápisu) nie je zarátaná do počtu Zápasy. </span>}Dáta generované {klub.generatedAt}.
   </p>
 </Base>

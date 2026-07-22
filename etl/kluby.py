@@ -77,6 +77,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             "nominations.teamId": 1, "nominations.athletes.sportnetUser._id": 1,
             "nominations.crew.sportnetUser._id": 1, "nominations.crew.position": 1,
             "contumation.isContumated": 1,
+            "__issfMatchStatus": 1, "state": 1,
         },
         no_cursor_timeout=True,
     )
@@ -93,13 +94,21 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
                 "hraci": {"unik": set(), "kat": {}},   # cat → set(pid)
                 "treneri": {"unik": set(), "kat": {}},
                 "realizacnyTim": {"unik": set(), "kat": {}},
-                "kontumovane": 0,  # #kontumácie: počet zápasov klubu s contumation.isContumated=True
+                # doplnkové kategórie zápasov (__issfMatchStatus) so split administratívne (bez zápisu)
+                "kontumovane": 0, "kontumovaneAdmin": 0,
+                "odstupene": 0, "odstupeneAdmin": 0,
             }
         return k
 
     for m in cur:
         aps = m.get("appSpace")
         audience = (m.get("protocol") or {}).get("audience")
+        # administratívne ukončený zápas BEZ reálneho odohratia (viď docs/metodika.md):
+        # KONTUMOVANY/ODSTUPENE_DRUZSTVO + žiadne udalosti v protokole + žiadni diváci.
+        _status = m.get("__issfMatchStatus") or m.get("state")
+        _bez_udalosti = not ((m.get("protocol") or {}).get("events"))
+        _bez_divakov = not (isinstance(audience, int) and audience > 0)
+        _admin = _status in ("KONTUMOVANY", "ODSTUPENE_DRUZSTVO") and _bez_udalosti and _bez_divakov
         # mapa teamId(str) → (org_id, nazov, cat)
         tmap = {}
         for t in m.get("teams", []):
@@ -116,10 +125,20 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
         for tid, (oid, nazov, cat) in tmap.items():
             k = klub(oid, nazov)
             k["appSpaceCount"][aps] = k["appSpaceCount"].get(aps, 0) + 1
-            kc = k["kat"].setdefault(cat, {"zapasy": 0, "druzstva": set(), "goly": 0, "zlte": 0, "cervene": 0, "divaci": 0, "divaciPokrytych": 0})
-            kc["zapasy"] += 1
-            if (m.get("contumation") or {}).get("isContumated"):
+            kc = k["kat"].setdefault(cat, {"zapasy": 0, "uzatvorene": 0, "administrativne": 0, "druzstva": set(), "goly": 0, "zlte": 0, "cervene": 0, "divaci": 0, "divaciPokrytych": 0})
+            kc["uzatvorene"] += 1
+            if _admin:
+                kc["administrativne"] += 1
+            else:
+                kc["zapasy"] += 1  # reálne odohrané
+            if _status == "KONTUMOVANY":
                 k["kontumovane"] += 1
+                if _admin:
+                    k["kontumovaneAdmin"] += 1
+            elif _status == "ODSTUPENE_DRUZSTVO":
+                k["odstupene"] += 1
+                if _admin:
+                    k["odstupeneAdmin"] += 1
             kc["druzstva"].add(tid)
             if isinstance(audience, int) and 0 <= audience < 200000:
                 kc["divaci"] += audience
@@ -178,20 +197,29 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
         kategorie = {}
         for cat, kc in k["kat"].items():
             kategorie[cat] = {
-                "zapasy": kc["zapasy"], "druzstva": len(kc["druzstva"]), "goly": kc["goly"],
+                "zapasy": kc["zapasy"], "uzatvorene": kc["uzatvorene"], "administrativne": kc["administrativne"],
+                "druzstva": len(kc["druzstva"]), "goly": kc["goly"],
                 "zlte": kc["zlte"], "cervene": kc["cervene"], "divaci": kc["divaci"], "divaciPokrytych": kc["divaciPokrytych"],
             }
         kategorie = validate.zorad_kategorie(kategorie)
         zapasy = sum(c["zapasy"] for c in kategorie.values())
-        # zápas klubu sa v kpi.zapasy nesmie dvojiť medzi kategóriami toho istého zápasu je OK
+        uzatvorene = sum(c["uzatvorene"] for c in kategorie.values())
+        administrativne = sum(c["administrativne"] for c in kategorie.values())
         kpi = {
             "zapasy": zapasy,
+            "uzatvorene": uzatvorene,
+            "administrativne": administrativne,
             "druzstva": sum(c["druzstva"] for c in kategorie.values()),
             "goly": sum(c["goly"] for c in kategorie.values()),
             "divaci": sum(c["divaci"] for c in kategorie.values()),
             "zlteKarty": sum(c["zlte"] for c in kategorie.values()),
             "cerveneKarty": sum(c["cervene"] for c in kategorie.values()),
             "kontumovane": k["kontumovane"],
+            "kontumovaneAdmin": k["kontumovaneAdmin"],
+            "kontumovaneOdohrane": k["kontumovane"] - k["kontumovaneAdmin"],
+            "odstupene": k["odstupene"],
+            "odstupeneAdmin": k["odstupeneAdmin"],
+            "odstupeneOdohrane": k["odstupene"] - k["odstupeneAdmin"],
         }
 
         def osoba(o):
@@ -203,10 +231,10 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             "zvaz": zv["id"], "uroven": zv["uroven"],
             "generatedAt": teraz(),
             "methodologyFlags": {
-                "zapasy": "len closed:true; klub = teams.organization._id",
+                "zapasy": "reálne odohrané (closed:true bez administratívnych kontumácií/odstúpení bez zápisu); uzatvorene = všetky closed:true; klub = teams.organization._id",
                 "divaciPokrytie": round(pokrytych / zapasy, 3) if zapasy else 0.0,
                 "poznamka": "Góly/karty priradené tímu klubu z protocol.events; osoby = hráči (nominations) a tréneri (crew) klubu. Rozhodcovia/delegáti nie sú klubové.",
-            "kontumovanePoznamka": "kpi.kontumovane = počet zápasov klubu s contumation.isContumated=True. Sú súčasťou kpi.zapasy (closed:true zahŕňa aj kontumované zápasy), nie sú z neho odpočítané.",
+                "kontumovanePoznamka": "kpi.kontumovane = zápasy klubu so statusom KONTUMOVANY, kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu) je odpočítaná z kpi.zapasy; kpi.uzatvorene = všetky closed:true.",
             },
             "kpi": kpi,
             "kategorie": kategorie,

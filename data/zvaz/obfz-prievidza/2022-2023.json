@@ -2,89 +2,133 @@
   "zvaz": "obfz-prievidza",
   "sezona": "2022/2023",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-20T22:07:00+02:00",
+  "generatedAt": "2026-07-22T17:51:48+02:00",
   "methodologyFlags": {
-    "zapasy": "len closed:true",
-    "divaciPokrytie": 0.915,
+    "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
+    "divaciPokrytie": 1.0,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
-    "kontumovanePoznamka": "kpi.kontumovane = počet zápasov s contumation.isContumated=True. Sú súčasťou kpi.zapasy (closed:true zahŕňa aj kontumované zápasy), nie sú z neho odpočítané."
+    "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
+    "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
   },
   "kpi": {
     "sutaze": 13,
-    "zapasy": 1863,
+    "zapasy": 1705,
+    "uzatvorene": 1863,
+    "administrativne": 158,
     "druzstva": 0,
     "goly": 6471,
     "divaci": 124799,
     "zlteKarty": 2476,
     "cerveneKarty": 87,
-    "kontumovane": 31
+    "kontumovane": 31,
+    "kontumovaneAdmin": 11,
+    "kontumovaneOdohrane": 20,
+    "odstupene": 183,
+    "odstupeneAdmin": 147,
+    "odstupeneOdohrane": 36
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 820,
+      "zapasy": 768,
+      "uzatvorene": 820,
+      "administrativne": 52,
       "druzstva": 0,
       "goly": 3310,
       "zlte": 2174,
       "cervene": 72,
       "divaci": 84362,
       "divaciPokrytych": 768,
-      "sutaze": 5
+      "sutaze": 5,
+      "kontumovane": 17,
+      "kontumovaneAdmin": 7,
+      "odstupene": 59,
+      "odstupeneAdmin": 45
     },
     "U19": {
-      "zapasy": 216,
+      "zapasy": 161,
+      "uzatvorene": 216,
+      "administrativne": 55,
       "druzstva": 0,
       "goly": 956,
       "zlte": 226,
       "cervene": 12,
       "divaci": 6606,
       "divaciPokrytych": 161,
-      "sutaze": 2
+      "sutaze": 2,
+      "kontumovane": 5,
+      "kontumovaneAdmin": 2,
+      "odstupene": 64,
+      "odstupeneAdmin": 53
     },
     "U15": {
-      "zapasy": 231,
+      "zapasy": 219,
+      "uzatvorene": 231,
+      "administrativne": 12,
       "druzstva": 0,
       "goly": 1385,
       "zlte": 67,
       "cervene": 2,
       "divaci": 7518,
       "divaciPokrytych": 219,
-      "sutaze": 1
+      "sutaze": 1,
+      "kontumovane": 5,
+      "kontumovaneAdmin": 1,
+      "odstupene": 14,
+      "odstupeneAdmin": 11
     },
     "U13": {
-      "zapasy": 72,
+      "zapasy": 71,
+      "uzatvorene": 72,
+      "administrativne": 1,
       "druzstva": 0,
       "goly": 432,
       "zlte": 9,
       "cervene": 1,
       "divaci": 2161,
       "divaciPokrytych": 71,
-      "sutaze": 1
+      "sutaze": 1,
+      "kontumovane": 4,
+      "kontumovaneAdmin": 1,
+      "odstupene": 0,
+      "odstupeneAdmin": 0
     },
     "U11": {
-      "zapasy": 389,
+      "zapasy": 356,
+      "uzatvorene": 389,
+      "administrativne": 33,
       "druzstva": 0,
       "goly": 209,
       "zlte": 0,
       "cervene": 0,
       "divaci": 17159,
       "divaciPokrytych": 356,
-      "sutaze": 2
+      "sutaze": 2,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 41,
+      "odstupeneAdmin": 33
     },
     "U09": {
-      "zapasy": 135,
+      "zapasy": 130,
+      "uzatvorene": 135,
+      "administrativne": 5,
       "druzstva": 0,
       "goly": 179,
       "zlte": 0,
       "cervene": 0,
       "divaci": 6993,
       "divaciPokrytych": 130,
-      "sutaze": 2
+      "sutaze": 2,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 5,
+      "odstupeneAdmin": 5
     }
   },
   "pohlavie": {
     "M": {
-      "zapasy": 1863,
+      "zapasy": 1705,
       "druzstva": 173,
       "goly": 6471,
       "divaci": 124799,
@@ -92,7 +136,7 @@
       "cerveneKarty": 87,
       "kategorie": {
         "ADULTS": {
-          "zapasy": 820,
+          "zapasy": 768,
           "druzstva": 58,
           "goly": 3310,
           "zlte": 2174,
@@ -101,7 +145,7 @@
           "divaciPokrytych": 768
         },
         "U19": {
-          "zapasy": 216,
+          "zapasy": 161,
           "druzstva": 21,
           "goly": 956,
           "zlte": 226,
@@ -110,7 +154,7 @@
           "divaciPokrytych": 161
         },
         "U15": {
-          "zapasy": 231,
+          "zapasy": 219,
           "druzstva": 31,
           "goly": 1385,
           "zlte": 67,
@@ -119,7 +163,7 @@
           "divaciPokrytych": 219
         },
         "U13": {
-          "zapasy": 72,
+          "zapasy": 71,
           "druzstva": 9,
           "goly": 432,
           "zlte": 9,
@@ -128,7 +172,7 @@
           "divaciPokrytych": 71
         },
         "U11": {
-          "zapasy": 389,
+          "zapasy": 356,
           "druzstva": 38,
           "goly": 209,
           "zlte": 0,
@@ -137,7 +181,7 @@
           "divaciPokrytych": 356
         },
         "U09": {
-          "zapasy": 135,
+          "zapasy": 130,
           "druzstva": 16,
           "goly": 179,
           "zlte": 0,
