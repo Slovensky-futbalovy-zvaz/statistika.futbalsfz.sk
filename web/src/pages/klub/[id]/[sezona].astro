@@ -3,6 +3,8 @@ import Base from '../../../layouts/Base.astro';
 import CategoryDrill from '../../../components/CategoryDrill.tsx';
 import KlubPicker from '../../../components/KlubPicker.tsx';
 import AgePyramid from '../../../components/AgePyramid.tsx';
+import SeasonPicker from '../../../components/SeasonPicker.tsx';
+import KpiTrend from '../../../components/KpiTrend.tsx';
 import { fmt, delta } from '../../../lib/format';
 import { GROUPS } from '../../../lib/palette';
 import { getKlubyPaths, getKlub, getKlubSezony, getKlubSezonyPaged, getKluby, getZvaz, odvetviaKlubu, ODVETVIE_LABEL, getDemografiaKlub } from '../../../lib/data';
@@ -17,6 +19,8 @@ const klub = getKlub(id!, sezona);
 if (!klub) throw new Error(`Klub ${id} ${sezona} neexistuje`);
 
 const sezony = getKlubSezony(id!); // všetky (pre medziročné porovnanie)
+const trendPerSeason: Record<string, any> = {};
+for (const s of sezony) { const kk = getKlub(id!, s); if (kk) trendPerSeason[s] = (kk as any).kategorie ?? {}; }
 function odvetvieUrl(o: string, s: string): string {
   const slug = s.replace('/', '-');
   return o === 'futbal' ? `/klub/${id}/${slug}` : `/klub/${id}/${o}/${slug}`;
@@ -120,14 +124,9 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
     </div>
   </header>
 
-  <div class="mb-6 flex flex-wrap items-center gap-1.5">
-    <span class="mr-1 text-xs font-semibold uppercase tracking-wider text-muted">Sezóna:</span>
-    {
-      sezonyPaged.slice().reverse().map((s) => (
-        <a href={`/klub/${id}/${s.replace('/', '-')}`} class:list={['rounded-md border px-2 py-0.5 text-sm', s === sezona ? 'border-sfz-blue bg-sfz-blue text-white font-semibold' : 'border-black/10 text-sfz-blue hover:bg-black/5']}>{s}</a>
-      ))
-    }
-    {sezony.length > sezonyPaged.length && <span class="text-xs text-muted">(zobrazujeme posledné sezóny; medziročná zmena počíta aj so staršími dátami)</span>}
+  <div class="mb-6 flex flex-wrap items-center gap-2">
+    <span class="text-xs font-semibold uppercase tracking-wider text-muted">Sezóna:</span>
+    <SeasonPicker client:load sezony={sezony} aktualna={sezona} hrefTemplate={`/klub/${id}/{sezona}`} />
   </div>
 
   <section class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">

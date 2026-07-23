@@ -1,6 +1,6 @@
 {
  "sezona": "2012/2013",
- "generatedAt": "2026-07-23T16:21:53+02:00",
+ "generatedAt": "2026-07-23T17:24:15+02:00",
  "pocetZvazov": 15,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
@@ -9,11 +9,101 @@
  "kpi": {
   "sutaze": 109,
   "zapasy": 14617,
+  "uzatvorene": 15124,
+  "administrativne": 507,
   "druzstva": 0,
   "goly": 58427,
   "divaci": 1921014,
   "zlteKarty": 30791,
-  "cerveneKarty": 1154
+  "cerveneKarty": 1154,
+  "kontumovane": 345,
+  "kontumovaneAdmin": 140,
+  "kontumovaneOdohrane": 205,
+  "odstupene": 543,
+  "odstupeneAdmin": 367,
+  "odstupeneOdohrane": 176
+ },
+ "kategorie": {
+  "ADULTS": {
+   "zapasy": 7410,
+   "uzatvorene": 7560,
+   "administrativne": 150,
+   "druzstva": 0,
+   "goly": 25830,
+   "zlte": 22130,
+   "cervene": 761,
+   "divaci": 1631174
+  },
+  "U19": {
+   "zapasy": 2460,
+   "uzatvorene": 2597,
+   "administrativne": 137,
+   "druzstva": 0,
+   "goly": 10459,
+   "zlte": 5044,
+   "cervene": 252,
+   "divaci": 115921
+  },
+  "U17": {
+   "zapasy": 1118,
+   "uzatvorene": 1161,
+   "administrativne": 43,
+   "druzstva": 0,
+   "goly": 3993,
+   "zlte": 1787,
+   "cervene": 65,
+   "divaci": 46903
+  },
+  "U16": {
+   "zapasy": 87,
+   "uzatvorene": 99,
+   "administrativne": 12,
+   "druzstva": 0,
+   "goly": 500,
+   "zlte": 12,
+   "cervene": 1,
+   "divaci": 3375
+  },
+  "U15": {
+   "zapasy": 2266,
+   "uzatvorene": 2391,
+   "administrativne": 125,
+   "druzstva": 0,
+   "goly": 11406,
+   "zlte": 1653,
+   "cervene": 69,
+   "divaci": 83299
+  },
+  "U13": {
+   "zapasy": 1006,
+   "uzatvorene": 1045,
+   "administrativne": 39,
+   "druzstva": 0,
+   "goly": 4696,
+   "zlte": 144,
+   "cervene": 6,
+   "divaci": 31796
+  },
+  "U12": {
+   "zapasy": 254,
+   "uzatvorene": 255,
+   "administrativne": 1,
+   "druzstva": 0,
+   "goly": 1428,
+   "zlte": 21,
+   "cervene": 0,
+   "divaci": 8123
+  },
+  "U11": {
+   "zapasy": 16,
+   "uzatvorene": 16,
+   "administrativne": 0,
+   "druzstva": 0,
+   "goly": 115,
+   "zlte": 0,
+   "cervene": 0,
+   "divaci": 423
+  }
  },
  "osoby": {
   "hraci": 29180,

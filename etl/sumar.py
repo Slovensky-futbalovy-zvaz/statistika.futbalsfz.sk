@@ -41,7 +41,9 @@ ROLA_NAZOV = {
     "delegati": "Delegáti",
     "personal": "Personál",
 }
-KPI_KLUCE = ["sutaze", "zapasy", "druzstva", "goly", "divaci", "zlteKarty", "cerveneKarty"]
+KPI_KLUCE = ["sutaze", "zapasy", "uzatvorene", "administrativne", "druzstva", "goly", "divaci", "zlteKarty", "cerveneKarty", "kontumovane", "kontumovaneAdmin", "kontumovaneOdohrane", "odstupene", "odstupeneAdmin", "odstupeneOdohrane"]
+#: Metriky sčítané po vekových kategóriách (pre celoslovenský trend po úrovniach).
+KAT_METRIKY = ["zapasy", "uzatvorene", "administrativne", "druzstva", "goly", "zlte", "cervene", "divaci"]
 
 
 def load_json(path: Path) -> dict:
@@ -260,6 +262,7 @@ def main() -> None:
 
     for sezona in sorted(sezony):
         kpi: dict = {}
+        kat: dict = {}
         osoby = {rola: 0 for rola in ROLY}
         pocet_zvazov = 0
         for z in vsetky:
@@ -268,6 +271,10 @@ def main() -> None:
                 continue
             pocet_zvazov += 1
             scitaj_kpi(kpi, p["kpi"])
+            for c, cd in (p.get("kategorie") or {}).items():
+                acc = kat.setdefault(c, {m: 0 for m in KAT_METRIKY})
+                for m in KAT_METRIKY:
+                    acc[m] += cd.get(m, 0) or 0
             for rola in ROLY:
                 osoby[rola] += p.get("osoby", {}).get(rola, {}).get("unikatni", 0)
 
@@ -296,6 +303,7 @@ def main() -> None:
                 "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia.",
             },
             "kpi": kpi,
+            "kategorie": kat,
             "osoby": {**osoby, "spolu": sum(osoby.values())},
             "odvetvia": odvetvia,
             "sunburstSutaze": sunburst_sutaze(zvazy_cfg, out_dir, sezona),

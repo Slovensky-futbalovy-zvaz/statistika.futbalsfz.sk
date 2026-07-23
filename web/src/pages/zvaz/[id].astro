@@ -3,6 +3,7 @@
 // Renderuje redizajnovaný SezonaProfil pre najnovšiu futbalovú sezónu (s medziročným porovnaním).
 import Base from '../../layouts/Base.astro';
 import SezonaProfil from '../../components/SezonaProfil.astro';
+import KpiTrend from '../../components/KpiTrend.tsx';
 import { getZvazy, getZvaz, getProfil, fmt } from '../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
@@ -24,6 +25,9 @@ const profil = sezona ? getProfil(z.id, sezona) : undefined;
 const idxSezony = sezona ? z.sezony.indexOf(sezona) : -1;
 const predoslaSezona = idxSezony > 0 ? z.sezony[idxSezony - 1] : undefined;
 const predosly = predoslaSezona ? getProfil(z.id, predoslaSezona) : undefined;
+
+const trendPerSeason: Record<string, any> = {};
+for (const s of z.sezony) { const pr = getProfil(z.id, s); if (pr) trendPerSeason[s] = (pr as any).kategorie ?? {}; }
 
 const popis = profil
   ? `${z.nazov} (${z.uroven}) — štatistiky sezóny ${sezona}: ${fmt(profil.kpi.zapasy)} zápasov, ${fmt(profil.kpi.goly)} gólov, ${fmt(profil.osoby?.hraci?.unikatni ?? 0)} hráčov. Kategórie, osoby a veková štruktúra.`
@@ -62,4 +66,11 @@ const breadcrumb = {
       <p class="text-muted">Pre tento zväz zatiaľ nie sú dostupné žiadne sezónne dáta.</p>
     )
   }
+
+  <section class="mt-6 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vývoj v čase · vekové úrovne</div>
+    <h2 class="font-extrabold tracking-tight" style="font-size:20px; margin:2px 0 2px;">Ukazovatele naprieč sezónami</h2>
+    <p class="text-sm text-muted mb-3">Reálne odohrané zápasy (a góly, diváci, karty, družstvá) po vekových skupinách. Prepni metriku a skupiny.</p>
+    <KpiTrend client:visible sezony={z.sezony} perSeason={trendPerSeason} />
+  </section>
 </Base>

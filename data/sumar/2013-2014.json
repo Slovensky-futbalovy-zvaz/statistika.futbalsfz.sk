@@ -1,6 +1,6 @@
 {
  "sezona": "2013/2014",
- "generatedAt": "2026-07-23T16:21:53+02:00",
+ "generatedAt": "2026-07-23T17:24:15+02:00",
  "pocetZvazov": 42,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
@@ -9,11 +9,131 @@
  "kpi": {
   "sutaze": 292,
   "zapasy": 38906,
+  "uzatvorene": 40391,
+  "administrativne": 1485,
   "druzstva": 0,
   "goly": 186747,
   "divaci": 3534039,
   "zlteKarty": 75310,
-  "cerveneKarty": 3099
+  "cerveneKarty": 3099,
+  "kontumovane": 688,
+  "kontumovaneAdmin": 150,
+  "kontumovaneOdohrane": 538,
+  "odstupene": 1841,
+  "odstupeneAdmin": 1335,
+  "odstupeneOdohrane": 506
+ },
+ "kategorie": {
+  "ADULTS": {
+   "zapasy": 19657,
+   "uzatvorene": 20114,
+   "administrativne": 457,
+   "druzstva": 0,
+   "goly": 76156,
+   "zlte": 56197,
+   "cervene": 2223,
+   "divaci": 2840842
+  },
+  "U19": {
+   "zapasy": 6753,
+   "uzatvorene": 7187,
+   "administrativne": 434,
+   "druzstva": 0,
+   "goly": 33920,
+   "zlte": 12511,
+   "cervene": 608,
+   "divaci": 266331
+  },
+  "U17": {
+   "zapasy": 1212,
+   "uzatvorene": 1271,
+   "administrativne": 59,
+   "druzstva": 0,
+   "goly": 5177,
+   "zlte": 2053,
+   "cervene": 75,
+   "divaci": 49569
+  },
+  "U16": {
+   "zapasy": 381,
+   "uzatvorene": 381,
+   "administrativne": 0,
+   "druzstva": 0,
+   "goly": 1716,
+   "zlte": 323,
+   "cervene": 10,
+   "divaci": 15917
+  },
+  "U15": {
+   "zapasy": 6405,
+   "uzatvorene": 6752,
+   "administrativne": 347,
+   "druzstva": 0,
+   "goly": 35327,
+   "zlte": 3607,
+   "cervene": 152,
+   "divaci": 207225
+  },
+  "U14": {
+   "zapasy": 473,
+   "uzatvorene": 474,
+   "administrativne": 1,
+   "druzstva": 0,
+   "goly": 2237,
+   "zlte": 294,
+   "cervene": 18,
+   "divaci": 18002
+  },
+  "U13": {
+   "zapasy": 2456,
+   "uzatvorene": 2600,
+   "administrativne": 144,
+   "druzstva": 0,
+   "goly": 17502,
+   "zlte": 285,
+   "cervene": 8,
+   "divaci": 81528
+  },
+  "U12": {
+   "zapasy": 454,
+   "uzatvorene": 454,
+   "administrativne": 0,
+   "druzstva": 0,
+   "goly": 6277,
+   "zlte": 29,
+   "cervene": 3,
+   "divaci": 18397
+  },
+  "U11": {
+   "zapasy": 895,
+   "uzatvorene": 938,
+   "administrativne": 43,
+   "druzstva": 0,
+   "goly": 6632,
+   "zlte": 6,
+   "cervene": 2,
+   "divaci": 28639
+  },
+  "U10": {
+   "zapasy": 110,
+   "uzatvorene": 110,
+   "administrativne": 0,
+   "druzstva": 0,
+   "goly": 895,
+   "zlte": 3,
+   "cervene": 0,
+   "divaci": 3859
+  },
+  "U09": {
+   "zapasy": 110,
+   "uzatvorene": 110,
+   "administrativne": 0,
+   "druzstva": 0,
+   "goly": 908,
+   "zlte": 2,
+   "cervene": 0,
+   "divaci": 3730
+  }
  },
  "osoby": {
   "hraci": 77668,

@@ -59,8 +59,13 @@ export interface Profil {
   osoby: Record<string, OsobaSkupina>;
 }
 
+const _jsonCache = new Map<string, unknown>();
 function readJson<T>(p: string): T {
-  return JSON.parse(fs.readFileSync(p, 'utf-8')) as T;
+  const hit = _jsonCache.get(p);
+  if (hit !== undefined) return hit as T;
+  const v = JSON.parse(fs.readFileSync(p, 'utf-8')) as T;
+  _jsonCache.set(p, v);
+  return v;
 }
 
 export function getIndex(): Index {
@@ -476,11 +481,8 @@ export function klubWindowSlugy(): string[] {
 /** Sezóny klubu, ktoré majú stránku (prienik dostupných sezón a okna).
  *  Ak klub nemá žiadnu sezónu v okne (zanikol pred oknom), dostane aspoň svoju najnovšiu. */
 export function getKlubSezonyPaged(id: string): string[] {
-  const okno = new Set(klubWindowSlugy());
-  const all = getKlubSezony(id);
-  const win = all.filter((s) => okno.has(s.replace('/', '-')));
-  if (win.length) return win;
-  return all.length ? [all[all.length - 1]] : [];
+  // Všetky sezóny klubu (predtým okno posledných ~6 sezón). Výber rieši SeasonPicker.
+  return getKlubSezony(id);
 }
 
 export function getKlub(id: string, sezona: string): Klub | undefined {
