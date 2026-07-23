@@ -5,10 +5,11 @@ import { METRICS } from '../lib/palette';
 
 interface Props {
   mapa: MapaData;
+  rebricekNadpis?: string;
 }
 
 /** Choropleth mapa ObFZ jedného RFZ + rebríček. Prepínač metriky. */
-export default function RfzObfzMapa({ mapa }: Props) {
+export default function RfzObfzMapa({ mapa, rebricekNadpis = 'Rebríček ObFZ' }: Props) {
   const [metric, setMetric] = useState<string>('zapasy');
   const [hover, setHover] = useState<{ name: string; value: number; x: number; y: number } | null>(null);
 
@@ -118,7 +119,7 @@ export default function RfzObfzMapa({ mapa }: Props) {
         {/* REBRÍČEK */}
         <div style={cardStyle}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--color-sfz-blue)' }}>
-            Rebríček ObFZ
+            {rebricekNadpis}
           </div>
           <div style={{ fontSize: 19, fontWeight: 800, margin: '4px 0 14px' }}>Najviac {metricLabel.toLowerCase()}</div>
           {rebricek.length ? (

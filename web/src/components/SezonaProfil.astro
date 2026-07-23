@@ -7,7 +7,7 @@ import ZvazPicker from './ZvazPicker.tsx';
 import AgePyramid from './AgePyramid.tsx';
 import RfzObfzMapa from './RfzObfzMapa.tsx';
 import { fmt, delta } from '../lib/format';
-import { sezonyOdvetvia, odvetviaZvazu, ODVETVIE_LABEL, getZvazy, getDemografia, klubyZvazu, getObfzMapaPreRfz } from '../lib/data';
+import { sezonyOdvetvia, odvetviaZvazu, ODVETVIE_LABEL, getZvazy, getDemografia, klubyZvazu, getObfzMapaPreRfz, getRfzMapa } from '../lib/data';
 import { GROUPS, REGION, RFZ_LABEL, RFZ_OF_GEONAME } from '../lib/palette';
 import type { Profil, ZvazIndex } from '../lib/data';
 
@@ -26,6 +26,7 @@ const demo = odvetvie === 'futbal' ? getDemografia(z.id) : undefined;
 const klubyPodZvazom = odvetvie === 'futbal' ? klubyZvazu(z.id).slice(0, 8) : [];
 const klubyPocet = odvetvie === 'futbal' ? klubyZvazu(z.id).length : 0;
 const obfzMapa = z.uroven === 'RFZ' && odvetvie === 'futbal' ? getObfzMapaPreRfz(z.id, sezona) : undefined;
+const rfzMapa = z.uroven === 'SFZ' && odvetvie === 'futbal' ? getRfzMapa(sezona) : undefined;
 
 function sezonaUrl(o: string, s: string): string {
   const slug = s.replace('/', '-');
@@ -155,6 +156,19 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
         Oblastné futbalové zväzy patriace pod {z.nazov} v sezóne {sezona}. Klikni na oblasť na mape alebo na položku rebríčka pre profil ObFZ.
       </p>
       <RfzObfzMapa client:visible mapa={obfzMapa} />
+    </section>
+  )
+}
+
+{
+  rfzMapa && rfzMapa.regions.length > 0 && (
+    <section class="mt-8">
+      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Mapa regiónov</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Regionálne zväzy (RFZ)</h2>
+      <p class="text-sm text-muted mb-3">
+        Štyri regionálne futbalové zväzy v sezóne {sezona}. Klikni na región na mape alebo na položku rebríčka pre profil RFZ.
+      </p>
+      <RfzObfzMapa client:visible mapa={rfzMapa} rebricekNadpis="Rebríček RFZ" />
     </section>
   )
 }

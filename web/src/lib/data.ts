@@ -691,3 +691,19 @@ export function getObfzMapaPreRfz(rfzId: string, sezona: string): RfzObfzMapa {
     .filter((r) => r.id && obfzRfz[r.id] === rfzId);
   return { viewBox: mapa.viewBox, slovensko: mapa.slovensko, regions };
 }
+
+/** Choropleth dáta pre 4 regionálne zväzy (RFZ) — pre profil SFZ. */
+export function getRfzMapa(sezona: string): RfzObfzMapa {
+  const slug = sezona.replace('/', '-');
+  const mapa = readJson<{ viewBox: string; slovensko: string; rfz: { name: string; path: string }[] }>(
+    path.join(process.cwd(), 'assets', 'geo', 'mapa.json'),
+  );
+  const geo = geoNameToId();
+  const nazvy: Record<string, string> = Object.fromEntries(getZvazy().map((z) => [z.id, z.nazov]));
+  const vals = porovnanieValues('rfz', slug);
+  const regions: MapRegion[] = mapa.rfz.map((r) => {
+    const id = geo[r.name];
+    return { id, name: nazvy[id] ?? r.name, path: r.path, values: vals[id] ?? {} };
+  });
+  return { viewBox: mapa.viewBox, slovensko: mapa.slovensko, regions };
+}
