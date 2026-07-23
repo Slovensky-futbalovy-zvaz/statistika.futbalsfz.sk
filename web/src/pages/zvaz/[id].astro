@@ -28,6 +28,8 @@ const predosly = predoslaSezona ? getProfil(z.id, predoslaSezona) : undefined;
 
 const trendPerSeason: Record<string, any> = {};
 for (const s of z.sezony) { const pr = getProfil(z.id, s); if (pr) trendPerSeason[s] = (pr as any).kategorie ?? {}; }
+const trendOsoby: Record<string, any> = {};
+for (const s of z.sezony) { const pr = getProfil(z.id, s) as any; if (pr) { const o: Record<string, any> = {}; for (const rola of Object.keys(pr.osoby || {})) o[rola] = pr.osoby[rola]?.poKategorii || {}; trendOsoby[s] = o; } }
 
 const popis = profil
   ? `${z.nazov} (${z.uroven}) — štatistiky sezóny ${sezona}: ${fmt(profil.kpi.zapasy)} zápasov, ${fmt(profil.kpi.goly)} gólov, ${fmt(profil.osoby?.hraci?.unikatni ?? 0)} hráčov. Kategórie, osoby a veková štruktúra.`
@@ -71,6 +73,6 @@ const breadcrumb = {
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vývoj v čase · vekové úrovne</div>
     <h2 class="font-extrabold tracking-tight" style="font-size:20px; margin:2px 0 2px;">Ukazovatele naprieč sezónami</h2>
     <p class="text-sm text-muted mb-3">Reálne odohrané zápasy (a góly, diváci, karty, družstvá) po vekových skupinách. Prepni metriku a skupiny.</p>
-    <KpiTrend client:visible sezony={z.sezony} perSeason={trendPerSeason} />
+    <KpiTrend client:visible sezony={z.sezony} perSeason={trendPerSeason} perSeasonOsoby={trendOsoby} />
   </section>
 </Base>

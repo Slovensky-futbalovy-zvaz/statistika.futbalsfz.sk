@@ -13,6 +13,8 @@ const sumreMap = new Map(sezony.map((s) => [s, getSumar(s)]));
 const trendSezony = sezony;
 const trendPerSeason: Record<string, any> = {};
 for (const s of sezony) trendPerSeason[s] = ((sumreMap.get(s) as any)?.kategorie) ?? {};
+const trendOsoby: Record<string, any> = {};
+for (const s of sezony) trendOsoby[s] = ((sumreMap.get(s) as any)?.osobyKat) ?? {};
 interface Props {
   sezona: string;
 }
@@ -238,7 +240,7 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       <div class={KICKER}>15-ročný trend · vekové úrovne</div>
       <h2 class={H2} style="font-size:clamp(21px,2.4vw,28px); margin:2px 0 6px;">Zápasy vo futbale na Slovensku</h2>
       <p class="text-sm text-muted mb-3">Reálne odohrané zápasy (a góly, diváci, karty, družstvá) naprieč sezónami, súčet 43 zväzov. Prepni metriku a vekové skupiny.</p>
-      <KpiTrend client:visible sezony={trendSezony} perSeason={trendPerSeason} />
+      <KpiTrend client:visible sezony={trendSezony} perSeason={trendPerSeason} perSeasonOsoby={trendOsoby} />
     </div>
   </section>
 

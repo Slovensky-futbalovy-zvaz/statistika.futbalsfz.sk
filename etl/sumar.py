@@ -263,6 +263,7 @@ def main() -> None:
     for sezona in sorted(sezony):
         kpi: dict = {}
         kat: dict = {}
+        osobyKat: dict = {}
         osoby = {rola: 0 for rola in ROLY}
         pocet_zvazov = 0
         for z in vsetky:
@@ -277,6 +278,11 @@ def main() -> None:
                     acc[m] += cd.get(m, 0) or 0
             for rola in ROLY:
                 osoby[rola] += p.get("osoby", {}).get(rola, {}).get("unikatni", 0)
+            for rola, ob in (p.get("osoby") or {}).items():
+                poKat = (ob or {}).get("poKategorii") or {}
+                acc = osobyKat.setdefault(rola, {})
+                for cat, n in poKat.items():
+                    acc[cat] = acc.get(cat, 0) + (n or 0)
 
         # odvetvia (futsal, …) — zatiaľ len SFZ
         odvetvia: dict = {}
@@ -304,6 +310,7 @@ def main() -> None:
             },
             "kpi": kpi,
             "kategorie": kat,
+            "osobyKat": osobyKat,
             "osoby": {**osoby, "spolu": sum(osoby.values())},
             "odvetvia": odvetvia,
             "sunburstSutaze": sunburst_sutaze(zvazy_cfg, out_dir, sezona),

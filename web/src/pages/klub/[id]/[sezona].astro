@@ -21,6 +21,8 @@ if (!klub) throw new Error(`Klub ${id} ${sezona} neexistuje`);
 const sezony = getKlubSezony(id!); // všetky (pre medziročné porovnanie)
 const trendPerSeason: Record<string, any> = {};
 for (const s of sezony) { const kk = getKlub(id!, s); if (kk) trendPerSeason[s] = (kk as any).kategorie ?? {}; }
+const trendOsoby: Record<string, any> = {};
+for (const s of sezony) { const kk = getKlub(id!, s) as any; if (kk) { const o: Record<string, any> = {}; for (const rola of Object.keys(kk.osoby || {})) o[rola] = kk.osoby[rola]?.poKategorii || {}; trendOsoby[s] = o; } }
 function odvetvieUrl(o: string, s: string): string {
   const slug = s.replace('/', '-');
   return o === 'futbal' ? `/klub/${id}/${slug}` : `/klub/${id}/${o}/${slug}`;
@@ -197,4 +199,10 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
   <p class="mt-8 text-xs text-muted">
     <b>Metodika:</b> „Zápasy" = reálne odohrané — uzavreté zápasy bez administratívnych kontumácií/odstúpení bez zápisu; klub = organizácia (`teams.organization`). Góly a karty priradené tímu klubu z protokolu; osoby = hráči a tréneri klubu (rozhodcovia/delegáti nie sú klubové). Diváci = návštevnosť zápasov klubu (pokrytie {Math.round(((klub.methodologyFlags?.divaciPokrytie as number) ?? 0) * 100)} %). {klub.kpi.kontumovane !== undefined && <span>Kontumované a Odstúpené sa vykazujú samostatne; ich administratívna časť (bez zápisu) nie je zarátaná do počtu Zápasy. </span>}Dáta generované {klub.generatedAt}.
   </p>
+  <section class="mt-6 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+    <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vývoj v čase · vekové úrovne</div>
+    <h2 class="font-extrabold tracking-tight" style="font-size:20px; margin:2px 0 2px;">Ukazovatele klubu naprieč sezónami</h2>
+    <p class="text-sm text-muted mb-3">Reálne odohrané zápasy, osoby a ďalšie ukazovatele po vekových skupinách naprieč sezónami.</p>
+    <KpiTrend client:visible sezony={sezony} perSeason={trendPerSeason} perSeasonOsoby={trendOsoby} />
+  </section>
 </Base>

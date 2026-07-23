@@ -9,12 +9,16 @@ import { GROUPS, GROUP_COLOR } from '../lib/palette';
 echarts.use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
 type PerSeason = Record<string, Record<string, Record<string, number>>>;
+// osoby: sezona -> rola -> kategoria -> počet
+type PerSeasonOsoby = Record<string, Record<string, Record<string, number>>>;
+
 interface Props {
   sezony: string[]; // vzostupne
-  perSeason: PerSeason; // sezona -> kategoria(ADULTS/U19…) -> metrika -> hodnota
+  perSeason: PerSeason; // sezona -> kategoria(ADULTS/U19…) -> metrika -> hodnota (zápasové KPI)
+  perSeasonOsoby?: PerSeasonOsoby;
 }
 
-const METRIKY = [
+const ZAPASY_METRIKY = [
   { k: 'zapasy', label: 'Zápasy' },
   { k: 'goly', label: 'Góly' },
   { k: 'divaci', label: 'Diváci' },
@@ -22,21 +26,40 @@ const METRIKY = [
   { k: 'zlte', label: 'Žlté karty' },
   { k: 'cervene', label: 'Červené karty' },
 ];
+const OSOBY_METRIKY = [
+  { k: 'hraci', label: 'Hráči' },
+  { k: 'treneri', label: 'Tréneri' },
+  { k: 'realizacnyTim', label: 'Realizačný tím' },
+  { k: 'rozhodcovia', label: 'Rozhodcovia' },
+  { k: 'delegati', label: 'Delegáti' },
+  { k: 'personal', label: 'Personál' },
+];
+const OSOBA_KEYS = new Set(OSOBY_METRIKY.map((m) => m.k));
 
-/** Trend hlavných KPI naprieč sezónami, série = vekové skupiny (Dospelí/Dorast/Žiaci/Prípravky). */
-export default function KpiTrend({ sezony, perSeason }: Props) {
+/** Trend KPI aj osôb naprieč sezónami; série = vekové skupiny (Dospelí/Dorast/Žiaci/Prípravky). */
+export default function KpiTrend({ sezony, perSeason, perSeasonOsoby = {} }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const chart = useRef<echarts.ECharts | null>(null);
   const [metric, setMetric] = useState('zapasy');
   const [sel, setSel] = useState<string[]>(GROUPS.map((g) => g.key));
 
+  // ktoré osobné roly majú vôbec dáta (kluby nemajú rozhodcov/delegátov/personál)
+  const osobyAvail = OSOBY_METRIKY.filter((m) =>
+    sezony.some((s) => {
+      const rr = perSeasonOsoby[s]?.[m.k];
+      return rr && Object.values(rr).some((v) => (v as number) > 0);
+    }),
+  );
+
   function hodnota(s: string, groupKey: string): number {
-    const kat = perSeason[s] || {};
     const g = GROUPS.find((x) => x.key === groupKey);
     if (!g) return 0;
-    let sum = 0;
-    for (const c of g.cats) sum += kat[c]?.[metric] ?? 0;
-    return sum;
+    if (OSOBA_KEYS.has(metric)) {
+      const rr = perSeasonOsoby[s]?.[metric] || {};
+      return g.cats.reduce((a, c) => a + (rr[c] ?? 0), 0);
+    }
+    const kk = perSeason[s] || {};
+    return g.cats.reduce((a, c) => a + (kk[c]?.[metric] ?? 0), 0);
   }
 
   useEffect(() => {
@@ -62,7 +85,7 @@ export default function KpiTrend({ sezony, perSeason }: Props) {
       true,
     );
     chart.current.resize();
-  }, [metric, sel, sezony, perSeason]);
+  }, [metric, sel, sezony, perSeason, perSeasonOsoby]);
 
   useEffect(() => {
     const on = () => chart.current?.resize();
@@ -72,44 +95,32 @@ export default function KpiTrend({ sezony, perSeason }: Props) {
 
   const toggle = (k: string) => setSel((p) => (p.includes(k) ? p.filter((x) => x !== k) : [...p, k]));
 
+  const btn = (active: boolean, color?: string) => ({
+    padding: '5px 10px', borderRadius: 16, fontSize: 12.5, fontWeight: active ? 700 : 500, cursor: 'pointer',
+    border: '1px solid ' + (active ? (color ?? 'var(--color-sfz-blue)') : 'var(--color-line)'),
+    background: active ? (color ?? 'var(--color-sfz-blue)') : 'transparent',
+    color: active ? '#fff' : 'var(--color-ink)',
+  });
+
   return (
     <div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, margin: '2px 0 6px' }}>
-        {METRIKY.map((m) => (
-          <button
-            key={m.k}
-            type="button"
-            onClick={() => setMetric(m.k)}
-            style={{
-              padding: '5px 10px', borderRadius: 16, fontSize: 12.5, fontWeight: m.k === metric ? 700 : 500, cursor: 'pointer',
-              border: '1px solid ' + (m.k === metric ? 'var(--color-sfz-blue)' : 'var(--color-line)'),
-              background: m.k === metric ? 'var(--color-sfz-blue)' : 'transparent',
-              color: m.k === metric ? '#fff' : 'var(--color-ink)',
-            }}
-          >
-            {m.label}
-          </button>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, margin: '2px 0 4px' }}>
+        {ZAPASY_METRIKY.map((m) => (
+          <button key={m.k} type="button" onClick={() => setMetric(m.k)} style={btn(m.k === metric)}>{m.label}</button>
         ))}
       </div>
+      {osobyAvail.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, margin: '0 0 6px' }}>
+          <span style={{ alignSelf: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--color-muted)', marginRight: 2 }}>Osoby:</span>
+          {osobyAvail.map((m) => (
+            <button key={m.k} type="button" onClick={() => setMetric(m.k)} style={btn(m.k === metric)}>{m.label}</button>
+          ))}
+        </div>
+      )}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
-        {GROUPS.map((g) => {
-          const on = sel.includes(g.key);
-          return (
-            <button
-              key={g.key}
-              type="button"
-              onClick={() => toggle(g.key)}
-              style={{
-                padding: '4px 10px', borderRadius: 16, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                border: '1px solid ' + (on ? g.color : 'var(--color-line)'),
-                background: on ? g.color : 'transparent',
-                color: on ? '#fff' : 'var(--color-muted)',
-              }}
-            >
-              {g.key}
-            </button>
-          );
-        })}
+        {GROUPS.map((g) => (
+          <button key={g.key} type="button" onClick={() => toggle(g.key)} style={btn(sel.includes(g.key), g.color)}>{g.key}</button>
+        ))}
       </div>
       <div ref={el} style={{ width: '100%', height: 320 }} />
     </div>
