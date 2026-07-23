@@ -5,7 +5,7 @@ import SlovakiaMap from './SlovakiaMap.tsx';
 import SunburstSutaze from './SunburstSutaze.tsx';
 import SunburstOsoby from './SunburstOsoby.tsx';
 import AgePyramid from './AgePyramid.tsx';
-import { getSumarSezony, getSumar, getMapData, getSumarDemografia, fmt } from '../lib/data';
+import { getSumarSezony, getSumar, getMapData, getSumarDemografia, demoTrend, fmt } from '../lib/data';
 import { delta } from '../lib/format';
 
 const sezony = getSumarSezony();
@@ -13,8 +13,7 @@ const sumreMap = new Map(sezony.map((s) => [s, getSumar(s)]));
 const trendSezony = sezony;
 const trendPerSeason: Record<string, any> = {};
 for (const s of sezony) trendPerSeason[s] = ((sumreMap.get(s) as any)?.kategorie) ?? {};
-const trendOsoby: Record<string, any> = {};
-for (const s of sezony) trendOsoby[s] = ((sumreMap.get(s) as any)?.osobyKat) ?? {};
+const trendOsoby = demoTrend(getSumarDemografia());
 interface Props {
   sezona: string;
 }

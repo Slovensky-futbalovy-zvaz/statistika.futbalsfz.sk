@@ -4,7 +4,7 @@
 import Base from '../../layouts/Base.astro';
 import SezonaProfil from '../../components/SezonaProfil.astro';
 import KpiTrend from '../../components/KpiTrend.tsx';
-import { getZvazy, getZvaz, getProfil, fmt } from '../../lib/data';
+import { getZvazy, getZvaz, getProfil, getDemografia, demoTrend, fmt } from '../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -28,8 +28,7 @@ const predosly = predoslaSezona ? getProfil(z.id, predoslaSezona) : undefined;
 
 const trendPerSeason: Record<string, any> = {};
 for (const s of z.sezony) { const pr = getProfil(z.id, s); if (pr) trendPerSeason[s] = (pr as any).kategorie ?? {}; }
-const trendOsoby: Record<string, any> = {};
-for (const s of z.sezony) { const pr = getProfil(z.id, s) as any; if (pr) { const o: Record<string, any> = {}; for (const rola of Object.keys(pr.osoby || {})) o[rola] = pr.osoby[rola]?.poKategorii || {}; trendOsoby[s] = o; } }
+const trendOsoby = demoTrend(getDemografia(z.id));
 
 const popis = profil
   ? `${z.nazov} (${z.uroven}) — štatistiky sezóny ${sezona}: ${fmt(profil.kpi.zapasy)} zápasov, ${fmt(profil.kpi.goly)} gólov, ${fmt(profil.osoby?.hraci?.unikatni ?? 0)} hráčov. Kategórie, osoby a veková štruktúra.`

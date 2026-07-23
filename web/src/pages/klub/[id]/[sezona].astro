@@ -7,7 +7,7 @@ import SeasonPicker from '../../../components/SeasonPicker.tsx';
 import KpiTrend from '../../../components/KpiTrend.tsx';
 import { fmt, delta } from '../../../lib/format';
 import { GROUPS } from '../../../lib/palette';
-import { getKlubyPaths, getKlub, getKlubSezony, getKlubSezonyPaged, getKluby, getZvaz, odvetviaKlubu, ODVETVIE_LABEL, getDemografiaKlub } from '../../../lib/data';
+import { getKlubyPaths, getKlub, getKlubSezony, getKlubSezonyPaged, getKluby, getZvaz, odvetviaKlubu, ODVETVIE_LABEL, getDemografiaKlub, demoTrend } from '../../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -21,8 +21,7 @@ if (!klub) throw new Error(`Klub ${id} ${sezona} neexistuje`);
 const sezony = getKlubSezony(id!); // všetky (pre medziročné porovnanie)
 const trendPerSeason: Record<string, any> = {};
 for (const s of sezony) { const kk = getKlub(id!, s); if (kk) trendPerSeason[s] = (kk as any).kategorie ?? {}; }
-const trendOsoby: Record<string, any> = {};
-for (const s of sezony) { const kk = getKlub(id!, s) as any; if (kk) { const o: Record<string, any> = {}; for (const rola of Object.keys(kk.osoby || {})) o[rola] = kk.osoby[rola]?.poKategorii || {}; trendOsoby[s] = o; } }
+const trendOsoby = demoTrend(getDemografiaKlub(id!));
 function odvetvieUrl(o: string, s: string): string {
   const slug = s.replace('/', '-');
   return o === 'futbal' ? `/klub/${id}/${slug}` : `/klub/${id}/${o}/${slug}`;

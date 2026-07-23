@@ -2,6 +2,7 @@
 // pri BUILDE (Node fs). Web nemá žiadny runtime prístup k dátam ani DB (ADR-0001).
 import fs from 'node:fs';
 import path from 'node:path';
+import { endYear, ageLevel } from './format';
 
 const DATA = path.resolve(process.cwd(), '..', 'data');
 const CONFIG = path.resolve(process.cwd(), '..', 'etl', 'config');
@@ -326,6 +327,28 @@ const DEMOGRAFIA_KLUB = path.join(DATA, 'demografia-klub');
 export function getDemografiaKlub(id: string): DemografiaKlub | undefined {
   const p = path.join(DEMOGRAFIA_KLUB, id + '.json');
   return fs.existsSync(p) ? readJson<DemografiaKlub>(p) : undefined;
+}
+
+/** Osoby po sezónach a rolách z DEMOGRAFIE (rok narodenia → veková úroveň) pre KpiTrend.
+ *  { sezona -> rola -> úroveň(ADULTS/U..) -> počet }. Dostupné za všetky sezóny
+ *  (na rozdiel od osoby.poKategorii, ktoré vychádza z teams.ageCategory až od ~2024). */
+export function demoTrend(demo: Demografia | DemografiaKlub | undefined): Record<string, Record<string, Record<string, number>>> {
+  const out: Record<string, Record<string, Record<string, number>>> = {};
+  if (!demo) return out;
+  for (const [s, roly] of Object.entries(demo.sezony)) {
+    const ey = endYear(s);
+    const o: Record<string, Record<string, number>> = {};
+    for (const [rola, r] of Object.entries(roly)) {
+      const byLvl: Record<string, number> = {};
+      for (const [yr, pg] of Object.entries(r.roky || {})) {
+        const lvl = ageLevel(ey - parseInt(yr, 10));
+        byLvl[lvl] = (byLvl[lvl] ?? 0) + (((pg as Record<string, number>).M ?? 0) + ((pg as Record<string, number>).F ?? 0) + ((pg as Record<string, number>).N ?? 0));
+      }
+      o[rola] = byLvl;
+    }
+    out[s] = o;
+  }
+  return out;
 }
 
 // ---- Celoslovenský sumár (etl/sumar.py → data/sumar) ----
