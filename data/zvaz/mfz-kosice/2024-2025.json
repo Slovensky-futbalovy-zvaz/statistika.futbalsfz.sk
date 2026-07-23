@@ -2,10 +2,10 @@
   "zvaz": "mfz-kosice",
   "sezona": "2024/2025",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T19:13:28+02:00",
+  "generatedAt": "2026-07-23T13:59:09+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.979,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,20 +13,20 @@
   },
   "kpi": {
     "sutaze": 6,
-    "zapasy": 187,
+    "zapasy": 191,
     "uzatvorene": 209,
-    "administrativne": 22,
+    "administrativne": 18,
     "druzstva": 38,
     "goly": 1425,
     "divaci": 6021,
     "zlteKarty": 1,
     "cerveneKarty": 0,
     "kontumovane": 4,
-    "kontumovaneAdmin": 2,
-    "kontumovaneOdohrane": 2,
+    "kontumovaneAdmin": 1,
+    "kontumovaneOdohrane": 3,
     "odstupene": 21,
-    "odstupeneAdmin": 20,
-    "odstupeneOdohrane": 1
+    "odstupeneAdmin": 17,
+    "odstupeneOdohrane": 4
   },
   "kategorie": {
     "ADULTS": {
@@ -94,9 +94,9 @@
       "odstupeneAdmin": 0
     },
     "U09": {
-      "zapasy": 56,
+      "zapasy": 60,
       "uzatvorene": 78,
-      "administrativne": 22,
+      "administrativne": 18,
       "druzstva": 8,
       "goly": 453,
       "zlte": 0,
@@ -105,9 +105,9 @@
       "divaciPokrytych": 56,
       "sutaze": 1,
       "kontumovane": 2,
-      "kontumovaneAdmin": 2,
+      "kontumovaneAdmin": 1,
       "odstupene": 21,
-      "odstupeneAdmin": 20
+      "odstupeneAdmin": 17
     },
     "U08": {
       "zapasy": 22,
@@ -128,7 +128,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 187,
+      "zapasy": 191,
       "druzstva": 38,
       "goly": 1425,
       "divaci": 6021,
@@ -172,7 +172,7 @@
           "divaciPokrytych": 44
         },
         "U09": {
-          "zapasy": 56,
+          "zapasy": 60,
           "druzstva": 8,
           "goly": 453,
           "zlte": 0,

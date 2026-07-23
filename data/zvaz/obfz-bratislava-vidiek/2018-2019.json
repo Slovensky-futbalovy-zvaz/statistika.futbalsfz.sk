@@ -2,10 +2,10 @@
   "zvaz": "obfz-bratislava-vidiek",
   "sezona": "2018/2019",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T17:18:51+02:00",
+  "generatedAt": "2026-07-23T12:01:01+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.998,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,9 +13,9 @@
   },
   "kpi": {
     "sutaze": 5,
-    "zapasy": 583,
+    "zapasy": 584,
     "uzatvorene": 747,
-    "administrativne": 164,
+    "administrativne": 163,
     "druzstva": 40,
     "goly": 3115,
     "divaci": 36508,
@@ -25,8 +25,8 @@
     "kontumovaneAdmin": 28,
     "kontumovaneOdohrane": 6,
     "odstupene": 158,
-    "odstupeneAdmin": 136,
-    "odstupeneOdohrane": 22
+    "odstupeneAdmin": 135,
+    "odstupeneOdohrane": 23
   },
   "kategorie": {
     "ADULTS": {
@@ -46,9 +46,9 @@
       "odstupeneAdmin": 21
     },
     "U19": {
-      "zapasy": 49,
+      "zapasy": 50,
       "uzatvorene": 123,
-      "administrativne": 74,
+      "administrativne": 73,
       "druzstva": 0,
       "goly": 240,
       "zlte": 111,
@@ -59,7 +59,7 @@
       "kontumovane": 25,
       "kontumovaneAdmin": 25,
       "odstupene": 54,
-      "odstupeneAdmin": 49
+      "odstupeneAdmin": 48
     },
     "U15": {
       "zapasy": 96,
@@ -112,7 +112,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 582,
+      "zapasy": 583,
       "druzstva": 59,
       "goly": 3110,
       "divaci": 36468,
@@ -129,7 +129,7 @@
           "divaciPokrytych": 269
         },
         "U19": {
-          "zapasy": 49,
+          "zapasy": 50,
           "druzstva": 8,
           "goly": 240,
           "zlte": 111,

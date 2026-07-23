@@ -2,10 +2,10 @@
   "zvaz": "obfz-nitra",
   "sezona": "2017/2018",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T17:59:52+02:00",
+  "generatedAt": "2026-07-23T12:42:15+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.999,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,17 +13,17 @@
   },
   "kpi": {
     "sutaze": 12,
-    "zapasy": 1943,
+    "zapasy": 1945,
     "uzatvorene": 2115,
-    "administrativne": 172,
+    "administrativne": 170,
     "druzstva": 0,
     "goly": 11719,
     "divaci": 128688,
     "zlteKarty": 2763,
     "cerveneKarty": 85,
     "kontumovane": 62,
-    "kontumovaneAdmin": 29,
-    "kontumovaneOdohrane": 33,
+    "kontumovaneAdmin": 27,
+    "kontumovaneOdohrane": 35,
     "odstupene": 231,
     "odstupeneAdmin": 143,
     "odstupeneOdohrane": 88
@@ -78,9 +78,9 @@
       "odstupeneAdmin": 57
     },
     "U13": {
-      "zapasy": 177,
+      "zapasy": 178,
       "uzatvorene": 187,
-      "administrativne": 10,
+      "administrativne": 9,
       "druzstva": 0,
       "goly": 1967,
       "zlte": 0,
@@ -89,14 +89,14 @@
       "divaciPokrytych": 177,
       "sutaze": 1,
       "kontumovane": 12,
-      "kontumovaneAdmin": 10,
+      "kontumovaneAdmin": 9,
       "odstupene": 0,
       "odstupeneAdmin": 0
     },
     "U11": {
-      "zapasy": 419,
+      "zapasy": 420,
       "uzatvorene": 429,
-      "administrativne": 10,
+      "administrativne": 9,
       "druzstva": 0,
       "goly": 2435,
       "zlte": 0,
@@ -105,14 +105,14 @@
       "divaciPokrytych": 419,
       "sutaze": 1,
       "kontumovane": 9,
-      "kontumovaneAdmin": 7,
+      "kontumovaneAdmin": 6,
       "odstupene": 5,
       "odstupeneAdmin": 3
     }
   },
   "pohlavie": {
     "M": {
-      "zapasy": 1943,
+      "zapasy": 1945,
       "druzstva": 170,
       "goly": 11719,
       "divaci": 128688,
@@ -147,7 +147,7 @@
           "divaciPokrytych": 256
         },
         "U13": {
-          "zapasy": 177,
+          "zapasy": 178,
           "druzstva": 23,
           "goly": 1967,
           "zlte": 0,
@@ -156,7 +156,7 @@
           "divaciPokrytych": 177
         },
         "U11": {
-          "zapasy": 419,
+          "zapasy": 420,
           "druzstva": 24,
           "goly": 2435,
           "zlte": 0,

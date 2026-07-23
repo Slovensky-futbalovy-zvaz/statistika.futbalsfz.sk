@@ -2,10 +2,10 @@
   "zvaz": "sofz-spisska-nova-ves",
   "sezona": "2015/2016",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T19:22:40+02:00",
+  "generatedAt": "2026-07-23T14:09:33+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.999,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,17 +13,17 @@
   },
   "kpi": {
     "sutaze": 5,
-    "zapasy": 720,
+    "zapasy": 721,
     "uzatvorene": 739,
-    "administrativne": 19,
+    "administrativne": 18,
     "druzstva": 0,
     "goly": 4278,
     "divaci": 34704,
     "zlteKarty": 1482,
     "cerveneKarty": 37,
     "kontumovane": 10,
-    "kontumovaneAdmin": 2,
-    "kontumovaneOdohrane": 8,
+    "kontumovaneAdmin": 1,
+    "kontumovaneOdohrane": 9,
     "odstupene": 21,
     "odstupeneAdmin": 17,
     "odstupeneOdohrane": 4
@@ -46,9 +46,9 @@
       "odstupeneAdmin": 17
     },
     "U19": {
-      "zapasy": 181,
+      "zapasy": 182,
       "uzatvorene": 182,
-      "administrativne": 1,
+      "administrativne": 0,
       "druzstva": 0,
       "goly": 1155,
       "zlte": 398,
@@ -57,7 +57,7 @@
       "divaciPokrytych": 181,
       "sutaze": 1,
       "kontumovane": 7,
-      "kontumovaneAdmin": 1,
+      "kontumovaneAdmin": 0,
       "odstupene": 0,
       "odstupeneAdmin": 0
     },
@@ -80,7 +80,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 720,
+      "zapasy": 721,
       "druzstva": 59,
       "goly": 4278,
       "divaci": 34704,
@@ -97,7 +97,7 @@
           "divaciPokrytych": 248
         },
         "U19": {
-          "zapasy": 181,
+          "zapasy": 182,
           "druzstva": 14,
           "goly": 1155,
           "zlte": 398,

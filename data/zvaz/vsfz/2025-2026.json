@@ -2,10 +2,10 @@
   "zvaz": "vsfz",
   "sezona": "2025/2026",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T17:13:22+02:00",
+  "generatedAt": "2026-07-23T11:55:35+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 0.955,
+    "divaciPokrytie": 0.954,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,26 +13,26 @@
   },
   "kpi": {
     "sutaze": 28,
-    "zapasy": 4099,
+    "zapasy": 4103,
     "uzatvorene": 4256,
-    "administrativne": 157,
+    "administrativne": 153,
     "druzstva": 332,
     "goly": 21002,
     "divaci": 268258,
     "zlteKarty": 9397,
     "cerveneKarty": 348,
     "kontumovane": 26,
-    "kontumovaneAdmin": 13,
-    "kontumovaneOdohrane": 13,
+    "kontumovaneAdmin": 10,
+    "kontumovaneOdohrane": 16,
     "odstupene": 186,
-    "odstupeneAdmin": 144,
-    "odstupeneOdohrane": 42
+    "odstupeneAdmin": 143,
+    "odstupeneOdohrane": 43
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 1509,
+      "zapasy": 1510,
       "uzatvorene": 1539,
-      "administrativne": 30,
+      "administrativne": 29,
       "druzstva": 109,
       "goly": 6116,
       "zlte": 5873,
@@ -41,14 +41,14 @@
       "divaciPokrytych": 1362,
       "sutaze": 9,
       "kontumovane": 11,
-      "kontumovaneAdmin": 4,
+      "kontumovaneAdmin": 3,
       "odstupene": 26,
       "odstupeneAdmin": 26
     },
     "U19": {
-      "zapasy": 935,
+      "zapasy": 937,
       "uzatvorene": 1049,
-      "administrativne": 114,
+      "administrativne": 112,
       "druzstva": 86,
       "goly": 5463,
       "zlte": 2278,
@@ -57,9 +57,9 @@
       "divaciPokrytych": 936,
       "sutaze": 7,
       "kontumovane": 11,
-      "kontumovaneAdmin": 7,
+      "kontumovaneAdmin": 6,
       "odstupene": 149,
-      "odstupeneAdmin": 107
+      "odstupeneAdmin": 106
     },
     "U17": {
       "zapasy": 264,
@@ -78,9 +78,9 @@
       "odstupeneAdmin": 11
     },
     "U15": {
-      "zapasy": 745,
+      "zapasy": 746,
       "uzatvorene": 746,
-      "administrativne": 1,
+      "administrativne": 0,
       "druzstva": 60,
       "goly": 4409,
       "zlte": 605,
@@ -89,7 +89,7 @@
       "divaciPokrytych": 705,
       "sutaze": 7,
       "kontumovane": 2,
-      "kontumovaneAdmin": 1,
+      "kontumovaneAdmin": 0,
       "odstupene": 0,
       "odstupeneAdmin": 0
     },
@@ -112,7 +112,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 4001,
+      "zapasy": 4004,
       "druzstva": 373,
       "goly": 20303,
       "divaci": 266809,
@@ -120,7 +120,7 @@
       "cerveneKarty": 348,
       "kategorie": {
         "ADULTS": {
-          "zapasy": 1509,
+          "zapasy": 1510,
           "druzstva": 155,
           "goly": 6116,
           "zlte": 5873,
@@ -129,7 +129,7 @@
           "divaciPokrytych": 1362
         },
         "U19": {
-          "zapasy": 935,
+          "zapasy": 937,
           "druzstva": 86,
           "goly": 5463,
           "zlte": 2278,
@@ -167,7 +167,7 @@
       }
     },
     "F": {
-      "zapasy": 58,
+      "zapasy": 59,
       "druzstva": 6,
       "goly": 423,
       "divaci": 1449,
@@ -175,7 +175,7 @@
       "cerveneKarty": 0,
       "kategorie": {
         "U15": {
-          "zapasy": 58,
+          "zapasy": 59,
           "druzstva": 6,
           "goly": 423,
           "zlte": 1,

@@ -2,10 +2,10 @@
   "zvaz": "obfz-povazska-bystrica",
   "sezona": "2013/2014",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T17:54:39+02:00",
+  "generatedAt": "2026-07-23T12:36:59+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.998,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,9 +13,9 @@
   },
   "kpi": {
     "sutaze": 3,
-    "zapasy": 521,
+    "zapasy": 522,
     "uzatvorene": 540,
-    "administrativne": 19,
+    "administrativne": 18,
     "druzstva": 0,
     "goly": 2014,
     "divaci": 48383,
@@ -25,14 +25,14 @@
     "kontumovaneAdmin": 0,
     "kontumovaneOdohrane": 5,
     "odstupene": 26,
-    "odstupeneAdmin": 19,
-    "odstupeneOdohrane": 7
+    "odstupeneAdmin": 18,
+    "odstupeneOdohrane": 8
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 521,
+      "zapasy": 522,
       "uzatvorene": 540,
-      "administrativne": 19,
+      "administrativne": 18,
       "druzstva": 0,
       "goly": 2014,
       "zlte": 1209,
@@ -43,12 +43,12 @@
       "kontumovane": 5,
       "kontumovaneAdmin": 0,
       "odstupene": 26,
-      "odstupeneAdmin": 19
+      "odstupeneAdmin": 18
     }
   },
   "pohlavie": {
     "M": {
-      "zapasy": 521,
+      "zapasy": 522,
       "druzstva": 44,
       "goly": 2014,
       "divaci": 48383,
@@ -56,7 +56,7 @@
       "cerveneKarty": 70,
       "kategorie": {
         "ADULTS": {
-          "zapasy": 521,
+          "zapasy": 522,
           "druzstva": 44,
           "goly": 2014,
           "zlte": 1209,

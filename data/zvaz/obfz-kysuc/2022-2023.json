@@ -2,10 +2,10 @@
   "zvaz": "obfz-kysuc",
   "sezona": "2022/2023",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T18:28:32+02:00",
+  "generatedAt": "2026-07-23T13:11:40+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.002,
+    "divaciPokrytie": 1.0,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,17 +13,17 @@
   },
   "kpi": {
     "sutaze": 5,
-    "zapasy": 455,
+    "zapasy": 456,
     "uzatvorene": 456,
-    "administrativne": 1,
+    "administrativne": 0,
     "druzstva": 0,
     "goly": 1276,
     "divaci": 21812,
     "zlteKarty": 524,
     "cerveneKarty": 14,
     "kontumovane": 3,
-    "kontumovaneAdmin": 1,
-    "kontumovaneOdohrane": 2,
+    "kontumovaneAdmin": 0,
+    "kontumovaneOdohrane": 3,
     "odstupene": 0,
     "odstupeneAdmin": 0,
     "odstupeneOdohrane": 0
@@ -46,9 +46,9 @@
       "odstupeneAdmin": 0
     },
     "U15": {
-      "zapasy": 55,
+      "zapasy": 56,
       "uzatvorene": 56,
-      "administrativne": 1,
+      "administrativne": 0,
       "druzstva": 0,
       "goly": 376,
       "zlte": 48,
@@ -57,7 +57,7 @@
       "divaciPokrytych": 56,
       "sutaze": 1,
       "kontumovane": 2,
-      "kontumovaneAdmin": 1,
+      "kontumovaneAdmin": 0,
       "odstupene": 0,
       "odstupeneAdmin": 0
     },
@@ -112,7 +112,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 455,
+      "zapasy": 456,
       "druzstva": 52,
       "goly": 1276,
       "divaci": 21812,
@@ -129,7 +129,7 @@
           "divaciPokrytych": 154
         },
         "U15": {
-          "zapasy": 55,
+          "zapasy": 56,
           "druzstva": 8,
           "goly": 376,
           "zlte": 48,

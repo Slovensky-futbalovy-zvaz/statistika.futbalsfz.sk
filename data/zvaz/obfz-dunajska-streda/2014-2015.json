@@ -2,10 +2,10 @@
   "zvaz": "obfz-dunajska-streda",
   "sezona": "2014/2015",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T17:30:26+02:00",
+  "generatedAt": "2026-07-23T12:11:41+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.999,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,9 +13,9 @@
   },
   "kpi": {
     "sutaze": 7,
-    "zapasy": 1361,
+    "zapasy": 1362,
     "uzatvorene": 1376,
-    "administrativne": 15,
+    "administrativne": 14,
     "druzstva": 0,
     "goly": 5559,
     "divaci": 71497,
@@ -25,8 +25,8 @@
     "kontumovaneAdmin": 0,
     "kontumovaneOdohrane": 5,
     "odstupene": 26,
-    "odstupeneAdmin": 15,
-    "odstupeneOdohrane": 11
+    "odstupeneAdmin": 14,
+    "odstupeneOdohrane": 12
   },
   "kategorie": {
     "ADULTS": {
@@ -78,9 +78,9 @@
       "odstupeneAdmin": 12
     },
     "U13": {
-      "zapasy": 459,
+      "zapasy": 460,
       "uzatvorene": 462,
-      "administrativne": 3,
+      "administrativne": 2,
       "druzstva": 0,
       "goly": 1728,
       "zlte": 3,
@@ -91,7 +91,7 @@
       "kontumovane": 0,
       "kontumovaneAdmin": 0,
       "odstupene": 12,
-      "odstupeneAdmin": 3
+      "odstupeneAdmin": 2
     },
     "U11": {
       "zapasy": 96,
@@ -112,7 +112,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 1361,
+      "zapasy": 1362,
       "druzstva": 105,
       "goly": 5559,
       "divaci": 71497,
@@ -147,7 +147,7 @@
           "divaciPokrytych": 114
         },
         "U13": {
-          "zapasy": 459,
+          "zapasy": 460,
           "druzstva": 32,
           "goly": 1728,
           "zlte": 3,

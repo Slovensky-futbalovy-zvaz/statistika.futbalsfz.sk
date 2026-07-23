@@ -2,10 +2,10 @@
   "zvaz": "obfz-lucenec",
   "sezona": "2021/2022",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T18:56:05+02:00",
+  "generatedAt": "2026-07-23T13:41:13+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.998,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,9 +13,9 @@
   },
   "kpi": {
     "sutaze": 6,
-    "zapasy": 417,
+    "zapasy": 418,
     "uzatvorene": 461,
-    "administrativne": 44,
+    "administrativne": 43,
     "druzstva": 0,
     "goly": 2806,
     "divaci": 19535,
@@ -25,8 +25,8 @@
     "kontumovaneAdmin": 7,
     "kontumovaneOdohrane": 2,
     "odstupene": 46,
-    "odstupeneAdmin": 37,
-    "odstupeneOdohrane": 9
+    "odstupeneAdmin": 36,
+    "odstupeneOdohrane": 10
   },
   "kategorie": {
     "ADULTS": {
@@ -78,9 +78,9 @@
       "odstupeneAdmin": 0
     },
     "U11": {
-      "zapasy": 61,
+      "zapasy": 62,
       "uzatvorene": 90,
-      "administrativne": 29,
+      "administrativne": 28,
       "druzstva": 0,
       "goly": 699,
       "zlte": 0,
@@ -91,7 +91,7 @@
       "kontumovane": 2,
       "kontumovaneAdmin": 1,
       "odstupene": 34,
-      "odstupeneAdmin": 28
+      "odstupeneAdmin": 27
     },
     "U09": {
       "zapasy": 15,
@@ -112,7 +112,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 417,
+      "zapasy": 418,
       "druzstva": 46,
       "goly": 2806,
       "divaci": 19535,
@@ -147,7 +147,7 @@
           "divaciPokrytych": 89
         },
         "U11": {
-          "zapasy": 61,
+          "zapasy": 62,
           "druzstva": 10,
           "goly": 699,
           "zlte": 0,

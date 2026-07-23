@@ -66,13 +66,15 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         Do štatistík vstupujú len <strong class="text-ink">uzatvorené</strong> zápasy (uzavretý zápis
         o stretnutí). Kontumácia však zápas uzatvára automaticky — preto medzi uzatvorenými sú aj
         zápasy, ktoré sa <strong class="text-ink">fyzicky nikdy neodohrali</strong> (administratívna
-        kontumácia alebo odstúpené družstvo: technický výsledok, žiadny priebeh v zápise, žiadni diváci).
+        kontumácia alebo odstúpené družstvo: technický výsledok 0:0, žiadny priebeh v zápise, bez divákov a bez podanej zostavy).
       </p>
       <p class="mt-3 text-muted" style="line-height:1.6;">
         Preto <strong class="text-ink">„Odohraté zápasy" = uzatvorené zápasy mínus administratívne
-        ukončené bez zápisu</strong>. Reálne odohraný zápas, ktorý bol dodatočne kontumovaný
-        (má priebeh alebo návštevnosť), zostáva započítaný — vylučujú sa len administratívne
-        prípady bez odohratia.
+        ukončené bez zápisu</strong>. Za reálne odohraný považujeme zápas, ktorý má aspoň jeden zo
+        znakov skutočnej hry: <strong class="text-ink">udalosti v zápise</strong> (góly, karty…),
+        <strong class="text-ink">zaznamenanú návštevnosť</strong>, alebo <strong class="text-ink">podanú
+        (uzavretú) zostavu</strong>. Kontumácia či odstúpené družstvo bez ktoréhokoľvek z týchto znakov
+        sa do „Odohratých" nezapočítava; reálne odohraný zápas dodatočne kontumovaný ostáva započítaný.
       </p>
       <div class="mt-4 overflow-x-auto">
         <table class="w-full text-sm" style="border-collapse:collapse;">
@@ -93,12 +95,12 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       </div>
       <p class="mt-4 text-sm text-muted" style="line-height:1.6;">
         <strong class="text-ink">Príklad (ObFZ Nitra, 2025/2026):</strong> 2 786 uzatvorených zápasov,
-        z toho 155 administratívnych bez odohratia → <span class="tnum">2 631</span> reálne odohratých.
+        z toho 152 administratívnych bez odohratia → <span class="tnum">2 634</span> reálne odohratých.
       </p>
       <p class="mt-2 text-sm text-muted" style="line-height:1.6;">
         <strong class="text-ink">Celoslovensky (2025/2026):</strong> z <span class="tnum">63 943</span> uzatvorených
-        zápasov je <span class="tnum">2 985</span> administratívnych (≈ 4,7 %), teda
-        <span class="tnum">60 958</span> reálne odohratých. Pravidlo platí pre zväzy, kluby aj futsal a všetky sezóny.
+        zápasov je <span class="tnum">2 939</span> administratívnych (≈ 4,6 %), teda
+        <span class="tnum">61 004</span> reálne odohratých. Pravidlo platí pre zväzy, kluby aj futsal a všetky sezóny.
       </p>
     </div>
   </section>

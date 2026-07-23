@@ -2,10 +2,10 @@
   "zvaz": "obfz-trebisov",
   "sezona": "2017/2018",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T19:50:09+02:00",
+  "generatedAt": "2026-07-23T14:41:10+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.998,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,9 +13,9 @@
   },
   "kpi": {
     "sutaze": 3,
-    "zapasy": 453,
+    "zapasy": 454,
     "uzatvorene": 502,
-    "administrativne": 49,
+    "administrativne": 48,
     "druzstva": 0,
     "goly": 2965,
     "divaci": 16967,
@@ -25,14 +25,14 @@
     "kontumovaneAdmin": 2,
     "kontumovaneOdohrane": 8,
     "odstupene": 82,
-    "odstupeneAdmin": 47,
-    "odstupeneOdohrane": 35
+    "odstupeneAdmin": 46,
+    "odstupeneOdohrane": 36
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 217,
+      "zapasy": 218,
       "uzatvorene": 265,
-      "administrativne": 48,
+      "administrativne": 47,
       "druzstva": 0,
       "goly": 1023,
       "zlte": 423,
@@ -43,7 +43,7 @@
       "kontumovane": 5,
       "kontumovaneAdmin": 1,
       "odstupene": 82,
-      "odstupeneAdmin": 47
+      "odstupeneAdmin": 46
     },
     "U19": {
       "zapasy": 55,
@@ -80,7 +80,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 453,
+      "zapasy": 454,
       "druzstva": 52,
       "goly": 2965,
       "divaci": 16967,
@@ -88,7 +88,7 @@
       "cerveneKarty": 22,
       "kategorie": {
         "ADULTS": {
-          "zapasy": 217,
+          "zapasy": 218,
           "druzstva": 24,
           "goly": 1023,
           "zlte": 423,

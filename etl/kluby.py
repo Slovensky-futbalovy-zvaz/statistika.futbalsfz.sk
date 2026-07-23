@@ -74,7 +74,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             "appSpace": 1,
             "teams._id": 1, "teams.organization._id": 1, "teams.organization.name": 1, "teams.ageCategory": 1,
             "protocol.events.eventType": 1, "protocol.events.team": 1, "protocol.audience": 1,
-            "nominations.teamId": 1, "nominations.athletes.sportnetUser._id": 1,
+            "nominations.teamId": 1, "nominations.closed": 1, "nominations.athletes.sportnetUser._id": 1,
             "nominations.crew.sportnetUser._id": 1, "nominations.crew.position": 1,
             "contumation.isContumated": 1,
             "__issfMatchStatus": 1, "state": 1,
@@ -108,7 +108,8 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
         _status = m.get("__issfMatchStatus") or m.get("state")
         _bez_udalosti = not ((m.get("protocol") or {}).get("events"))
         _bez_divakov = not (isinstance(audience, int) and audience > 0)
-        _admin = _status in ("KONTUMOVANY", "ODSTUPENE_DRUZSTVO") and _bez_udalosti and _bez_divakov
+        _bez_nominacie = not any((n or {}).get("closed") for n in (m.get("nominations") or []))
+        _admin = _status in ("KONTUMOVANY", "ODSTUPENE_DRUZSTVO") and _bez_udalosti and _bez_divakov and _bez_nominacie
         # mapa teamId(str) → (org_id, nazov, cat)
         tmap = {}
         for t in m.get("teams", []):

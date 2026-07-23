@@ -2,10 +2,10 @@
   "zvaz": "obfz-humenne",
   "sezona": "2015/2016",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T19:37:49+02:00",
+  "generatedAt": "2026-07-23T14:26:55+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.999,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,9 +13,9 @@
   },
   "kpi": {
     "sutaze": 10,
-    "zapasy": 965,
+    "zapasy": 966,
     "uzatvorene": 1052,
-    "administrativne": 87,
+    "administrativne": 86,
     "druzstva": 0,
     "goly": 4263,
     "divaci": 53628,
@@ -25,8 +25,8 @@
     "kontumovaneAdmin": 9,
     "kontumovaneOdohrane": 29,
     "odstupene": 158,
-    "odstupeneAdmin": 78,
-    "odstupeneOdohrane": 80
+    "odstupeneAdmin": 77,
+    "odstupeneOdohrane": 81
   },
   "kategorie": {
     "ADULTS": {
@@ -62,9 +62,9 @@
       "odstupeneAdmin": 50
     },
     "U15": {
-      "zapasy": 163,
+      "zapasy": 164,
       "uzatvorene": 177,
-      "administrativne": 14,
+      "administrativne": 13,
       "druzstva": 0,
       "goly": 921,
       "zlte": 29,
@@ -75,7 +75,7 @@
       "kontumovane": 3,
       "kontumovaneAdmin": 0,
       "odstupene": 24,
-      "odstupeneAdmin": 14
+      "odstupeneAdmin": 13
     },
     "U13": {
       "zapasy": 21,
@@ -96,7 +96,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 965,
+      "zapasy": 966,
       "druzstva": 94,
       "goly": 4263,
       "divaci": 53628,
@@ -122,7 +122,7 @@
           "divaciPokrytych": 316
         },
         "U15": {
-          "zapasy": 163,
+          "zapasy": 164,
           "druzstva": 22,
           "goly": 921,
           "zlte": 29,

@@ -2,10 +2,10 @@
   "zvaz": "obfz-zilina",
   "sezona": "2019/2020",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T18:22:17+02:00",
+  "generatedAt": "2026-07-23T13:05:53+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.001,
+    "divaciPokrytie": 0.999,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,20 +13,20 @@
   },
   "kpi": {
     "sutaze": 11,
-    "zapasy": 818,
+    "zapasy": 820,
     "uzatvorene": 848,
-    "administrativne": 30,
+    "administrativne": 28,
     "druzstva": 0,
     "goly": 4092,
     "divaci": 38047,
     "zlteKarty": 1254,
     "cerveneKarty": 39,
     "kontumovane": 8,
-    "kontumovaneAdmin": 4,
-    "kontumovaneOdohrane": 4,
+    "kontumovaneAdmin": 3,
+    "kontumovaneOdohrane": 5,
     "odstupene": 32,
-    "odstupeneAdmin": 26,
-    "odstupeneOdohrane": 6
+    "odstupeneAdmin": 25,
+    "odstupeneOdohrane": 7
   },
   "kategorie": {
     "ADULTS": {
@@ -46,9 +46,9 @@
       "odstupeneAdmin": 0
     },
     "U19": {
-      "zapasy": 112,
+      "zapasy": 114,
       "uzatvorene": 134,
-      "administrativne": 22,
+      "administrativne": 20,
       "druzstva": 0,
       "goly": 722,
       "zlte": 270,
@@ -57,9 +57,9 @@
       "divaciPokrytych": 113,
       "sutaze": 2,
       "kontumovane": 3,
-      "kontumovaneAdmin": 2,
+      "kontumovaneAdmin": 1,
       "odstupene": 26,
-      "odstupeneAdmin": 20
+      "odstupeneAdmin": 19
     },
     "U15": {
       "zapasy": 200,
@@ -128,7 +128,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 818,
+      "zapasy": 820,
       "druzstva": 168,
       "goly": 4092,
       "divaci": 38047,
@@ -145,7 +145,7 @@
           "divaciPokrytych": 259
         },
         "U19": {
-          "zapasy": 112,
+          "zapasy": 114,
           "druzstva": 20,
           "goly": 722,
           "zlte": 270,

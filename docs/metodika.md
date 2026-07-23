@@ -48,10 +48,10 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 
 - Do štatistík sa počítajú len zápasy s `closed: true` (uzavreté/uzatvorené).
 - **POZOR — kontumácia zápas automaticky uzatvára** (`closed:true`, vloží syntetické `goal_contumation` udalosti). Preto `closed:true` zahŕňa aj kontumácie a odstúpené družstvá, **vrátane tých, ktoré sa fyzicky nikdy nehrali** (technický výsledok 0:0, prázdna návštevnosť, bez rozhodcu). Samotný `closed` teda „odohraný“ nezaručuje.
-- **Reálne odohrané (kpi.zapasy)** = `closed:true` **mínus administratívne ukončené bez zápisu**. Administratívne ukončený zápas = `__issfMatchStatus` (fallback `state`) ∈ {`KONTUMOVANY`, `ODSTUPENE_DRUZSTVO`} **a zároveň** žiadne udalosti v protokole (`protocol.events` prázdne) **a zároveň** žiadna návštevnosť (`protocol.audience` prázdne/0). Implementácia: `_ADMIN_NEODOHRANY_EXPR` v `etl/pipelines/__init__.py`.
-- **Reálne odohrané kontumácie/odstúpenia ostávajú započítané** (majú protokol alebo návštevnosť) — vylučujú sa len administratívne bez zápisu.
+- **Reálne odohrané (kpi.zapasy)** = `closed:true` **mínus administratívne ukončené bez zápisu**. Administratívne ukončený zápas = `__issfMatchStatus` (fallback `state`) ∈ {`KONTUMOVANY`, `ODSTUPENE_DRUZSTVO`} **a zároveň** žiadne udalosti v protokole (`protocol.events` prázdne) **a zároveň** žiadna návštevnosť (`protocol.audience` prázdne/0) **a zároveň** žiadna uzavretá nominácia (`nominations[].closed` — nebola podaná zostava). Implementácia: `_ADMIN_NEODOHRANY_EXPR` v `etl/pipelines/__init__.py`.
+- **Reálne odohrané kontumácie/odstúpenia ostávajú započítané** (majú protokol, návštevnosť alebo uzavretú nomináciu) — vylučujú sa len administratívne bez akéhokoľvek znaku odohratia.
 - Doplnkové KPI: `kpi.uzatvorene` (pôvodná báza všetkých `closed:true`), `kpi.administrativne`, a kategórie `kpi.kontumovane` / `kpi.odstupene` (každá so split `*Admin` / `*Odohrane`). Odstúpené družstvo **nemá** `contumation.isContumated` — preto sa kategórie určujú cez `__issfMatchStatus`, nie cez `isContumated`.
-- **Overenie (ObFZ Nitra 2025/2026, 22. 7. 2026):** uzatvorené 2786 → reálne odohrané 2631; administratívne 155 (kontumované 94 z toho 83 admin., odstúpené 123 z toho 72 admin.). Zhoduje sa s nezávislou ISSF analýzou (2782 vs 2627, 155 chýbajúcich zápisov).
+- **Overenie (ObFZ Nitra 2025/2026):** uzatvorené 2786 → reálne odohrané 2634; administratívne 152. Pôvodná proxy (bez udalostí a bez divákov) dávala 155; spresnenie o uzavretú nomináciu (3 zápasy s podanou zostavou sa preklopili na odohrané) → 152. Nezávislá ISSF analýza: 2782 vs 2627. Celoslovensky 2025/2026: 63 943 uzatvorených → 61 004 odohraných, 2 939 administratívnych (≈ 4,6 %).
 
 ### Premenovávanie súťaží počas sezóny (rebranding pasca)
 

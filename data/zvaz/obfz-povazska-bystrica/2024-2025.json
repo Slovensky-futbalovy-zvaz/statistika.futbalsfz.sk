@@ -2,10 +2,10 @@
   "zvaz": "obfz-povazska-bystrica",
   "sezona": "2024/2025",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-22T17:58:19+02:00",
+  "generatedAt": "2026-07-23T12:40:54+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 1.0,
+    "divaciPokrytie": 0.999,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
@@ -13,26 +13,26 @@
   },
   "kpi": {
     "sutaze": 7,
-    "zapasy": 1266,
+    "zapasy": 1267,
     "uzatvorene": 1292,
-    "administrativne": 26,
+    "administrativne": 25,
     "druzstva": 110,
     "goly": 7919,
     "divaci": 73278,
     "zlteKarty": 804,
     "cerveneKarty": 26,
     "kontumovane": 16,
-    "kontumovaneAdmin": 11,
-    "kontumovaneOdohrane": 5,
+    "kontumovaneAdmin": 10,
+    "kontumovaneOdohrane": 6,
     "odstupene": 40,
     "odstupeneAdmin": 15,
     "odstupeneOdohrane": 25
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 295,
+      "zapasy": 296,
       "uzatvorene": 314,
-      "administrativne": 19,
+      "administrativne": 18,
       "druzstva": 26,
       "goly": 1218,
       "zlte": 660,
@@ -41,7 +41,7 @@
       "divaciPokrytych": 295,
       "sutaze": 2,
       "kontumovane": 11,
-      "kontumovaneAdmin": 7,
+      "kontumovaneAdmin": 6,
       "odstupene": 26,
       "odstupeneAdmin": 12
     },
@@ -128,7 +128,7 @@
   },
   "pohlavie": {
     "M": {
-      "zapasy": 1266,
+      "zapasy": 1267,
       "druzstva": 110,
       "goly": 7919,
       "divaci": 73278,
@@ -136,7 +136,7 @@
       "cerveneKarty": 26,
       "kategorie": {
         "ADULTS": {
-          "zapasy": 295,
+          "zapasy": 296,
           "druzstva": 26,
           "goly": 1218,
           "zlte": 660,

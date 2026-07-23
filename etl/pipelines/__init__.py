@@ -55,6 +55,11 @@ _ADMIN_NEODOHRANY_EXPR = {
         {"$in": [_STATUS_EXPR, ["KONTUMOVANY", "ODSTUPENE_DRUZSTVO"]]},
         {"$eq": [{"$size": {"$ifNull": ["$protocol.events", []]}}, 0]},
         {"$eq": [{"$convert": {"input": "$protocol.audience", "to": "double", "onError": 0, "onNull": 0}}, 0]},
+        # žiadna uzavretá nominácia (zostava nebola podaná) — silný príznak, že sa nehralo
+        {"$not": [{"$anyElementTrue": {"$map": {
+            "input": {"$ifNull": ["$nominations", []]}, "as": "n",
+            "in": {"$eq": ["$$n.closed", True]},
+        }}}]},
     ]
 }
 
