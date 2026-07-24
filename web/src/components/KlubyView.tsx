@@ -58,7 +58,7 @@ export default function KlubyView({ kluby }: Props) {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Hľadať klub alebo zväz…"
-          style={{ flex: '1 1 240px', minWidth: 200, border: '1px solid #d9dce1', borderRadius: 10, padding: '10px 13px', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+          style={{ flex: '1 1 240px', minWidth: 200, border: '1px solid #d9dce1', borderRadius: 10, padding: '10px 13px', fontSize: 14, outline: 'none', boxSizing: 'border-box', background: '#fff' }}
         />
         <div style={{ display: 'inline-flex', background: 'var(--color-track)', borderRadius: 11, padding: 3 }}>
           {UROVNE.map((u) => (

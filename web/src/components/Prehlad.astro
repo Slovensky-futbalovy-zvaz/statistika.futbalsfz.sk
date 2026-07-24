@@ -83,7 +83,7 @@ const faq = [
   },
   {
     q: 'Odkiaľ pochádzajú dáta?',
-    a: 'Dáta pochádzajú z platformy sportnet.online, ktorá eviduje súťaže, zápasy a osoby slovenského futbalu. Publikujú sa výhradne agregované počty; portál neuvádza mená osôb.',
+    a: 'Dáta pochádzajú z platformy <a href="https://sportnet.online" target="_blank" rel="noopener" style="color:var(--color-sfz-blue)">sportnet.online</a>, ktorá eviduje súťaže, zápasy a osoby slovenského futbalu. Publikujú sa výhradne agregované počty; portál neuvádza mená osôb.',
   },
   {
     q: 'Aké súťaže a zväzy portál pokrýva?',
@@ -251,14 +251,14 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       <strong class="text-ink">Štatistiky slovenského futbalu</strong> sú verejný portál Slovenského
       futbalového zväzu. Prehľadne sprístupňujú čísla o slovenskom futbale na všetkých troch úrovniach
       pyramídy — SFZ, štyri regionálne (RFZ) a 38 oblastných (ObFZ) zväzov — za jednotlivé sezóny.
-      Zdrojom dát je platforma sportnet.online; publikujú sa výhradne agregované počty.
+      Zdrojom dát je platforma <a href="https://sportnet.online" target="_blank" rel="noopener" class="text-sfz-blue hover:underline">sportnet.online</a>; publikujú sa výhradne agregované počty.
     </p>
     <div class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
       {
         faq.map((f) => (
           <div class={CARD} style={CARD_STYLE}>
             <h3 class="font-bold text-ink" style="font-size:15px;">{f.q}</h3>
-            <p class="mt-1.5 text-sm text-muted" style="line-height:1.55;">{f.a}</p>
+            <p class="mt-1.5 text-sm text-muted" style="line-height:1.55;" set:html={f.a} />
           </div>
         ))
       }

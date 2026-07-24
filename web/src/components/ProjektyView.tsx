@@ -149,7 +149,7 @@ export default function ProjektyView({ projekty }: Props) {
       </div>
 
       <p style={{ fontSize: 11.5, color: 'var(--color-muted)', marginTop: 14 }}>
-        <b>Metodika:</b> deti = počet detí v súpiskách tímov (nie zápasy). Školy = unikátne školy/kluby, tímy = počet skupín. Zdroj: sportnet.online.
+        <b>Metodika:</b> deti = počet detí v súpiskách tímov (nie zápasy). Školy = unikátne školy/kluby, tímy = počet skupín. Zdroj: <a href="https://sportnet.online" target="_blank" rel="noopener" style={{ color: 'var(--color-sfz-blue)' }}>sportnet.online</a>.
       </p>
     </div>
   );
