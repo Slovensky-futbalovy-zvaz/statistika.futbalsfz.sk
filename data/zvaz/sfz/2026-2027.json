@@ -2,7 +2,7 @@
   "zvaz": "sfz",
   "sezona": "2026/2027",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-23T11:03:08+02:00",
+  "generatedAt": "2026-07-23T22:39:36+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -12,11 +12,11 @@
     "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
   },
   "kpi": {
-    "sutaze": 1,
+    "sutaze": 2,
     "zapasy": 1,
-    "uzatvorene": 2,
-    "administrativne": 1,
-    "druzstva": 3,
+    "uzatvorene": 21,
+    "administrativne": 20,
+    "druzstva": 15,
     "goly": 2,
     "divaci": 183,
     "zlteKarty": 0,
@@ -24,32 +24,32 @@
     "kontumovane": 0,
     "kontumovaneAdmin": 0,
     "kontumovaneOdohrane": 0,
-    "odstupene": 1,
-    "odstupeneAdmin": 1,
+    "odstupene": 20,
+    "odstupeneAdmin": 20,
     "odstupeneOdohrane": 0
   },
   "kategorie": {
     "ADULTS": {
       "zapasy": 1,
-      "uzatvorene": 2,
-      "administrativne": 1,
-      "druzstva": 3,
+      "uzatvorene": 21,
+      "administrativne": 20,
+      "druzstva": 15,
       "goly": 2,
       "zlte": 0,
       "cervene": 0,
       "divaci": 183,
       "divaciPokrytych": 1,
-      "sutaze": 1,
+      "sutaze": 2,
       "kontumovane": 0,
       "kontumovaneAdmin": 0,
-      "odstupene": 1,
-      "odstupeneAdmin": 1
+      "odstupene": 20,
+      "odstupeneAdmin": 20
     }
   },
   "pohlavie": {
     "M": {
       "zapasy": 1,
-      "druzstva": 3,
+      "druzstva": 5,
       "goly": 2,
       "divaci": 183,
       "zlteKarty": 0,
@@ -57,12 +57,31 @@
       "kategorie": {
         "ADULTS": {
           "zapasy": 1,
-          "druzstva": 3,
+          "druzstva": 5,
           "goly": 2,
           "zlte": 0,
           "cervene": 0,
           "divaci": 183,
           "divaciPokrytych": 1
+        }
+      }
+    },
+    "F": {
+      "zapasy": 0,
+      "druzstva": 10,
+      "goly": 0,
+      "divaci": 0,
+      "zlteKarty": 0,
+      "cerveneKarty": 0,
+      "kategorie": {
+        "ADULTS": {
+          "zapasy": 0,
+          "druzstva": 10,
+          "goly": 0,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 0,
+          "divaciPokrytych": 0
         }
       }
     }
@@ -75,15 +94,15 @@
       }
     },
     "treneri": {
-      "unikatni": 2,
+      "unikatni": 3,
       "poKategorii": {
-        "ADULTS": 2
+        "ADULTS": 3
       }
     },
     "realizacnyTim": {
-      "unikatni": 4,
+      "unikatni": 6,
       "poKategorii": {
-        "ADULTS": 4
+        "ADULTS": 6
       }
     },
     "rozhodcovia": {

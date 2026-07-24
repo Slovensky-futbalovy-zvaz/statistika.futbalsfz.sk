@@ -65,13 +65,35 @@ def klub_id_slug(org_id: str) -> str:
     return f"klub-{m.group(1)}" if m else re.sub(r"[^a-z0-9]+", "-", (org_id or "").lower()).strip("-")
 
 
+#: Normalizácia nekanonických kategórií (zhodné s run.py).
+KAT_NORMALIZACIA = {"Dospelí": "ADULTS", "U15 mix": "U15"}
+
+
+def nacitaj_part_kat(db, varianty: list[str]) -> dict:
+    """Mapa partId(str) → veková kategória z competitions.parts[].rules.category
+    (fallback pre historické sezóny, keď teams.ageCategory nie je vyplnené) — naprieč
+    všetkými zväzmi, keďže kluby agregujú celé SR."""
+    mapa: dict[str, str] = {}
+    for c in db.competitions.find({"season.name": {"$in": varianty}}, {"parts._id": 1, "parts.rules.category": 1}):
+        for pp in c.get("parts", []):
+            cat = ((pp.get("rules") or {}).get("category"))
+            if cat and cat.startswith("WU"):
+                cat = cat[1:]
+            cat = KAT_NORMALIZACIA.get(cat, cat)
+            if cat:
+                mapa[str(pp["_id"])] = cat
+    return mapa
+
+
 def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: dict, coach_positions: list[str]) -> tuple[dict, list]:
     as2z = appspace_na_zvaz(zvazy)
     coach_set = set(coach_positions)
+    part_kat = nacitaj_part_kat(db, varianty)
     cur = db.matches.find(
         {"closed": True, "season.name": {"$in": varianty}, "rules.sport_sector": sport_sector},
         {
             "appSpace": 1,
+            "competitionPart._id": 1,
             "teams._id": 1, "teams.organization._id": 1, "teams.organization.name": 1, "teams.ageCategory": 1,
             "protocol.events.eventType": 1, "protocol.events.team": 1, "protocol.audience": 1,
             "nominations.teamId": 1, "nominations.closed": 1, "nominations.athletes.sportnetUser._id": 1,
@@ -110,6 +132,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
         _bez_divakov = not (isinstance(audience, int) and audience > 0)
         _bez_nominacie = not any((n or {}).get("closed") for n in (m.get("nominations") or []))
         _admin = _status in ("KONTUMOVANY", "ODSTUPENE_DRUZSTVO") and _bez_udalosti and _bez_divakov and _bez_nominacie
+        _fb = part_kat.get(str((m.get("competitionPart") or {}).get("_id")))
         # mapa teamId(str) → (org_id, nazov, cat)
         tmap = {}
         for t in m.get("teams", []):
@@ -118,7 +141,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             if not oid:
                 continue
             tid = str(t.get("_id"))
-            cat = t.get("ageCategory") or "NEZNAMA"
+            cat = t.get("ageCategory") or _fb or "NEZNAMA"
             tmap[tid] = (oid, org.get("name"), cat)
 
         # zápas/družstvá/diváci per klub per kategória (klub v zápase raz per jeho team)

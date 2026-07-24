@@ -343,9 +343,11 @@ def druzstva(app_spaces, season_variants, sport_sector="futbal", part_map=None):
     """Unikátne družstvá (organization.name) po kategóriách — len s ≥1 uzavretým zápasom."""
     return [
         _match_stage(app_spaces, season_variants, sport_sector),
-        {"$project": {"teams": 1}},
+        # catFb sa MUSÍ počítať v projekcii (kým existuje competitionPart); po $unwind
+        # by fallback vekovej kategórie nemal z čoho čítať (historické sezóny → null).
+        {"$project": {"teams": 1, "catFb": cat_fallback_expr(part_map) or {"$literal": None}}},
         {"$unwind": "$teams"},
-        {"$group": {"_id": {"cat": {"$ifNull": ["$teams.ageCategory", cat_fallback_expr(part_map) or None]}, "org": "$teams.organization.name"}}},
+        {"$group": {"_id": {"cat": {"$ifNull": ["$teams.ageCategory", "$catFb"]}, "org": "$teams.organization.name"}}},
         {"$group": {"_id": "$_id.cat", "druzstva": {"$sum": 1}}},
         {"$sort": {"_id": 1}},
     ]

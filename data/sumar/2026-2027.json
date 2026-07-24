@@ -1,17 +1,17 @@
 {
  "sezona": "2026/2027",
- "generatedAt": "2026-07-23T19:23:34+02:00",
- "pocetZvazov": 4,
+ "generatedAt": "2026-07-24T02:37:22+02:00",
+ "pocetZvazov": 6,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
   "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia."
  },
  "kpi": {
-  "sutaze": 4,
+  "sutaze": 7,
   "zapasy": 1,
-  "uzatvorene": 30,
-  "administrativne": 29,
-  "druzstva": 21,
+  "uzatvorene": 101,
+  "administrativne": 100,
+  "druzstva": 61,
   "goly": 2,
   "divaci": 183,
   "zlteKarty": 0,
@@ -19,20 +19,30 @@
   "kontumovane": 1,
   "kontumovaneAdmin": 1,
   "kontumovaneOdohrane": 0,
-  "odstupene": 28,
-  "odstupeneAdmin": 28,
+  "odstupene": 99,
+  "odstupeneAdmin": 99,
   "odstupeneOdohrane": 0
  },
  "kategorie": {
   "ADULTS": {
    "zapasy": 1,
-   "uzatvorene": 30,
-   "administrativne": 29,
-   "druzstva": 21,
+   "uzatvorene": 75,
+   "administrativne": 74,
+   "druzstva": 47,
    "goly": 2,
    "zlte": 0,
    "cervene": 0,
    "divaci": 183
+  },
+  "U19": {
+   "zapasy": 0,
+   "uzatvorene": 26,
+   "administrativne": 26,
+   "druzstva": 14,
+   "goly": 0,
+   "zlte": 0,
+   "cervene": 0,
+   "divaci": 0
   }
  },
  "osobyKat": {
@@ -40,10 +50,10 @@
    "ADULTS": 33
   },
   "treneri": {
-   "ADULTS": 2
+   "ADULTS": 3
   },
   "realizacnyTim": {
-   "ADULTS": 4
+   "ADULTS": 6
   },
   "rozhodcovia": {
    "ADULTS": 3
@@ -57,11 +67,11 @@
  },
  "osoby": {
   "hraci": 33,
-  "treneri": 2,
+  "treneri": 3,
   "rozhodcovia": 3,
   "delegati": 1,
   "personal": 2,
-  "spolu": 41
+  "spolu": 42
  },
  "odvetvia": {},
  "sunburstSutaze": {
@@ -112,7 +122,7 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 2
+          "value": 3
          }
         ]
        },
