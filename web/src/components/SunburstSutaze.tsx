@@ -14,14 +14,18 @@ interface Props {
 }
 
 type Gender = 'VSETCI' | 'M' | 'F';
+type Metrika = 'zapasy' | 'sutaze';
 
-/** Sunburst súťaží so spoločnými filtrami šport (futbal/futsal) a pohlavie. */
+/** Sunburst pyramídy so spoločnými filtrami metrika (zápasy/súťaže), šport a pohlavie. */
 export default function SunburstSutaze({ strom }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const chart = useRef<echarts.ECharts | null>(null);
   const [futbal, setFutbal] = useState(true);
   const [futsal, setFutsal] = useState(true);
   const [gender, setGender] = useState<Gender>('VSETCI');
+  const [metrika, setMetrika] = useState<Metrika>('zapasy');
+  // rozpad po pohlaví je zatiaľ k dispozícii len pre zápasy
+  const genderAktivny = metrika === 'zapasy';
 
   // farbenie uzla podľa mena (RFZ / SFZ vlastné / odvetvie)
   function farba(name: string, depth: number): string | undefined {
@@ -39,7 +43,12 @@ export default function SunburstSutaze({ strom }: Props) {
     function pretvor(u: SunburstUzol, depth: number): SunburstUzol | null {
       // list
       if (!u.children || u.children.length === 0) {
-        const val = gender === 'VSETCI' ? (u.value ?? 0) : (u.pohlavie?.[gender] ?? 0);
+        const val =
+          metrika === 'sutaze'
+            ? (u.sutaze ?? 0)
+            : gender === 'VSETCI'
+              ? (u.value ?? 0)
+              : (u.pohlavie?.[gender] ?? 0);
         if (val <= 0) return null;
         return { name: u.name, value: val, itemStyle: { color: farba(u.name, depth) } } as SunburstUzol & { itemStyle?: unknown };
       }
@@ -52,7 +61,7 @@ export default function SunburstSutaze({ strom }: Props) {
       o.name === 'Futbal' ? futbal : o.name === 'Futsal' ? futsal : true,
     );
     return odvetvia.map((o) => pretvor(o, 1)).filter(Boolean) as SunburstUzol[];
-  }, [strom, futbal, futsal, gender]);
+  }, [strom, futbal, futsal, gender, metrika]);
 
   useEffect(() => {
     if (!el.current) return;
@@ -94,14 +103,26 @@ export default function SunburstSutaze({ strom }: Props) {
     <div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 10, fontSize: 12.5 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ color: 'var(--color-muted)' }}>Metrika:</span>
+          <button type="button" style={pill(metrika === 'zapasy')} onClick={() => setMetrika('zapasy')}>Zápasy</button>
+          <button type="button" style={pill(metrika === 'sutaze')} onClick={() => setMetrika('sutaze')}>Súťaže</button>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: 'var(--color-muted)' }}>Šport:</span>
           <button type="button" style={pill(futbal)} onClick={() => setFutbal((v) => !v)}>Futbal</button>
           <button type="button" style={pill(futsal)} onClick={() => setFutsal((v) => !v)}>Futsal</button>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: genderAktivny ? 1 : 0.45 }}>
           <span style={{ color: 'var(--color-muted)' }}>Pohlavie:</span>
           {(['VSETCI', 'M', 'F'] as Gender[]).map((g) => (
-            <button key={g} type="button" style={pill(gender === g)} onClick={() => setGender(g)}>
+            <button
+              key={g}
+              type="button"
+              disabled={!genderAktivny}
+              title={genderAktivny ? undefined : 'Rozpad počtu súťaží podľa pohlavia zatiaľ nie je k dispozícii'}
+              style={{ ...pill(genderAktivny && gender === g), ...(genderAktivny ? {} : { cursor: 'not-allowed' }) }}
+              onClick={() => setGender(g)}
+            >
               {g === 'VSETCI' ? 'Všetci' : g === 'M' ? 'Muži' : 'Ženy'}
             </button>
           ))}
@@ -126,6 +147,7 @@ export default function SunburstSutaze({ strom }: Props) {
       </div>
       <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
         Kruhy zvnútra von: odvetvie → SFZ → RFZ → ObFZ → súťaž.
+        {metrika === 'sutaze' && ' Súťaž = súťaž s aspoň jedným odohraným zápasom, priradená svojmu riadiacemu zväzu.'}
       </p>
     </div>
   );

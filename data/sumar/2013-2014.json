@@ -1,10 +1,11 @@
 {
  "sezona": "2013/2014",
- "generatedAt": "2026-07-24T02:37:22+02:00",
+ "generatedAt": "2026-08-06T16:58:13+02:00",
  "pocetZvazov": 42,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
-  "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia."
+  "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia.",
+  "sutazePoznamka": "Súťaž = distinct súťaž s aspoň jedným uzavretým zápasom. V bloku kategorie sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich, preto súčet po kategóriách môže prevýšiť kpi.sutaze."
  },
  "kpi": {
   "sutaze": 292,
@@ -25,6 +26,7 @@
  },
  "kategorie": {
   "ADULTS": {
+   "sutaze": 131,
    "zapasy": 19657,
    "uzatvorene": 20114,
    "administrativne": 457,
@@ -35,6 +37,7 @@
    "divaci": 2840842
   },
   "U19": {
+   "sutaze": 57,
    "zapasy": 6753,
    "uzatvorene": 7187,
    "administrativne": 434,
@@ -45,6 +48,7 @@
    "divaci": 266331
   },
   "U17": {
+   "sutaze": 6,
    "zapasy": 1212,
    "uzatvorene": 1271,
    "administrativne": 59,
@@ -55,6 +59,7 @@
    "divaci": 49569
   },
   "U16": {
+   "sutaze": 6,
    "zapasy": 381,
    "uzatvorene": 381,
    "administrativne": 0,
@@ -65,6 +70,7 @@
    "divaci": 15917
   },
   "U15": {
+   "sutaze": 61,
    "zapasy": 6405,
    "uzatvorene": 6752,
    "administrativne": 347,
@@ -75,6 +81,7 @@
    "divaci": 207225
   },
   "U14": {
+   "sutaze": 2,
    "zapasy": 473,
    "uzatvorene": 474,
    "administrativne": 1,
@@ -85,6 +92,7 @@
    "divaci": 18002
   },
   "U13": {
+   "sutaze": 18,
    "zapasy": 2456,
    "uzatvorene": 2600,
    "administrativne": 144,
@@ -95,6 +103,7 @@
    "divaci": 81528
   },
   "U12": {
+   "sutaze": 1,
    "zapasy": 454,
    "uzatvorene": 454,
    "administrativne": 0,
@@ -105,6 +114,7 @@
    "divaci": 18397
   },
   "U11": {
+   "sutaze": 8,
    "zapasy": 895,
    "uzatvorene": 938,
    "administrativne": 43,
@@ -115,6 +125,7 @@
    "divaci": 28639
   },
   "U10": {
+   "sutaze": 1,
    "zapasy": 110,
    "uzatvorene": 110,
    "administrativne": 0,
@@ -125,6 +136,7 @@
    "divaci": 3859
   },
   "U09": {
+   "sutaze": 1,
    "zapasy": 110,
    "uzatvorene": 110,
    "administrativne": 0,
@@ -133,6 +145,117 @@
    "zlte": 2,
    "cervene": 0,
    "divaci": 3730
+  }
+ },
+ "sutazePodlaRiadiacehoZvazu": {
+  "SFZ": {
+   "sutaze": 23,
+   "zapasy": 3801,
+   "pocetZvazov": 1,
+   "kategorie": {
+    "ADULTS": {
+     "sutaze": 11,
+     "zapasy": 1236
+    },
+    "U19": {
+     "sutaze": 1,
+     "zapasy": 182
+    },
+    "U17": {
+     "sutaze": 1,
+     "zapasy": 182
+    },
+    "U16": {
+     "sutaze": 6,
+     "zapasy": 381
+    },
+    "U15": {
+     "sutaze": 1,
+     "zapasy": 459
+    },
+    "U14": {
+     "sutaze": 1,
+     "zapasy": 453
+    },
+    "U13": {
+     "sutaze": 1,
+     "zapasy": 454
+    },
+    "U12": {
+     "sutaze": 1,
+     "zapasy": 454
+    }
+   }
+  },
+  "RFZ": {
+   "sutaze": 78,
+   "zapasy": 13118,
+   "pocetZvazov": 4,
+   "kategorie": {
+    "ADULTS": {
+     "sutaze": 27,
+     "zapasy": 5252
+    },
+    "U19": {
+     "sutaze": 17,
+     "zapasy": 2996
+    },
+    "U17": {
+     "sutaze": 5,
+     "zapasy": 1030
+    },
+    "U15": {
+     "sutaze": 10,
+     "zapasy": 1497
+    },
+    "U13": {
+     "sutaze": 10,
+     "zapasy": 1407
+    },
+    "U11": {
+     "sutaze": 7,
+     "zapasy": 716
+    },
+    "U10": {
+     "sutaze": 1,
+     "zapasy": 110
+    },
+    "U09": {
+     "sutaze": 1,
+     "zapasy": 110
+    }
+   }
+  },
+  "ObFZ": {
+   "sutaze": 191,
+   "zapasy": 21987,
+   "pocetZvazov": 37,
+   "kategorie": {
+    "ADULTS": {
+     "sutaze": 93,
+     "zapasy": 13169
+    },
+    "U15": {
+     "sutaze": 50,
+     "zapasy": 4449
+    },
+    "U13": {
+     "sutaze": 7,
+     "zapasy": 595
+    },
+    "U19": {
+     "sutaze": 39,
+     "zapasy": 3575
+    },
+    "U11": {
+     "sutaze": 1,
+     "zapasy": 179
+    },
+    "U14": {
+     "sutaze": 1,
+     "zapasy": 20
+    }
+   }
   }
  },
  "osobyKat": {
@@ -182,6 +305,7 @@
        {
         "name": "SFZ — vlastné súťaže",
         "value": 3801,
+        "sutaze": 23,
         "pohlavie": {
          "M": 3299,
          "F": 502
@@ -195,6 +319,7 @@
          {
           "name": "Bratislavský futbalový zväz — vlastné súťaže",
           "value": 2269,
+          "sutaze": 18,
           "pohlavie": {
            "M": 2269
           },
@@ -203,6 +328,7 @@
          {
           "name": "ObFZ Bratislava-mesto",
           "value": 432,
+          "sutaze": 3,
           "pohlavie": {
            "M": 432
           },
@@ -211,6 +337,7 @@
          {
           "name": "ObFZ Bratislava-vidiek",
           "value": 924,
+          "sutaze": 8,
           "pohlavie": {
            "M": 924
           },
@@ -225,6 +352,7 @@
          {
           "name": "Západoslovenský futbalový zväz — vlastné súťaže",
           "value": 2571,
+          "sutaze": 12,
           "pohlavie": {
            "M": 2571
           },
@@ -233,6 +361,7 @@
          {
           "name": "ObFZ Trnava",
           "value": 1999,
+          "sutaze": 10,
           "pohlavie": {
            "M": 1999
           },
@@ -241,6 +370,7 @@
          {
           "name": "ObFZ Dunajská Streda",
           "value": 831,
+          "sutaze": 4,
           "pohlavie": {
            "M": 831
           },
@@ -249,6 +379,7 @@
          {
           "name": "ObFZ Galanta",
           "value": 553,
+          "sutaze": 3,
           "pohlavie": {
            "M": 553
           },
@@ -257,6 +388,7 @@
          {
           "name": "ObFZ Senica",
           "value": 422,
+          "sutaze": 2,
           "pohlavie": {
            "M": 422
           },
@@ -265,6 +397,7 @@
          {
           "name": "ObFZ Trenčín",
           "value": 232,
+          "sutaze": 1,
           "pohlavie": {
            "M": 232
           },
@@ -273,6 +406,7 @@
          {
           "name": "ObFZ Prievidza",
           "value": 589,
+          "sutaze": 3,
           "pohlavie": {
            "M": 589
           },
@@ -281,6 +415,7 @@
          {
           "name": "ObFZ Považská Bystrica",
           "value": 522,
+          "sutaze": 3,
           "pohlavie": {
            "M": 522
           },
@@ -289,6 +424,7 @@
          {
           "name": "ObFZ Nitra",
           "value": 239,
+          "sutaze": 1,
           "pohlavie": {
            "M": 239
           },
@@ -297,6 +433,7 @@
          {
           "name": "ObFZ Nové Zámky",
           "value": 178,
+          "sutaze": 3,
           "pohlavie": {
            "M": 178
           },
@@ -305,6 +442,7 @@
          {
           "name": "ObFZ Levice",
           "value": 388,
+          "sutaze": 3,
           "pohlavie": {
            "M": 388
           },
@@ -313,6 +451,7 @@
          {
           "name": "ObFZ Topoľčany",
           "value": 928,
+          "sutaze": 8,
           "pohlavie": {
            "M": 928
           },
@@ -327,6 +466,7 @@
          {
           "name": "Stredoslovenský futbalový zväz — vlastné súťaže",
           "value": 4434,
+          "sutaze": 27,
           "pohlavie": {
            "M": 4434
           },
@@ -335,6 +475,7 @@
          {
           "name": "ObFZ Žilina",
           "value": 1364,
+          "sutaze": 11,
           "pohlavie": {
            "M": 1364
           },
@@ -343,6 +484,7 @@
          {
           "name": "ObFZ Kysúc",
           "value": 504,
+          "sutaze": 6,
           "pohlavie": {
            "M": 504
           },
@@ -351,6 +493,7 @@
          {
           "name": "Oravský futbalový zväz",
           "value": 988,
+          "sutaze": 9,
           "pohlavie": {
            "M": 988
           },
@@ -359,6 +502,7 @@
          {
           "name": "Liptovský futbalový zväz",
           "value": 976,
+          "sutaze": 6,
           "pohlavie": {
            "M": 976
           },
@@ -367,6 +511,7 @@
          {
           "name": "Turčiansky futbalový zväz",
           "value": 314,
+          "sutaze": 2,
           "pohlavie": {
            "M": 314
           },
@@ -375,6 +520,7 @@
          {
           "name": "ObFZ Banská Bystrica",
           "value": 181,
+          "sutaze": 1,
           "pohlavie": {
            "M": 181
           },
@@ -383,6 +529,7 @@
          {
           "name": "ObFZ Zvolen",
           "value": 540,
+          "sutaze": 6,
           "pohlavie": {
            "M": 540
           },
@@ -391,6 +538,7 @@
          {
           "name": "ObFZ Žiar nad Hronom",
           "value": 110,
+          "sutaze": 1,
           "pohlavie": {
            "M": 110
           },
@@ -399,6 +547,7 @@
          {
           "name": "ObFZ Lučenec",
           "value": 410,
+          "sutaze": 6,
           "pohlavie": {
            "M": 410
           },
@@ -407,6 +556,7 @@
          {
           "name": "ObFZ Veľký Krtíš",
           "value": 450,
+          "sutaze": 4,
           "pohlavie": {
            "M": 450
           },
@@ -415,6 +565,7 @@
          {
           "name": "ObFZ Rimavská Sobota",
           "value": 270,
+          "sutaze": 5,
           "pohlavie": {
            "M": 270
           },
@@ -429,6 +580,7 @@
          {
           "name": "Východoslovenský futbalový zväz — vlastné súťaže",
           "value": 3844,
+          "sutaze": 21,
           "pohlavie": {
            "M": 3844
           },
@@ -437,6 +589,7 @@
          {
           "name": "ObFZ Košice-okolie",
           "value": 724,
+          "sutaze": 9,
           "pohlavie": {
            "M": 724
           },
@@ -445,6 +598,7 @@
          {
           "name": "Mestský FZ Košice",
           "value": 96,
+          "sutaze": 2,
           "pohlavie": {
            "M": 96
           },
@@ -453,6 +607,7 @@
          {
           "name": "ObFZ Prešov",
           "value": 1636,
+          "sutaze": 14,
           "pohlavie": {
            "M": 1636
           },
@@ -461,6 +616,7 @@
          {
           "name": "Podtatranský futbalový zväz",
           "value": 1038,
+          "sutaze": 8,
           "pohlavie": {
            "M": 1038
           },
@@ -469,6 +625,7 @@
          {
           "name": "Spišský oblastný futbalový zväz",
           "value": 671,
+          "sutaze": 6,
           "pohlavie": {
            "M": 671
           },
@@ -477,6 +634,7 @@
          {
           "name": "ObFZ Stará Ľubovňa",
           "value": 126,
+          "sutaze": 1,
           "pohlavie": {
            "M": 126
           },
@@ -485,6 +643,7 @@
          {
           "name": "ObFZ Bardejov",
           "value": 269,
+          "sutaze": 2,
           "pohlavie": {
            "M": 269
           },
@@ -493,6 +652,7 @@
          {
           "name": "Ondavský oblastný futbalový zväz",
           "value": 373,
+          "sutaze": 6,
           "pohlavie": {
            "M": 373
           },
@@ -501,6 +661,7 @@
          {
           "name": "ObFZ Humenné",
           "value": 279,
+          "sutaze": 3,
           "pohlavie": {
            "M": 279
           },
@@ -509,6 +670,7 @@
          {
           "name": "ObFZ Vranov nad Topľou",
           "value": 508,
+          "sutaze": 5,
           "pohlavie": {
            "M": 508
           },
@@ -517,6 +679,7 @@
          {
           "name": "ObFZ Michalovce",
           "value": 1107,
+          "sutaze": 14,
           "pohlavie": {
            "M": 1107
           },
@@ -525,6 +688,7 @@
          {
           "name": "ObFZ Trebišov",
           "value": 539,
+          "sutaze": 10,
           "pohlavie": {
            "M": 539
           },
@@ -533,6 +697,7 @@
          {
           "name": "ObFZ Rožňava",
           "value": 277,
+          "sutaze": 2,
           "pohlavie": {
            "M": 277
           },

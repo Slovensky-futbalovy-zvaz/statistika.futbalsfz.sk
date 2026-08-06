@@ -5,7 +5,7 @@ import SlovakiaMap from './SlovakiaMap.tsx';
 import SunburstSutaze from './SunburstSutaze.tsx';
 import SunburstOsoby from './SunburstOsoby.tsx';
 import AgePyramid from './AgePyramid.tsx';
-import { getSumarSezony, getSumar, getMapData, getSumarDemografia, demoTrend, fmt } from '../lib/data';
+import { getSumarSezony, getSumar, getMapData, getSumarDemografia, demoTrend, fmt, ODVETVIE_LABEL } from '../lib/data';
 import { delta } from '../lib/format';
 
 const sezony = getSumarSezony();
@@ -13,6 +13,15 @@ const sumreMap = new Map(sezony.map((s) => [s, getSumar(s)]));
 const trendSezony = sezony;
 const trendPerSeason: Record<string, any> = {};
 for (const s of sezony) trendPerSeason[s] = ((sumreMap.get(s) as any)?.kategorie) ?? {};
+// rozpad ďalších odvetví (futsal, …) po vekových úrovniach — pill filter športu v trende
+const trendOdvetvia: Record<string, Record<string, any>> = {};
+for (const s of sezony) {
+  const odv = ((sumreMap.get(s) as any)?.odvetvia ?? {}) as Record<string, any>;
+  for (const [sektor, blok] of Object.entries(odv)) {
+    if (!blok?.kategorie || Object.keys(blok.kategorie).length === 0) continue;
+    (trendOdvetvia[sektor] ??= {})[s] = blok.kategorie;
+  }
+}
 const trendOsoby = demoTrend(getSumarDemografia());
 interface Props {
   sezona: string;
@@ -237,9 +246,9 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
   <section class="mt-10">
     <div class={CARD} style={CARD_STYLE}>
       <div class={KICKER}>15-ročný trend · vekové úrovne</div>
-      <h2 class={H2} style="font-size:clamp(21px,2.4vw,28px); margin:2px 0 6px;">Zápasy vo futbale na Slovensku</h2>
-      <p class="text-sm text-muted mb-3">Reálne odohrané zápasy (a góly, diváci, karty, družstvá) naprieč sezónami, súčet 43 zväzov. Prepni metriku a vekové skupiny.</p>
-      <KpiTrend client:visible sezony={trendSezony} perSeason={trendPerSeason} perSeasonOsoby={trendOsoby} />
+      <h2 class={H2} style="font-size:clamp(21px,2.4vw,28px); margin:2px 0 6px;">Súťaže a zápasy vo futbale na Slovensku</h2>
+      <p class="text-sm text-muted mb-3">Počet súťaží a reálne odohrané zápasy (a góly, diváci, karty, družstvá) naprieč sezónami, súčet 43 zväzov. Prepni metriku, šport a vekové skupiny.</p>
+      <KpiTrend client:visible sezony={trendSezony} perSeason={trendPerSeason} perSeasonOsoby={trendOsoby} perSeasonOdvetvia={trendOdvetvia} odvetvieLabel={ODVETVIE_LABEL} />
     </div>
   </section>
 

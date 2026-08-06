@@ -1,10 +1,11 @@
 {
  "sezona": "2026/2027",
- "generatedAt": "2026-07-24T02:37:22+02:00",
+ "generatedAt": "2026-08-06T16:58:14+02:00",
  "pocetZvazov": 6,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
-  "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia."
+  "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia.",
+  "sutazePoznamka": "Súťaž = distinct súťaž s aspoň jedným uzavretým zápasom. V bloku kategorie sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich, preto súčet po kategóriách môže prevýšiť kpi.sutaze."
  },
  "kpi": {
   "sutaze": 7,
@@ -25,6 +26,7 @@
  },
  "kategorie": {
   "ADULTS": {
+   "sutaze": 6,
    "zapasy": 1,
    "uzatvorene": 75,
    "administrativne": 74,
@@ -35,6 +37,7 @@
    "divaci": 183
   },
   "U19": {
+   "sutaze": 1,
    "zapasy": 0,
    "uzatvorene": 26,
    "administrativne": 26,
@@ -43,6 +46,45 @@
    "zlte": 0,
    "cervene": 0,
    "divaci": 0
+  }
+ },
+ "sutazePodlaRiadiacehoZvazu": {
+  "SFZ": {
+   "sutaze": 2,
+   "zapasy": 1,
+   "pocetZvazov": 1,
+   "kategorie": {
+    "ADULTS": {
+     "sutaze": 2,
+     "zapasy": 1
+    }
+   }
+  },
+  "RFZ": {
+   "sutaze": 2,
+   "zapasy": 0,
+   "pocetZvazov": 2,
+   "kategorie": {
+    "U19": {
+     "sutaze": 1,
+     "zapasy": 0
+    },
+    "ADULTS": {
+     "sutaze": 1,
+     "zapasy": 0
+    }
+   }
+  },
+  "ObFZ": {
+   "sutaze": 3,
+   "zapasy": 0,
+   "pocetZvazov": 3,
+   "kategorie": {
+    "ADULTS": {
+     "sutaze": 3,
+     "zapasy": 0
+    }
+   }
   }
  },
  "osobyKat": {
@@ -87,6 +129,7 @@
        {
         "name": "SFZ — vlastné súťaže",
         "value": 1,
+        "sutaze": 2,
         "pohlavie": {
          "M": 1
         },

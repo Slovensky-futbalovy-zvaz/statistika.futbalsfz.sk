@@ -176,8 +176,11 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
 <!-- zápasy podľa kategórií -->
 <section class="mt-8 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
   <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vekové kategórie</div>
-  <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Zápasy podľa kategórií</h2>
-  <p class="text-sm text-muted mb-3">Klikni na kategóriu pre rozpad na konkrétne vekové úrovne.</p>
+  <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Súťaže a zápasy podľa kategórií</h2>
+  <p class="text-sm text-muted mb-3">
+    Klikni na kategóriu pre rozpad na konkrétne vekové úrovne. Súťaž so zápasmi vo viacerých
+    vekových úrovniach sa započíta v každej z nich, preto súčet môže prevýšiť celkový počet súťaží.
+  </p>
   <CategoryDrill client:visible kategorie={profil.kategorie} />
 </section>
 

@@ -43,7 +43,13 @@ ROLA_NAZOV = {
 }
 KPI_KLUCE = ["sutaze", "zapasy", "uzatvorene", "administrativne", "druzstva", "goly", "divaci", "zlteKarty", "cerveneKarty", "kontumovane", "kontumovaneAdmin", "kontumovaneOdohrane", "odstupene", "odstupeneAdmin", "odstupeneOdohrane"]
 #: Metriky sčítané po vekových kategóriách (pre celoslovenský trend po úrovniach).
-KAT_METRIKY = ["zapasy", "uzatvorene", "administrativne", "druzstva", "goly", "zlte", "cervene", "divaci"]
+#: `sutaze` = počet súťaží s aspoň jedným uzavretým zápasom v danej vekovej úrovni
+#: (doplnené 6. 8. 2026). Súťaž, ktorej zápasy spadajú do viacerých vekových úrovní,
+#: sa započíta v každej z nich — súčet po kategóriách preto môže prevýšiť kpi.sutaze.
+KAT_METRIKY = ["sutaze", "zapasy", "uzatvorene", "administrativne", "druzstva", "goly", "zlte", "cervene", "divaci"]
+
+#: Úrovne pyramídy pre rozpad súťaží podľa riadiaceho zväzu.
+RIADIACE_UROVNE = [("sfz", "SFZ"), ("rfz", "RFZ"), ("obfz", "ObFZ")]
 
 
 def load_json(path: Path) -> dict:
@@ -95,9 +101,16 @@ def sunburst_sutaze(zvazy_cfg: dict, out_dir: Path, sezona: str) -> dict:
     uzla presne sedel na súčet celej vetvy (ECharts sunburst sčíta listy).
     Listy nesú aj rozpad zápasov po pohlaví (kľúč `pohlavie`) pre klientsky
     pill filter Muži/Ženy — hodnoty sa prepočítajú vo frontende.
+    Kľúč `sutaze` nesie počet súťaží zväzu (prepínač metriky Zápasy/Súťaže vo
+    frontende); rozpad súťaží po pohlaví zatiaľ nie je k dispozícii.
     """
     def leaf(nazov: str, p: dict, zvaz_id: str | None = None) -> dict:
-        d = {"name": nazov, "value": p["kpi"]["zapasy"], "pohlavie": _pohlavie_zapasy(p)}
+        d = {
+            "name": nazov,
+            "value": p["kpi"]["zapasy"],
+            "sutaze": p["kpi"].get("sutaze", 0) or 0,
+            "pohlavie": _pohlavie_zapasy(p),
+        }
         if zvaz_id:
             d["id"] = zvaz_id
         return d
@@ -252,6 +265,10 @@ def main() -> None:
 
     zvazy_cfg = load_json(CONFIG / "zvazy.json")
     vsetky = zvazy_cfg["sfz"] + zvazy_cfg["rfz"] + zvazy_cfg["obfz"]
+    # id zväzu → úroveň pyramídy (SFZ/RFZ/ObFZ) pre rozpad súťaží podľa riadiaceho zväzu
+    uroven_zvazu = {
+        z["id"]: label for kluc, label in RIADIACE_UROVNE for z in zvazy_cfg.get(kluc, [])
+    }
 
     sezony: set[str] = set()
     for z in vsetky:
@@ -265,6 +282,7 @@ def main() -> None:
         kat: dict = {}
         osobyKat: dict = {}
         osoby = {rola: 0 for rola in ROLY}
+        riadiaci: dict = {}
         pocet_zvazov = 0
         for z in vsetky:
             p = profil(out_dir, z["id"], sezona)
@@ -276,6 +294,19 @@ def main() -> None:
                 acc = kat.setdefault(c, {m: 0 for m in KAT_METRIKY})
                 for m in KAT_METRIKY:
                     acc[m] += cd.get(m, 0) or 0
+            # rozpad súťaží podľa riadiaceho zväzu (SFZ / RFZ / ObFZ)
+            uz = uroven_zvazu.get(z["id"])
+            if uz:
+                racc = riadiaci.setdefault(
+                    uz, {"sutaze": 0, "zapasy": 0, "pocetZvazov": 0, "kategorie": {}}
+                )
+                racc["sutaze"] += p["kpi"].get("sutaze", 0) or 0
+                racc["zapasy"] += p["kpi"].get("zapasy", 0) or 0
+                racc["pocetZvazov"] += 1
+                for c, cd in (p.get("kategorie") or {}).items():
+                    rk = racc["kategorie"].setdefault(c, {"sutaze": 0, "zapasy": 0})
+                    rk["sutaze"] += cd.get("sutaze", 0) or 0
+                    rk["zapasy"] += cd.get("zapasy", 0) or 0
             for rola in ROLY:
                 osoby[rola] += p.get("osoby", {}).get(rola, {}).get("unikatni", 0)
             for rola, ob in (p.get("osoby") or {}).items():
@@ -295,7 +326,11 @@ def main() -> None:
             scitaj_kpi(o_kpi, p_s["kpi"])
             o_osoby = {rola: p_s.get("osoby", {}).get(rola, {}).get("unikatni", 0) for rola in ROLY}
             o_osoby["spolu"] = sum(o_osoby.values())
-            odvetvia[sektor] = {"kpi": o_kpi, "osoby": o_osoby}
+            # rozpad odvetvia po vekových úrovniach — pre pill filter športu v 15-ročnom trende
+            o_kat: dict = {}
+            for c, cd in (p_s.get("kategorie") or {}).items():
+                o_kat[c] = {m: (cd.get(m, 0) or 0) for m in KAT_METRIKY}
+            odvetvia[sektor] = {"kpi": o_kpi, "osoby": o_osoby, "kategorie": o_kat}
 
         vystup = {
             "sezona": sezona,
@@ -307,9 +342,17 @@ def main() -> None:
                     "zväzoch sa počíta v každom z nich (dvojité pôsobenie)."
                 ),
                 "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia.",
+                "sutazePoznamka": (
+                    "Súťaž = distinct súťaž s aspoň jedným uzavretým zápasom. V bloku "
+                    "kategorie sa súťaž so zápasmi vo viacerých vekových úrovniach započíta "
+                    "v každej z nich, preto súčet po kategóriách môže prevýšiť kpi.sutaze."
+                ),
             },
             "kpi": kpi,
             "kategorie": kat,
+            "sutazePodlaRiadiacehoZvazu": {
+                label: riadiaci[label] for _, label in RIADIACE_UROVNE if label in riadiaci
+            },
             "osobyKat": osobyKat,
             "osoby": {**osoby, "spolu": sum(osoby.values())},
             "odvetvia": odvetvia,

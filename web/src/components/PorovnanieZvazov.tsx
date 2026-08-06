@@ -4,7 +4,7 @@ import { RadarChart, LineChart } from 'echarts/charts';
 import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import type { PorovnanieRiadok, BumpData } from '../lib/data';
-import { PALETTE, METRICS7, GROUPS } from '../lib/palette';
+import { PALETTE, METRICS_RADAR, GROUPS } from '../lib/palette';
 import { fmt, fmt1 } from '../lib/format';
 
 echarts.use([RadarChart, LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
@@ -83,11 +83,12 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
   function rowMetric(r: Row, k: string): number {
     if (!subset) return Number((r as unknown as Record<string, number>)[k] ?? 0);
     const kat = r.kat ?? {};
-    let z = 0, g = 0, dv = 0, dr = 0, h = 0;
+    let z = 0, g = 0, dv = 0, dr = 0, h = 0, su = 0;
     for (const l of subset) {
       const c = kat[l];
       if (!c) continue;
       z += c.zapasy || 0; g += c.goly || 0; dv += c.divaci || 0; dr += c.druzstva || 0; h += c.hraci || 0;
+      su += c.sutaze || 0;
     }
     switch (k) {
       case 'zapasy': return z;
@@ -95,6 +96,9 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
       case 'divaci': return dv;
       case 'druzstva': return dr;
       case 'hraci': return h;
+      // súťaž so zápasmi vo viacerých vekových úrovniach sa pri výbere viacerých
+      // úrovní započíta v každej z nich — viď poznámka pod grafom
+      case 'sutaze': return su;
       case 'golyNaZapas': return z ? g / z : 0;
       case 'divaciNaZapas': return z ? dv / z : 0;
       default: return 0;
@@ -116,7 +120,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
     }
     if (!radarCh.current) radarCh.current = echarts.init(radarEl.current, undefined, { renderer: 'canvas' });
     const maxima: Record<string, number> = {};
-    for (const m of METRICS7) maxima[m.k] = Math.max(...rows.map((r) => rowMetric(r, m.k)), 1);
+    for (const m of METRICS_RADAR) maxima[m.k] = Math.max(...rows.map((r) => rowMetric(r, m.k)), 1);
     radarCh.current.setOption(
       {
         legend: { top: 0, type: 'scroll', data: vybrane.map((r) => r.nazov), textStyle: { fontSize: 11 } },
@@ -128,7 +132,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
             const r = vybrane[p.dataIndex];
             return (
               `<b>${r.nazov}</b><br/>` +
-              METRICS7.map(
+              METRICS_RADAR.map(
                 (m, i) =>
                   `${m.label}: <b>${m.k.includes('NaZapas') ? fmt1(rowMetric(r, m.k)) : fmt(rowMetric(r, m.k))}</b> (${Math.round(p.value[i])} %)`,
               ).join('<br/>')
@@ -136,7 +140,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
           },
         },
         radar: {
-          indicator: METRICS7.map((m) => ({ name: m.label, max: 100 })),
+          indicator: METRICS_RADAR.map((m) => ({ name: m.label, max: 100 })),
           radius: '62%',
           axisName: { fontSize: 11, color: '#475569' },
         },
@@ -145,7 +149,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
             type: 'radar',
             data: vybrane.map((r, i) => ({
               name: r.nazov,
-              value: METRICS7.map((m) => (rowMetric(r, m.k) / maxima[m.k]) * 100),
+              value: METRICS_RADAR.map((m) => (rowMetric(r, m.k) / maxima[m.k]) * 100),
               itemStyle: { color: PALETTE[i % PALETTE.length] },
               areaStyle: { opacity: 0.12 },
             })),
@@ -337,6 +341,11 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
         ) : (
           <p style={{ fontSize: 14, color: 'var(--color-muted)' }}>Vyber aspoň 2 zväzy.</p>
         )}
+        <p style={{ fontSize: 11.5, color: 'var(--color-muted)', margin: '8px 0 0' }}>
+          Súťaž = súťaž s aspoň jedným odohraným zápasom v danej sezóne. Pri filtri vekovej
+          skupiny sa súťaž, ktorej zápasy patria do viacerých vekových úrovní, započíta
+          v každej z nich — súčet cez skupiny preto môže prevýšiť počet súťaží celého zväzu.
+        </p>
       </section>
 
       {/* Vývoj v čase (reálne hodnoty) */}

@@ -15,6 +15,9 @@ interface Props {
 
 const U_LEVELS = ['ADULTS', 'U19', 'U18', 'U17', 'U16', 'U15', 'U14', 'U13', 'U12', 'U11', 'U10', 'U09', 'U08', 'U07'];
 
+type Pohlavie = 'VSETCI' | 'M' | 'F';
+const POHLAVIE_LABEL: Record<Pohlavie, string> = { VSETCI: 'Všetci', M: 'Muži', F: 'Ženy' };
+
 /** Farba U-úrovne podľa skupiny, do ktorej patrí. */
 function farbaUrovne(lvl: string): string {
   const g = skupinaKategorie(lvl);
@@ -26,6 +29,7 @@ export default function DemografiaSekcia({ demo }: Props) {
   const lineEl = useRef<HTMLDivElement>(null);
   const lineChart = useRef<echarts.ECharts | null>(null);
   const [rola, setRola] = useState('hraci');
+  const [pohlavie, setPohlavie] = useState<Pohlavie>('VSETCI');
   const [sel, setSel] = useState<string[]>(GROUPS.map((g) => g.key));
 
   const sezony = useMemo(() => Object.keys(demo.sezony).sort(), [demo]);
@@ -43,8 +47,19 @@ export default function DemografiaSekcia({ demo }: Props) {
     for (const [yr, pg] of Object.entries(r.roky)) {
       const lvl = ageLevel(ey - parseInt(yr, 10));
       const zhoda = jeSkupina(key) ? skupinaKategorie(lvl) === key : lvl === key;
-      if (zhoda) sum += (pg.M ?? 0) + (pg.F ?? 0) + (pg.N ?? 0);
+      if (!zhoda) continue;
+      sum += pohlavie === 'VSETCI' ? (pg.M ?? 0) + (pg.F ?? 0) + (pg.N ?? 0) : (pg[pohlavie] ?? 0);
     }
+    return sum;
+  }
+
+  /** Celkový počet osôb roly v sezóne — pri filtri pohlavia súčet z rokov narodenia. */
+  function osobyRoly(sezona: string, r: string): number {
+    const zaznam = demo.sezony[sezona]?.[r];
+    if (!zaznam) return 0;
+    if (pohlavie === 'VSETCI') return zaznam.osoby ?? 0;
+    let sum = 0;
+    for (const pg of Object.values(zaznam.roky)) sum += pg[pohlavie] ?? 0;
     return sum;
   }
 
@@ -75,7 +90,7 @@ export default function DemografiaSekcia({ demo }: Props) {
     const ro = new ResizeObserver(() => lineChart.current?.resize());
     ro.observe(lineEl.current);
     return () => ro.disconnect();
-  }, [sel, rola, sezony]);
+  }, [sel, rola, pohlavie, sezony]);
 
   function toggle(key: string) {
     setSel((cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]));
@@ -91,7 +106,7 @@ export default function DemografiaSekcia({ demo }: Props) {
   const rozpadSpolu = rozpad.reduce((s, r) => s + r.hodnota, 0);
 
   // small multiples rolí — trend osôb roly cez sezóny (sparkline)
-  const rolaTrend = (r: string) => sezony.map((s) => demo.sezony[s]?.[r]?.osoby ?? 0);
+  const rolaTrend = (r: string) => sezony.map((s) => osobyRoly(s, r));
   function sparkPts(vals: number[]): string {
     const mn = Math.min(...vals), mx = Math.max(...vals);
     return vals
@@ -147,15 +162,31 @@ export default function DemografiaSekcia({ demo }: Props) {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--color-sfz-blue)' }}>
           {sezony.length}-ročný trend · vekové úrovne
         </div>
-        <h2 style={{ fontSize: 22, fontWeight: 800, margin: '2px 0 2px' }}>{rolaNazov} vo futbale na Slovensku</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 800, margin: '2px 0 2px' }}>Osoby vo futbale na Slovensku</h2>
         <p style={{ fontSize: 13.5, color: 'var(--color-muted)', marginBottom: 12 }}>
           Každá vybraná kategória či veková úroveň je samostatná čiara. Osoby podľa veku (rok narodenia), súčet {demo.zvaz === 'sr' ? '43 zväzov' : 'zväzu'}.
+          {' '}Zobrazené: <b style={{ color: 'var(--color-ink)' }}>{rolaNazov}</b>
+          {pohlavie !== 'VSETCI' && <> · <b style={{ color: 'var(--color-ink)' }}>{POHLAVIE_LABEL[pohlavie]}</b></>}.
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
           {dostupneRoly.map((r) => (
             <button key={r} type="button" style={rolaPill(rola === r)} onClick={() => setRola(r)}>
               {ROLA_LABEL[r]}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+          <span style={{ fontSize: 12.5, color: 'var(--color-muted)', marginRight: 2 }}>Pohlavie:</span>
+          {(['VSETCI', 'M', 'F'] as Pohlavie[]).map((g) => (
+            <button
+              key={g}
+              type="button"
+              style={{ ...rolaPill(pohlavie === g), fontSize: 12.5, padding: '4px 12px' }}
+              onClick={() => setPohlavie(g)}
+            >
+              {POHLAVIE_LABEL[g]}
             </button>
           ))}
         </div>
@@ -197,7 +228,9 @@ export default function DemografiaSekcia({ demo }: Props) {
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--color-sfz-blue)' }}>
           Aktuálna sezóna · {posledna}
         </div>
-        <h2 style={{ fontSize: 20, fontWeight: 800, margin: '2px 0 2px' }}>{rolaNazov} podľa vybraných úrovní</h2>
+        <h2 style={{ fontSize: 20, fontWeight: 800, margin: '2px 0 2px' }}>
+          {rolaNazov} podľa vybraných úrovní{pohlavie !== 'VSETCI' ? ` — ${POHLAVIE_LABEL[pohlavie].toLowerCase()}` : ''}
+        </h2>
         <p style={{ fontSize: 13.5, color: 'var(--color-muted)', marginBottom: 14 }}>Rozpad poslednej sezóny pre vybrané čiary. Podiel z vybraných.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {rozpad.map((r) => (
@@ -243,7 +276,10 @@ export default function DemografiaSekcia({ demo }: Props) {
       </div>
 
       <p style={{ fontSize: 11.5, color: 'var(--color-muted)', marginTop: 10 }}>
-        Veková úroveň je odvodená z roku narodenia (vek k záveru sezóny) — proxy, keďže historická súťažná kategória osôb nie je dostupná. Súčet M+Ž+neuvedené.
+        Veková úroveň je odvodená z roku narodenia (vek k záveru sezóny) — proxy, keďže historická súťažná kategória osôb nie je dostupná.
+        {pohlavie === 'VSETCI'
+          ? ' „Všetci“ = súčet mužov, žien aj osôb s neuvedeným pohlavím.'
+          : ' Pri filtri pohlavia sú započítané len osoby s vyplneným pohlavím aj rokom narodenia, preto súčet mužov a žien môže byť nižší než celkový počet.'}
       </p>
     </div>
   );

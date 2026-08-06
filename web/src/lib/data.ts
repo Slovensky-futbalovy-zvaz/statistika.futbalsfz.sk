@@ -34,6 +34,7 @@ export interface Kpi {
 }
 
 export interface Kategoria {
+  sutaze?: number; // počet súťaží vo vekovej úrovni (staršie profily ho nemajú)
   zapasy: number;
   druzstva: number;
   goly: number;
@@ -358,6 +359,7 @@ export interface SunburstUzol {
   id?: string;
   uroven?: string; // SFZ/RFZ/ObFZ — na uzloch úrovne v sunburstOsoby
   value?: number;
+  sutaze?: number; // len listy sunburstSutaze — počet súťaží zväzu (prepínač metriky)
   pohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → zápasy)
   children?: SunburstUzol[];
 }
@@ -369,7 +371,16 @@ export interface Sumar {
   methodologyFlags: Record<string, string>;
   kpi: Kpi;
   osoby: Record<string, number>; // roly + spolu
-  odvetvia: Record<string, { kpi: Kpi; osoby: Record<string, number> }>;
+  kategorie?: Record<string, Kategoria>; // súčty po vekových úrovniach (futbal, 43 zväzov)
+  /** Rozpad súťaží podľa riadiaceho zväzu (SFZ / RFZ / ObFZ). */
+  sutazePodlaRiadiacehoZvazu?: Record<
+    string,
+    { sutaze: number; zapasy: number; pocetZvazov: number; kategorie: Record<string, { sutaze: number; zapasy: number }> }
+  >;
+  odvetvia: Record<
+    string,
+    { kpi: Kpi; osoby: Record<string, number>; kategorie?: Record<string, Kategoria> }
+  >;
   sunburstSutaze: SunburstUzol;
   sunburstOsoby: SunburstUzol;
 }

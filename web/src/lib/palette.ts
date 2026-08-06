@@ -80,8 +80,8 @@ export const METRICS: Metric[] = [
   { k: 'hraci', label: 'Hráči' },
 ];
 
-/** 7 osí radaru pre priame porovnanie. */
-export const METRICS7: Metric[] = [
+/** Osi radaru pre priame porovnanie zväzov (8 osí — Súťaže doplnené 6. 8. 2026). */
+export const METRICS_RADAR: Metric[] = [
   { k: 'zapasy', label: 'Zápasy' },
   { k: 'divaciNaZapas', label: 'Diváci/zápas' },
   { k: 'golyNaZapas', label: 'Góly/zápas' },
@@ -89,6 +89,7 @@ export const METRICS7: Metric[] = [
   { k: 'hraci', label: 'Hráči' },
   { k: 'goly', label: 'Góly' },
   { k: 'druzstva', label: 'Družstvá' },
+  { k: 'sutaze', label: 'Súťaže' },
 ];
 
 export const ROLA_LABEL: Record<string, string> = {

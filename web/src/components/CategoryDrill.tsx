@@ -3,6 +3,7 @@ import { fmt } from '../lib/format';
 import { GROUPS } from '../lib/palette';
 
 interface Kat {
+  sutaze?: number;
   zapasy: number;
   druzstva: number;
   goly: number;
@@ -26,7 +27,8 @@ export default function CategoryDrill({ kategorie }: Props) {
     const zapasy = uKody.reduce((s, k) => s + k.zapasy, 0);
     const druzstva = uKody.reduce((s, k) => s + k.druzstva, 0);
     const goly = uKody.reduce((s, k) => s + k.goly, 0);
-    return { ...g, uKody, zapasy, druzstva, goly };
+    const sutaze = uKody.reduce((s, k) => s + (k.sutaze ?? 0), 0);
+    return { ...g, uKody, zapasy, druzstva, goly, sutaze };
   }).filter((g) => g.zapasy > 0 || g.uKody.length > 0);
 
   const max = Math.max(1, ...skupiny.map((s) => s.zapasy));
@@ -47,7 +49,8 @@ export default function CategoryDrill({ kategorie }: Props) {
                   <span style={{ color: 'var(--color-muted)', fontSize: 11 }}>{rozbalene ? '▾' : '▸'}</span> {g.key}
                 </span>
                 <span className="tnum" style={{ color: 'var(--color-muted)' }}>
-                  <b style={{ color: 'var(--color-ink)' }}>{fmt(g.zapasy)}</b> zápasov · {fmt(g.druzstva)} druž.
+                  <b style={{ color: 'var(--color-ink)' }}>{fmt(g.zapasy)}</b> zápasov
+                  {g.sutaze > 0 && <> · {fmt(g.sutaze)} súť.</>} · {fmt(g.druzstva)} druž.
                 </span>
               </div>
               <div style={{ height: 10, borderRadius: 5, background: 'var(--color-track)' }}>
@@ -62,6 +65,7 @@ export default function CategoryDrill({ kategorie }: Props) {
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, marginBottom: 2 }}>
                       <span>{u.cat}</span>
                       <span className="tnum" style={{ color: 'var(--color-muted)' }}>
+                        {(u.sutaze ?? 0) > 0 && <>{fmt(u.sutaze ?? 0)} s. · </>}
                         {fmt(u.zapasy)} z. · {fmt(u.druzstva)} d. · {fmt(u.goly)} g.
                       </span>
                     </div>

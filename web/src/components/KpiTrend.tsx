@@ -14,11 +14,16 @@ type PerSeasonOsoby = Record<string, Record<string, Record<string, number>>>;
 
 interface Props {
   sezony: string[]; // vzostupne
-  perSeason: PerSeason; // sezona -> kategoria(ADULTS/U19…) -> metrika -> hodnota (zápasové KPI)
+  perSeason: PerSeason; // sezona -> kategoria(ADULTS/U19…) -> metrika -> hodnota (zápasové KPI, futbal)
   perSeasonOsoby?: PerSeasonOsoby;
+  /** Ďalšie odvetvia (futsal, …) v rovnakej schéme ako perSeason — zapnú pill filter športu. */
+  perSeasonOdvetvia?: Record<string, PerSeason>;
+  /** Zobrazované názvy odvetví, napr. { futsal: 'Futsal' }. */
+  odvetvieLabel?: Record<string, string>;
 }
 
 const ZAPASY_METRIKY = [
+  { k: 'sutaze', label: 'Súťaže' },
   { k: 'zapasy', label: 'Zápasy' },
   { k: 'goly', label: 'Góly' },
   { k: 'divaci', label: 'Diváci' },
@@ -35,13 +40,31 @@ const OSOBY_METRIKY = [
   { k: 'personal', label: 'Personál' },
 ];
 const OSOBA_KEYS = new Set(OSOBY_METRIKY.map((m) => m.k));
+const FUTBAL = 'futbal';
 
 /** Trend KPI aj osôb naprieč sezónami; série = vekové skupiny (Dospelí/Dorast/Žiaci/Prípravky). */
-export default function KpiTrend({ sezony, perSeason, perSeasonOsoby = {} }: Props) {
+export default function KpiTrend({
+  sezony,
+  perSeason,
+  perSeasonOsoby = {},
+  perSeasonOdvetvia = {},
+  odvetvieLabel = {},
+}: Props) {
   const el = useRef<HTMLDivElement>(null);
   const chart = useRef<echarts.ECharts | null>(null);
   const [metric, setMetric] = useState('zapasy');
   const [sel, setSel] = useState<string[]>(GROUPS.map((g) => g.key));
+
+  // šport: futbal + odvetvia, ktoré majú dáta (pill filter sa zobrazí len ak je čo prepínať)
+  const sporty = [
+    { k: FUTBAL, label: 'Futbal' },
+    ...Object.keys(perSeasonOdvetvia)
+      .filter((o) => sezony.some((s) => Object.keys(perSeasonOdvetvia[o]?.[s] ?? {}).length > 0))
+      .map((o) => ({ k: o, label: odvetvieLabel[o] ?? o.charAt(0).toUpperCase() + o.slice(1) })),
+  ];
+  const [selSport, setSelSport] = useState<string[]>(() => [FUTBAL, ...Object.keys(perSeasonOdvetvia)]);
+  const jeOsoba = OSOBA_KEYS.has(metric);
+  const maSporty = sporty.length > 1;
 
   // ktoré osobné roly majú vôbec dáta (kluby nemajú rozhodcov/delegátov/personál)
   const osobyAvail = OSOBY_METRIKY.filter((m) =>
@@ -54,12 +77,17 @@ export default function KpiTrend({ sezony, perSeason, perSeasonOsoby = {} }: Pro
   function hodnota(s: string, groupKey: string): number {
     const g = GROUPS.find((x) => x.key === groupKey);
     if (!g) return 0;
-    if (OSOBA_KEYS.has(metric)) {
+    if (jeOsoba) {
+      // osoby sú zatiaľ len za futbal (zdroj = demografia), pill filter športu sa na ne neuplatňuje
       const rr = perSeasonOsoby[s]?.[metric] || {};
       return g.cats.reduce((a, c) => a + (rr[c] ?? 0), 0);
     }
-    const kk = perSeason[s] || {};
-    return g.cats.reduce((a, c) => a + (kk[c]?.[metric] ?? 0), 0);
+    let suma = 0;
+    for (const sport of maSporty ? selSport : [FUTBAL]) {
+      const kk = (sport === FUTBAL ? perSeason : perSeasonOdvetvia[sport])?.[s] || {};
+      suma += g.cats.reduce((a, c) => a + (kk[c]?.[metric] ?? 0), 0);
+    }
+    return suma;
   }
 
   useEffect(() => {
@@ -85,7 +113,7 @@ export default function KpiTrend({ sezony, perSeason, perSeasonOsoby = {} }: Pro
       true,
     );
     chart.current.resize();
-  }, [metric, sel, sezony, perSeason, perSeasonOsoby]);
+  }, [metric, sel, selSport, sezony, perSeason, perSeasonOsoby, perSeasonOdvetvia]);
 
   useEffect(() => {
     const on = () => chart.current?.resize();
@@ -94,6 +122,8 @@ export default function KpiTrend({ sezony, perSeason, perSeasonOsoby = {} }: Pro
   }, []);
 
   const toggle = (k: string) => setSel((p) => (p.includes(k) ? p.filter((x) => x !== k) : [...p, k]));
+  const toggleSport = (k: string) =>
+    setSelSport((p) => (p.includes(k) ? (p.length > 1 ? p.filter((x) => x !== k) : p) : [...p, k]));
 
   const btn = (active: boolean, color?: string) => ({
     padding: '5px 10px', borderRadius: 16, fontSize: 12.5, fontWeight: active ? 700 : 500, cursor: 'pointer',
@@ -117,12 +147,36 @@ export default function KpiTrend({ sezony, perSeason, perSeasonOsoby = {} }: Pro
           ))}
         </div>
       )}
+      {maSporty && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, margin: '0 0 6px', opacity: jeOsoba ? 0.45 : 1 }}>
+          <span style={{ alignSelf: 'center', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--color-muted)', marginRight: 2 }}>Šport:</span>
+          {sporty.map((o) => (
+            <button
+              key={o.k}
+              type="button"
+              disabled={jeOsoba}
+              title={jeOsoba ? 'Osoby sa vykazujú len za futbal' : undefined}
+              onClick={() => toggleSport(o.k)}
+              style={{ ...btn(selSport.includes(o.k)), ...(jeOsoba ? { cursor: 'not-allowed' } : {}) }}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      )}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
         {GROUPS.map((g) => (
           <button key={g.key} type="button" onClick={() => toggle(g.key)} style={btn(sel.includes(g.key), g.color)}>{g.key}</button>
         ))}
       </div>
       <div ref={el} style={{ width: '100%', height: 320 }} />
+      {metric === 'sutaze' && (
+        <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
+          Súťaž = súťaž s aspoň jedným odohraným zápasom v danej sezóne. Súťaž, ktorej zápasy patria
+          do viacerých vekových úrovní, sa započíta v každej z nich — súčet skupín preto môže byť
+          mierne vyšší než celkový počet súťaží.
+        </p>
+      )}
     </div>
   );
 }
