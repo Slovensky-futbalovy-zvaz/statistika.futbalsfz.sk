@@ -1,40 +1,52 @@
 {
  "sezona": "2026/2027",
- "generatedAt": "2026-08-06T16:58:14+02:00",
- "pocetZvazov": 6,
+ "generatedAt": "2026-08-07T01:32:49+02:00",
+ "pocetZvazov": 16,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
   "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia.",
-  "sutazePoznamka": "Súťaž = distinct súťaž s aspoň jedným uzavretým zápasom. V bloku kategorie sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich, preto súčet po kategóriách môže prevýšiť kpi.sutaze."
+  "sutazePoznamka": "Súťaž = distinct súťaž s aspoň jedným uzavretým zápasom. V bloku kategorie sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich, preto súčet po kategóriách môže prevýšiť kpi.sutaze.",
+  "urovenPoznamka": "Úroveň súťaže pochádza z poľa competitions.level (nenastaviteľné, kopírované z ISSF; nižší level = vyššia súťaž). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni (ADULTS, U19, U13…), nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú do jedného stĺpca. Vekové kategórie (Dospelí, Dorast, Žiaci, Prípravky) sú len medzisúčty pre vizualizáciu. Blok urovne je disjunktný a sedí na kpi.sutaze; sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich."
  },
  "kpi": {
-  "sutaze": 7,
-  "zapasy": 1,
-  "uzatvorene": 101,
-  "administrativne": 100,
-  "druzstva": 61,
-  "goly": 2,
-  "divaci": 183,
-  "zlteKarty": 0,
-  "cerveneKarty": 0,
-  "kontumovane": 1,
-  "kontumovaneAdmin": 1,
+  "sutaze": 27,
+  "zapasy": 246,
+  "uzatvorene": 715,
+  "administrativne": 469,
+  "druzstva": 609,
+  "goly": 1271,
+  "divaci": 88782,
+  "zlteKarty": 797,
+  "cerveneKarty": 27,
+  "kontumovane": 9,
+  "kontumovaneAdmin": 9,
   "kontumovaneOdohrane": 0,
-  "odstupene": 99,
-  "odstupeneAdmin": 99,
+  "odstupene": 460,
+  "odstupeneAdmin": 460,
   "odstupeneOdohrane": 0
  },
  "kategorie": {
   "ADULTS": {
-   "sutaze": 6,
-   "zapasy": 1,
-   "uzatvorene": 75,
-   "administrativne": 74,
-   "druzstva": 47,
-   "goly": 2,
+   "sutaze": 19,
+   "zapasy": 246,
+   "uzatvorene": 507,
+   "administrativne": 261,
+   "druzstva": 509,
+   "goly": 1271,
+   "zlte": 797,
+   "cervene": 27,
+   "divaci": 88782
+  },
+  "U15": {
+   "sutaze": 3,
+   "zapasy": 0,
+   "uzatvorene": 66,
+   "administrativne": 66,
+   "druzstva": 36,
+   "goly": 0,
    "zlte": 0,
    "cervene": 0,
-   "divaci": 183
+   "divaci": 0
   },
   "U19": {
    "sutaze": 1,
@@ -46,42 +58,247 @@
    "zlte": 0,
    "cervene": 0,
    "divaci": 0
+  },
+  "U13": {
+   "sutaze": 2,
+   "zapasy": 0,
+   "uzatvorene": 44,
+   "administrativne": 44,
+   "druzstva": 24,
+   "goly": 0,
+   "zlte": 0,
+   "cervene": 0,
+   "divaci": 0
+  },
+  "U11": {
+   "sutaze": 2,
+   "zapasy": 0,
+   "uzatvorene": 72,
+   "administrativne": 72,
+   "druzstva": 26,
+   "goly": 0,
+   "zlte": 0,
+   "cervene": 0,
+   "divaci": 0
   }
+ },
+ "urovne": {
+  "L1": {
+   "nazov": "1. liga",
+   "sutaze": 1,
+   "zapasy": 12
+  },
+  "L2": {
+   "nazov": "2. liga",
+   "sutaze": 5,
+   "zapasy": 16
+  },
+  "L3": {
+   "nazov": "3. liga",
+   "sutaze": 2,
+   "zapasy": 0
+  },
+  "L4": {
+   "nazov": "4. liga",
+   "sutaze": 2,
+   "zapasy": 0
+  },
+  "L5": {
+   "nazov": "5. liga",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  "L6": {
+   "nazov": "6. liga",
+   "sutaze": 4,
+   "zapasy": 1
+  },
+  "L7": {
+   "nazov": "7. liga",
+   "sutaze": 5,
+   "zapasy": 19
+  },
+  "L8": {
+   "nazov": "8. liga",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  "L9": {
+   "nazov": "9. liga",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  "POHARE": {
+   "nazov": "Poháre a turnaje",
+   "sutaze": 5,
+   "zapasy": 198
+  }
+ },
+ "sutazeUroven": [
+  {
+   "uroven": "L1",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 12
+  },
+  {
+   "uroven": "L2",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 16
+  },
+  {
+   "uroven": "L2",
+   "kat": "ADULTS",
+   "pohlavie": "F",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  {
+   "uroven": "L2",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  {
+   "uroven": "L2",
+   "kat": "U15",
+   "pohlavie": "F",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  {
+   "uroven": "L2",
+   "kat": "U13",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  {
+   "uroven": "L3",
+   "kat": "U11",
+   "pohlavie": "M",
+   "sutaze": 2,
+   "zapasy": 0
+  },
+  {
+   "uroven": "L4",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  {
+   "uroven": "L4",
+   "kat": "U13",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  {
+   "uroven": "L5",
+   "kat": "U19",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  {
+   "uroven": "L6",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 4,
+   "zapasy": 1
+  },
+  {
+   "uroven": "L7",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 5,
+   "zapasy": 19
+  },
+  {
+   "uroven": "L8",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  {
+   "uroven": "L9",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 0
+  },
+  {
+   "uroven": "POHARE",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 5,
+   "zapasy": 198
+  }
+ ],
+ "sutazePohlavie": {
+  "M": 25,
+  "F": 2
  },
  "sutazePodlaRiadiacehoZvazu": {
   "SFZ": {
-   "sutaze": 2,
-   "zapasy": 1,
+   "sutaze": 4,
+   "zapasy": 205,
    "pocetZvazov": 1,
    "kategorie": {
     "ADULTS": {
-     "sutaze": 2,
-     "zapasy": 1
+     "sutaze": 4,
+     "zapasy": 205
     }
    }
   },
   "RFZ": {
-   "sutaze": 2,
-   "zapasy": 0,
-   "pocetZvazov": 2,
+   "sutaze": 8,
+   "zapasy": 1,
+   "pocetZvazov": 4,
    "kategorie": {
+    "U15": {
+     "sutaze": 2,
+     "zapasy": 0
+    },
+    "ADULTS": {
+     "sutaze": 4,
+     "zapasy": 1
+    },
     "U19": {
      "sutaze": 1,
      "zapasy": 0
     },
-    "ADULTS": {
+    "U13": {
      "sutaze": 1,
      "zapasy": 0
     }
    }
   },
   "ObFZ": {
-   "sutaze": 3,
-   "zapasy": 0,
-   "pocetZvazov": 3,
+   "sutaze": 15,
+   "zapasy": 40,
+   "pocetZvazov": 11,
    "kategorie": {
     "ADULTS": {
-     "sutaze": 3,
+     "sutaze": 11,
+     "zapasy": 40
+    },
+    "U13": {
+     "sutaze": 1,
+     "zapasy": 0
+    },
+    "U11": {
+     "sutaze": 2,
+     "zapasy": 0
+    },
+    "U15": {
+     "sutaze": 1,
      "zapasy": 0
     }
    }
@@ -89,31 +306,31 @@
  },
  "osobyKat": {
   "hraci": {
-   "ADULTS": 33
+   "ADULTS": 6494
   },
   "treneri": {
-   "ADULTS": 3
+   "ADULTS": 562
   },
   "realizacnyTim": {
-   "ADULTS": 6
+   "ADULTS": 964
   },
   "rozhodcovia": {
-   "ADULTS": 3
+   "ADULTS": 520
   },
   "delegati": {
-   "ADULTS": 1
+   "ADULTS": 176
   },
   "personal": {
-   "ADULTS": 2
+   "ADULTS": 569
   }
  },
  "osoby": {
-  "hraci": 33,
-  "treneri": 3,
-  "rozhodcovia": 3,
-  "delegati": 1,
-  "personal": 2,
-  "spolu": 42
+  "hraci": 6494,
+  "treneri": 562,
+  "rozhodcovia": 520,
+  "delegati": 176,
+  "personal": 569,
+  "spolu": 8321
  },
  "odvetvia": {},
  "sunburstSutaze": {
@@ -128,12 +345,94 @@
       "children": [
        {
         "name": "SFZ — vlastné súťaže",
-        "value": 1,
-        "sutaze": 2,
+        "value": 205,
+        "sutaze": 4,
         "pohlavie": {
-         "M": 1
+         "M": 205
+        },
+        "sutazePohlavie": {
+         "M": 3,
+         "F": 1
         },
         "id": "sfz"
+       },
+       {
+        "name": "Západoslovenský futbalový zväz",
+        "id": "zsfz",
+        "children": [
+         {
+          "name": "ObFZ Nitra",
+          "value": 10,
+          "sutaze": 2,
+          "pohlavie": {
+           "M": 10
+          },
+          "sutazePohlavie": {
+           "M": 2
+          },
+          "id": "obfz-nitra"
+         }
+        ]
+       },
+       {
+        "name": "Stredoslovenský futbalový zväz",
+        "id": "ssfz",
+        "children": [
+         {
+          "name": "Stredoslovenský futbalový zväz — vlastné súťaže",
+          "value": 1,
+          "sutaze": 4,
+          "pohlavie": {
+           "M": 1
+          },
+          "sutazePohlavie": {
+           "M": 4
+          },
+          "id": "ssfz"
+         }
+        ]
+       },
+       {
+        "name": "Východoslovenský futbalový zväz",
+        "id": "vsfz",
+        "children": [
+         {
+          "name": "ObFZ Prešov",
+          "value": 4,
+          "sutaze": 1,
+          "pohlavie": {
+           "M": 4
+          },
+          "sutazePohlavie": {
+           "M": 1
+          },
+          "id": "obfz-presov"
+         },
+         {
+          "name": "Podtatranský futbalový zväz",
+          "value": 13,
+          "sutaze": 2,
+          "pohlavie": {
+           "M": 13
+          },
+          "sutazePohlavie": {
+           "M": 2
+          },
+          "id": "pfz-poprad"
+         },
+         {
+          "name": "ObFZ Humenné",
+          "value": 13,
+          "sutaze": 2,
+          "pohlavie": {
+           "M": 13
+          },
+          "sutazePohlavie": {
+           "M": 2
+          },
+          "id": "obfz-humenne"
+         }
+        ]
        }
       ]
      }
@@ -156,7 +455,7 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 33
+          "value": 5422
          }
         ]
        },
@@ -165,7 +464,7 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 3
+          "value": 506
          }
         ]
        },
@@ -174,7 +473,109 @@
         "children": [
          {
           "name": "ADULTS",
+          "value": 432
+         }
+        ]
+       },
+       {
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 172
+         }
+        ]
+       },
+       {
+        "name": "Personál",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 486
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "name": "RFZ",
+      "uroven": "RFZ",
+      "children": [
+       {
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 32
+         }
+        ]
+       },
+       {
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 5
+         }
+        ]
+       },
+       {
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 9
+         }
+        ]
+       },
+       {
+        "name": "Delegáti",
+        "children": [
+         {
+          "name": "ADULTS",
           "value": 3
+         }
+        ]
+       },
+       {
+        "name": "Personál",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 6
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "name": "ObFZ",
+      "uroven": "ObFZ",
+      "children": [
+       {
+        "name": "Hráči",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 1040
+         }
+        ]
+       },
+       {
+        "name": "Tréneri",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 51
+         }
+        ]
+       },
+       {
+        "name": "Rozhodcovia",
+        "children": [
+         {
+          "name": "ADULTS",
+          "value": 79
          }
         ]
        },
@@ -192,7 +593,7 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 2
+          "value": 77
          }
         ]
        }

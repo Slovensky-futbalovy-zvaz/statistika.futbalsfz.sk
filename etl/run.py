@@ -85,6 +85,22 @@ def pripoj_db(uri: str | None, db_name: str):
 #: turnaj VsFZ; zmiešané pohlavie rieši dimenzia pohlavie ako NEURCENE).
 KAT_NORMALIZACIA = {"Dospelí": "ADULTS", "U15 mix": "U15"}
 
+#: Metodická poznámka k dimenzii úrovne súťaže (etapa 2, 6. 8. 2026). Konštanta,
+#: aby bol text jediným zdrojom pravdy naprieč profilmi aj pri dávkových behoch.
+UROVEN_POZNAMKA = (
+    "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, "
+    "nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, "
+    "„Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — "
+    "2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). "
+    "Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie "
+    "k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ "
+    "dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka "
+    "pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie "
+    "chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí "
+    "na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, "
+    "kde súčet môže kpi.sutaze prevýšiť."
+)
+
 
 def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
     """Mapa partId(str) → {"cat": veková kategória, "gender": pohlavie} z competitions.parts[].rules.
@@ -114,6 +130,21 @@ def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
             if cat or gender:
                 mapa[str(p["_id"])] = {"cat": cat, "gender": gender}
     return mapa
+
+
+def nacitaj_comp_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
+    """Mapa competitionId(str) → kód úrovne súťaže z `competitions.level`.
+
+    Analógia k `nacitaj_part_mapu`. Pole `level` je nenastaviteľné a kopírované
+    z ISSF; jeho pokrytie bolo zmerané 6. 8. 2026 (96–100 % podľa sezóny, hodnota
+    `null` sa nevyskytuje). Prevod čísla na kód skupiny robí `pipelines.uroven_kod`;
+    súťaž bez `level` dostane kód NEURCENE.
+    """
+    app = spaces[0] if len(spaces) == 1 else {"$in": spaces}
+    cur = db.competitions.find(
+        {"appSpace": app, "season.name": {"$in": varianty}}, {"level": 1}
+    )
+    return {str(c["_id"]): pipelines.uroven_kod(c.get("level")) for c in cur}
 
 
 def agreguj(db, pipeline: list[dict], popis: str) -> list[dict]:
@@ -157,18 +188,33 @@ def _gender_kluc(g) -> str:
     return g if g in ("M", "F") else "NEURCENE"
 
 
-def _zloz_pohlavie(kat_g_raw: list[dict], druz_g_raw: list[dict]) -> dict:
-    """Blok `pohlavie` — per pohlavie súhrn (ako KPI) + kategórie (rozhodnutie O6, 12. 7. 2026)."""
+def _zloz_pohlavie(
+    kat_g_raw: list[dict],
+    druz_g_raw: list[dict],
+    sut_g: dict | None = None,
+    sut_gk: dict | None = None,
+) -> dict:
+    """Blok `pohlavie` — per pohlavie súhrn (ako KPI) + kategórie (rozhodnutie O6, 12. 7. 2026).
+
+    `sut_g` / `sut_gk` (doplnené 6. 8. 2026) nesú počty súťaží — distinct súťaž
+    na pohlavie, resp. na pohlavie × vekovú kategóriu. Počet súťaží pohlavia sa
+    NEROVNÁ súčtu po kategóriách (súťaž so zápasmi vo viacerých vekových
+    úrovniach sa v kategóriách započíta v každej z nich), preto sa preberá
+    priamo z agregácie a nesčítava.
+    """
     druz = {
         (_gender_kluc(r["_id"].get("gender")), r["_id"].get("cat")): r["druzstva"]
         for r in druz_g_raw
     }
+    sut_gk = sut_gk or {}
+    sut_g = sut_g or {}
     bloky: dict[str, dict] = {}
     for r in kat_g_raw:
         g = _gender_kluc(r["_id"].get("gender"))
         cat = r["_id"].get("cat") or "NEZNAMA"
         blok = bloky.setdefault(g, {})
         blok[cat] = {
+            "sutaze": sut_gk.get((g, r["_id"].get("cat")), 0),
             "zapasy": r["zapasy"],
             "druzstva": druz.get((g, r["_id"].get("cat")), 0),
             "goly": r["goly"],
@@ -183,6 +229,7 @@ def _zloz_pohlavie(kat_g_raw: list[dict], druz_g_raw: list[dict]) -> dict:
             continue
         kat = validate.zorad_kategorie(bloky[g])
         vysledok[g] = {
+            "sutaze": sut_g.get(g, 0),
             "zapasy": sum(k["zapasy"] for k in kat.values()),
             "druzstva": sum(k["druzstva"] for k in kat.values()),
             "goly": sum(k["goly"] for k in kat.values()),
@@ -192,6 +239,49 @@ def _zloz_pohlavie(kat_g_raw: list[dict], druz_g_raw: list[dict]) -> dict:
             "kategorie": kat,
         }
     return vysledok
+
+
+def _zloz_urovne(rozpad: dict) -> tuple[dict, list[dict]]:
+    """Blok `urovne` (súhrn na úroveň) + plochý zoznam `sutazeUroven`.
+
+    `sutazeUroven` je rez úroveň súťaže × veková úroveň × pohlavie — táto trojica
+    je jediný korektný spôsob, ako úroveň vykazovať: `level` sa vždy vzťahuje
+    ku konkrétnej vekovej úrovni, nie k vekovej kategórii (rozhodnutie PO
+    6. 8. 2026). Každá veková úroveň má vlastnú pyramídu — „1. liga“ dospelých,
+    U19 a U13 sú tri rôzne súťaže a nesčítavajú sa.
+    """
+    poradie_kat = {k: i for i, k in enumerate(validate.KATEGORIE_PORADIE)}
+    poradie_u = {k: i for i, k in enumerate(pipelines.UROVEN_PORADIE)}
+    poradie_g = {g: i for i, g in enumerate(validate.POHLAVIE_PORADIE)}
+
+    urovne = {}
+    for r in rozpad.get("uroven", []):
+        kod = r["_id"] or pipelines.UROVEN_NEURCENE
+        urovne[kod] = {
+            "nazov": pipelines.UROVEN_NAZOV.get(kod, kod),
+            "sutaze": r["sutaze"],
+            "zapasy": r.get("zapasy", 0),
+        }
+    urovne = {k: urovne[k] for k in pipelines.UROVEN_PORADIE if k in urovne}
+
+    riadky = [
+        {
+            "uroven": (r["_id"].get("u") or pipelines.UROVEN_NEURCENE),
+            "kat": (r["_id"].get("cat") or "NEZNAMA"),
+            "pohlavie": _gender_kluc(r["_id"].get("g")),
+            "sutaze": r["sutaze"],
+            "zapasy": r.get("zapasy", 0),
+        }
+        for r in rozpad.get("riadky", [])
+    ]
+    riadky.sort(
+        key=lambda x: (
+            poradie_u.get(x["uroven"], 99),
+            poradie_kat.get(x["kat"], 99),
+            poradie_g.get(x["pohlavie"], 9),
+        )
+    )
+    return urovne, riadky
 
 
 def vygeneruj(
@@ -207,6 +297,7 @@ def vygeneruj(
         [FUTSAL_APP_SPACE] if sport_sector == "futsal" else app_spaces(zvaz)
     )  # futsal patrí pod SFZ, ale žije na vlastnom appSpace
     part_map = nacitaj_part_mapu(db, spaces, varianty)
+    comp_map = nacitaj_comp_mapu(db, spaces, varianty)
 
     kat_raw = agreguj(
         db, pipelines.kategorie(spaces, varianty, sport_sector, part_map, corrections), "kategorie"
@@ -255,6 +346,20 @@ def vygeneruj(
         db, pipelines.pocet_sutazi_kategorie(spaces, varianty, sport_sector, part_map), "pocet-sutazi-kat"
     )
     sut_map = {(x["_id"] or "NEZNAMA"): x["sutaze"] for x in sutaze_kat_raw}
+
+    # rozpad súťaží: pohlavie × veková kategória × úroveň súťaže (jediný prechod, $facet)
+    rozpad_raw = agreguj(
+        db,
+        pipelines.pocet_sutazi_rozpad(spaces, varianty, sport_sector, part_map, comp_map),
+        "pocet-sutazi-rozpad",
+    )
+    rozpad = rozpad_raw[0] if rozpad_raw else {}
+    sut_g = {_gender_kluc(r["_id"]): r["sutaze"] for r in rozpad.get("pohlavie", [])}
+    sut_gk = {
+        (_gender_kluc(r["_id"].get("g")), r["_id"].get("cat")): r["sutaze"]
+        for r in rozpad.get("pohlavieKategorie", [])
+    }
+    urovne, sutaze_uroven = _zloz_urovne(rozpad)
 
     druz = {r["_id"]: r["druzstva"] for r in druz_raw}
     kategorie = {}
@@ -311,6 +416,7 @@ def vygeneruj(
                 "časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná "
                 "z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true."
             ),
+            "urovenPoznamka": UROVEN_POZNAMKA,
             "administrativnePoznamka": (
                 "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho "
                 "odohratia (žiadne udalosti v protokole a žiadna návštevnosť). "
@@ -335,7 +441,9 @@ def vygeneruj(
             "odstupeneOdohrane": odstupene - odstupeneAdmin,
         },
         "kategorie": kategorie,
-        "pohlavie": _zloz_pohlavie(kat_g_raw, druz_g_raw),
+        "urovne": urovne,
+        "sutazeUroven": sutaze_uroven,
+        "pohlavie": _zloz_pohlavie(kat_g_raw, druz_g_raw, sut_g, sut_gk),
         "osoby": {
             "hraci": _facet_osoby(hraci_raw),
             "treneri": _facet_osoby(treneri_raw),

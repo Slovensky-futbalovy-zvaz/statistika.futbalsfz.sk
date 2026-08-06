@@ -3,6 +3,7 @@
 // zápasy podľa kategórií (drill-down), osoby ako karty s rozpadom, veková pyramída.
 // Zdieľané pre futbal (/zvaz/[id]/[sezona]) aj odvetvia (/zvaz/[id]/[odvetvie]/[sezona]).
 import CategoryDrill from './CategoryDrill.tsx';
+import PyramidaSutazi from './PyramidaSutazi.tsx';
 import ZvazPicker from './ZvazPicker.tsx';
 import AgePyramid from './AgePyramid.tsx';
 import RfzObfzMapa from './RfzObfzMapa.tsx';
@@ -183,6 +184,22 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
   </p>
   <CategoryDrill client:visible kategorie={profil.kategorie} />
 </section>
+
+<!-- počet súťaží podľa úrovne súťaže (pyramída líg) -->
+{
+  (profil.sutazeUroven?.length ?? 0) > 0 && (
+    <section class="mt-8 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Počet súťaží</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Súťaže podľa úrovne</h2>
+      <p class="text-sm text-muted mb-3">
+        Na ktorých úrovniach súťaže (ligách) riadi {z.nazov} súťaže v sezóne {sezona}.
+        Každá veková kategória má vlastnú pyramídu — v každej sa dá rozbaliť konkrétna
+        veková úroveň a prepnúť pohlavie.
+      </p>
+      <PyramidaSutazi client:visible riadky={profil.sutazeUroven ?? []} />
+    </section>
+  )
+}
 
 <!-- osoby ako karty -->
 <section class="mt-8">

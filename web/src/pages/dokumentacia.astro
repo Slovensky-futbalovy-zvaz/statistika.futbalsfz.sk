@@ -18,8 +18,8 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
 
 <Base
   title="Dokumentácia a metodika"
-  description="Ako vznikajú čísla na portáli Štatistiky slovenského futbalu — zdroj dát, definície ukazovateľov a presné pravidlá výpočtu, napríklad ako sa počítajú odohraté zápasy a ako sa nakladá s kontumáciami a odstúpenými družstvami."
-  keywords="metodika futbalové štatistiky, ako sa počítajú zápasy, kontumácia, odstúpené družstvo, SFZ dokumentácia"
+  description="Ako vznikajú čísla na portáli Štatistiky slovenského futbalu — zdroj dát, definície ukazovateľov a presné pravidlá výpočtu: ako sa počítajú odohraté zápasy, ako sa nakladá s kontumáciami a odstúpenými družstvami a ako funguje pyramída líg podľa vekových kategórií."
+  keywords="metodika futbalové štatistiky, ako sa počítajú zápasy, kontumácia, odstúpené družstvo, pyramída líg, úroveň súťaže, SFZ dokumentácia"
   jsonLd={[dokLd]}
 >
   <header class="mb-6">
@@ -128,6 +128,61 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       <p class="text-muted" style="line-height:1.6;">
         Zápasy a osoby sa členia podľa vekových kategórií (dospelí, dorast, žiaci, prípravky) a podľa
         pohlavia. Súčty po kategóriách aj po pohlaví sa rovnajú celkovým číslam daného zväzu a sezóny.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        Kategória je pritom skupina niekoľkých <strong class="text-ink">vekových úrovní</strong>:
+        dorast zahŕňa U19, U18, U17 a U16, žiaci U15 až U12, prípravky U11 a nižšie; kategória
+        dospelých obsahuje práve jednu vekovú úroveň. Tam, kde na presnosti záleží — napríklad pri
+        pyramíde líg nižšie — sa dá zobraziť konkrétna veková úroveň, nielen celá kategória.
+      </p>
+    </div>
+  </section>
+
+  <!-- Počet súťaží a pyramída líg -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Súťaže</div>
+      <h2 class={H2} style="font-size:20px; margin:4px 0 8px;">Počet súťaží a pyramída líg</h2>
+      <p class="text-muted" style="line-height:1.6;">
+        Za súťaž považujeme súťaž s <strong class="text-ink">aspoň jedným odohratým zápasom</strong>
+        v danej sezóne. Každá súťaž je priradená zväzu, ktorý ju riadi — SFZ, regionálnemu (RFZ)
+        alebo oblastnému (ObFZ). Súťaž, ktorá sa ešte nezačala hrať, sa nepočíta.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Prečo pyramíd nie je jedna, ale štyri</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        Úroveň súťaže — teda „liga“ — sa vždy vzťahuje ku <strong class="text-ink">konkrétnej vekovej
+        úrovni</strong> (dospelí, U19, U15, U13, U11 a tak ďalej). Neexistuje jedna spoločná pyramída
+        pre všetky vekové úrovne: <strong class="text-ink">„1. liga“ dospelých, „1. liga“ dorastencov
+        U19 a „1. liga“ žiakov U13 sú tri úplne rôzne súťaže</strong> v troch samostatných pyramídach.
+        Nedajú sa preto sčítať do jedného stĺpca.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        Portál preto zobrazuje <strong class="text-ink">štyri samostatné pyramídy vedľa seba</strong> —
+        Dospelí, Dorast, Žiaci a Prípravky — každú s vlastnou škálou. Vekové kategórie sú pritom len
+        <strong class="text-ink">medzisúčty pre prehľad</strong>: okrem dospelých obsahuje každá z nich
+        viacero vekových úrovní (napríklad Dorast zahŕňa U19, U18, U17 a U16). Preto sa dá v každej
+        pyramíde rozbaliť konkrétna veková úroveň — až tam je poradie líg úplne presné.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Hĺbka pyramídy sa líši</strong> podľa vekovej úrovne aj podľa regiónu —
+        podľa toho, koľko stupňov sa v danej vekovej úrovni reálne hrá. U dospelých mužov ide o plnú
+        celoslovenskú pyramídu od 1. ligy po 9. ligu; naopak v prípravkách má niekoľko oblastí len
+        jedinú súťaž, kým inde sú nad ňou ešte regionálna a celoštátna úroveň. Nie je to nepresnosť
+        dát, ale spôsob, akým sú súťaže organizované.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Poháre a turnaje</strong> (napríklad Slovnaft Cup, Prezidentský pohár
+        alebo halové turnaje) nie sú súčasťou ligovej pyramídy a vykazujú sa samostatne. Súťaže, ktoré
+        majú úroveň nevyplnenú — sú to najmä reprezentačné, vysokoškolské a školské turnaje — sú
+        v skupine „Neurčená úroveň“. Zdrojom úrovne je údaj z ISSF, ktorý sa do Sportnetu preberá
+        a nedá sa v ňom upravovať.
+      </p>
+      <p class="mt-3 text-sm text-muted" style="line-height:1.6;">
+        Súčet súťaží po úrovniach sa presne rovná celkovému počtu súťaží zväzu a sezóny, pretože
+        každá súťaž patrí práve do jednej úrovne. Ak sa však v jednej súťaži hrajú zápasy viacerých
+        vekových úrovní, v rozpade podľa veku sa započíta v každej z nich — v takých prehľadoch môže
+        byť súčet o niekoľko súťaží vyšší než celkové číslo.
       </p>
     </div>
   </section>

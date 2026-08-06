@@ -49,6 +49,25 @@ export interface OsobaSkupina {
   poKategorii: Record<string, number>;
 }
 
+/** Súhrn za jednu úroveň súťaže (blok `urovne`; disjunktný — sedí na kpi.sutaze). */
+export interface UrovenSuhrn {
+  nazov: string;
+  sutaze: number;
+  zapasy: number;
+}
+
+/**
+ * Riadok rozpadu súťaží: úroveň × veková kategória × pohlavie (blok `sutazeUroven`).
+ * Súťaž so zápasmi vo viacerých vekových úrovniach sa započíta v každej z nich.
+ */
+export interface UrovenRiadok {
+  uroven: string; // L1…L9 | L10P | POHARE | NEURCENE
+  kat: string; // ADULTS | U19 | … | NEZNAMA
+  pohlavie: string; // M | F | NEURCENE
+  sutaze: number;
+  zapasy: number;
+}
+
 export interface Profil {
   zvaz: string;
   sezona: string;
@@ -57,6 +76,10 @@ export interface Profil {
   methodologyFlags: Record<string, unknown>;
   kpi: Kpi;
   kategorie: Record<string, Kategoria>;
+  /** Počet súťaží po úrovniach (etapa 2; staršie profily blok nemajú). */
+  urovne?: Record<string, UrovenSuhrn>;
+  /** Rozpad úroveň × kategória × pohlavie (etapa 2; staršie profily blok nemajú). */
+  sutazeUroven?: UrovenRiadok[];
   pohlavie: Record<string, unknown>;
   osoby: Record<string, OsobaSkupina>;
 }
@@ -164,6 +187,10 @@ export interface PorovnanieRiadok {
   personal?: number;
   golyNaZapas: number;
   divaciNaZapas: number;
+  /** Počet súťaží po pohlaví (etapa 2; staršie porovnania kľúč nemajú). */
+  sutazePohlavie?: Record<string, number>;
+  /** Počet súťaží po úrovniach súťaže, kód → počet (etapa 2). */
+  urovne?: Record<string, number>;
 }
 
 export interface Porovnanie {
@@ -361,6 +388,7 @@ export interface SunburstUzol {
   value?: number;
   sutaze?: number; // len listy sunburstSutaze — počet súťaží zväzu (prepínač metriky)
   pohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → zápasy)
+  sutazePohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → súťaže)
   children?: SunburstUzol[];
 }
 
@@ -377,9 +405,22 @@ export interface Sumar {
     string,
     { sutaze: number; zapasy: number; pocetZvazov: number; kategorie: Record<string, { sutaze: number; zapasy: number }> }
   >;
+  /** Počet súťaží po úrovniach za celú SR (etapa 2; staršie sumáre blok nemajú). */
+  urovne?: Record<string, UrovenSuhrn>;
+  /** Rozpad úroveň × kategória × pohlavie za celú SR (etapa 2). */
+  sutazeUroven?: UrovenRiadok[];
+  /** Počet súťaží po pohlaví za celú SR (etapa 2). */
+  sutazePohlavie?: Record<string, number>;
   odvetvia: Record<
     string,
-    { kpi: Kpi; osoby: Record<string, number>; kategorie?: Record<string, Kategoria> }
+    {
+      kpi: Kpi;
+      osoby: Record<string, number>;
+      kategorie?: Record<string, Kategoria>;
+      urovne?: Record<string, UrovenSuhrn>;
+      sutazeUroven?: UrovenRiadok[];
+      sutazePohlavie?: Record<string, number>;
+    }
   >;
   sunburstSutaze: SunburstUzol;
   sunburstOsoby: SunburstUzol;

@@ -2,34 +2,83 @@
   "zvaz": "ssfz",
   "sezona": "2026/2027",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-23T23:22:11+02:00",
+  "generatedAt": "2026-08-06T22:12:40+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
-    "divaciPokrytie": 0.0,
+    "divaciPokrytie": 1.0,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
+    "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
     "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
   },
   "kpi": {
-    "sutaze": 1,
-    "zapasy": 0,
-    "uzatvorene": 26,
-    "administrativne": 26,
-    "druzstva": 14,
-    "goly": 0,
-    "divaci": 0,
-    "zlteKarty": 0,
+    "sutaze": 4,
+    "zapasy": 1,
+    "uzatvorene": 131,
+    "administrativne": 130,
+    "druzstva": 70,
+    "goly": 3,
+    "divaci": 170,
+    "zlteKarty": 2,
     "cerveneKarty": 0,
     "kontumovane": 0,
     "kontumovaneAdmin": 0,
     "kontumovaneOdohrane": 0,
-    "odstupene": 26,
-    "odstupeneAdmin": 26,
+    "odstupene": 130,
+    "odstupeneAdmin": 130,
     "odstupeneOdohrane": 0
   },
   "kategorie": {
+    "ADULTS": {
+      "zapasy": 1,
+      "uzatvorene": 53,
+      "administrativne": 52,
+      "druzstva": 28,
+      "goly": 3,
+      "zlte": 2,
+      "cervene": 0,
+      "divaci": 170,
+      "divaciPokrytych": 1,
+      "sutaze": 1,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 52,
+      "odstupeneAdmin": 52
+    },
     "U19": {
+      "zapasy": 0,
+      "uzatvorene": 26,
+      "administrativne": 26,
+      "druzstva": 14,
+      "goly": 0,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 0,
+      "divaciPokrytych": 0,
+      "sutaze": 1,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 26,
+      "odstupeneAdmin": 26
+    },
+    "U15": {
+      "zapasy": 0,
+      "uzatvorene": 26,
+      "administrativne": 26,
+      "druzstva": 14,
+      "goly": 0,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 0,
+      "divaciPokrytych": 0,
+      "sutaze": 1,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 26,
+      "odstupeneAdmin": 26
+    },
+    "U13": {
       "zapasy": 0,
       "uzatvorene": 26,
       "administrativne": 26,
@@ -46,16 +95,95 @@
       "odstupeneAdmin": 26
     }
   },
+  "urovne": {
+    "L2": {
+      "nazov": "2. liga",
+      "sutaze": 2,
+      "zapasy": 0
+    },
+    "L5": {
+      "nazov": "5. liga",
+      "sutaze": 1,
+      "zapasy": 0
+    },
+    "L6": {
+      "nazov": "6. liga",
+      "sutaze": 1,
+      "zapasy": 1
+    }
+  },
+  "sutazeUroven": [
+    {
+      "uroven": "L2",
+      "kat": "U15",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 0
+    },
+    {
+      "uroven": "L2",
+      "kat": "U13",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 0
+    },
+    {
+      "uroven": "L5",
+      "kat": "U19",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 0
+    },
+    {
+      "uroven": "L6",
+      "kat": "ADULTS",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 1
+    }
+  ],
   "pohlavie": {
     "M": {
-      "zapasy": 0,
-      "druzstva": 14,
-      "goly": 0,
-      "divaci": 0,
-      "zlteKarty": 0,
+      "sutaze": 4,
+      "zapasy": 1,
+      "druzstva": 70,
+      "goly": 3,
+      "divaci": 170,
+      "zlteKarty": 2,
       "cerveneKarty": 0,
       "kategorie": {
+        "ADULTS": {
+          "sutaze": 1,
+          "zapasy": 1,
+          "druzstva": 28,
+          "goly": 3,
+          "zlte": 2,
+          "cervene": 0,
+          "divaci": 170,
+          "divaciPokrytych": 1
+        },
         "U19": {
+          "sutaze": 1,
+          "zapasy": 0,
+          "druzstva": 14,
+          "goly": 0,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 0,
+          "divaciPokrytych": 0
+        },
+        "U15": {
+          "sutaze": 1,
+          "zapasy": 0,
+          "druzstva": 14,
+          "goly": 0,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 0,
+          "divaciPokrytych": 0
+        },
+        "U13": {
+          "sutaze": 1,
           "zapasy": 0,
           "druzstva": 14,
           "goly": 0,
@@ -69,28 +197,40 @@
   },
   "osoby": {
     "hraci": {
-      "unikatni": 0,
-      "poKategorii": {}
+      "unikatni": 32,
+      "poKategorii": {
+        "ADULTS": 32
+      }
     },
     "treneri": {
-      "unikatni": 0,
-      "poKategorii": {}
+      "unikatni": 3,
+      "poKategorii": {
+        "ADULTS": 3
+      }
     },
     "realizacnyTim": {
-      "unikatni": 0,
-      "poKategorii": {}
+      "unikatni": 5,
+      "poKategorii": {
+        "ADULTS": 5
+      }
     },
     "rozhodcovia": {
-      "unikatni": 0,
-      "poKategorii": {}
+      "unikatni": 3,
+      "poKategorii": {
+        "ADULTS": 3
+      }
     },
     "delegati": {
-      "unikatni": 0,
-      "poKategorii": {}
+      "unikatni": 1,
+      "poKategorii": {
+        "ADULTS": 1
+      }
     },
     "personal": {
-      "unikatni": 0,
-      "poKategorii": {}
+      "unikatni": 3,
+      "poKategorii": {
+        "ADULTS": 3
+      }
     }
   }
 }

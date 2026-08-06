@@ -2,13 +2,14 @@
   "zvaz": "obfz-topolcany",
   "sezona": "2021/2022",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-24T00:45:34+02:00",
+  "generatedAt": "2026-08-06T23:16:13+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
     "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
+    "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
     "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
   },
   "kpi": {
@@ -110,8 +111,75 @@
       "odstupeneAdmin": 0
     }
   },
+  "urovne": {
+    "L3": {
+      "nazov": "3. liga",
+      "sutaze": 1,
+      "zapasy": 180
+    },
+    "L4": {
+      "nazov": "4. liga",
+      "sutaze": 2,
+      "zapasy": 229
+    },
+    "L6": {
+      "nazov": "6. liga",
+      "sutaze": 2,
+      "zapasy": 251
+    },
+    "L7": {
+      "nazov": "7. liga",
+      "sutaze": 1,
+      "zapasy": 106
+    }
+  },
+  "sutazeUroven": [
+    {
+      "uroven": "L3",
+      "kat": "U11",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 180
+    },
+    {
+      "uroven": "L4",
+      "kat": "U15",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 108
+    },
+    {
+      "uroven": "L4",
+      "kat": "U13",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 121
+    },
+    {
+      "uroven": "L6",
+      "kat": "ADULTS",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 180
+    },
+    {
+      "uroven": "L6",
+      "kat": "U19",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 71
+    },
+    {
+      "uroven": "L7",
+      "kat": "ADULTS",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "zapasy": 106
+    }
+  ],
   "pohlavie": {
     "M": {
+      "sutaze": 6,
       "zapasy": 766,
       "druzstva": 79,
       "goly": 5657,
@@ -120,6 +188,7 @@
       "cerveneKarty": 43,
       "kategorie": {
         "ADULTS": {
+          "sutaze": 2,
           "zapasy": 286,
           "druzstva": 24,
           "goly": 1328,
@@ -129,6 +198,7 @@
           "divaciPokrytych": 286
         },
         "U19": {
+          "sutaze": 1,
           "zapasy": 71,
           "druzstva": 9,
           "goly": 328,
@@ -138,6 +208,7 @@
           "divaciPokrytych": 71
         },
         "U15": {
+          "sutaze": 1,
           "zapasy": 108,
           "druzstva": 11,
           "goly": 893,
@@ -147,6 +218,7 @@
           "divaciPokrytych": 108
         },
         "U13": {
+          "sutaze": 1,
           "zapasy": 121,
           "druzstva": 17,
           "goly": 901,
@@ -156,6 +228,7 @@
           "divaciPokrytych": 121
         },
         "U11": {
+          "sutaze": 1,
           "zapasy": 180,
           "druzstva": 18,
           "goly": 2207,

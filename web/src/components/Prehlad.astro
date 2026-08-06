@@ -4,6 +4,7 @@ import KpiTrend from './KpiTrend.tsx';
 import SlovakiaMap from './SlovakiaMap.tsx';
 import SunburstSutaze from './SunburstSutaze.tsx';
 import SunburstOsoby from './SunburstOsoby.tsx';
+import PyramidaSutazi from './PyramidaSutazi.tsx';
 import AgePyramid from './AgePyramid.tsx';
 import { getSumarSezony, getSumar, getMapData, getSumarDemografia, demoTrend, fmt, ODVETVIE_LABEL } from '../lib/data';
 import { delta } from '../lib/format';
@@ -23,6 +24,7 @@ for (const s of sezony) {
   }
 }
 const trendOsoby = demoTrend(getSumarDemografia());
+
 interface Props {
   sezona: string;
 }
@@ -32,6 +34,14 @@ const idx = sezony.indexOf(aktualna);
 const predosla = idx > 0 ? sezony[idx - 1] : undefined;
 const sumar = sumreMap.get(aktualna)!;
 const sumarPrev = predosla ? sumreMap.get(predosla) : undefined;
+
+// pyramída líg (etapa 2) — rozpad úroveň × veková kategória × pohlavie za celú SR
+const pyramidaRiadky = sumar.sutazeUroven ?? [];
+const pyramidaOdvetvia: Record<string, typeof pyramidaRiadky> = {};
+for (const [sektor, blok] of Object.entries(sumar.odvetvia ?? {})) {
+  const r = blok?.sutazeUroven ?? [];
+  if (r.length) pyramidaOdvetvia[sektor] = r;
+}
 
 function spolu(s: ReturnType<typeof getSumar> | undefined, k: string): number {
   if (!s) return 0;
@@ -225,6 +235,31 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       </div>
     </div>
   </section>
+
+  <!-- Počet súťaží podľa úrovne (pyramída líg) -->
+  {
+    pyramidaRiadky.length > 0 && (
+      <section class="mt-10">
+        <div class={KICKER}>Počet súťaží</div>
+        <h2 class={H2} style="font-size:clamp(21px,2.4vw,28px); margin:2px 0 4px;">
+          Pyramídy líg podľa vekových kategórií
+        </h2>
+        <p class="text-sm text-muted mb-4">
+          Koľko súťaží sa hrá na jednotlivých úrovniach — od najvyššej celoštátnej po najnižšie
+          oblastné. Každá veková kategória má vlastnú pyramídu, pretože „1. liga“ dospelých,
+          dorastencov a žiakov sú tri rôzne súťaže. V každej sa dá rozbaliť konkrétna veková úroveň.
+        </p>
+        <div class={CARD} style={CARD_STYLE}>
+          <PyramidaSutazi
+            client:visible
+            riadky={pyramidaRiadky}
+            odvetvia={pyramidaOdvetvia}
+            odvetvieLabel={ODVETVIE_LABEL}
+          />
+        </div>
+      </section>
+    )
+  }
 
   <!-- Veková pyramída SR -->
   {

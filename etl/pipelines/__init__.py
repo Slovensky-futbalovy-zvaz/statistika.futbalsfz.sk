@@ -313,6 +313,176 @@ def pocet_sutazi_kategorie(app_spaces, season_variants, sport_sector="futbal", p
     ]
 
 
+# ---------------------------------------------------------------- úroveň súťaže
+
+#: Kódy skupín úrovne súťaže (rozhodnutie PO 6. 8. 2026). Zdroj je číselné pole
+#: `competitions.level` — nenastaviteľné, kopírované z ISSF (nižší level = vyššia
+#: súťaž). Meranie pokrytia 6. 8. 2026: 96–100 % súťaží podľa sezóny, hodnota
+#: `null` sa nevyskytuje (pole buď je číslo, alebo chýba úplne).
+#:
+#: ZÁKLADNÝ KĽÚČ (rozhodnutie PO 6. 8. 2026): `level` sa vždy vzťahuje ku
+#: KONKRÉTNEJ VEKOVEJ ÚROVNI (ADULTS, U19, U15…), nie k vekovej kategórii.
+#: Každá veková úroveň má vlastnú pyramídu — „1. liga“ dospelých, U19 a U13 sú
+#: tri rôzne súťaže a NIKDY sa nesčítavajú do jedného stĺpca. Vekové kategórie
+#: (Dospelí, Dorast, Žiaci, Prípravky) sú len medzisúčty pre vizualizáciu.
+#: Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (napr. U11 má v ZsFZ
+#: tri stupne, na Kysuciach jeden) — nie je to chyba dát, ale štruktúra súťaží.
+#: Preto sa úroveň vykazuje vždy v reze úroveň × veková úroveň.
+UROVEN_NEURCENE = "NEURCENE"  # súťaž bez vyplneného competitions.level
+UROVEN_POHARE = "POHARE"      # level ≥ 90 — poháre, superpoháre, halové turnaje
+UROVEN_NIZSIE = "L10P"        # level 10–89 — zvyšok pyramídy pod 9. ligou
+
+#: Poradie skupín úrovní vo výstupe (od najvyššej súťaže).
+UROVEN_PORADIE = [f"L{i}" for i in range(1, 10)] + [
+    UROVEN_NIZSIE,
+    UROVEN_POHARE,
+    UROVEN_NEURCENE,
+]
+
+#: Zobrazované názvy skupín úrovní.
+UROVEN_NAZOV = {
+    **{f"L{i}": f"{i}. liga" for i in range(1, 10)},
+    UROVEN_NIZSIE: "10. liga a nižšie",
+    UROVEN_POHARE: "Poháre a turnaje",
+    UROVEN_NEURCENE: "Neurčená úroveň",
+}
+
+
+def uroven_kod(level) -> str:
+    """Číselný `competitions.level` → kód skupiny úrovne (L1…L9 / L10P / POHARE / NEURCENE)."""
+    if level is None:
+        return UROVEN_NEURCENE
+    try:
+        n = int(level)
+    except (TypeError, ValueError):
+        return UROVEN_NEURCENE
+    if n >= 90:
+        return UROVEN_POHARE
+    if n >= 10:
+        return UROVEN_NIZSIE
+    if n >= 1:
+        return f"L{n}"
+    return UROVEN_NEURCENE
+
+
+def uroven_expr(comp_map: dict | None):
+    """Úroveň zápasu z jeho súťaže (competitions.level cez match.competition._id).
+
+    Zápas úroveň priamo nenesie — mapuje sa cez mapu competitionId(str) → kód
+    úrovne, ktorú načíta `run.nacitaj_comp_mapu` (analógia k `part_map`).
+    Vracia $switch výraz alebo None.
+    """
+    if not comp_map:
+        return None
+    branches = [
+        {"case": {"$eq": [{"$toString": "$competition._id"}, cid]}, "then": kod}
+        for cid, kod in comp_map.items()
+    ]
+    if not branches:
+        return None
+    return {"$switch": {"branches": branches, "default": UROVEN_NEURCENE}}
+
+
+def pocet_sutazi_rozpad(
+    app_spaces, season_variants, sport_sector="futbal", part_map=None, comp_map=None
+):
+    """Rozpad počtu súťaží: pohlavie × veková úroveň × úroveň súťaže.
+
+    Jediný prechod nad `matches`: najprv distinct štvorica (pohlavie, veková
+    úroveň, úroveň súťaže, súťaž) s počtom reálne odohraných zápasov, potom
+    $facet do štyroch rezov, ktoré run.py poskladá do výstupu:
+
+    - `pohlavie` — distinct súťaž na pohlavie (blok `pohlavie.{g}.sutaze`),
+    - `pohlavieKategorie` — distinct súťaž na pohlavie × kategóriu,
+    - `uroven` — distinct súťaž na úroveň (blok `urovne`),
+    - `riadky` — plochý zoznam úroveň × veková úroveň × pohlavie (blok `sutazeUroven`).
+
+    METODIKA: súťaž so zápasmi vo viacerých vekových úrovniach sa započíta
+    v každej z nich (rovnako ako v `pocet_sutazi_kategorie`), preto súčet
+    po vekových úrovniach môže prevýšiť `kpi.sutaze`. Naopak rez po úrovni súťaže
+    je disjunktný — súťaž má práve jednu, takže `urovne` sedí na `kpi.sutaze` presne.
+    """
+    g = gender_expr(part_map)
+    u = uroven_expr(comp_map)
+    return [
+        _match_stage(app_spaces, season_variants, sport_sector),
+        {
+            "$project": {
+                "gender": g if g is not None else {"$literal": None},
+                "cat": _cat_zapas(part_map),
+                "uroven": u if u is not None else {"$literal": UROVEN_NEURCENE},
+                "comp": "$competition._id",
+                "admin": _ADMIN_NEODOHRANY_EXPR,
+            }
+        },
+        {
+            "$group": {
+                "_id": {
+                    "gender": "$gender",
+                    "cat": "$cat",
+                    "uroven": "$uroven",
+                    "comp": "$comp",
+                },
+                # zápasy = reálne odohrané (bez administratívnych kontumácií/odstúpení)
+                "zapasy": {"$sum": {"$cond": ["$admin", 0, 1]}},
+            }
+        },
+        {
+            "$facet": {
+                "pohlavie": [
+                    {"$group": {"_id": {"g": "$_id.gender", "comp": "$_id.comp"}}},
+                    {"$group": {"_id": "$_id.g", "sutaze": {"$sum": 1}}},
+                    {"$sort": {"_id": 1}},
+                ],
+                "pohlavieKategorie": [
+                    {
+                        "$group": {
+                            "_id": {"g": "$_id.gender", "cat": "$_id.cat", "comp": "$_id.comp"}
+                        }
+                    },
+                    {
+                        "$group": {
+                            "_id": {"g": "$_id.g", "cat": "$_id.cat"},
+                            "sutaze": {"$sum": 1},
+                        }
+                    },
+                    {"$sort": {"_id.g": 1, "_id.cat": 1}},
+                ],
+                "uroven": [
+                    {
+                        "$group": {
+                            "_id": {"u": "$_id.uroven", "comp": "$_id.comp"},
+                            "zapasy": {"$sum": "$zapasy"},
+                        }
+                    },
+                    {
+                        "$group": {
+                            "_id": "$_id.u",
+                            "sutaze": {"$sum": 1},
+                            "zapasy": {"$sum": "$zapasy"},
+                        }
+                    },
+                    {"$sort": {"_id": 1}},
+                ],
+                "riadky": [
+                    {
+                        "$group": {
+                            "_id": {
+                                "u": "$_id.uroven",
+                                "cat": "$_id.cat",
+                                "g": "$_id.gender",
+                            },
+                            "sutaze": {"$sum": 1},
+                            "zapasy": {"$sum": "$zapasy"},
+                        }
+                    },
+                    {"$sort": {"_id.u": 1, "_id.cat": 1, "_id.g": 1}},
+                ],
+            }
+        },
+    ]
+
+
 def kontumovane_kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None):
     """Počet kontumovaných zápasov (contumation.isContumated) po vekových kategóriách."""
     return [

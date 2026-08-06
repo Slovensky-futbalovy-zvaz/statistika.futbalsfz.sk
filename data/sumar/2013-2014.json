@@ -1,11 +1,12 @@
 {
  "sezona": "2013/2014",
- "generatedAt": "2026-08-06T16:58:13+02:00",
+ "generatedAt": "2026-08-07T01:32:49+02:00",
  "pocetZvazov": 42,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
   "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia.",
-  "sutazePoznamka": "Súťaž = distinct súťaž s aspoň jedným uzavretým zápasom. V bloku kategorie sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich, preto súčet po kategóriách môže prevýšiť kpi.sutaze."
+  "sutazePoznamka": "Súťaž = distinct súťaž s aspoň jedným uzavretým zápasom. V bloku kategorie sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich, preto súčet po kategóriách môže prevýšiť kpi.sutaze.",
+  "urovenPoznamka": "Úroveň súťaže pochádza z poľa competitions.level (nenastaviteľné, kopírované z ISSF; nižší level = vyššia súťaž). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni (ADULTS, U19, U13…), nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú do jedného stĺpca. Vekové kategórie (Dospelí, Dorast, Žiaci, Prípravky) sú len medzisúčty pre vizualizáciu. Blok urovne je disjunktný a sedí na kpi.sutaze; sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich."
  },
  "kpi": {
   "sutaze": 292,
@@ -146,6 +147,374 @@
    "cervene": 0,
    "divaci": 3730
   }
+ },
+ "urovne": {
+  "L1": {
+   "nazov": "1. liga",
+   "sutaze": 28,
+   "zapasy": 3918
+  },
+  "L2": {
+   "nazov": "2. liga",
+   "sutaze": 24,
+   "zapasy": 3760
+  },
+  "L3": {
+   "nazov": "3. liga",
+   "sutaze": 33,
+   "zapasy": 4647
+  },
+  "L4": {
+   "nazov": "4. liga",
+   "sutaze": 46,
+   "zapasy": 5859
+  },
+  "L5": {
+   "nazov": "5. liga",
+   "sutaze": 28,
+   "zapasy": 3347
+  },
+  "L6": {
+   "nazov": "6. liga",
+   "sutaze": 20,
+   "zapasy": 3243
+  },
+  "L7": {
+   "nazov": "7. liga",
+   "sutaze": 60,
+   "zapasy": 7862
+  },
+  "L8": {
+   "nazov": "8. liga",
+   "sutaze": 33,
+   "zapasy": 4350
+  },
+  "L9": {
+   "nazov": "9. liga",
+   "sutaze": 20,
+   "zapasy": 1920
+  }
+ },
+ "sutazeUroven": [
+  {
+   "uroven": "L1",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 3,
+   "zapasy": 269
+  },
+  {
+   "uroven": "L1",
+   "kat": "ADULTS",
+   "pohlavie": "F",
+   "sutaze": 3,
+   "zapasy": 109
+  },
+  {
+   "uroven": "L1",
+   "kat": "U19",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 182
+  },
+  {
+   "uroven": "L1",
+   "kat": "U17",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 182
+  },
+  {
+   "uroven": "L1",
+   "kat": "U16",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 182
+  },
+  {
+   "uroven": "L1",
+   "kat": "U16",
+   "pohlavie": "F",
+   "sutaze": 5,
+   "zapasy": 199
+  },
+  {
+   "uroven": "L1",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 2,
+   "zapasy": 498
+  },
+  {
+   "uroven": "L1",
+   "kat": "U14",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 453
+  },
+  {
+   "uroven": "L1",
+   "kat": "U13",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 454
+  },
+  {
+   "uroven": "L1",
+   "kat": "U12",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 454
+  },
+  {
+   "uroven": "L1",
+   "kat": "U11",
+   "pohlavie": "M",
+   "sutaze": 7,
+   "zapasy": 716
+  },
+  {
+   "uroven": "L1",
+   "kat": "U10",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 110
+  },
+  {
+   "uroven": "L1",
+   "kat": "U09",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 110
+  },
+  {
+   "uroven": "L2",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 3,
+   "zapasy": 227
+  },
+  {
+   "uroven": "L2",
+   "kat": "ADULTS",
+   "pohlavie": "F",
+   "sutaze": 3,
+   "zapasy": 194
+  },
+  {
+   "uroven": "L2",
+   "kat": "U19",
+   "pohlavie": "M",
+   "sutaze": 3,
+   "zapasy": 689
+  },
+  {
+   "uroven": "L2",
+   "kat": "U17",
+   "pohlavie": "M",
+   "sutaze": 3,
+   "zapasy": 689
+  },
+  {
+   "uroven": "L2",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 6,
+   "zapasy": 988
+  },
+  {
+   "uroven": "L2",
+   "kat": "U13",
+   "pohlavie": "M",
+   "sutaze": 6,
+   "zapasy": 973
+  },
+  {
+   "uroven": "L3",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 4,
+   "zapasy": 750
+  },
+  {
+   "uroven": "L3",
+   "kat": "U19",
+   "pohlavie": "M",
+   "sutaze": 9,
+   "zapasy": 1581
+  },
+  {
+   "uroven": "L3",
+   "kat": "U17",
+   "pohlavie": "M",
+   "sutaze": 2,
+   "zapasy": 341
+  },
+  {
+   "uroven": "L3",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 10,
+   "zapasy": 1203
+  },
+  {
+   "uroven": "L3",
+   "kat": "U14",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 20
+  },
+  {
+   "uroven": "L3",
+   "kat": "U13",
+   "pohlavie": "M",
+   "sutaze": 7,
+   "zapasy": 752
+  },
+  {
+   "uroven": "L4",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 5,
+   "zapasy": 1232
+  },
+  {
+   "uroven": "L4",
+   "kat": "U19",
+   "pohlavie": "M",
+   "sutaze": 18,
+   "zapasy": 2106
+  },
+  {
+   "uroven": "L4",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 21,
+   "zapasy": 2318
+  },
+  {
+   "uroven": "L4",
+   "kat": "U13",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 24
+  },
+  {
+   "uroven": "L4",
+   "kat": "U11",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 179
+  },
+  {
+   "uroven": "L5",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 8,
+   "zapasy": 1661
+  },
+  {
+   "uroven": "L5",
+   "kat": "U19",
+   "pohlavie": "M",
+   "sutaze": 13,
+   "zapasy": 1166
+  },
+  {
+   "uroven": "L5",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 7,
+   "zapasy": 520
+  },
+  {
+   "uroven": "L6",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 15,
+   "zapasy": 2706
+  },
+  {
+   "uroven": "L6",
+   "kat": "U19",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 240
+  },
+  {
+   "uroven": "L6",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 3,
+   "zapasy": 225
+  },
+  {
+   "uroven": "L6",
+   "kat": "U13",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 72
+  },
+  {
+   "uroven": "L7",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 36,
+   "zapasy": 6305
+  },
+  {
+   "uroven": "L7",
+   "kat": "U19",
+   "pohlavie": "M",
+   "sutaze": 11,
+   "zapasy": 765
+  },
+  {
+   "uroven": "L7",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 11,
+   "zapasy": 611
+  },
+  {
+   "uroven": "L7",
+   "kat": "U13",
+   "pohlavie": "M",
+   "sutaze": 2,
+   "zapasy": 181
+  },
+  {
+   "uroven": "L8",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 31,
+   "zapasy": 4284
+  },
+  {
+   "uroven": "L8",
+   "kat": "U19",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 24
+  },
+  {
+   "uroven": "L8",
+   "kat": "U15",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "zapasy": 42
+  },
+  {
+   "uroven": "L9",
+   "kat": "ADULTS",
+   "pohlavie": "M",
+   "sutaze": 20,
+   "zapasy": 1920
+  }
+ ],
+ "sutazePohlavie": {
+  "M": 281,
+  "F": 11
  },
  "sutazePodlaRiadiacehoZvazu": {
   "SFZ": {
@@ -310,6 +679,10 @@
          "M": 3299,
          "F": 502
         },
+        "sutazePohlavie": {
+         "M": 12,
+         "F": 11
+        },
         "id": "sfz"
        },
        {
@@ -323,6 +696,9 @@
           "pohlavie": {
            "M": 2269
           },
+          "sutazePohlavie": {
+           "M": 18
+          },
           "id": "bfz"
          },
          {
@@ -332,6 +708,9 @@
           "pohlavie": {
            "M": 432
           },
+          "sutazePohlavie": {
+           "M": 3
+          },
           "id": "obfz-bratislava-mesto"
          },
          {
@@ -340,6 +719,9 @@
           "sutaze": 8,
           "pohlavie": {
            "M": 924
+          },
+          "sutazePohlavie": {
+           "M": 8
           },
           "id": "obfz-bratislava-vidiek"
          }
@@ -356,6 +738,9 @@
           "pohlavie": {
            "M": 2571
           },
+          "sutazePohlavie": {
+           "M": 12
+          },
           "id": "zsfz"
          },
          {
@@ -364,6 +749,9 @@
           "sutaze": 10,
           "pohlavie": {
            "M": 1999
+          },
+          "sutazePohlavie": {
+           "M": 10
           },
           "id": "obfz-trnava"
          },
@@ -374,6 +762,9 @@
           "pohlavie": {
            "M": 831
           },
+          "sutazePohlavie": {
+           "M": 4
+          },
           "id": "obfz-dunajska-streda"
          },
          {
@@ -382,6 +773,9 @@
           "sutaze": 3,
           "pohlavie": {
            "M": 553
+          },
+          "sutazePohlavie": {
+           "M": 3
           },
           "id": "obfz-galanta"
          },
@@ -392,6 +786,9 @@
           "pohlavie": {
            "M": 422
           },
+          "sutazePohlavie": {
+           "M": 2
+          },
           "id": "obfz-senica"
          },
          {
@@ -400,6 +797,9 @@
           "sutaze": 1,
           "pohlavie": {
            "M": 232
+          },
+          "sutazePohlavie": {
+           "M": 1
           },
           "id": "obfz-trencin"
          },
@@ -410,6 +810,9 @@
           "pohlavie": {
            "M": 589
           },
+          "sutazePohlavie": {
+           "M": 3
+          },
           "id": "obfz-prievidza"
          },
          {
@@ -418,6 +821,9 @@
           "sutaze": 3,
           "pohlavie": {
            "M": 522
+          },
+          "sutazePohlavie": {
+           "M": 3
           },
           "id": "obfz-povazska-bystrica"
          },
@@ -428,6 +834,9 @@
           "pohlavie": {
            "M": 239
           },
+          "sutazePohlavie": {
+           "M": 1
+          },
           "id": "obfz-nitra"
          },
          {
@@ -436,6 +845,9 @@
           "sutaze": 3,
           "pohlavie": {
            "M": 178
+          },
+          "sutazePohlavie": {
+           "M": 3
           },
           "id": "obfz-nove-zamky"
          },
@@ -446,6 +858,9 @@
           "pohlavie": {
            "M": 388
           },
+          "sutazePohlavie": {
+           "M": 3
+          },
           "id": "obfz-levice"
          },
          {
@@ -454,6 +869,9 @@
           "sutaze": 8,
           "pohlavie": {
            "M": 928
+          },
+          "sutazePohlavie": {
+           "M": 8
           },
           "id": "obfz-topolcany"
          }
@@ -470,6 +888,9 @@
           "pohlavie": {
            "M": 4434
           },
+          "sutazePohlavie": {
+           "M": 27
+          },
           "id": "ssfz"
          },
          {
@@ -478,6 +899,9 @@
           "sutaze": 11,
           "pohlavie": {
            "M": 1364
+          },
+          "sutazePohlavie": {
+           "M": 11
           },
           "id": "obfz-zilina"
          },
@@ -488,6 +912,9 @@
           "pohlavie": {
            "M": 504
           },
+          "sutazePohlavie": {
+           "M": 6
+          },
           "id": "obfz-kysuc"
          },
          {
@@ -496,6 +923,9 @@
           "sutaze": 9,
           "pohlavie": {
            "M": 988
+          },
+          "sutazePohlavie": {
+           "M": 9
           },
           "id": "ofz-orava"
          },
@@ -506,6 +936,9 @@
           "pohlavie": {
            "M": 976
           },
+          "sutazePohlavie": {
+           "M": 6
+          },
           "id": "lfz-liptov"
          },
          {
@@ -514,6 +947,9 @@
           "sutaze": 2,
           "pohlavie": {
            "M": 314
+          },
+          "sutazePohlavie": {
+           "M": 2
           },
           "id": "tfz-turiec"
          },
@@ -524,6 +960,9 @@
           "pohlavie": {
            "M": 181
           },
+          "sutazePohlavie": {
+           "M": 1
+          },
           "id": "obfz-banska-bystrica"
          },
          {
@@ -532,6 +971,9 @@
           "sutaze": 6,
           "pohlavie": {
            "M": 540
+          },
+          "sutazePohlavie": {
+           "M": 6
           },
           "id": "obfz-zvolen"
          },
@@ -542,6 +984,9 @@
           "pohlavie": {
            "M": 110
           },
+          "sutazePohlavie": {
+           "M": 1
+          },
           "id": "obfz-ziar-nad-hronom"
          },
          {
@@ -550,6 +995,9 @@
           "sutaze": 6,
           "pohlavie": {
            "M": 410
+          },
+          "sutazePohlavie": {
+           "M": 6
           },
           "id": "obfz-lucenec"
          },
@@ -560,6 +1008,9 @@
           "pohlavie": {
            "M": 450
           },
+          "sutazePohlavie": {
+           "M": 4
+          },
           "id": "obfz-velky-krtis"
          },
          {
@@ -568,6 +1019,9 @@
           "sutaze": 5,
           "pohlavie": {
            "M": 270
+          },
+          "sutazePohlavie": {
+           "M": 5
           },
           "id": "obfz-rimavska-sobota"
          }
@@ -584,6 +1038,9 @@
           "pohlavie": {
            "M": 3844
           },
+          "sutazePohlavie": {
+           "M": 21
+          },
           "id": "vsfz"
          },
          {
@@ -592,6 +1049,9 @@
           "sutaze": 9,
           "pohlavie": {
            "M": 724
+          },
+          "sutazePohlavie": {
+           "M": 9
           },
           "id": "obfz-kosice-okolie"
          },
@@ -602,6 +1062,9 @@
           "pohlavie": {
            "M": 96
           },
+          "sutazePohlavie": {
+           "M": 2
+          },
           "id": "mfz-kosice"
          },
          {
@@ -610,6 +1073,9 @@
           "sutaze": 14,
           "pohlavie": {
            "M": 1636
+          },
+          "sutazePohlavie": {
+           "M": 14
           },
           "id": "obfz-presov"
          },
@@ -620,6 +1086,9 @@
           "pohlavie": {
            "M": 1038
           },
+          "sutazePohlavie": {
+           "M": 8
+          },
           "id": "pfz-poprad"
          },
          {
@@ -628,6 +1097,9 @@
           "sutaze": 6,
           "pohlavie": {
            "M": 671
+          },
+          "sutazePohlavie": {
+           "M": 6
           },
           "id": "sofz-spisska-nova-ves"
          },
@@ -638,6 +1110,9 @@
           "pohlavie": {
            "M": 126
           },
+          "sutazePohlavie": {
+           "M": 1
+          },
           "id": "obfz-stara-lubovna"
          },
          {
@@ -646,6 +1121,9 @@
           "sutaze": 2,
           "pohlavie": {
            "M": 269
+          },
+          "sutazePohlavie": {
+           "M": 2
           },
           "id": "obfz-bardejov"
          },
@@ -656,6 +1134,9 @@
           "pohlavie": {
            "M": 373
           },
+          "sutazePohlavie": {
+           "M": 6
+          },
           "id": "oofz-svidnik"
          },
          {
@@ -664,6 +1145,9 @@
           "sutaze": 3,
           "pohlavie": {
            "M": 279
+          },
+          "sutazePohlavie": {
+           "M": 3
           },
           "id": "obfz-humenne"
          },
@@ -674,6 +1158,9 @@
           "pohlavie": {
            "M": 508
           },
+          "sutazePohlavie": {
+           "M": 5
+          },
           "id": "obfz-vranov-nad-toplou"
          },
          {
@@ -682,6 +1169,9 @@
           "sutaze": 14,
           "pohlavie": {
            "M": 1107
+          },
+          "sutazePohlavie": {
+           "M": 14
           },
           "id": "obfz-michalovce"
          },
@@ -692,6 +1182,9 @@
           "pohlavie": {
            "M": 539
           },
+          "sutazePohlavie": {
+           "M": 10
+          },
           "id": "obfz-trebisov"
          },
          {
@@ -700,6 +1193,9 @@
           "sutaze": 2,
           "pohlavie": {
            "M": 277
+          },
+          "sutazePohlavie": {
+           "M": 2
           },
           "id": "obfz-roznava"
          }

@@ -18,7 +18,7 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 
 ### Polia v kolekcii `competitions` (overené 12. 7. 2026, dokumentácia + reálne dáta)
 
-- **`level`** = úroveň súťaže / liga (číslo; nižšie = vyššia súťaž, napr. 4 = IV. liga); `sortvalue` radí v rámci úrovne.
+- **`level`** = úroveň súťaže / liga (číslo; nižšie = vyššia súťaž, napr. 4 = IV. liga); `sortvalue` radí v rámci úrovne. Pokrytie, semantika a obmedzenia: kapitola **Úroveň súťaže — pyramída líg** nižšie.
 - **`competitionGroupId`** = **stabilná identita súťaže naprieč sezónami aj premenovaniami** (kolekcia `competitions_groups`). Overené: „VIII. liga A - TAJBI sport ObFZ NR“ (2025/2026) nesie groupId vytvorené ešte v r. 2020. **ETL zlučuje premenované súťaže cez `competitionGroupId`, nie cez názvy ani `$in` zoznamy.**
 - **`parts[]`** = časti súťaže; každá časť má:
   - **`rules.gender`** = pohlavie („M“ / „F“ / prázdne),
@@ -80,6 +80,21 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 - **WUxx → Uxx** (rozhodnutie Ján Letko, 13. 7. 2026): „W“ v kategórii (napr. WU14 na futbalsfz.sk) je len označenie ženskej súťaže v názve kategórie — veková úroveň je Uxx, pohlavie nesie `rules.gender` („F“). ETL normalizuje v part mape; hodnoty WUxx sa vyskytujú výhradne v `parts.rules.category` (v `teams.ageCategory` nie).
 - **Normalizácia nekanonických kategórií** (rozhodnutie Ján Letko, 13. 7. 2026): „Dospelí“ → ADULTS (futsal, Vysokoškolská liga), „U15 mix“ → U15 (školský turnaj VsFZ; zmiešané pohlavie vykáže dimenzia pohlavie ako NEURCENE). **U21** (SsFZ 2015/2016) je regulárna veková úroveň — doplnená do číselníka medzi ADULTS a U20.
 
+### Úroveň súťaže — pyramída líg (dimenzia, meranie a rozhodnutia 6. 8. 2026)
+
+- Zdroj je **`competitions.level`** — číselné, **nenastaviteľné** pole kopírované z ISSF (nižší level = vyššia súťaž). Zápas úroveň priamo nenesie — mapuje sa cez `match.competition._id` mapou `competitionId → kód úrovne` (`run.nacitaj_comp_mapu`), analógiou k part mape pre vekovú úroveň a pohlavie.
+- **ZÁKLADNÝ KĽÚČ (rozhodnutie Ján Letko, 6. 8. 2026): `level` sa vždy vzťahuje ku KONKRÉTNEJ VEKOVEJ ÚROVNI, nie k vekovej kategórii.** Neexistuje jedna spoločná pyramída pre všetky vekové úrovne — každá veková úroveň (ADULTS, U19, U15, U11…) má vlastnú pyramídu. „1. liga“ dospelých, „1. liga“ U19 a „1. liga“ U13 sú **tri rôzne súťaže v troch rôznych pyramídach** a nesmú sa sčítať do jedného stĺpca. Vekové kategórie (Dospelí, Dorast, Žiaci, Prípravky) sú **len medzisúčty pre vizualizáciu** — okrem Dospelých obsahuje každá viacero vekových úrovní. **Toto nie je chyba dát, je to spôsob, akým sa súťaže organizujú** (a nielen vo futbale).
+- **Hĺbka pyramídy sa líši podľa vekovej úrovne aj podľa regiónu** — podľa toho, koľko stupňov sa v danej úrovni reálne hrá. Príklad U11 (2025/2026): „Prípravka U11 ObFZ Kysúc“ má level 1, „Prípravka U11 ObFZ Trnava“ level 3 — v západnom regióne je nad oblastnou súťažou ešte regionálna a celoštátna U11, na Kysuciach nie. Číslo teda popisuje reálnu štruktúru, len ju **nemožno čítať ako výkonnostnú škálu porovnateľnú medzi zväzmi**.
+- **Pokrytie (merané 6. 8. 2026 nad `competitions`, futbal, kanonické sezóny):** 100 % v sezónach 2012/2013–2017/2018, potom 95–99 % (2024/2025: 421 zo 437; 2025/2026: 421 z 432; 2026/2027: 401 z 405). Hodnota `null` sa **nevyskytuje ani raz** — pole buď je číslo, alebo chýba úplne.
+- **Čo chýba, nie sú ligy:** reprezentačné turnaje (RT U14, RT WU14, Memoriál Gejzu Princa), Regions' Cup, Vysokoškolská liga (futbal aj futsal), školský turnaj ZŠ mesta Košice. Jediná bežná liga bez `level` je VII. liga SOFZ.
+- **Stabilita naprieč sezónami:** medzi 2024/2025 a 2025/2026 má z 401 skupín (`competitionGroupId`) rovnakú úroveň 390, šesť ju zmenilo, päť ju nemá → 98,5 %. Cez celú históriu 2012→2026 je to horšie (zo 695 skupín má 317 jednu hodnotu, 278 dve, 32 tri, 4 štyri) — zodpovedá prečíslovaniam v rokoch 2013–2016.
+- **Skupiny vo výstupe** (rozhodnutie Ján Letko, 6. 8. 2026): `L1`…`L9` = 1.–9. liga, `L10P` = „10. liga a nižšie“ (pojíma aj ojedinelé hodnoty 12 a 20), `POHARE` = level ≥ 90 (poháre, superpoháre a halové turnaje — Slovnaft Cup 96, Prezidentský pohár 97, oblastné poháre 99), `NEURCENE` = level nevyplnený.
+- **Kontrola na dospelých (2025/2026):** pyramída ADULTS mužov je plná a celoslovenská — 1 = Niké liga, 2 = MONACObet, 3 = III. liga (SFZ), 4–6 = regionálne (RFZ), 7–9 = oblastné (ObFZ). Ženská vetva beží paralelne (vlastná 1., 2. a 3. liga). Pre U19, U15 a U13 vychádza rovnako konzistentný obraz v rámci každej vekovej úrovne.
+- **Spôsob vykazovania (rozhodnutie Ján Letko, 6. 8. 2026):** vo frontende sa zobrazuje **niekoľko samostatných pyramíd — jedna na vekovú kategóriu** (Dospelí, Dorast, Žiaci, Prípravky), pretože kategórie sa naprieč zväzmi pravidelne sledujú. V každej sa dá rozbaliť konkrétna veková úroveň (U19, U18, U17, U16…), kde je pyramída metodicky presná; pri zobrazenom medzisúčte kategórie sa uvedie, cez ktoré vekové úrovne sa sčítava. **Pyramídy sa nikdy nezlučujú do jednej.**
+- **Výstupná schéma:** blok `urovne` = `{kód: {nazov, sutaze, zapasy}}` — **disjunktný** (súťaž má práve jednu úroveň), preto súčet presne sedí na `kpi.sutaze`. Blok `sutazeUroven` = plochý zoznam `{uroven, kat, pohlavie, sutaze, zapasy}` — súťaž so zápasmi vo viacerých vekových úrovniach sa v ňom započíta v každej z nich, takže súčet môže `kpi.sutaze` prevýšiť (rovnaká metodika ako `kategorie.*.sutaze`).
+- **Počet súťaží po pohlaví** (`pohlavie.{M,F,NEURCENE}.sutaze` a rovnaký kľúč v ich `kategorie`) je distinct súťaž danej skupiny; súťaž s mužskými aj ženskými časťami sa započíta v oboch, preto sa **nesčítava** — preberá sa priamo z agregácie.
+- Všetky štyri rezy počíta jediný prechod nad `matches` (`pipelines.pocet_sutazi_rozpad`, `$facet` nad distinct štvoricou pohlavie × veková úroveň × úroveň súťaže × súťaž).
+
 ### Osoby
 
 - **Hráči:** `nominations[].athletes[].sportnetUser._id`, väzba na tím (a kategóriu) cez `nominations[].teamId == teams[]._id`.
@@ -111,6 +126,8 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 1. **Nekonzistentné `season.name`:** varianty „2024/2025“, „2024 / 2025“, „2024/25“, „24/25“, samostatné roky („2016“…), aj testovacie hodnoty („Test“, „KLF“…). ETL musí mať normalizačnú mapu sezón; nenormalizovateľné záznamy sa logujú a vylučujú.
 2. **Staršie sezóny (pred ~2016):** kvalita vyplnenia protokolov (karty, diváci) sa musí zmerať vo F1; ukazovatele s nedostatočným pokrytím sa za dané sezóny **nezobrazia, nie odhadnú**.
 3. **Zmena schémy DB:** ETL beh obsahuje validácie (počty, povinné polia) a alerting pri anomáliách.
+
+> Poznámka: rôzne hodnoty `level` pri tej istej vekovej úrovni v rôznych zväzoch **nie sú** problém kvality dát — vyjadrujú rôznu hĺbku pyramídy v danej oblasti. Viď kapitola Úroveň súťaže — pyramída líg.
 
 ## Demografia (10-ročné rady osôb)
 

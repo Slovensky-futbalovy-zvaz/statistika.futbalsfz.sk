@@ -27,11 +27,16 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 CONFIG = REPO / "etl" / "config"
+
+sys.path.insert(0, str(REPO / "etl"))
+import pipelines  # noqa: E402  — len číselník úrovní (UROVEN_PORADIE/NAZOV), bez DB
+import validate  # noqa: E402  — poradie vekových kategórií
 
 ROLY = ["hraci", "treneri", "rozhodcovia", "delegati", "personal"]
 ROLA_NAZOV = {
@@ -50,6 +55,9 @@ KAT_METRIKY = ["sutaze", "zapasy", "uzatvorene", "administrativne", "druzstva", 
 
 #: Úrovne pyramídy pre rozpad súťaží podľa riadiaceho zväzu.
 RIADIACE_UROVNE = [("sfz", "SFZ"), ("rfz", "RFZ"), ("obfz", "ObFZ")]
+
+#: Skupiny pohlavia v rozpade súťaží (etapa 2, 6. 8. 2026).
+POHLAVIA = ["M", "F", "NEURCENE"]
 
 
 def load_json(path: Path) -> dict:
@@ -94,6 +102,64 @@ def _pohlavie_zapasy(p: dict) -> dict:
     return out
 
 
+def _zoradene_urovne(acc: dict) -> dict:
+    """Zoradenie súhrnu úrovní podľa pyramídy (1. liga … poháre … neurčené)."""
+    return {k: acc[k] for k in pipelines.UROVEN_PORADIE if k in acc}
+
+
+def _zoradene_riadky(acc: dict) -> list[dict]:
+    """Plochý zoznam úroveň súťaže × veková úroveň × pohlavie zo slovníka (u, kat, g) → sumy."""
+    poradie_u = {k: i for i, k in enumerate(pipelines.UROVEN_PORADIE)}
+    poradie_kat = {k: i for i, k in enumerate(validate.KATEGORIE_PORADIE)}
+    poradie_g = {g: i for i, g in enumerate(POHLAVIA)}
+    riadky = [
+        {"uroven": u, "kat": kat, "pohlavie": g, **sumy}
+        for (u, kat, g), sumy in acc.items()
+    ]
+    riadky.sort(
+        key=lambda x: (
+            poradie_u.get(x["uroven"], 99),
+            poradie_kat.get(x["kat"], 99),
+            poradie_g.get(x["pohlavie"], 9),
+        )
+    )
+    return riadky
+
+
+def _zber_urovni(p: dict, urovne_acc: dict, riadky_acc: dict, pohlavie_acc: dict) -> None:
+    """Pripočíta rozpad súťaží jedného profilu do celoslovenských akumulátorov."""
+    for kod, u in (p.get("urovne") or {}).items():
+        a = urovne_acc.setdefault(
+            kod,
+            {"nazov": u.get("nazov") or pipelines.UROVEN_NAZOV.get(kod, kod), "sutaze": 0, "zapasy": 0},
+        )
+        a["sutaze"] += u.get("sutaze", 0) or 0
+        a["zapasy"] += u.get("zapasy", 0) or 0
+    for r in p.get("sutazeUroven") or []:
+        a = riadky_acc.setdefault(
+            (r["uroven"], r["kat"], r["pohlavie"]), {"sutaze": 0, "zapasy": 0}
+        )
+        a["sutaze"] += r.get("sutaze", 0) or 0
+        a["zapasy"] += r.get("zapasy", 0) or 0
+    for g, s in _pohlavie_sutaze(p).items():
+        pohlavie_acc[g] = pohlavie_acc.get(g, 0) + s
+
+
+def _pohlavie_sutaze(p: dict) -> dict:
+    """Súťaže po pohlaví z bloku profilu (doplnené 6. 8. 2026, etapa 2).
+
+    Súťaž patrí práve jednému zväzu, takže sčítanie naprieč zväzmi je korektné.
+    V rámci jedného zväzu však súťaž s mužskými aj ženskými časťami spadne do
+    oboch skupín — súčet pohlaví preto môže prevýšiť kpi.sutaze.
+    """
+    out = {}
+    for g, blok in (p.get("pohlavie") or {}).items():
+        s = (blok or {}).get("sutaze", 0) or 0
+        if s:
+            out[g] = s
+    return out
+
+
 def sunburst_sutaze(zvazy_cfg: dict, out_dir: Path, sezona: str) -> dict:
     """Strom SR → odvetvie → SFZ → RFZ → ObFZ; hodnota listu = zápasy zväzu.
 
@@ -102,7 +168,8 @@ def sunburst_sutaze(zvazy_cfg: dict, out_dir: Path, sezona: str) -> dict:
     Listy nesú aj rozpad zápasov po pohlaví (kľúč `pohlavie`) pre klientsky
     pill filter Muži/Ženy — hodnoty sa prepočítajú vo frontende.
     Kľúč `sutaze` nesie počet súťaží zväzu (prepínač metriky Zápasy/Súťaže vo
-    frontende); rozpad súťaží po pohlaví zatiaľ nie je k dispozícii.
+    frontende) a `sutazePohlavie` jeho rozpad po pohlaví (etapa 2, 6. 8. 2026) —
+    vďaka nemu funguje pill filter Muži/Ženy aj pri metrike Súťaže.
     """
     def leaf(nazov: str, p: dict, zvaz_id: str | None = None) -> dict:
         d = {
@@ -110,6 +177,7 @@ def sunburst_sutaze(zvazy_cfg: dict, out_dir: Path, sezona: str) -> dict:
             "value": p["kpi"]["zapasy"],
             "sutaze": p["kpi"].get("sutaze", 0) or 0,
             "pohlavie": _pohlavie_zapasy(p),
+            "sutazePohlavie": _pohlavie_sutaze(p),
         }
         if zvaz_id:
             d["id"] = zvaz_id
@@ -283,6 +351,9 @@ def main() -> None:
         osobyKat: dict = {}
         osoby = {rola: 0 for rola in ROLY}
         riadiaci: dict = {}
+        urovne_acc: dict = {}       # kód úrovne → {nazov, sutaze, zapasy}
+        uroven_riadky: dict = {}    # (uroven, kat, pohlavie) → {sutaze, zapasy}
+        sutaze_pohlavie: dict = {}  # M/F/NEURCENE → počet súťaží
         pocet_zvazov = 0
         for z in vsetky:
             p = profil(out_dir, z["id"], sezona)
@@ -290,6 +361,7 @@ def main() -> None:
                 continue
             pocet_zvazov += 1
             scitaj_kpi(kpi, p["kpi"])
+            _zber_urovni(p, urovne_acc, uroven_riadky, sutaze_pohlavie)
             for c, cd in (p.get("kategorie") or {}).items():
                 acc = kat.setdefault(c, {m: 0 for m in KAT_METRIKY})
                 for m in KAT_METRIKY:
@@ -330,7 +402,19 @@ def main() -> None:
             o_kat: dict = {}
             for c, cd in (p_s.get("kategorie") or {}).items():
                 o_kat[c] = {m: (cd.get(m, 0) or 0) for m in KAT_METRIKY}
-            odvetvia[sektor] = {"kpi": o_kpi, "osoby": o_osoby, "kategorie": o_kat}
+            # rozpad súťaží odvetvia po úrovniach a pohlaví (etapa 2)
+            o_urovne: dict = {}
+            o_riadky: dict = {}
+            o_pohlavie: dict = {}
+            _zber_urovni(p_s, o_urovne, o_riadky, o_pohlavie)
+            odvetvia[sektor] = {
+                "kpi": o_kpi,
+                "osoby": o_osoby,
+                "kategorie": o_kat,
+                "urovne": _zoradene_urovne(o_urovne),
+                "sutazeUroven": _zoradene_riadky(o_riadky),
+                "sutazePohlavie": {g: o_pohlavie[g] for g in POHLAVIA if o_pohlavie.get(g)},
+            }
 
         vystup = {
             "sezona": sezona,
@@ -347,9 +431,24 @@ def main() -> None:
                     "kategorie sa súťaž so zápasmi vo viacerých vekových úrovniach započíta "
                     "v každej z nich, preto súčet po kategóriách môže prevýšiť kpi.sutaze."
                 ),
+                "urovenPoznamka": (
+                    "Úroveň súťaže pochádza z poľa competitions.level (nenastaviteľné, "
+                    "kopírované z ISSF; nižší level = vyššia súťaž). Základný kľúč: úroveň "
+                    "sa vždy vzťahuje ku konkrétnej vekovej úrovni (ADULTS, U19, U13…), nie "
+                    "k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ "
+                    "dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú do jedného "
+                    "stĺpca. Vekové kategórie (Dospelí, Dorast, Žiaci, Prípravky) sú len "
+                    "medzisúčty pre vizualizáciu. Blok urovne je disjunktný a sedí na "
+                    "kpi.sutaze; sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde "
+                    "sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej "
+                    "z nich."
+                ),
             },
             "kpi": kpi,
             "kategorie": kat,
+            "urovne": _zoradene_urovne(urovne_acc),
+            "sutazeUroven": _zoradene_riadky(uroven_riadky),
+            "sutazePohlavie": {g: sutaze_pohlavie[g] for g in POHLAVIA if sutaze_pohlavie.get(g)},
             "sutazePodlaRiadiacehoZvazu": {
                 label: riadiaci[label] for _, label in RIADIACE_UROVNE if label in riadiaci
             },

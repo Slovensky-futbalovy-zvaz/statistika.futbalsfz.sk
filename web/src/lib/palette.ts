@@ -92,6 +92,30 @@ export const METRICS_RADAR: Metric[] = [
   { k: 'sutaze', label: 'Súťaže' },
 ];
 
+/**
+ * Úrovne súťaže (pyramída líg) — kódy z ETL (`competitions.level`, etapa 2, 6. 8. 2026).
+ * L1…L9 = 1.–9. liga, L10P = 10. liga a nižšie, POHARE = poháre a turnaje
+ * (level ≥ 90), NEURCENE = súťaž bez vyplnenej úrovne.
+ */
+export const UROVEN_PORADIE = [
+  'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', 'L9', 'L10P', 'POHARE', 'NEURCENE',
+];
+
+export const UROVEN_LABEL: Record<string, string> = {
+  L1: '1. liga',
+  L2: '2. liga',
+  L3: '3. liga',
+  L4: '4. liga',
+  L5: '5. liga',
+  L6: '6. liga',
+  L7: '7. liga',
+  L8: '8. liga',
+  L9: '9. liga',
+  L10P: '10. liga a nižšie',
+  POHARE: 'Poháre a turnaje',
+  NEURCENE: 'Neurčená úroveň',
+};
+
 export const ROLA_LABEL: Record<string, string> = {
   hraci: 'Hráči',
   treneri: 'Tréneri',

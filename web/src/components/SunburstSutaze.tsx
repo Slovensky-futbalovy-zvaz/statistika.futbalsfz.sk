@@ -24,8 +24,6 @@ export default function SunburstSutaze({ strom }: Props) {
   const [futsal, setFutsal] = useState(true);
   const [gender, setGender] = useState<Gender>('VSETCI');
   const [metrika, setMetrika] = useState<Metrika>('zapasy');
-  // rozpad po pohlaví je zatiaľ k dispozícii len pre zápasy
-  const genderAktivny = metrika === 'zapasy';
 
   // farbenie uzla podľa mena (RFZ / SFZ vlastné / odvetvie)
   function farba(name: string, depth: number): string | undefined {
@@ -45,7 +43,9 @@ export default function SunburstSutaze({ strom }: Props) {
       if (!u.children || u.children.length === 0) {
         const val =
           metrika === 'sutaze'
-            ? (u.sutaze ?? 0)
+            ? gender === 'VSETCI'
+              ? (u.sutaze ?? 0)
+              : (u.sutazePohlavie?.[gender] ?? 0)
             : gender === 'VSETCI'
               ? (u.value ?? 0)
               : (u.pohlavie?.[gender] ?? 0);
@@ -112,17 +112,10 @@ export default function SunburstSutaze({ strom }: Props) {
           <button type="button" style={pill(futbal)} onClick={() => setFutbal((v) => !v)}>Futbal</button>
           <button type="button" style={pill(futsal)} onClick={() => setFutsal((v) => !v)}>Futsal</button>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: genderAktivny ? 1 : 0.45 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: 'var(--color-muted)' }}>Pohlavie:</span>
           {(['VSETCI', 'M', 'F'] as Gender[]).map((g) => (
-            <button
-              key={g}
-              type="button"
-              disabled={!genderAktivny}
-              title={genderAktivny ? undefined : 'Rozpad počtu súťaží podľa pohlavia zatiaľ nie je k dispozícii'}
-              style={{ ...pill(genderAktivny && gender === g), ...(genderAktivny ? {} : { cursor: 'not-allowed' }) }}
-              onClick={() => setGender(g)}
-            >
+            <button key={g} type="button" style={pill(gender === g)} onClick={() => setGender(g)}>
               {g === 'VSETCI' ? 'Všetci' : g === 'M' ? 'Muži' : 'Ženy'}
             </button>
           ))}
@@ -148,6 +141,8 @@ export default function SunburstSutaze({ strom }: Props) {
       <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
         Kruhy zvnútra von: odvetvie → SFZ → RFZ → ObFZ → súťaž.
         {metrika === 'sutaze' && ' Súťaž = súťaž s aspoň jedným odohraným zápasom, priradená svojmu riadiacemu zväzu.'}
+        {metrika === 'sutaze' && gender !== 'VSETCI' &&
+          ' Pohlavie súťaže sa určuje z častí súťaže — súťaž s mužskými aj ženskými časťami sa započíta v oboch skupinách.'}
       </p>
     </div>
   );
