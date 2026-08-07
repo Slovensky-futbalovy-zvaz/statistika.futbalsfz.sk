@@ -1,15 +1,20 @@
 ---
 import type { Porovnanie, BumpData } from '../lib/data';
+import type { UrovneVCase } from '../lib/urovne';
 import PorovnanieZvazov from './PorovnanieZvazov.tsx';
+import UrovneSekcia from './UrovneSekcia.tsx';
 
 interface Props {
   porovnanie: Porovnanie;
   bump?: BumpData;
   bumpLabel?: string; // ponechané pre kompatibilitu (nevyužité)
   bumpVyberDefault?: string[];
+  urovne?: UrovneVCase;
 }
-const { porovnanie, bump, bumpVyberDefault } = Astro.props;
-const rows = porovnanie.zvazy;
+const { porovnanie, bump, bumpVyberDefault, urovne } = Astro.props;
+// `sutazeUroven` slúži len sekcii úrovní (dostáva ho v kompaktnom tvare cez `urovne`).
+// V riadkoch tabuľky a radaru by sa serializoval dvakrát a zbytočne nafukoval stránku.
+const rows = porovnanie.zvazy.map(({ sutazeUroven: _s, ...r }) => r);
 
 const stlpce = [
   { key: 'zapasy', label: 'Zápasy', fixed: 0 },
@@ -36,6 +41,12 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
   {
     bump && bump.zvazy.length ? (
       <PorovnanieZvazov client:visible rows={rows} bump={bump} defaultVyber={defaultVyber} />
+    ) : null
+  }
+
+  {
+    urovne && urovne.rows.length ? (
+      <UrovneSekcia client:visible data={urovne} sezona={porovnanie.sezona} defaultVyber={defaultVyber} />
     ) : null
   }
 

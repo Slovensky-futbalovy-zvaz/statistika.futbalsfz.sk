@@ -95,6 +95,17 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 - **Počet súťaží po pohlaví** (`pohlavie.{M,F,NEURCENE}.sutaze` a rovnaký kľúč v ich `kategorie`) je distinct súťaž danej skupiny; súťaž s mužskými aj ženskými časťami sa započíta v oboch, preto sa **nesčítava** — preberá sa priamo z agregácie.
 - Všetky štyri rezy počíta jediný prechod nad `matches` (`pipelines.pocet_sutazi_rozpad`, `$facet` nad distinct štvoricou pohlavie × veková úroveň × úroveň súťaže × súťaž).
 
+#### Zobrazenia pyramídy vo frontende (doplnené 7. 8. 2026)
+
+Pyramída sa ukazuje v štyroch pohľadoch; každý odpovedá na inú otázku a všetky čítajú ten istý blok `sutazeUroven`.
+
+- **Pyramída súťaží** (`PyramidaSutazi.tsx`, profil zväzu + Prehľad) — statický rez jednou sezónou: štyri samostatné siluety vedľa seba, jedna na vekovú kategóriu, s možnosťou rozbaliť konkrétnu vekovú úroveň. Odpovedá „ako vyzerá pyramída tohto zväzu dnes“.
+- **Heatmapa zväzy × úrovne** (`HeatmapaUrovni.tsx`, Porovnania) — matica, riadok je zväz, stĺpec úroveň, hodnota počet súťaží. Odpovedá „kto čo riadi“ a robí okamžite viditeľným, že oblastné zväzy sedia na 7.–9. lige a regionálne na 4.–6. Prázdna bunka znamená, že zväz na danej úrovni v tomto reze súťaž nemá. Poháre, turnaje a súťaže bez úrovne majú vlastný stĺpec — do ligovej pyramídy nepatria.
+- **Vývoj počtu súťaží danej úrovne** (`UrovenTrend.tsx`, Porovnania) — jedna séria na zväz naprieč sezónami pre zvolenú úroveň. Predvolí sa **úroveň s najväčším počtom súťaží v poslednej kompletnej sezóne v práve zvolenom reze** (nie prvá v poradí — pri ObFZ by to bola „1. liga“, ktorú oblastné zväzy takmer neriadia). Nad štyri vybrané zväzy sa graf prepína na mriežku mini-grafov, lebo hodnoty bývajú 1–3 a čiary by splývali.
+- **Ako sa menila pyramída súťaží** (`PyramidaVCase.tsx`, profil zväzu) — skladaný plošný graf jedného zväzu v čase; výška plochy je počet súťaží, farby sú úrovne od najvyššej (tmavá) po najnižšiu. Odpovedá „kedy zväzu liga pribudla alebo zanikla“.
+- **Prebiehajúca sezóna** sa vo všetkých časových pohľadoch odlišuje (prerušovaná čiara, šrafovaná plocha) — čísla sa v nej ešte len dopĺňajú, prepad k nule nie je trend. Referenciou je posledná kompletná sezóna z `poslednaKompletnaSlug()`.
+- **Prenos dát do prehliadača:** rez pripravuje `web/src/lib/urovne.ts` (`getUrovneVCase`, `getUrovneVCaseZvazu`) a riadky serializuje ako jeden reťazec (`zvazIdx,sezonaIdx,urovenIdx,katIdx,pohlavieIdx,pocet` oddelené `;`), pretože pole polí by Astro do stránky zapísalo s obalom `[0, x]` okolo každého čísla — pri 38 ObFZ × 15 sezónach ~150 kB navyše. Rozbaľuje `rozbal()`. Heatmapa aj trend bežia v jednom ostrove (`UrovneSekcia.tsx`), aby sa dáta do stránky serializovali len raz.
+
 ### Osoby
 
 - **Hráči:** `nominations[].athletes[].sportnetUser._id`, väzba na tím (a kategóriu) cez `nominations[].teamId == teams[]._id`.

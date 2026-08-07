@@ -2,6 +2,7 @@
 import Base from '../../../layouts/Base.astro';
 import PorovnanieView from '../../../components/PorovnanieView.astro';
 import { getPorovnaniaZoznam, getPorovnanie, sezonyUrovne, getBumpDataRfz, getBumpDataObfz, porovnanieCielovaSlug, porovnanieKlubyDefaultSlug } from '../../../lib/data';
+import { getUrovneVCase } from '../../../lib/urovne';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -20,6 +21,9 @@ const bumpVyberDefault =
         .slice(0, 4)
         .map(([id]) => id)
     : undefined;
+// rozpad po úrovniach súťaže naprieč sezónami — heatmapa + graf vývoja (7. 8. 2026)
+const urovneVCase = getUrovneVCase(uroven!);
+
 const klubySlug = porovnanieKlubyDefaultSlug();
 
 const urovne = [
@@ -63,7 +67,7 @@ const urovne = [
     </div>
   </div>
 
-  <PorovnanieView porovnanie={porovnanie} bump={bump} bumpLabel={bumpLabel} bumpVyberDefault={bumpVyberDefault} />
+  <PorovnanieView porovnanie={porovnanie} bump={bump} bumpLabel={bumpLabel} bumpVyberDefault={bumpVyberDefault} urovne={urovneVCase} />
 
 
   <p class="mt-8 text-xs text-sfz-muted">

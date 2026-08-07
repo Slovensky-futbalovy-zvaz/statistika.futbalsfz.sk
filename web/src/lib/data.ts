@@ -191,6 +191,8 @@ export interface PorovnanieRiadok {
   sutazePohlavie?: Record<string, number>;
   /** Počet súťaží po úrovniach súťaže, kód → počet (etapa 2). */
   urovne?: Record<string, number>;
+  /** Plochý rez úroveň × veková úroveň × pohlavie (podklad pre heatmapu a trend úrovní). */
+  sutazeUroven?: UrovenRiadok[];
 }
 
 export interface Porovnanie {

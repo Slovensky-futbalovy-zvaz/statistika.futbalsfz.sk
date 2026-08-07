@@ -4,6 +4,8 @@
 // Zdieľané pre futbal (/zvaz/[id]/[sezona]) aj odvetvia (/zvaz/[id]/[odvetvie]/[sezona]).
 import CategoryDrill from './CategoryDrill.tsx';
 import PyramidaSutazi from './PyramidaSutazi.tsx';
+import PyramidaVCase from './PyramidaVCase.tsx';
+import { getUrovneVCaseZvazu } from '../lib/urovne';
 import ZvazPicker from './ZvazPicker.tsx';
 import AgePyramid from './AgePyramid.tsx';
 import RfzObfzMapa from './RfzObfzMapa.tsx';
@@ -33,6 +35,9 @@ function sezonaUrl(o: string, s: string): string {
   const slug = s.replace('/', '-');
   return o === 'futbal' ? `/zvaz/${z.id}/${slug}` : `/zvaz/${z.id}/${o}/${slug}`;
 }
+
+// vývoj pyramídy súťaží zväzu naprieč sezónami (len futbal — odvetvia majú vlastné profily)
+const urovneVCase = odvetvie === 'futbal' ? getUrovneVCaseZvazu(z.id) : undefined;
 
 const odvetvia = odvetviaZvazu(z);
 const prepinacOdvetvi = odvetvia.map((o) => {
@@ -197,6 +202,21 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
         veková úroveň a prepnúť pohlavie.
       </p>
       <PyramidaSutazi client:visible riadky={profil.sutazeUroven ?? []} />
+    </section>
+  )
+}
+
+<!-- vývoj pyramídy zväzu v čase (len futbal, len ak sú dáta za viac sezón) -->
+{
+  urovneVCase && urovneVCase.sezony.length > 1 && urovneVCase.rows.length > 0 && (
+    <section class="mt-8 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vývoj v čase</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Ako sa menila pyramída súťaží</h2>
+      <p class="text-sm text-muted mb-3">
+        Skladané plochy sú úrovne súťaže naprieč sezónami — vidno, kedy zväzu liga pribudla
+        alebo zanikla a ako sa presúvalo ťažisko súťaží.
+      </p>
+      <PyramidaVCase client:visible data={urovneVCase} />
     </section>
   )
 }

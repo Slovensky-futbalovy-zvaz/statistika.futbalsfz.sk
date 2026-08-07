@@ -107,6 +107,9 @@ def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
         "kat": kat,
         "sutazePohlavie": {g: n for g, n in sutaze_pohlavie.items() if n},
         "urovne": {kod: n for kod, n in urovne.items() if n},
+        # plochý rez úroveň × veková úroveň × pohlavie — podklad pre heatmapu
+        # a graf vývoja počtu súťaží danej úrovne v čase (7. 8. 2026)
+        "sutazeUroven": profil.get("sutazeUroven") or [],
     }
     if rfz_skratka:
         r["rfz"] = rfz_skratka
