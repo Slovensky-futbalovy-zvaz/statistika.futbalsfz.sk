@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { UrovenRiadok } from '../lib/data';
 import { fmt } from '../lib/format';
-import { GROUPS, UROVEN_LABEL, UROVEN_PORADIE } from '../lib/palette';
+import { GROUPS, UROVEN_LABEL, UROVEN_LABEL_KRATKY, UROVEN_PORADIE } from '../lib/palette';
 
 type Gender = 'VSETCI' | 'M' | 'F';
 
@@ -27,15 +27,19 @@ const MIMO_PYRAMIDY = new Set(['POHARE', 'NEURCENE']);
 
 // geometria SVG pyramídy (viewBox 0 0 320 …)
 const W = 320;
-const LAB = 76; // stĺpec s názvom ligy
+//: Šírka stĺpca s názvom úrovne. Musí stačiť na najdlhší skrátený popisok
+//: („10. a nižšie“) — SVG orezáva k viewBoxu, dlhší text by sa ustrihol.
+const LAB = 92;
 const CX = LAB + (W - LAB) / 2;
 const MAX_HALF = (W - LAB) / 2 - 10;
 const H = 26; // výška stupňa
 const GAP = 3;
+const FONT_LAB = 10;
 
 interface Stupen {
   kod: string;
   label: string;
+  labelPlny: string;
   sutaze: number;
 }
 
@@ -172,7 +176,8 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
             for (const r of filtrovane) acc.set(r.uroven, (acc.get(r.uroven) ?? 0) + r.sutaze);
             const vsetky: Stupen[] = UROVEN_PORADIE.filter((u) => (acc.get(u) ?? 0) > 0).map((u) => ({
               kod: u,
-              label: UROVEN_LABEL[u] ?? u,
+              label: UROVEN_LABEL_KRATKY[u] ?? u,
+              labelPlny: UROVEN_LABEL[u] ?? u,
               sutaze: acc.get(u) ?? 0,
             }));
             const ligove = vsetky.filter((t) => !MIMO_PYRAMIDY.has(t.kod));
@@ -200,9 +205,10 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
               tvary.push(
                 <g key={t.kod}>
                   <polygon points={body} fill={farbaStupna(t.kod, i, ligove.length, p.farba)}>
-                    <title>{`${t.label}: ${fmt(t.sutaze)} súťaží`}</title>
+                    <title>{`${t.labelPlny}: ${fmt(t.sutaze)} súťaží`}</title>
                   </polygon>
-                  <text x={LAB - 10} y={y + H / 2 + 4} textAnchor="end" fontSize={10.5} fontWeight={600} fill="var(--color-muted)">
+                  <text x={LAB - 10} y={y + H / 2 + 4} textAnchor="end" fontSize={FONT_LAB} fontWeight={600} fill="var(--color-muted)">
+                    <title>{t.labelPlny}</title>
                     {t.label}
                   </text>
                   <text
@@ -242,9 +248,10 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
                 tvary.push(
                   <g key={t.kod}>
                     <rect x={CX - h1} y={y} width={h1 * 2} height={vyska} rx={4} fill={farbaStupna(t.kod, 0, 1, p.farba)}>
-                      <title>{`${t.label}: ${fmt(t.sutaze)} súťaží`}</title>
+                      <title>{`${t.labelPlny}: ${fmt(t.sutaze)} súťaží`}</title>
                     </rect>
-                    <text x={LAB - 10} y={y + vyska / 2 + 4} textAnchor="end" fontSize={10.5} fontWeight={600} fill="var(--color-muted)">
+                    <text x={LAB - 10} y={y + vyska / 2 + 4} textAnchor="end" fontSize={FONT_LAB} fontWeight={600} fill="var(--color-muted)">
+                      <title>{t.labelPlny}</title>
                       {t.label}
                     </text>
                     <text
@@ -303,7 +310,7 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
 
                 <svg
                   viewBox={`0 0 ${W} ${y + 6}`}
-                  style={{ display: 'block', width: '100%', height: 'auto' }}
+                  style={{ display: 'block', width: '100%', height: 'auto', overflow: 'visible' }}
                   role="img"
                   aria-label={`Pyramída líg — ${p.kategoria}`}
                 >

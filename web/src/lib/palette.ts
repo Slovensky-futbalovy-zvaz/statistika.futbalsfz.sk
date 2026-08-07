@@ -116,6 +116,17 @@ export const UROVEN_LABEL: Record<string, string> = {
   NEURCENE: 'Neurčená úroveň',
 };
 
+/**
+ * Skrátené popisky pre úzky popisový stĺpec v grafe pyramídy (SVG má pevný viewBox,
+ * dlhý text by sa orezal). Plný názov ostáva v tooltipe — UROVEN_LABEL.
+ */
+export const UROVEN_LABEL_KRATKY: Record<string, string> = {
+  ...UROVEN_LABEL,
+  L10P: '10. a nižšie',
+  POHARE: 'Poháre',
+  NEURCENE: 'Neurčené',
+};
+
 export const ROLA_LABEL: Record<string, string> = {
   hraci: 'Hráči',
   treneri: 'Tréneri',
