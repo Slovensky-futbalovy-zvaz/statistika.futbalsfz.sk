@@ -45,11 +45,24 @@ export function delta(cur: number, prev?: number, goodUp = true): Delta | null {
 export const endYear = (s: string): number => parseInt(s.split('/')[1], 10);
 
 /**
- * Rok/vek → veková úroveň (proxy pre demografiu): vek ≥ 19 → ADULTS,
- * inak U07–U19 (age+1, orezané do 7..19).
+ * **Veková úroveň OSOBY** — odvodená z ročníka narodenia
+ * (`vek` sem vstupuje ako `endYear(sezóna) − rok narodenia`).
+ *
+ * Pravidlo (potvrdil Ján Letko 7. 8. 2026): ročník 2011 v sezóne 2025/2026
+ * → 2026 − 2011 = 15 → **U15**. Hranica dospelých je **20 a viac**, aby U19
+ * mohla vzniknúť.
+ *
+ * POZOR — toto NIE JE to isté ako **veková úroveň SÚŤAŽE alebo DRUŽSTVA**,
+ * ktorá je exaktne zadaná v databáze (`parts.rules.category`,
+ * `teams.ageCategory`) a bežná vo zvyšku portálu. Sedemnásťročný hráč
+ * (veková úroveň osoby U17) môže nastupovať v súťaži dospelých — všetky
+ * ostatné metriky by ho zarátali medzi dospelých, táto funkcia medzi dorast.
+ *
+ * Do 7. 8. 2026 tu bolo `age + 1` a hranica `>= 19`, čo posuvalo každú
+ * kategóriu o jednu úroveň vyššie a U19 nevznikla nikdy.
  */
 export const ageLevel = (age: number): string =>
-  age >= 19 ? 'ADULTS' : 'U' + String(Math.min(Math.max(age + 1, 7), 19)).padStart(2, '0');
+  age >= 20 ? 'ADULTS' : 'U' + String(Math.min(Math.max(age, 7), 19)).padStart(2, '0');
 
 /** Choropleth: sekvenčná modrá #dbe6ff → #1450df podľa t∈⟨0,1⟩. */
 export function choroColor(t: number): string {

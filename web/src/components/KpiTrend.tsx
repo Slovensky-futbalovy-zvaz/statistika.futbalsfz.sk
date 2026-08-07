@@ -177,6 +177,15 @@ export default function KpiTrend({
           mierne vyšší než celkový počet súťaží.
         </p>
       )}
+      {jeOsoba && (
+        <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
+          Pri osobách sa kategória určuje z <strong>ročníka narodenia</strong> (koncový rok sezóny
+          mínus ročník), teda podľa <strong>vekovej úrovne osoby</strong>. Pri zápasoch, súťažiach
+          a družstvách ide o <strong>vekovú úroveň súťaže alebo družstva</strong>, ktorá je zadaná
+          priamo v súťaži. Sú to dve rôzne veci: sedemnásťročný hráč, ktorý nastupuje za
+          dospelých, je tu v skupine Dorast, ale jeho zápasy sú medzi zápasmi dospelých.
+        </p>
+      )}
     </div>
   );
 }
