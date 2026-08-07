@@ -73,9 +73,9 @@ export default function HeatmapaUrovni({ data, sezona, kat, gender }: HeatmapaPr
         <table style={{ borderCollapse: 'separate', borderSpacing: 3, width: '100%', fontSize: 12 }}>
           <thead>
             <tr>
-              {/* prvý stĺpec si vezme zvyšnú šírku, aby sa bunky nerozahovali
-                  cez pôl tabuľky, keď je v reze len jedna úroveň súťaže */}
-              <th style={{ textAlign: 'left', color: 'var(--color-muted)', fontWeight: 600, padding: '0 6px 4px 0', width: '100%' }}>
+              {/* prvý stĺpec si vezme zvyšnú šírku (bunky majú pevných 78 px),
+                  aby sa nerozťahovali cez pôl tabuľky pri jedinej úrovni v reze */}
+              <th style={{ textAlign: 'left', color: 'var(--color-muted)', fontWeight: 600, padding: '0 6px 4px 0', minWidth: 180 }}>
                 Zväz
               </th>
               {urovneIdx.map((ui) => (
