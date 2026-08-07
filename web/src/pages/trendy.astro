@@ -1,0 +1,118 @@
+---
+// Stránka Trendy — vekové zloženie hráčov v zápasoch dospelých a Index klubu.
+// Metodika: claude/plan-trendy-vek.md a claude/metodika-index-klubu.md v projekte.
+import Base from '../layouts/Base.astro';
+import IndexTabulka from '../components/IndexTabulka.tsx';
+import StarnuceKluby from '../components/StarnuceKluby.tsx';
+import VekTrendZvazov from '../components/VekTrendZvazov.tsx';
+import { getIndexPrehlad, getStarnuceKluby, getVekZvazovVCase } from '../lib/trendy';
+import { getZvazy, klubyZvazu } from '../lib/data';
+
+const prehlad = getIndexPrehlad();
+const starnuce = getStarnuceKluby(3);
+const vekZvazov = getVekZvazovVCase();
+
+// klub → zväz (na filter v tabuľke indexu)
+const klubZvaz: Record<string, string> = {};
+const zvazy = getZvazy();
+for (const z of zvazy) {
+  for (const k of klubyZvazu(z.id)) klubZvaz[k.id] = z.id;
+}
+
+// Kompaktná serializácia — 1 400+ klubov by ako pole objektov stránku nafúklo.
+const indexRows = (prehlad?.kluby ?? [])
+  .map((r) => [
+    r.klub, r.nazov, r.index, r.stav,
+    r.zlozky.A, r.zlozky.B, r.zlozky.C, r.zlozky.D, r.zlozky.E ?? '',
+    r.detaily.skupiny, r.detaily.deti, r.detaily.druzstvaMladez, r.detaily.sezonPoSebe,
+    r.detaily.podielMladych ?? '',
+  ].join('|'))
+  .join('\n');
+
+const starnuceRows = starnuce
+  .map((r) => [
+    r.klub, r.nazov, Math.round(r.trend * 100), r.medianPrva, r.medianPosledna,
+    Math.round(r.zmenaHracov), r.zapisov, Math.round(r.doU21 * 1000),
+  ].join('|'))
+  .join('\n');
+
+const okno = starnuce.length ? starnuce[0].sezony : [];
+
+const KICKER = 'text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue';
+const CARD = 'border border-line';
+const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);';
+---
+
+<Base
+  title="Trendy"
+  description="Ako sa vyvíja vek hráčov v zápasoch dospelých po zväzoch a kluboch, ktoré kluby najrýchlejšie starnú a Index klubu — meranie mládežníckej základne všetkých klubov na Slovensku."
+  keywords="vek hráčov futbal, starnutie klubov, index klubu, mládež vo futbale, ObFZ kluby, štatistiky SFZ"
+>
+  <header class="mb-6">
+    <div class={KICKER}>Vývoj v čase</div>
+    <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Trendy</h1>
+    <p class="mt-2 max-w-3xl text-muted">
+      Ako sa mení futbal na Slovensku v čase. Zatiaľ vek hráčov v zápasoch dospelých
+      a mládežnícka základňa klubov — ďalšie trendy budú pribúdať.
+    </p>
+  </header>
+
+  <!-- vek po zväzoch -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Vek hráčov</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 4px;">Ako starne futbal dospelých</h2>
+      <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+        Medián veku hráčov uvedených v zápise o stretnutí v súťažiach dospelých, po zväzoch
+        a sezónach. Vek je <strong class="text-ink">veková úroveň osoby</strong> — koncový rok
+        sezóny mínus ročník narodenia, teda tak, ako sa vek vo futbale používa. Jednotka je jeden
+        zápis hráča v jednom zápase, takže opora váži viac než jednorazová výpomoc.
+      </p>
+      <VekTrendZvazov client:visible data={vekZvazov} />
+    </div>
+  </section>
+
+  <!-- starnúce kluby -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Zdravie klubov</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 4px;">Kluby, ktoré najrýchlejšie starnú</h2>
+      <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+        Klub, ktorému rok čo rok rastie vek dospelého družstva, nedopĺňa mladých — a o pár
+        sezón nemusí mať kto hrať. Rebríček preto zoraďuje kluby podľa toho, o koľko rokov
+        ročne im vek stúpa.
+      </p>
+      <StarnuceKluby client:visible rows={starnuceRows} okno={okno} />
+    </div>
+  </section>
+
+  <!-- index klubu -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Index klubu</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 4px;">Mládežnícka základňa klubov</h2>
+      <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+        Index klubu je číslo od 0 do 100, ktoré meria mládežnícku základňu klubu a jej
+        udržateľnosť: či má klub dorast, žiakov aj prípravky, koľko detí v nich hrá, koľko
+        má družstiev, ako dlho mládež udržuje a či sa jeho mladí dostanú do dospelého družstva.
+      </p>
+      {
+        prehlad ? (
+          <IndexTabulka
+            client:visible
+            rows={indexRows}
+            sezona={prehlad.sezona}
+            zvazy={zvazy.map((z) => ({ id: z.id, nazov: z.nazov }))}
+            klubZvaz={klubZvaz}
+          />
+        ) : (
+          <p class="text-sm text-muted">Index sa zatiaľ nepodarilo načítať.</p>
+        )
+      }
+    </div>
+  </section>
+
+  <p class="text-xs text-muted">
+    Podrobná metodika je v <a href="/dokumentacia" class="text-sfz-blue hover:underline">dokumentácii</a>.
+  </p>
+</Base>

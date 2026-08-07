@@ -204,6 +204,77 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     </div>
   </section>
 
+  <!-- Vek hracov a Index klubu -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Trendy</div>
+      <h2 class={H2} style="font-size:20px; margin:4px 0 8px;">Vek hráčov a Index klubu</h2>
+
+      <h3 class="font-bold text-ink" style="font-size:15px;">Aký vek to vlastne je</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        Vo futbale sa nepoužíva presný vek, ale <strong class="text-ink">veková úroveň odvodená
+        od ročníka narodenia</strong>: koncový rok sezóny mínus ročník. Hráč narodený v roku 2000
+        má v sezóne 2025/2026 hodnotu 26 — a má ju celú sezónu, bez ohľadu na to, či má narodeniny
+        v januári alebo v decembri. Presný vek by dvoch spoluhráčov z toho istého ročníka rozdelil,
+        čo je proti tomu, ako futbal veky kategorizuje.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        Nezamieňajte to s <strong class="text-ink">vekovou úrovňou súťaže alebo družstva</strong>
+        (U15, dospelí a podobne), ktorá je zadaná priamo pri súťaži. Sú to dve rôzne veci:
+        sedemnásťročný hráč, ktorý nastupuje za dospelých, má vekovú úroveň osoby U17, ale hrá
+        v súťaži dospelých — a práve to je na tom zaujímavé.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Čo presne sa počíta</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        Jednotkou je <strong class="text-ink">jeden zápis hráča v jednom zápase</strong>. Hráč, ktorý
+        je v zápise dvadsaťpäťkrát, váži dvadsaťpäťkrát toľko ako ten, čo je tam raz — číslo teda
+        odpovedá na otázku, aký starý je futbal, ktorý sa reálne hrá.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Dôležité obmedzenie:</strong> sú to hráči <strong class="text-ink">uvedení
+        v zápise o stretnutí</strong>, nie tí, ktorí skutočne nastúpili na ihrisko. Striedania sa
+        v zápise neevidujú, takže rozlíšiť hrajúceho hráča od náhradníka sa nedá — a odohrané
+        minúty v dátach neexistujú vôbec.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        Hlavným číslom je <strong class="text-ink">medián</strong>, nie priemer. Kategória dospelých
+        siaha od pätnástich rokov po sedemdesiat, takže jediný šesťdesiatročný brankár by priemerom
+        malého klubu poriadne pohol. V grafoch je preto okolo čiary aj svetlé pásmo — rozsah, v ktorom
+        leží stredná polovica hráčov. Zobrazujú sa len kluby a sezóny s aspoň sto zápismi.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Index klubu</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        Index klubu je číslo od 0 do 100, ktoré meria <strong class="text-ink">mládežnícku základňu
+        klubu a jej udržateľnosť</strong>. Skladá sa z piatich zložiek: šírka mládeže (30 bodov — či má
+        klub dorast, žiakov aj prípravky), počet detí (25), počet družstiev mládeže (15), kontinuita
+        (15 — koľko sezón po sebe mládež udržuje) a prechod do dospelých (15 — koľko hráčov do 21 rokov
+        sa dostane do A-mužstva). Na profile každého klubu je index rozpísaný na tieto zložky aj
+        s vysvetlením, čo každá z nich znamená.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Čo index nemeria:</strong> nehovorí nič o kvalite trénerskej práce,
+        o zázemí, o prístupe k deťom ani o športovej úspešnosti — tie údaje v dátach jednoducho nie sú.
+        Systematicky tiež <strong class="text-ink">zvýhodňuje veľké kluby</strong>: klub s jedným družstvom
+        prípravky nikdy nedosiahne skóre mestského klubu so šiestimi družstvami, hoci pre dieťa z tej obce
+        môže byť jedinou dostupnou a veľmi dobrou voľbou. Index je vodidlo, nie vysvedčenie.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        Do indexu <strong class="text-ink">nevstupujú tréneri</strong>, hoci by to bol cenný údaj.
+        Vyše štvrtiny klubov totiž nemá v zápisoch evidovaného ani jedného mládežníckeho trénera — a to
+        takmer určite nie je pravda, len sa realizačný tím nevyplňa. Index by tak trestal kluby za
+        administratívnu nedôslednosť namiesto za stav mládeže.
+      </p>
+      <p class="mt-3 text-sm text-muted" style="line-height:1.6;">
+        Družstvo sa do indexu započíta, len ak odohralo viac než polovicu zápasov, ktoré v danej súťaži
+        odohrali ostatní — aby sa nedal nafuknuť prihlásením družstva, ktoré po pár zápasoch skončí.
+        Klub bez družstva dospelých sa hodnotí zo štyroch zložiek prepočítaných na sto bodov, klub bez
+        mládeže sa zobrazuje slovne ako „bez mládeže“. História siaha po sezónu 2013/2014.
+      </p>
+    </div>
+  </section>
+
   <!-- Cookies a meranie navstevnosti -->
   <section class="mb-8">
     <div class={CARD} style={CARD_STYLE}>

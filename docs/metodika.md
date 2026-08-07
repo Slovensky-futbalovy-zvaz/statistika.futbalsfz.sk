@@ -107,6 +107,80 @@ Pyramída sa ukazuje v troch pohľadoch; každý odpovedá na inú otázku a vš
 - **Prenos dát do prehliadača:** rez pripravuje `web/src/lib/urovne.ts` (`getUrovneVCase`, `getUrovneVCaseZvazu`) a riadky serializuje ako jeden reťazec (`zvazIdx,sezonaIdx,urovenIdx,katIdx,pohlavieIdx,pocet` oddelené `;`), pretože pole polí by Astro do stránky zapísalo s obalom `[0, x]` okolo každého čísla — pri 38 ObFZ × 15 sezónach ~150 kB navyše.
 - **POZOR pri úpravách:** typy a `rozbal()` žijú v samostatnom module **`web/src/lib/urovneTypy.ts`**, ktorý nesmie importovať `lib/data` ani nič z Node. React komponenty musia brať `rozbal()` odtiaľ, nie z `lib/urovne.ts` — ten číta JSON zo súborov a Vite by celú dátovú vrstvu pribalil do klientskeho bundlu. Stačilo to raz a stránka padala na `ReferenceError: process is not defined`: island sa nehydratoval a pill filtre nereagovali (nasadené v `a046cfcc8`, opravené ešte ten deň).
 
+### Vek hráčov a Index klubu — stránka Trendy (7. 8. 2026)
+
+Metodika v plných podrobnostiach: `claude/plan-trendy-vek.md` a `claude/metodika-index-klubu.md`
+v projekte. ETL: `etl/trendy.py` a `etl/index_klubu.py`.
+
+#### ZÁKLADNÝ KĽÚČ: dve rôzne „vekové úrovne“ (rozhodnutie Ján Letko, 7. 8. 2026)
+
+Portál pracuje s **dvoma odlišnými pojmami**, ktoré sa nesmú zamieňať:
+
+1. **Veková úroveň OSOBY** — **odvodená** z ročníka narodenia:
+   `vek = koncový rok sezóny − rok narodenia`. Ročník 2011 v sezóne 2025/2026 → 2026 − 2011 = 15 → **U15**.
+   Hranica: 19 → U19, **20 a viac → ADULTS**. Je to celé číslo, **rovnaké pre celú sezónu** — dvaja
+   hráči toho istého ročníka majú vždy rovnakú hodnotu bez ohľadu na mesiac narodenia.
+2. **Veková úroveň SÚŤAŽE alebo DRUŽSTVA** — **exaktne zadaná** v databáze
+   (`competitions.parts[].rules.category`, `teams[].ageCategory`). Týmto sa riadi drvivá väčšina portálu.
+
+Sedemnásťročný hráč (veková úroveň osoby U17) môže nastupovať v súťaži dospelých (veková úroveň
+súťaže ADULTS). Rez „súťaže dospelých“ sa preto berie podľa **vekovej úrovne súťaže**, kým vek hráča
+podľa **vekovej úrovne osoby**.
+
+> Do 7. 8. 2026 počítal `web/src/lib/format.ts` → `ageLevel` vekovú úroveň osoby o jednu vyššie
+> (`age + 1`) a hranicou `>= 19` znemožňoval vznik U19. Opravené v commite `245642eab`.
+
+#### Čo sa meria a čo sa zmerať nedá
+
+- **Jednotka je jeden ZÁPIS hráča v jednom zápase** — hráč s 25 zápismi váži 25×
+  (rozhodnutie Ján Letko). Odpovedá to na otázku „aký starý je futbal, ktorý sa reálne hrá“.
+- Sú to **hráči uvedení v zápise o stretnutí**, nie tí, ktorí nastúpili na ihrisko.
+  **Kto nastúpil sa zistiť NEDÁ**: `protocol.events` obsahuje len góly a súvisiace typy,
+  **striedania sa neevidujú vôbec** (overené v ObFZ Nitra aj v súťažiach SFZ), a príznak
+  `additionalData.substitute` je vyplnený len u 6,7 % hráčov. Odohrané minúty teda neexistujú.
+- **`additionalData.age` sa NEPOUŽÍVA.** V dátach existuje a je vyplnený na 100 %, ale je to
+  presný vek v deň zápasu — tomu istému hráčovi sa počas sezóny zmení (overené: 9 → 10).
+  Zdrojom je `sportnet.users.birthdate` → ročník → veková úroveň osoby. Pokrytie ročníka je
+  **100 %** (36 068 z 36 068 hráčov v súťažiach dospelých 2025/2026).
+- **6–7 % uzavretých zápasov dospelých nemá vyplnenú nomináciu** a do štatistiky nevstupuje.
+- **História siaha po sezónu 2013/2014**, nie 2012/2013.
+- **Prah zobrazenia: 100 zápisov za sezónu.** Jedno družstvo dospelých odohrá ~28 zápasov a v každom
+  je ~15 hráčov v zápise, teda **~415 zápisov za sezónu**. Rozdelenie je bimodálne (klub buď odohrá
+  takmer celú sezónu, alebo takmer nič), takže prah nie je citlivý — v ObFZ Nitra vyradí 5 klubov z 51.
+- Publikujú sa: **medián** (hlavné číslo), priemer, 25. a 75. percentil, podiel do 21 rokov a 35 a viac.
+
+#### Rebríček „starnúce kluby“
+
+Ohrozený je klub, ktorému vek **RASTIE** — starne a nedopĺňa mladých. Radí sa podľa **sklonu
+mediánu za tri sezóny**, nie podľa medziročnej zmeny: jednorazový výkyv nesmie rozhodovať.
+Vedľa zmeny veku sa **vždy zobrazuje zmena počtu hráčov** — bez nej sa nedá odlíšiť zdravé
+omladenie od rozpadu kádra. Meranie 7. 8. 2026: SK Velčice −3,4 roka pri poklese zápisov
+399 → 195, Slovan Hostie −3,2 roka pri raste 434 → 533 — dva opačné príbehy s takmer rovnakým
+číslom veku.
+
+#### Index klubu
+
+Číslo 0–100 za sezónu, ktoré meria **mládežnícku základňu klubu a jej udržateľnosť**. Zložky:
+šírka mládeže 30 b., deti v mládeži 25 b., počet družstiev mládeže 15 b., kontinuita 15 b.,
+prechod do dospelých 15 b. Prahy sú kalibrované na rozdelení 1 450 klubov (medián klubu má
+2 z 3 skupín mládeže, 36 detí, 2 družstvá).
+
+- **Tréneri do indexu NEVSTUPUJÚ.** Medián počtu mládežníckych trénerov na klub je 1 a dolný
+  kvartil 0 — vyše štvrtiny klubov nemá evidovaného ani jedného. Nie je to skutočnosť, ale dôsledok
+  nevyplňovania realizačného tímu v zápise; index by trestal administratívnu nedôslednosť.
+- **Družstvo sa započíta, len ak odohralo viac než polovicu mediánu zápasov v tej istej časti
+  súťaže** (rozhodnutie Ján Letko). Empirický medián je použitý zámerne namiesto teoretického
+  počtu kol — pri prípravkách sa hrá turnajovo. Overené: z 285 družstiev ObFZ Nitra vyradí jediné.
+- **Družstvo je unikátna dvojica (veková úroveň, `teams.category`)**, nie záznam v časti súťaže —
+  to isté ačko hrajúce ligu aj pohár je jedno družstvo.
+- Klub **bez družstva dospelých** (156 klubov) sa hodnotí zo štyroch zložiek prepočítaných na 100.
+  Klub **bez mládeže** (260 klubov, 18,2 %) má index 0 a zobrazuje sa slovne ako „bez mládeže“.
+- **Kapitola „Čo index nemeria“ je povinnou súčasťou každého zobrazenia**, nie odkazom v pätičke:
+  index nehovorí nič o kvalite trénerskej práce, zázemí, prístupe k deťom ani o športovej
+  úspešnosti a systematicky zvýhodňuje veľké kluby.
+
+Rozdelenie indexu (2025/2026, 1 431 klubov): min 0, P25 40, medián 66, P75 86, P90 94, max 100.
+
 ### Osoby
 
 - **Hráči:** `nominations[].athletes[].sportnetUser._id`, väzba na tím (a kategóriu) cez `nominations[].teamId == teams[]._id`.

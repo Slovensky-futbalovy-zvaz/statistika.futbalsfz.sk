@@ -5,6 +5,10 @@ import KlubPicker from '../../../components/KlubPicker.tsx';
 import AgePyramid from '../../../components/AgePyramid.tsx';
 import SeasonPicker from '../../../components/SeasonPicker.tsx';
 import KpiTrend from '../../../components/KpiTrend.tsx';
+import IndexKlubuKarta from '../../../components/IndexKlubuKarta.tsx';
+import VekKlubu from '../../../components/VekKlubu.tsx';
+import { getIndexKlubu, getVekKlubuRows } from '../../../lib/trendy';
+import { poslednaKompletnaSlug } from '../../../lib/data';
 import { fmt, delta } from '../../../lib/format';
 import { GROUPS } from '../../../lib/palette';
 import { getKlubyPaths, getKlub, getKlubSezony, getKlubSezonyPaged, getKluby, getZvaz, odvetviaKlubu, ODVETVIE_LABEL, getDemografiaKlub, demoTrend } from '../../../lib/data';
@@ -36,6 +40,11 @@ const predoslaSezona = idxSez > 0 ? sezony[idxSez - 1] : undefined;
 const predosly = predoslaSezona ? getKlub(id!, predoslaSezona) : undefined;
 
 const klubyItems = getKluby().map((k) => ({ id: k.id, nazov: k.nazov, zvazNazov: k.zvazNazov, uroven: k.uroven, sezony: k.sezony }));
+
+// Index klubu (etl/index_klubu.py) — metodika: claude/metodika-index-klubu.md
+const indexKlubu = getIndexKlubu(id!);
+// Vekový vývoj v súťažiach dospelých (etl/trendy.py)
+const vekRows = getVekKlubuRows(id!);
 const zvaz = klub.zvaz ? getZvaz(klub.zvaz) : undefined;
 const demoKlub = getDemografiaKlub(id!);
 
@@ -147,6 +156,36 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
     }
   </section>
   {predoslaSezona && <p class="mt-2 text-xs text-muted">Medziročná zmena oproti sezóne {predoslaSezona}.</p>}
+
+  {
+    vekRows && (
+      <section class="mt-8 border border-line" style={CS}>
+        <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vek hráčov</div>
+        <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Ako starne dospelé družstvo</h2>
+        <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+          Vek hráčov uvedených v zápise o stretnutí v súťažiach dospelých, naprieč sezónami.
+          Vek je <strong class="text-ink">veková úroveň osoby</strong> — koncový rok sezóny mínus
+          ročník narodenia, teda tak, ako sa vek vo futbale používa.
+        </p>
+        <VekKlubu client:visible rows={vekRows} poslednaKompletna={poslednaKompletnaSlug().replace('-', '/')} />
+      </section>
+    )
+  }
+
+  {
+    indexKlubu && (
+      <section class="mt-8 border border-line" style={CS}>
+        <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Index klubu</div>
+        <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Mládežnícka základňa klubu</h2>
+        <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+          Index klubu je číslo od 0 do 100, ktoré meria mládežnícku základňu klubu a jej udržateľnosť.
+          Klikni na zložku pre vysvetlenie, čo presne meria a prečo má takú váhu.
+          Celé kluby sa dajú porovnať na stránke <a href="/trendy" class="text-sfz-blue hover:underline">Trendy</a>.
+        </p>
+        <IndexKlubuKarta client:visible sezony={indexKlubu.sezony} sezona={sezona} nazov={klub.nazov} />
+      </section>
+    )
+  }
 
   <section class="mt-8 border border-line" style={CS}>
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vekové kategórie</div>
