@@ -13,34 +13,14 @@ import {
   sezonyUrovne,
 } from './data';
 import { GROUPS, UROVEN_PORADIE } from './palette';
+import { POHLAVIA_PORADIE, type UrovneVCase } from './urovneTypy';
 
-export interface UrovneVCase {
-  /** Sezóny vzostupne, v tvare RRRR/RRRR. */
-  sezony: string[];
-  zvazy: { id: string; nazov: string }[];
-  /** Kódy úrovní (L1…NEURCENE) — len tie, ktoré sa v dátach vyskytujú. */
-  urovne: string[];
-  /** Vekové kategórie: Dospelí / Dorast / Žiaci / Prípravky / Ostatné. */
-  kategorie: string[];
-  /**
-   * Riadky zbalené do jedného reťazca — šestice oddelené `;`, čísla `,`:
-   * `zvazIdx,sezonaIdx,urovenIdx,kategoriaIdx,pohlavieIdx,pocetSutazi`.
-   * Pole polí by Astro serializovalo do stránky s obalom `[0, x]` okolo každého
-   * čísla (pri 38 ObFZ × 15 sezónach ~150 kB), reťazec má ~pätinu.
-   * Rozbaľuje sa cez {@link rozbal}.
-   */
-  rows: string;
-  /** Posledná kompletná sezóna; sezóny za ňou sa kreslia ako prebiehajúce. */
-  poslednaKompletna: string;
-}
-
-export const POHLAVIA_PORADIE = ['M', 'F', 'NEURCENE'];
-
-/** Rozbalí `UrovneVCase.rows` späť na šestice čísel. */
-export function rozbal(rows: string): number[][] {
-  if (!rows) return [];
-  return rows.split(';').map((r) => r.split(',').map(Number));
-}
+// Typy a `rozbal()` žijú v `urovneTypy.ts`, aby si ich mohli importovať React
+// komponenty bez toho, aby sa im do bundlu dostala dátová vrstva (fs/path).
+// Tu sa len re-exportujú pre .astro stránky.
+export type { UrovneVCase } from './urovneTypy';
+export { POHLAVIA_PORADIE, rozbal } from './urovneTypy';
+export type { UrovenRiadok } from './data';
 
 /** Index vekovej kategórie pre vekovú úroveň (ADULTS, U19…); mimo GROUPS = Ostatné. */
 function kategoriaVeku(kat: string): number {

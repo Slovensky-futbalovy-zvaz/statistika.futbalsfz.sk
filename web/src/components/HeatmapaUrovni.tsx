@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { rozbal, type UrovneVCase } from '../lib/urovne';
+import { rozbal, type UrovneVCase } from '../lib/urovneTypy';
 import { fmt } from '../lib/format';
 import { UROVEN_LABEL, UROVEN_LABEL_KRATKY } from '../lib/palette';
 
@@ -17,8 +17,7 @@ export interface HeatmapaProps {
  * Matica zväzy × úrovne súťaže — koľko súťaží ktorý zväz riadi na ktorej úrovni.
  * Číslo v bunke je presný počet, sýtosť farby dáva obraz na prvý pohľad.
  *
- * Filtre vekovej kategórie a pohlavia drží nadradená sekcia, aby oba grafy
- * (matica aj vývoj v čase) ukazovali ten istý rez a payload islandu bol jeden.
+ * Filtre vekovej kategórie a pohlavia drží nadradená sekcia.
  */
 export default function HeatmapaUrovni({ data, sezona, kat, gender }: HeatmapaProps) {
   const si = data.sezony.indexOf(sezona);
@@ -44,7 +43,10 @@ export default function HeatmapaUrovni({ data, sezona, kat, gender }: HeatmapaPr
   }, [data, si, kat, gender]);
 
   const bunka = (n: number): React.CSSProperties => {
-    const t = n / max;
+    // Pri reze, kde je všade najviac jedna súťaž, by pomer n/max spravil všetky
+    // bunky plne sýte a matica by pôsobila ako jedna tmavá plocha — vtedy sa
+    // použije miernejšia pevná sýtosť.
+    const t = max <= 1 ? 0.3 : n / max;
     return {
       background: n === 0 ? 'var(--color-track, #f4f6f8)' : `rgba(20, 80, 223, ${(0.12 + t * 0.8).toFixed(2)})`,
       color: n && t > 0.5 ? '#fff' : 'var(--color-ink)',
@@ -71,19 +73,23 @@ export default function HeatmapaUrovni({ data, sezona, kat, gender }: HeatmapaPr
         <table style={{ borderCollapse: 'separate', borderSpacing: 3, width: '100%', fontSize: 12 }}>
           <thead>
             <tr>
-              <th style={{ textAlign: 'left', color: 'var(--color-muted)', fontWeight: 600, padding: '0 6px 4px 0' }}>
+              {/* prvý stĺpec si vezme zvyšnú šírku, aby sa bunky nerozahovali
+                  cez pôl tabuľky, keď je v reze len jedna úroveň súťaže */}
+              <th style={{ textAlign: 'left', color: 'var(--color-muted)', fontWeight: 600, padding: '0 6px 4px 0', width: '100%' }}>
                 Zväz
               </th>
               {urovneIdx.map((ui) => (
                 <th
                   key={ui}
                   title={UROVEN_LABEL[data.urovne[ui]]}
-                  style={{ color: 'var(--color-muted)', fontWeight: 600, padding: '0 2px 4px', whiteSpace: 'nowrap' }}
+                  style={{ color: 'var(--color-muted)', fontWeight: 600, padding: '0 2px 4px', whiteSpace: 'nowrap', width: 78 }}
                 >
                   {UROVEN_LABEL_KRATKY[data.urovne[ui]] ?? data.urovne[ui]}
                 </th>
               ))}
-              <th style={{ color: 'var(--color-muted)', fontWeight: 600, padding: '0 0 4px 6px' }}>Spolu</th>
+              <th style={{ color: 'var(--color-muted)', fontWeight: 600, padding: '0 0 4px 6px', textAlign: 'center' }}>
+                Spolu
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -108,7 +114,14 @@ export default function HeatmapaUrovni({ data, sezona, kat, gender }: HeatmapaPr
                       </td>
                     );
                   })}
-                  <td style={{ padding: '0 0 0 6px', fontWeight: 800, fontVariantNumeric: 'tabular-nums' }}>
+                  <td
+                    style={{
+                      padding: '0 0 0 6px',
+                      fontWeight: 800,
+                      fontVariantNumeric: 'tabular-nums',
+                      textAlign: 'center',
+                    }}
+                  >
                     {fmt(spolu)}
                   </td>
                 </tr>

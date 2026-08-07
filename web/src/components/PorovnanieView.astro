@@ -46,7 +46,7 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
 
   {
     urovne && urovne.rows.length ? (
-      <UrovneSekcia client:visible data={urovne} sezona={porovnanie.sezona} defaultVyber={defaultVyber} />
+      <UrovneSekcia client:visible data={urovne} sezona={porovnanie.sezona} />
     ) : null
   }
 
