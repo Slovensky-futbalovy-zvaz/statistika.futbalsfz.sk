@@ -5,8 +5,8 @@
 // komponenty bez toho, aby sa im do bundlu dostala táto dátová vrstva.
 import fs from 'node:fs';
 import path from 'node:path';
-import { statistiky, zluc, sklon, type Histogram, type IndexKlubu, type IndexPrehladRiadok, type VekVCase } from './trendyTypy';
-import { getZvazy, poslednaKompletnaSlug } from './data';
+import { statistiky, zluc, sklon, PRAH_KLUBOV, type Histogram, type IndexKlubu, type IndexPrehladRiadok, type VekVCase } from './trendyTypy';
+import { getZvazy, klubyZvazu, poslednaKompletnaSlug } from './data';
 import { UROVEN_PORADIE } from './palette';
 
 const DATA = path.resolve(process.cwd(), '..', 'data');
@@ -32,6 +32,8 @@ function readJson<T>(p: string): T | undefined {
 interface VekSubor {
   sezony: Record<string, { vek?: Record<string, Histogram>; vekUroven?: Record<string, Histogram>;
                           vekSutaz?: Record<string, Histogram>; sutaze?: Record<string, string>;
+                          /** competitionId → kód úrovne súťaže dospelých (len pri kluboch). */
+                          urovne?: Record<string, string>;
                           druzstva?: Record<string, number> }>;
 }
 
@@ -220,6 +222,124 @@ export function getVekKlubuRows(id: string): string {
     }
   }
   return out.join('\n');
+}
+
+/** Kód rezu pre kluby, ktoré v danej sezóne nemali dospelé družstvo. */
+export const BEZ_DOSPELYCH = 'Bez dospelých';
+
+/**
+ * Najvyššia úroveň dospelej súťaže, v ktorej klub v sezóne hral.
+ * `BEZ_DOSPELYCH`, ak nehral žiadnu — takých klubov je okoľo 156 a sú medzi nimi
+ * tie najsilnejšie mládežnícke akadémie, takže sa nesmú poticho zahodiť.
+ */
+function najvyssiaUroven(urovne: Record<string, string> | undefined): string {
+  const kody = new Set(Object.values(urovne || {}));
+  if (!kody.size) return BEZ_DOSPELYCH;
+  for (const u of UROVEN_PORADIE) if (kody.has(u)) return u;
+  return [...kody][0];
+}
+
+/**
+ * Vývoj Indexu klubu po zväzoch — medián indexu klubov zväzu v každej sezóne.
+ *
+ * Rozhodnutia Jána Letka (8. 8. 2026):
+ * - hlavné číslo je **medián**, priemer sa nesie vedľa (rovnako ako pri veku);
+ * - kluby **bez mládeže sa započítavajú** s indexom 0 — sú súčasťou reality zväzu;
+ * - rez sa robí podľa **najvyššej dospelej úrovne klubu** v danej sezóne.
+ *
+ * POZOR na čítanie rezu: klub sa medzi sezónami sťahuje medzi úrovňami (postup, pád),
+ * takže séria „6. liga" nie je ten istý súbor klubov naprieč sezónami. Pri veku to
+ * nevadilo — tam sa merala súťaž; tu sa merie klub a súťažou sa len označuje.
+ *
+ * Výstup má rovnaký tvar ako `getVekZvazovVCase()`, aby sa dal použiť ten istý
+ * komponent — `median` je medián indexu, `n` je počet klubov (nie zápisov).
+ */
+export function getIndexZvazovVCase(): VekVCase {
+  const zvazy = getZvazy();
+  const posledna = poslednaKompletnaSlug().replace('-', '/');
+
+  // zväz → sezóna → rez → histogram {index: početKlubov}
+  const data = new Map<string, Map<string, Map<string, Histogram>>>();
+  const pocetKlubov = new Map<string, number>();
+  const rezySet = new Set<string>();
+  // hodnoty zložky D (kontinuita) po sezónach — z nich sa určí, od kedy je index
+  // porovnateľný (kontinuita potrebuje päť sezón histórie, aby mohla dať plných 15 b.)
+  const kontinuita = new Map<string, number[]>();
+
+  for (const z of zvazy) {
+    const perSezona = new Map<string, Map<string, Histogram>>();
+    for (const k of klubyZvazu(z.id)) {
+      const idx = getIndexKlubu(k.id);
+      if (!idx?.sezony) continue;
+      const vek = getVekKlub(k.id);
+      for (const [sez, s] of Object.entries(idx.sezony)) {
+        if (typeof s?.index !== 'number') continue;
+        // Prebiehajúca sezóna sa vynecháva ÚPLNE. Na rozdiel od veku (kde má rozohratá
+        // sezóna zmysel) tu ešte nie sú prihlásené mládežnícke družstvá, takže index
+        // vychádza 0 a graf by sa na konci zrútil (meranie 8. 8. 2026: 75 % núl).
+        if (sez > posledna) continue;
+        const rez = najvyssiaUroven(vek?.sezony?.[sez]?.urovne);
+        rezySet.add(rez);
+        pocetKlubov.set(sez, (pocetKlubov.get(sez) ?? 0) + 1);
+        if (typeof s.zlozky?.D === 'number') {
+          const zoz = kontinuita.get(sez) ?? [];
+          zoz.push(s.zlozky.D);
+          kontinuita.set(sez, zoz);
+        }
+        let rezy = perSezona.get(sez);
+        if (!rezy) { rezy = new Map(); perSezona.set(sez, rezy); }
+        for (const kluc of ['', rez]) {
+          const h = rezy.get(kluc) ?? {};
+          h[s.index] = (h[s.index] ?? 0) + 1;
+          rezy.set(kluc, h);
+        }
+      }
+    }
+    if (perSezona.size) data.set(z.id, perSezona);
+  }
+
+  // Sezóny s výrazne menším pokrytím sa vynechávajú — nie sú porovnateľné. Týka sa to
+  // 2012/2013, kde je v dátach 578 klubov oproti ~1 700 v ďalších sezónach; medián 0
+  // by čítateľ vnímal ako stav mládeže, nie ako dôsledok toho, že dáta ešte nie sú.
+  const maxPocet = Math.max(0, ...pocetKlubov.values());
+  const sezony = [...pocetKlubov.keys()]
+    .filter((s) => (pocetKlubov.get(s) ?? 0) >= 0.6 * maxPocet)
+    .sort();
+  const subjekty = zvazy.filter((z) => data.has(z.id)).map((z) => ({ id: z.id, nazov: z.nazov }));
+  const urovne = ['', ...UROVEN_PORADIE.filter((u) => rezySet.has(u))];
+  if (rezySet.has(BEZ_DOSPELYCH)) urovne.push(BEZ_DOSPELYCH);
+
+  // Od kedy je index porovnateľný: prvá sezóna, v ktorej medián zložky kontinuity
+  // dosiahne svoje maximum. Do vtedy je rast indexu z väčšej časti len tým, že
+  // história ešte nebola dosť dlhá (rozhodnutie Ján Letko, 8. 8. 2026: sezóny pred
+  // touto hranicou sa kreslia prerušovane).
+  const medianD = (sez: string) => {
+    const v = (kontinuita.get(sez) ?? []).slice().sort((a, b) => a - b);
+    return v.length ? v[Math.floor(v.length / 2)] : 0;
+  };
+  const maxD = Math.max(0, ...sezony.map(medianD));
+  const porovnatelneOd = sezony.find((s) => medianD(s) >= maxD);
+
+  const riadky: string[] = [];
+  subjekty.forEach((z, zi) => {
+    const perSezona = data.get(z.id)!;
+    sezony.forEach((s, si) => {
+      urovne.forEach((u, ui) => {
+        const st = statistiky(perSezona.get(s)?.get(u), PRAH_KLUBOV);
+        if (!st) return;
+        riadky.push(`${zi},${si},${ui},${st.median},${Math.round(st.priemer * 100)},${st.n}`);
+      });
+    });
+  });
+
+  return {
+    sezony,
+    subjekty,
+    urovne,
+    rows: riadky.join(';'),
+    poslednaKompletna: posledna,
+    porovnatelneOd,
+  };
 }
 
 export interface StarnuciKlub {

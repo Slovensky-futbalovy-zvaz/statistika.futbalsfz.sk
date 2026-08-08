@@ -5,12 +5,28 @@ import Base from '../layouts/Base.astro';
 import IndexTabulka from '../components/IndexTabulka.tsx';
 import StarnuceKluby from '../components/StarnuceKluby.tsx';
 import VekTrendZvazov from '../components/VekTrendZvazov.tsx';
-import { getIndexPrehlad, getStarnuceKluby, getVekZvazovVCase } from '../lib/trendy';
+import { getIndexPrehlad, getIndexZvazovVCase, getStarnuceKluby, getVekZvazovVCase } from '../lib/trendy';
 import { getZvazy, klubyZvazu } from '../lib/data';
 
 const prehlad = getIndexPrehlad();
 const starnuce = getStarnuceKluby(3);
 const vekZvazov = getVekZvazovVCase();
+const indexZvazov = getIndexZvazovVCase();
+
+const INDEX_POZNAMKA =
+  'Medián Indexu klubu medzi klubmi zväzu. Kluby bez mládeže sa započítavajú s nulou — sú ' +
+  'súčasťou reality zväzu, nie chybou merania. ' +
+  (indexZvazov.porovnatelneOd
+    ? `Prerušovaný úsek na začiatku (do ${indexZvazov.porovnatelneOd}) NIE JE porovnateľný ` +
+      'so zvyškom — zložka kontinuity dáva plných 15 bodov až za päť sezón mládeže po sebe, ' +
+      'a história začína 2013/2014, takže v prvých sezónach ju nemohol mať plnú nikto. ' +
+      'Väčšina rastu v tomto úseku je artefakt metodiky, nie zlepšenie mládeže. '
+    : '') +
+  'Rez radí klub podľa najvyššej dospelej súťaže, v ktorej v danej sezóne hral; čítaj ho ' +
+  'opatrne — kluby medzi úrovňami postupujú a padajú, takže séria nie je ten istý súbor ' +
+  'klubov naprieč sezónami. Kluby bez dospelého družstva majú vlastný rez. Prebiehajúca ' +
+  'sezóna sa nezobrazuje vôbec — mládežnícke družstvá v nej ešte nie sú prihlásené. ' +
+  'Zobrazujú sa len zväzy a sezóny s aspoň piatimi klubmi.';
 
 // klub → zväz (na filter v tabuľke indexu)
 const klubZvaz: Record<string, string> = {};
@@ -83,6 +99,28 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         ročne im vek stúpa.
       </p>
       <StarnuceKluby client:visible rows={starnuceRows} okno={okno} />
+    </div>
+  </section>
+
+  <!-- vývoj indexu po zväzoch -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Index klubu</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 4px;">Ako rastie mládežnícka základňa</h2>
+      <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+        Ten istý pohľad ako pri veku, len namiesto rokov je na osi <strong class="text-ink">Index
+        klubu</strong> — číslo od 0 do 100, ktoré meria mládežnícku základňu klubu. Čiara je
+        medián medzi klubmi zväzu, teda typický klub, nie ten najlepší ani priemer ťahaný
+        veľkými mestskými klubmi.
+      </p>
+      <VekTrendZvazov
+        client:visible
+        data={indexZvazov}
+        jednotka="bodov"
+        pocetSlovo="klubov"
+        rezSlovo="Najvyššia súťaž klubu"
+        poznamka={INDEX_POZNAMKA}
+      />
     </div>
   </section>
 

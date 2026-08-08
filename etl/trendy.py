@@ -371,6 +371,9 @@ def main() -> int:
         hist_zvaz_uroven: dict = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
         hist_zvaz_sutaz: dict = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
         nazvy_sutazi: dict[str, str] = {}
+        # competitionId -> kod urovne sutaze. Potrebne na rez Indexu klubu podla
+        # najvyssej dospelej urovne klubu (rozhodnutie Jan Letko, 8. 8. 2026).
+        urovne_sutazi: dict[str, str] = {}
         bez_rocnika = 0
 
         for (klub, comp_id, gender), pids in z["zapisy"].items():
@@ -378,6 +381,7 @@ def main() -> int:
             zvaz = space_zvaz.get(s.get("appSpace", ""), "")
             uroven = s.get("uroven", "NEURCENE")
             nazvy_sutazi[comp_id] = s.get("nazov", "")
+            urovne_sutazi[comp_id] = uroven
             for pid, n in pids.items():
                 rok = rocniky.get(pid)
                 if rok is None:
@@ -400,6 +404,8 @@ def main() -> int:
                 "vekSutaz": {k: zorad_hist(h) for k, h in hist_klub_sutaz[klub].items()},
                 "sutaze": {c: nazvy_sutazi.get(c, "") for c in
                            {k.split("|")[0] for k in hist_klub_sutaz[klub]}},
+                "urovne": {c: urovne_sutazi.get(c, "NEURCENE") for c in
+                           {k.split("|")[0] for k in hist_klub_sutaz[klub]}},
                 "druzstva": druzstva.get(klub, {}),
             }, args.sport_sector)
 
@@ -410,7 +416,7 @@ def main() -> int:
                 continue
             slug = klub_id_slug(klub)
             merge_sezonu(out / "vek-klub" / (slug + ".json"), "klub", slug, sez, {
-                "vek": {}, "vekSutaz": {}, "sutaze": {}, "druzstva": d,
+                "vek": {}, "vekSutaz": {}, "sutaze": {}, "urovne": {}, "druzstva": d,
             }, args.sport_sector)
 
         for zvaz, per_gender in hist_zvaz.items():

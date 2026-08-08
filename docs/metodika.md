@@ -181,6 +181,40 @@ prechod do dospelých 15 b. Prahy sú kalibrované na rozdelení 1 450 klubov (m
 
 Rozdelenie indexu (2025/2026, 1 431 klubov): min 0, P25 40, medián 66, P75 86, P90 94, max 100.
 
+#### Vývoj indexu po zväzoch (8. 8. 2026)
+
+Na stránke Trendy je nad tabuľkou indexu čiarový graf **„Ako rastie mládežnícka základňa“** —
+rovnaký pohľad ako pri veku, len na osi je index. Rozhodnutia Jána Letka (8. 8. 2026):
+
+- **Medián**, nie priemer — typický klub zväzu; priemer je v tooltipe. Priemer by ťahali
+  veľké mestské kluby so 100 bodmi.
+- **Kluby bez mládeže sa započítavajú s indexom 0.** Sú súčasťou reality zväzu; ich vynechanie
+  by spôsobilo, že zväz, ktorému mládež zaniká, by v grafe vyzeral, že sa zlepšuje.
+- **Rez podľa najvyššej dospelej úrovne klubu** v danej sezóne (`data/vek-klub/*.json`,
+  kľúč `urovne` — doplnené do `etl/trendy.py` 8. 8. 2026). Kluby **bez dospelého družstva**
+  majú vlastný rez „Bez dospelých“ — je ich 156 a sú medzi nimi najsilnejšie mládežnícke
+  akadémie, takže ich nemožno z rezov ticho vypustiť.
+- **Prah 5 klubov** na zväz a sezónu (`PRAH_KLUBOV`) — medián z troch klubov nie je
+  charakteristika zväzu.
+- **Prebiehajúca sezóna sa vynecháva úplne** (na rozdiel od veku, kde sa kreslí prerušovane).
+  Meranie 8. 8. 2026: v 2026/2027 malo 423 z 565 klubov (75 %) index 0, lebo mládežnícke
+  družstvá ešte neboli prihlásené — graf sa na konci padal k nule.
+- **Sezóny s pokrytím pod 60 % maxima sa vynechávajú.** Týka sa to 2012/2013 (578 klubov
+  oproti ~1 700), kde medián vychádza 0.
+
+**Prvých päť sezón nie je porovnateľných — kreslí sa prerušovane** (rozhodnutie Ján Letko,
+8. 8. 2026). Zložka D dáva plných 15 bodov až za **päť sezón mládeže po sebe**, ale história
+začína 2013/2014, takže plný počet nemohol mať nikto pred 2018/2019. Namerané mediány
+zložky D: 2013/14 = 3, 2014/15 = 3, 2015/16 = 6, 2016/17 = 10, 2017/18 = 10, od 2018/19 = 15.
+Celoslovenský medián indexu za ten čas stúpol z 38 na 66 — **zhruba dvanásť z tých
+dvadsiatich ôsmich bodov je iba dobiehajúca kontinuita, nie zlepšenie mládeže.**
+Hranica sa nepočíta natvrdo: `getIndexZvazovVCase()` hľadá prvú sezónu, v ktorej medián
+zložky D dosiahne svoje maximum.
+
+**Obmedzenie, ktoré patrí k rezu:** klub medzi sezónami postupuje a padá, takže séria „6. liga“
+nie je ten istý súbor klubov naprieč sezónami. Pri veku to nevadilo — tam sa merala súťaž;
+tu sa meria klub a súťažou sa len označuje. Text je uvedený priamo pod grafom.
+
 ### Osoby
 
 - **Hráči:** `nominations[].athletes[].sportnetUser._id`, väzba na tím (a kategóriu) cez `nominations[].teamId == teams[]._id`.

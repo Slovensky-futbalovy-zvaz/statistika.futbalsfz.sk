@@ -27,6 +27,14 @@ export interface VekVCase {
    */
   rows: string;
   poslednaKompletna: string;
+  /**
+   * Prvá sezóna, od ktorej sú hodnoty plne porovnateľné. Sezóny pred ňou sa kreslía
+   * prerušovane. Používa to Index klubu: zložka kontinuity dáva plných 15 bodov až za
+   * päť sezón mládeže po sebe, takže na začiatku histórie (2013/2014) nemohol mať
+   * plný počet nikto — rast do 2018/2019 je z väčšej časti artefakt metodiky, nie
+   * zlepšenie mládeže (meranie 8. 8. 2026: medián zložky D 3 → 15).
+   */
+  porovnatelneOd?: string;
 }
 
 export interface VekStat {
@@ -47,6 +55,12 @@ export interface VekStat {
 export const PRAH_ZAPISOV = 100;
 
 /**
+ * Prah pre rezy, kde je jednotkou KLUB, nie zápis hráča — vývoj Indexu klubu
+ * po zväzoch. Medián z troch klubov nie je charakteristika zväzu, je to náhoda.
+ */
+export const PRAH_KLUBOV = 5;
+
+/**
  * Percentil z histogramu. Histogram je {vek: početZápisov}, takže percentil sa
  * počíta nad rozvinutým radom — hráč s 25 zápismi váži 25×.
  */
@@ -60,14 +74,19 @@ function percentil(dvojice: [number, number][], n: number, q: number): number {
   return dvojice.length ? dvojice[dvojice.length - 1][0] : 0;
 }
 
-/** Súhrnné štatistiky z histogramu. `null`, ak je pod prahom alebo prázdny. */
-export function statistiky(h: Histogram | undefined): VekStat | null {
+/**
+ * Súhrnné štatistiky z histogramu. `null`, ak je pod prahom alebo prázdny.
+ *
+ * `prah` sa dá prepísať, lebo tá istá funkcia počíta aj rozdelenie Indexu klubu,
+ * kde je jednotkou klub — tam je 100 nezmyselne veľa (pozri `PRAH_KLUBOV`).
+ */
+export function statistiky(h: Histogram | undefined, prah = PRAH_ZAPISOV): VekStat | null {
   if (!h) return null;
   const dvojice = Object.entries(h)
     .map(([v, n]) => [Number(v), n] as [number, number])
     .sort((a, b) => a[0] - b[0]);
   const n = dvojice.reduce((s, [, p]) => s + p, 0);
-  if (n < PRAH_ZAPISOV) return null;
+  if (n < prah) return null;
 
   let suma = 0;
   let mladi = 0;

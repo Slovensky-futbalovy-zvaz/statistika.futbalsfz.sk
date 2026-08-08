@@ -6,6 +6,14 @@ interface Props {
   data: VekVCase;
   /** Predvolený výber (id zväzov). Ak prázdny, vyberie sa SFZ a štyri RFZ. */
   defaultVyber?: string[];
+  /** Jednotka meranej hodnoty v tooltipe — `rokov` pri veku, `bodov` pri Indexe klubu. */
+  jednotka?: string;
+  /** Čo sa počíta v `n` — `zápisov` pri veku, `klubov` pri Indexe klubu. */
+  pocetSlovo?: string;
+  /** Popisok filtra rezov. */
+  rezSlovo?: string;
+  /** Vysvetlivka pod grafom. Ak nie je zadaná, použije sa veková. */
+  poznamka?: string;
 }
 
 const PREDVOLENE = ['sfz', 'bfz', 'zsfz', 'ssfz', 'vsfz'];
@@ -25,7 +33,14 @@ const MAX_AUTO = 6;
  * napríklad 7. ligu prázdny — predvolene sú vybrané SFZ a RFZ, ale 7. liga je
  * úroveň oblastných zväzov.
  */
-export default function VekTrendZvazov({ data, defaultVyber }: Props) {
+export default function VekTrendZvazov({
+  data,
+  defaultVyber,
+  jednotka = 'rokov',
+  pocetSlovo = 'zápisov',
+  rezSlovo = 'Úroveň',
+  poznamka,
+}: Props) {
   const predvolene = useMemo(() => {
     const ids = defaultVyber?.length ? defaultVyber : PREDVOLENE;
     const idx = data.subjekty.map((z, i) => (ids.includes(z.id) ? i : -1)).filter((i) => i >= 0);
@@ -91,6 +106,17 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
     return i < 0 ? n : i + 1;
   }, [data, n]);
 
+  /**
+   * Index prvej plne porovnateľnej sezóny. Sezóny pred ňou sa kreslia prerušovane
+   * rovnako ako prebiehajúca sezóna na konci — pri Indexe klubu je to úsek, v ktorom
+   * ešte nemohla byť nasytená zložka kontinuity.
+   */
+  const porovnatelneOd = useMemo(() => {
+    if (!data.porovnatelneOd) return 0;
+    const i = data.sezony.indexOf(data.porovnatelneOd);
+    return i < 0 ? 0 : i;
+  }, [data]);
+
   const val = (zi: number, si: number) => hodnoty.get(`${zi}|${si}`)?.median ?? null;
 
   const W = 860;
@@ -132,7 +158,7 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
     <div>
       {data.urovne.length > 1 && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center', marginBottom: 8, fontSize: 12 }}>
-          <span style={{ color: 'var(--color-muted)' }}>Úroveň:</span>
+          <span style={{ color: 'var(--color-muted)' }}>{rezSlovo}:</span>
           {data.urovne.map((u, ui) => (
             <button
               key={u || 'celok'}
@@ -161,7 +187,7 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
               key={z.id}
               type="button"
               style={chip(on, farba(zi), !maData)}
-              title={maData ? undefined : `${z.nazov} nemá v úrovni ${menoUrovne(data.urovne[uroven])} žiadne súťaže`}
+              title={maData ? undefined : `${z.nazov} nemá v reze „${menoUrovne(data.urovne[uroven])}“ žiadne dáta`}
               onClick={() => setVybrane((v) => (on ? v.filter((i) => i !== zi) : [...v, zi]))}
             >
               {z.nazov}
@@ -173,10 +199,10 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
       {uroven > 0 && (
         <p style={{ marginBottom: 12, fontSize: 11.5, color: 'var(--color-muted)' }}>
           {dostupne.length === 0
-            ? `Úroveň ${menoUrovne(data.urovne[uroven])} neriadi žiadny zväz s dostatkom dát.`
-            : `Úroveň ${menoUrovne(data.urovne[uroven])} riadi ${dostupne.length} ${
-                dostupne.length === 1 ? 'zväz' : dostupne.length < 5 ? 'zväzy' : 'zväzov'
-              }; výber sa prepol na ${vybrane.length} z nich (podľa počtu zápisov). Ďalšie pridáš kliknutím vyššie — zväzy bez tejto úrovne sú stlmené.`}
+            ? `Rez „${menoUrovne(data.urovne[uroven])}“ nemá dostatok dát v žiadnom zväze.`
+            : `Rez „${menoUrovne(data.urovne[uroven])}“ má dáta v ${dostupne.length} ${
+                dostupne.length === 1 ? 'zväze' : dostupne.length < 5 ? 'zväzoch' : 'zväzoch'
+              }; výber sa prepol na ${vybrane.length} z nich (podľa počtu ${pocetSlovo}). Ďalšie pridáš kliknutím vyššie — zväzy bez dát v tomto reze sú stlmené.`}
         </p>
       )}
 
@@ -199,7 +225,10 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
           )}
           {vybrane.map((zi, k) => (
             <g key={zi}>
-              <path d={cesta(zi, 0, prebiehaOd - 1)} fill="none" stroke={farba(zi)} strokeWidth={2} strokeLinejoin="round" />
+              {porovnatelneOd > 0 && (
+                <path d={cesta(zi, 0, porovnatelneOd)} fill="none" stroke={farba(zi)} strokeWidth={2} strokeDasharray="4 3" opacity={0.6} />
+              )}
+              <path d={cesta(zi, porovnatelneOd, prebiehaOd - 1)} fill="none" stroke={farba(zi)} strokeWidth={2} strokeLinejoin="round" />
               {prebiehaOd < n && (
                 <path d={cesta(zi, prebiehaOd - 1, n - 1)} fill="none" stroke={farba(zi)} strokeWidth={2} strokeDasharray="4 3" opacity={0.6} />
               )}
@@ -207,8 +236,8 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
                 const v = val(zi, si);
                 if (v === null) return null;
                 return (
-                  <circle key={s} cx={x(si)} cy={y(v)} r={2.4} fill={farba(zi)} opacity={si >= prebiehaOd ? 0.6 : 1}>
-                    <title>{`${data.subjekty[zi].nazov} · ${s}: medián ${v} rokov (${hodnoty.get(`${zi}|${si}`)?.n ?? 0} zápisov)`}</title>
+                  <circle key={s} cx={x(si)} cy={y(v)} r={2.4} fill={farba(zi)} opacity={si >= prebiehaOd || si < porovnatelneOd ? 0.6 : 1}>
+                    <title>{`${data.subjekty[zi].nazov} · ${s}: medián ${v} ${jednotka} (${hodnoty.get(`${zi}|${si}`)?.n ?? 0} ${pocetSlovo})`}</title>
                   </circle>
                 );
               })}
@@ -222,11 +251,15 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
       )}
 
       <p style={{ marginTop: 10, fontSize: 11.5, color: 'var(--color-muted)', lineHeight: 1.6 }}>
-        Medián vekovej úrovne osoby v zápisoch o stretnutí v súťažiach dospelých. Prerušovaný
-        úsek je prebiehajúca sezóna, v ktorej sa čísla ešte dopĺňajú — posledná kompletná je{' '}
-        {data.poslednaKompletna}. Filter úrovne porovnáva tú istú ligu naprieč zväzmi — úrovne
-        sú naprieč sezónami stabilné, na rozdiel od názvov súťaží. Zobrazujú sa len zväzy
-        a sezóny s aspoň 100 zápismi.
+        {poznamka ?? (
+          <>
+            Medián vekovej úrovne osoby v zápisoch o stretnutí v súťažiach dospelých. Prerušovaný
+            úsek je prebiehajúca sezóna, v ktorej sa čísla ešte dopĺňajú — posledná kompletná je{' '}
+            {data.poslednaKompletna}. Filter úrovne porovnáva tú istú ligu naprieč zväzmi — úrovne
+            sú naprieč sezónami stabilné, na rozdiel od názvov súťaží. Zobrazujú sa len zväzy
+            a sezóny s aspoň 100 zápismi.
+          </>
+        )}
       </p>
     </div>
   );
