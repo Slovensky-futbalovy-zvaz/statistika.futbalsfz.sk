@@ -47,6 +47,7 @@ vygenerované JSON**. Druhá skupina je rýchla a dá sa púšťať opakovane be
 | `porovnania.py` | `data/porovnania/{uroven}/{sezona}.json` | Porovnávacie tabuľky zväzov (RFZ, ObFZ) s odvodenými metrikami |
 | `porovnania_kluby.py` | `data/porovnania/kluby/{sezona}.json` | To isté pre všetky kluby |
 | `index_klubu.py` | `data/index-klubu/`, `data/index-klubu.json` | Index klubu (0–100) z piatich zložiek. Beží **nad výstupmi `trendy.py`**, do DB nesiaha |
+| `kontrola_skupin.py` | (nezapisuje) | Overuje invarianty metriky **skupiny** nad `data/` — `skupiny >= sutaze` v každom reze, súčet cez úrovne = `kpi.skupiny`, porovnania nesú `skupiny`. Nenulový exit pri chybe. Pusti po každom behu, ktorý sa dotýka počtov súťaží |
 
 ### Orchestrácia
 
@@ -85,6 +86,7 @@ python etl/demografia.py --zvaz obfz-nitra --all-sezony
 python etl/trendy.py --vsetky                                          # všetky sezóny, ~14 min
 python etl/index_klubu.py --sezona-prehladu 2025/2026
 bash   etl/prepocet.sh 2025/2026
+python etl/kontrola_skupin.py                                          # po behu: invarianty skupín
 ```
 
 **Lokálny beh (macOS, python.org build):**
