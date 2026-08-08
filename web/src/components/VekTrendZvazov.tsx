@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { PALETTE } from '../lib/palette';
+import { PALETTE, UROVEN_LABEL_KRATKY } from '../lib/palette';
 import type { VekVCase } from '../lib/trendyTypy';
 
 interface Props {
@@ -24,18 +24,22 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
     return idx.length ? idx : data.subjekty.map((_, i) => i).slice(0, 5);
   });
 
+  const [uroven, setUroven] = useState(0);
+
   const { hodnoty, min, max } = useMemo(() => {
     const h = new Map<string, { median: number; n: number }>();
     let lo = 99;
     let hi = 0;
     for (const r of (data.rows ? data.rows.split(';') : [])) {
-      const [zi, si, med, , n] = r.split(',').map(Number);
+      const [zi, si, ui, med, , n] = r.split(',').map(Number);
+      if (ui !== uroven) continue;
       h.set(`${zi}|${si}`, { median: med, n });
       if (med < lo) lo = med;
       if (med > hi) hi = med;
     }
+    if (lo > hi) return { hodnoty: h, min: 20, max: 35 };
     return { hodnoty: h, min: Math.floor(lo - 1), max: Math.ceil(hi + 1) };
-  }, [data]);
+  }, [data, uroven]);
 
   const n = data.sezony.length;
   const prebiehaOd = useMemo(() => {
@@ -79,6 +83,27 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
 
   return (
     <div>
+      {data.urovne.length > 1 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center', marginBottom: 8, fontSize: 12 }}>
+          <span style={{ color: 'var(--color-muted)' }}>Úroveň:</span>
+          {data.urovne.map((u, ui) => (
+            <button
+              key={u || 'celok'}
+              type="button"
+              style={{
+                padding: '3px 10px', borderRadius: 13, fontSize: 11.5, fontWeight: 600, cursor: 'pointer',
+                border: uroven === ui ? 'none' : '1px solid #dcdfe4',
+                background: uroven === ui ? 'var(--color-sfz-blue)' : 'var(--color-card)',
+                color: uroven === ui ? '#fff' : 'var(--color-ink)',
+              }}
+              onClick={() => setUroven(ui)}
+            >
+              {u ? (UROVEN_LABEL_KRATKY[u] ?? u) : 'Všetky súťaže'}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center', marginBottom: 12, fontSize: 12 }}>
         <span style={{ color: 'var(--color-muted)' }}>Zväzy:</span>
         {data.subjekty.map((z, zi) => {
@@ -140,7 +165,9 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
       <p style={{ marginTop: 10, fontSize: 11.5, color: 'var(--color-muted)', lineHeight: 1.6 }}>
         Medián vekovej úrovne osoby v zápisoch o stretnutí v súťažiach dospelých. Prerušovaný
         úsek je prebiehajúca sezóna, v ktorej sa čísla ešte dopĺňajú — posledná kompletná je{' '}
-        {data.poslednaKompletna}. Zobrazujú sa len zväzy a sezóny s aspoň 100 zápismi.
+        {data.poslednaKompletna}. Filter úrovne porovnáva tú istú ligu naprieč zväzmi — úrovne
+        sú naprieč sezónami stabilné, na rozdiel od názvov súťaží. Zobrazujú sa len zväzy
+        a sezóny s aspoň 100 zápismi.
       </p>
     </div>
   );

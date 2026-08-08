@@ -1,14 +1,19 @@
 import { useMemo, useState } from 'react';
 import { fmt, fmt1 } from '../lib/format';
+import { UROVEN_LABEL } from '../lib/palette';
 
 interface Props {
   /**
    * Riadky zbalené do reťazca — jeden na sezónu a rez, polia oddelené `|`:
    * `sezona|rez|median|priemer×100|p25|p75|n|doU21×1000|nad35×1000`
-   * `rez` je prázdny pre celý klub, inak názov súťaže.
+   *
+   * `rez` je prázdny pre celok, `L:<kod>` pre úroveň ligy a `S:<názov>` pre konkrétnu
+   * súťaž. Pri kluboch príde názov súťaže bez prefixu (spätná kompatibilita).
    */
   rows: string;
   poslednaKompletna: string;
+  /** Popis celku v prepínači — napr. „Všetky súťaže“ alebo „Celý zväz“. */
+  labelCelok?: string;
 }
 
 interface Bod {
@@ -24,10 +29,10 @@ interface Bod {
  * je rozsah medzi 25. a 75. percentilom, teda kde leží stredná polovica hráčov;
  * z neho vidno nielen posun stredu, ale aj či sa káder rozťahuje alebo zužuje.
  */
-export default function VekKlubu({ rows, poslednaKompletna }: Props) {
+export default function VekKlubu({ rows, poslednaKompletna, labelCelok = 'Všetky súťaže' }: Props) {
   const [rez, setRez] = useState('');
 
-  const { body, rezy, sezony } = useMemo(() => {
+  const { body, urovne, sutaze, sezony } = useMemo(() => {
     const b: Bod[] = (rows ? rows.split('\n') : []).map((r) => {
       const p = r.split('|');
       return {
@@ -36,10 +41,19 @@ export default function VekKlubu({ rows, poslednaKompletna }: Props) {
         u21: Number(p[7]) / 1000, nad35: Number(p[8]) / 1000,
       };
     });
-    const rz = [...new Set(b.map((x) => x.rez))].filter(Boolean).sort();
-    const sz = [...new Set(b.map((x) => x.sezona))].sort();
-    return { body: b, rezy: rz, sezony: sz };
+    const vsetky = [...new Set(b.map((x) => x.rez))].filter(Boolean);
+    return {
+      body: b,
+      urovne: vsetky.filter((r) => r.startsWith('L:')).sort(),
+      // súťaže: s prefixom `S:` (zväz) aj bez prefixu (klub — spätná kompatibilita)
+      sutaze: vsetky.filter((r) => !r.startsWith('L:')).sort(),
+      sezony: [...new Set(b.map((x) => x.sezona))].sort(),
+    };
   }, [rows]);
+
+  /** Popis rezu do prepínača: `L:L7` → „7. liga“, `S:Názov` → „Názov“. */
+  const popisRezu = (r: string) =>
+    r.startsWith('L:') ? (UROVEN_LABEL[r.slice(2)] ?? r.slice(2)) : r.replace(/^S:/, '');
 
   const vybrane = useMemo(
     () => sezony.map((s) => body.find((x) => x.sezona === s && x.rez === rez) ?? null),
@@ -112,13 +126,27 @@ export default function VekKlubu({ rows, poslednaKompletna }: Props) {
 
   return (
     <div>
-      {rezy.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center', marginBottom: 12, fontSize: 12 }}>
-          <span style={{ color: 'var(--color-muted)' }}>Rez:</span>
-          <button type="button" style={chip(rez === '')} onClick={() => setRez('')}>Všetky súťaže</button>
-          {rezy.map((r) => (
-            <button key={r} type="button" style={chip(rez === r)} onClick={() => setRez(r)}>{r}</button>
-          ))}
+      {(urovne.length > 0 || sutaze.length > 0) && (
+        <div style={{ marginBottom: 12, fontSize: 12 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center' }}>
+            <span style={{ color: 'var(--color-muted)' }}>Rez:</span>
+            <button type="button" style={chip(rez === '')} onClick={() => setRez('')}>{labelCelok}</button>
+            {urovne.map((r) => (
+              <button key={r} type="button" style={chip(rez === r)} onClick={() => setRez(r)}>
+                {popisRezu(r)}
+              </button>
+            ))}
+          </div>
+          {sutaze.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center', marginTop: 6 }}>
+              <span style={{ color: 'var(--color-muted)' }}>Súťaže:</span>
+              {sutaze.map((r) => (
+                <button key={r} type="button" style={chip(rez === r)} onClick={() => setRez(r)}>
+                  {popisRezu(r)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

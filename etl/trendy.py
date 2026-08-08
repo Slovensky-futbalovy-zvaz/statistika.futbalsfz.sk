@@ -369,6 +369,7 @@ def main() -> int:
         hist_klub_sutaz: dict = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
         hist_zvaz: dict = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
         hist_zvaz_uroven: dict = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
+        hist_zvaz_sutaz: dict = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
         nazvy_sutazi: dict[str, str] = {}
         bez_rocnika = 0
 
@@ -388,6 +389,7 @@ def main() -> int:
                 if zvaz:
                     hist_zvaz[zvaz][gender][vek] += n
                     hist_zvaz_uroven[zvaz][f"{uroven}|{gender}"][vek] += n
+                    hist_zvaz_sutaz[zvaz][f"{comp_id}|{gender}"][vek] += n
         if bez_rocnika:
             log.warning("   zapisov bez rocnika narodenia: %d", bez_rocnika)
 
@@ -412,9 +414,15 @@ def main() -> int:
             }, args.sport_sector)
 
         for zvaz, per_gender in hist_zvaz.items():
+            # Rez po konkretnych sutaziach aj po urovniach ligy (rozhodnutie Jan Letko,
+            # 7. 8. 2026): urovne su naprieс sezonami stabilne a hodia sa na vyvoj v case,
+            # konkretne sutaze su presnejsie v ramci jednej sezony, ale premenuvaju sa.
             merge_sezonu(out / "vek" / (zvaz + ".json"), "zvaz", zvaz, sez, {
                 "vek": {g: zorad_hist(h) for g, h in per_gender.items()},
                 "vekUroven": {k: zorad_hist(h) for k, h in hist_zvaz_uroven[zvaz].items()},
+                "vekSutaz": {k: zorad_hist(h) for k, h in hist_zvaz_sutaz[zvaz].items()},
+                "sutaze": {c: nazvy_sutazi.get(c, "") for c in
+                           {k.split("|")[0] for k in hist_zvaz_sutaz[zvaz]}},
             }, args.sport_sector)
 
         log.info("   %s: klubov s dospelymi %d, klubov spolu %d, zvazov %d",

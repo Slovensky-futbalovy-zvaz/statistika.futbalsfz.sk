@@ -15,8 +15,13 @@ export interface VekVCase {
   /** Subjekty (zväzy alebo kluby) v poradí. */
   subjekty: { id: string; nazov: string }[];
   /**
-   * Riadky zbalené do reťazca — pätice oddelené `;`, čísla `,`:
-   * `subjektIdx,sezonaIdx,median,priemer×100,pocetZapisov`.
+   * Rezy podľa úrovne ligy. Index 0 je vždy celok (všetky súťaže dospelých),
+   * ďalšie sú kódy úrovní (`L1`…`L9`, `L10P`, `POHARE`, `NEURCENE`).
+   */
+  urovne: string[];
+  /**
+   * Riadky zbalené do reťazca — šestice oddelené `;`, čísla `,`:
+   * `subjektIdx,sezonaIdx,urovenIdx,median,priemer×100,pocetZapisov`.
    * Dôvod reťazca: pole polí by Astro serializovalo s obalom `[0, x]` okolo
    * každého čísla (rovnaká lekcia ako pri `urovneTypy.ts`).
    */

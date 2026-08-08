@@ -5,7 +5,10 @@
 import CategoryDrill from './CategoryDrill.tsx';
 import PyramidaSutazi from './PyramidaSutazi.tsx';
 import HeatmapaZvazuVCase from './HeatmapaZvazuVCase.tsx';
+import VekKlubu from './VekKlubu.tsx';
 import { getUrovneVCaseZvazu } from '../lib/urovne';
+import { getVekZvazuRows } from '../lib/trendy';
+import { poslednaKompletnaSlug } from '../lib/data';
 import ZvazPicker from './ZvazPicker.tsx';
 import AgePyramid from './AgePyramid.tsx';
 import RfzObfzMapa from './RfzObfzMapa.tsx';
@@ -39,6 +42,9 @@ function sezonaUrl(o: string, s: string): string {
 // vývoj pyramídy súťaží zväzu naprieč sezónami — matica sezóny × úrovne
 // (len futbal — odvetvia majú vlastné profily)
 const urovneVCase = odvetvie === 'futbal' ? getUrovneVCaseZvazu(z.id) : undefined;
+
+// vekové zloženie hráčov v súťažiach dospelých (etl/trendy.py) — celok, úrovne ligy aj súťaže
+const vekZvazuRows = odvetvie === 'futbal' ? getVekZvazuRows(z.id) : '';
 
 const odvetvia = odvetviaZvazu(z);
 const prepinacOdvetvi = odvetvia.map((o) => {
@@ -218,6 +224,23 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
         a ako sa presúvalo ťažisko súťaží.
       </p>
       <HeatmapaZvazuVCase client:visible data={urovneVCase} />
+    </section>
+  )
+}
+
+<!-- vek hráčov v súťažiach dospelých -->
+{
+  vekZvazuRows && (
+    <section class="mt-8 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+      <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Vek hráčov</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Ako starnú hráči v súťažiach dospelých</h2>
+      <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+        Medián veku hráčov uvedených v zápise o stretnutí v súťažiach dospelých, ktoré riadi
+        {' '}{z.nazov}. Rez sa dá prepnúť na jednotlivé úrovne ligy alebo konkrétne súťaže —
+        úrovne sú naprieč sezónami stabilné, názvy súťaží sa menia podľa partnerov.
+        Porovnanie všetkých zväzov je na stránke <a href="/trendy" class="text-sfz-blue hover:underline">Trendy</a>.
+      </p>
+      <VekKlubu client:visible rows={vekZvazuRows} poslednaKompletna={poslednaKompletnaSlug().replace('-', '/')} labelCelok="Celý zväz" />
     </section>
   )
 }

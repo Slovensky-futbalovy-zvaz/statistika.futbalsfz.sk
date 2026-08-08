@@ -6,11 +6,16 @@ import SunburstSutaze from './SunburstSutaze.tsx';
 import SunburstOsoby from './SunburstOsoby.tsx';
 import PyramidaSutazi from './PyramidaSutazi.tsx';
 import AgePyramid from './AgePyramid.tsx';
-import { getSumarSezony, getSumar, getMapData, getSumarDemografia, demoTrend, fmt, ODVETVIE_LABEL } from '../lib/data';
+import VekKlubu from './VekKlubu.tsx';
+import { getSumarSezony, getSumar, getMapData, getSumarDemografia, demoTrend, fmt, ODVETVIE_LABEL, poslednaKompletnaSlug } from '../lib/data';
+import { getVekSlovenskoRows } from '../lib/trendy';
 import { delta } from '../lib/format';
 
 const sezony = getSumarSezony();
 const sumreMap = new Map(sezony.map((s) => [s, getSumar(s)]));
+
+// vekové zloženie hráčov v súťažiach dospelých za celé Slovensko (etl/trendy.py)
+const vekSlovensko = getVekSlovenskoRows();
 const trendSezony = sezony;
 const trendPerSeason: Record<string, any> = {};
 for (const s of sezony) trendPerSeason[s] = ((sumreMap.get(s) as any)?.kategorie) ?? {};
@@ -286,6 +291,25 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       <KpiTrend client:visible sezony={trendSezony} perSeason={trendPerSeason} perSeasonOsoby={trendOsoby} perSeasonOdvetvia={trendOdvetvia} odvetvieLabel={ODVETVIE_LABEL} />
     </div>
   </section>
+
+  <!-- Vek hráčov (SR) -->
+  {
+    vekSlovensko && (
+      <section class="mt-10">
+        <div class={CARD} style={CARD_STYLE}>
+          <div class={KICKER}>Vek hráčov · celé Slovensko</div>
+          <h2 class={H2} style="font-size:clamp(21px,2.4vw,28px); margin:2px 0 6px;">Starne slovenský futbal?</h2>
+          <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+            Medián veku hráčov uvedených v zápise o stretnutí v súťažiach dospelých, súčet všetkých
+            43 zväzov. Vek je veková úroveň osoby — koncový rok sezóny mínus ročník narodenia.
+            Rozpad po zväzoch, súťažiach a kluboch je na stránke
+            <a href="/trendy" class="text-sfz-blue hover:underline">Trendy</a>.
+          </p>
+          <VekKlubu client:visible rows={vekSlovensko} poslednaKompletna={poslednaKompletnaSlug().replace('-', '/')} labelCelok="Celé Slovensko" />
+        </div>
+      </section>
+    )
+  }
 
   <!-- O portáli + FAQ (SEO + AI) -->
   <section class="mt-12">

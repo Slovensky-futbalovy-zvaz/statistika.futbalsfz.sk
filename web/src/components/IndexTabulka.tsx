@@ -95,19 +95,56 @@ export default function IndexTabulka({ rows, sezona, zvazy, klubZvaz }: Props) {
           onChange={(e) => { setHladanie(e.target.value); setStrana(0); }}
           placeholder="Hľadať klub…"
           style={{
-            padding: '6px 12px', borderRadius: 16, border: '1px solid #dcdfe4',
-            fontSize: 13, minWidth: 200, background: '#fff',
+            padding: '7px 14px', borderRadius: 18, border: '1px solid #dcdfe4',
+            fontSize: 13, minWidth: 210, background: 'var(--color-card)',
+            color: 'var(--color-ink)', outline: 'none',
           }}
         />
         {zvazy && zvazy.length > 0 && (
-          <select
-            value={zvaz}
-            onChange={(e) => { setZvaz(e.target.value); setStrana(0); }}
-            style={{ padding: '6px 10px', borderRadius: 16, border: '1px solid #dcdfe4', fontSize: 13, background: '#fff' }}
+          // natívny <select> je zámerný — na mobile otvorí systémový picker, čo je
+          // pri 43 zväzoch pohodlnejšie než vlastný dropdown. Štýluje sa len zavretý
+          // stav (appearance:none + vlastná šípka), aby sadol k zvyšku UI.
+          <span style={{ position: 'relative', display: 'inline-flex' }}>
+            <select
+              value={zvaz}
+              onChange={(e) => { setZvaz(e.target.value); setStrana(0); }}
+              style={{
+                appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
+                padding: '7px 34px 7px 14px', borderRadius: 18,
+                border: zvaz ? 'none' : '1px solid #dcdfe4',
+                background: zvaz ? 'var(--color-sfz-blue)' : 'var(--color-card)',
+                color: zvaz ? '#fff' : 'var(--color-ink)',
+                fontSize: 13, fontWeight: zvaz ? 600 : 400,
+                cursor: 'pointer', outline: 'none',
+              }}
+            >
+              <option value="">Všetky zväzy</option>
+              {zvazy.map((z) => <option key={z.id} value={z.id}>{z.nazov}</option>)}
+            </select>
+            <span
+              aria-hidden
+              style={{
+                position: 'absolute', right: 13, top: '50%', transform: 'translateY(-50%)',
+                pointerEvents: 'none', fontSize: 9, lineHeight: 1,
+                color: zvaz ? '#fff' : 'var(--color-muted)',
+              }}
+            >
+              ▼
+            </span>
+          </span>
+        )}
+        {(zvaz || hladanie) && (
+          <button
+            type="button"
+            onClick={() => { setZvaz(''); setHladanie(''); setStrana(0); }}
+            style={{
+              padding: '7px 12px', borderRadius: 18, border: '1px solid #dcdfe4',
+              background: 'var(--color-card)', color: 'var(--color-muted)',
+              fontSize: 12.5, cursor: 'pointer',
+            }}
           >
-            <option value="">Všetky zväzy</option>
-            {zvazy.map((z) => <option key={z.id} value={z.id}>{z.nazov}</option>)}
-          </select>
+            Zrušiť filter
+          </button>
         )}
         <span style={{ fontSize: 12.5, color: 'var(--color-muted)' }}>
           {fmt(filtrovane.length)} klubov · sezóna {sezona}
