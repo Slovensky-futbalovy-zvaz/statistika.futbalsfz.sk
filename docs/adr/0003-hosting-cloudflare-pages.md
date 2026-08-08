@@ -4,7 +4,7 @@
 
 ## Kontext
 
-Architektúra je čisto statická (ADR-0001): predgenerované JSON + SSG web, žiadny backend. DNS zóny futbalsfz.sk spravuje PO na Cloudflare. Repo je na GitHube (private, org Slovensky-futbalovy-zvaz). Porovnanie štyroch variantov hostingu je v [docs/analyza-hosting.md](../analyza-hosting.md).
+Architektúra je čisto statická (ADR-0001): predgenerované JSON + SSG web, žiadny backend. DNS zóny futbalsfz.sk spravuje PO na Cloudflare. Repo je na GitHube (private, org Slovensky-futbalovy-zvaz). Porovnanie štyroch variantov hostingu je v [docs/archiv/analyza-hosting.md](../archiv/analyza-hosting.md).
 
 ## Rozhodnutie
 

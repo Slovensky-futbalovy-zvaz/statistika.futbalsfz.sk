@@ -26,4 +26,4 @@ Cloudflare medzičasom (nezávisle od tohto projektu) zlúčil Pages do Workers 
 
 **Negatívne / kompromisy:** dva aktívne hostingové ciele (Vercel produkčný + Cloudflare Worker bokom) — mierne viac údržby (dependency `wrangler` v `package.json`, `wrangler.jsonc` v repe); ak raz bude potrebné oba zosúladiť alebo jeden odstrániť, treba explicitné rozhodnutie PO (nič sa nemaže bez povolenia).
 
-**Nadväzuje:** `docs/cloudflare-pages-nasadenie.md` zostáva ako referencia pre Cloudflare cestu (pre prípad budúcej DNS migrácie); tento ADR je zdroj pravdy pre aktuálny produkčný hosting.
+**Nadväzuje:** `docs/archiv/cloudflare-pages-nasadenie.md` zostáva ako referencia pre Cloudflare cestu (pre prípad budúcej DNS migrácie); tento ADR je zdroj pravdy pre aktuálny produkčný hosting.

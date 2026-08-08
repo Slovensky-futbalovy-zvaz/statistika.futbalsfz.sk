@@ -4,7 +4,7 @@
 
 ## Kontext
 
-Vizuálny redizajn portálu (design handoff `design_handoff_statistika_redesign/`) prináša viac bohato interaktívnych prvkov: choropleth mapa s prepínaním úrovne a metriky, dva sunbursty s filtrami šport/pohlavie, radar 2–5 zväzov, bump chart poradia RFZ, multi-line demografia s výberom čiar, vyhľadávateľný zväz picker, custom dropdown sezóny a mobilný hamburger. Handoff je napísaný s receptami pre React (`.tsx`) islands.
+Vizuálny redizajn portálu (design handoff `docs/archiv/design_handoff_statistika_redesign/`) prináša viac bohato interaktívnych prvkov: choropleth mapa s prepínaním úrovne a metriky, dva sunbursty s filtrami šport/pohlavie, radar 2–5 zväzov, bump chart poradia RFZ, multi-line demografia s výberom čiar, vyhľadávateľný zväz picker, custom dropdown sezóny a mobilný hamburger. Handoff je napísaný s receptami pre React (`.tsx`) islands.
 
 Doteraz (ADR-0005) boli islands riešené ako vanilla `.astro` komponenty s `<script>`. Pri narastajúcej interaktivite (zdieľaný stav, prekresľovanie grafov podľa viacerých filtrov, permalink) je ručný DOM/stav v `<script>` čoraz krehkejší.
 
