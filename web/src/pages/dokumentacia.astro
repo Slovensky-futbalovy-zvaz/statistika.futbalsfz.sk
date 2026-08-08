@@ -244,6 +244,24 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         leží stredná polovica hráčov. Zobrazujú sa len kluby a sezóny s aspoň sto zápismi.
       </p>
 
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Kluby, ktoré najrýchlejšie starnú</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        Klub, ktorému rok čo rok rastie vek dospelého družstva, nedopĺňa mladých — a o pár sezón
+        nemusí mať kto hrať. Rebríček na stránke <a href="/trendy" class="text-sfz-blue hover:underline">Trendy</a>
+        preto zoraďuje kluby podľa toho, o koľko rokov ročne im vek stúpa. Nie je to medziročná zmena,
+        ale <strong class="text-ink">sklon mediánu za tri sezóny</strong> — jednorazový výkyv, ako
+        odchod silného ročníka alebo vlna zranení, nesmie o poradí rozhodovať.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        Vedľa zmeny veku stojí zámerne aj <strong class="text-ink">zmena počtu hráčov</strong>, lebo
+        bez nej sa jedno od druhého nedá odlíšiť. Klesajúci vek totiž nemusí znamenať omladenie:
+        môže znamenať aj to, že klubu odišli skúsení hráči a nemá kým ich nahradiť. Nameraný príklad:
+        dva kluby s takmer rovnakým poklesom veku (−3,4 a −3,2 roka), ale prvému za tie tri sezóny
+        ubudla polovica zápisov a druhému pribudli. Prvý sa rozpadá, druhý omladzuje — a z veku
+        samotného by to nikto nespoznal. Stĺpec „Do 21 r.“ je priamy ukazovateľ toho, či klub
+        dopĺňa mladých. Zobrazujú sa len kluby s aspoň sto zápismi v každej z troch sezón.
+      </p>
+
       <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Index klubu</h3>
       <p class="mt-1 text-muted" style="line-height:1.6;">
         Index klubu je číslo od 0 do 100, ktoré meria <strong class="text-ink">mládežnícku základňu
@@ -282,6 +300,21 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         podľa najvyššej dospelej súťaže klubu; kluby bez dospelého družstva majú vlastný rez.
         <strong class="text-ink">Tento rez čítaj opatrne</strong> — kluby medzi úrovňami postupujú
         a padajú, takže napríklad čiara „6. liga“ nie je ten istý súbor klubov naprieč sezónami.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Prvých päť sezón grafu je prerušovaných a nie je porovnateľných
+        so zvyškom.</strong> Zložka kontinuity dáva plných pätnásť bodov až za päť sezón mládeže
+        po sebe, ale história dostupných dát začína sezónou 2013/2014 — plný počet teda nemohol mať
+        nikto pred 2018/2019. Medián tejto zložky stúpal 3, 3, 6, 10, 10 a až potom 15, zatiaľ čo
+        celoslovenský medián indexu išiel z 38 na 66. Znamená to, že <strong class="text-ink">zhruba
+        dvanásť z tých dvadsiatich ôsmich bodov je iba dobiehajúca metodika, nie zlepšenie
+        mládeže</strong>. Rast v prerušovanom úseku preto netreba čítať ako zásluhu zväzov ani klubov.
+      </p>
+      <p class="mt-3 text-sm text-muted" style="line-height:1.6;">
+        Prebiehajúca sezóna sa v tomto grafe nezobrazuje vôbec — na rozdiel od veku, kde má
+        rozohratá sezóna zmysel, mládežnícke družstvá v nej ešte nie sú prihlásené a index by
+        väčšine klubov vyšiel nula. Rovnako vypadáva sezóna 2012/2013, v ktorej je v dátach
+        len asi tretina klubov oproti nasledujúcim ročníkom.
       </p>
     </div>
   </section>
