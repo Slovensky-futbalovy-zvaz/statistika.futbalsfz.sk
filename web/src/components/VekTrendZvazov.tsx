@@ -10,21 +10,65 @@ interface Props {
 
 const PREDVOLENE = ['sfz', 'bfz', 'zsfz', 'ssfz', 'vsfz'];
 
+/** Koľko zväzov sa pri prepnutí úrovne vyberie automaticky. Viac čiar sa už nedá čítať. */
+const MAX_AUTO = 6;
+
 /**
  * Vývoj mediánu veku hráčov v súťažiach dospelých, jedna séria na zväz.
  *
  * Prebiehajúca sezóna sa kreslí prerušovane — čísla sa v nej ešte dopĺňajú.
  * Typy a dáta chodia z `lib/trendy.ts`; tento komponent nesmie importovať nič,
  * čo siaha na súbory (pozri poznámku v `urovneTypy.ts`).
+ *
+ * Filter úrovne pri prepnutí PREHODÍ VÝBER ZVÄZOV na tie, ktoré danú úroveň naozaj
+ * riadia (rozhodnutie Ján Letko, 8. 8. 2026). Bez toho ostal graf po kliknutí na
+ * napríklad 7. ligu prázdny — predvolene sú vybrané SFZ a RFZ, ale 7. liga je
+ * úroveň oblastných zväzov.
  */
 export default function VekTrendZvazov({ data, defaultVyber }: Props) {
-  const [vybrane, setVybrane] = useState<number[]>(() => {
+  const predvolene = useMemo(() => {
     const ids = defaultVyber?.length ? defaultVyber : PREDVOLENE;
     const idx = data.subjekty.map((z, i) => (ids.includes(z.id) ? i : -1)).filter((i) => i >= 0);
     return idx.length ? idx : data.subjekty.map((_, i) => i).slice(0, 5);
-  });
+  }, [data, defaultVyber]);
 
+  const [vybrane, setVybrane] = useState<number[]>(predvolene);
   const [uroven, setUroven] = useState(0);
+
+  /**
+   * Pre každú úroveň zoznam zväzov, ktoré v nej majú dáta, zoradený podľa počtu
+   * zápisov zostupne — pri prepnutí úrovne sa berie zhora.
+   */
+  const zvazyNaUrovni = useMemo(() => {
+    const sucty = new Map<number, Map<number, number>>();
+    for (const r of data.rows ? data.rows.split(';') : []) {
+      const [zi, , ui, , , n] = r.split(',').map(Number);
+      let g = sucty.get(ui);
+      if (!g) { g = new Map(); sucty.set(ui, g); }
+      g.set(zi, (g.get(zi) ?? 0) + n);
+    }
+    const out = new Map<number, number[]>();
+    for (const [ui, g] of sucty) {
+      out.set(ui, [...g.entries()].sort((a, b) => b[1] - a[1]).map(([zi]) => zi));
+    }
+    return out;
+  }, [data]);
+
+  const dostupne = zvazyNaUrovni.get(uroven) ?? [];
+
+  const prepniUroven = (ui: number) => {
+    setUroven(ui);
+    if (ui === 0) {
+      setVybrane(predvolene);
+      return;
+    }
+    const kandidati = zvazyNaUrovni.get(ui) ?? [];
+    // Ponecháme z terajšieho výberu tie, ktoré úroveň naozaj riadia, zvyšok doplníme
+    // od najväčších, aby graf nikdy neostal prázdny.
+    const ponechane = vybrane.filter((zi) => kandidati.includes(zi));
+    const doplnene = kandidati.filter((zi) => !ponechane.includes(zi));
+    setVybrane([...ponechane, ...doplnene].slice(0, MAX_AUTO));
+  };
 
   const { hodnoty, min, max } = useMemo(() => {
     const h = new Map<string, { median: number; n: number }>();
@@ -68,11 +112,12 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
     return d;
   };
 
-  const chip = (active: boolean, col: string): React.CSSProperties => ({
+  const chip = (active: boolean, col: string, tlmene = false): React.CSSProperties => ({
     padding: '3px 10px', borderRadius: 13, fontSize: 11.5, fontWeight: 600, cursor: 'pointer',
     border: active ? '1px solid transparent' : '1px solid #dcdfe4',
     background: active ? col : 'var(--color-card)',
     color: active ? '#fff' : 'var(--color-muted)',
+    opacity: !active && tlmene ? 0.45 : 1,
   });
 
   const kroky = useMemo(() => {
@@ -80,6 +125,8 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
     for (let v = min; v <= max; v++) if ((v - min) % Math.max(1, Math.ceil((max - min) / 6)) === 0) out.push(v);
     return out;
   }, [min, max]);
+
+  const menoUrovne = (u: string) => (u ? (UROVEN_LABEL_KRATKY[u] ?? u) : 'Všetky súťaže');
 
   return (
     <div>
@@ -96,23 +143,25 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
                 background: uroven === ui ? 'var(--color-sfz-blue)' : 'var(--color-card)',
                 color: uroven === ui ? '#fff' : 'var(--color-ink)',
               }}
-              onClick={() => setUroven(ui)}
+              onClick={() => prepniUroven(ui)}
             >
-              {u ? (UROVEN_LABEL_KRATKY[u] ?? u) : 'Všetky súťaže'}
+              {menoUrovne(u)}
             </button>
           ))}
         </div>
       )}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center', marginBottom: 12, fontSize: 12 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center', marginBottom: 8, fontSize: 12 }}>
         <span style={{ color: 'var(--color-muted)' }}>Zväzy:</span>
         {data.subjekty.map((z, zi) => {
           const on = vybrane.includes(zi);
+          const maData = uroven === 0 || dostupne.includes(zi);
           return (
             <button
               key={z.id}
               type="button"
-              style={chip(on, farba(zi))}
+              style={chip(on, farba(zi), !maData)}
+              title={maData ? undefined : `${z.nazov} nemá v úrovni ${menoUrovne(data.urovne[uroven])} žiadne súťaže`}
               onClick={() => setVybrane((v) => (on ? v.filter((i) => i !== zi) : [...v, zi]))}
             >
               {z.nazov}
@@ -120,6 +169,16 @@ export default function VekTrendZvazov({ data, defaultVyber }: Props) {
           );
         })}
       </div>
+
+      {uroven > 0 && (
+        <p style={{ marginBottom: 12, fontSize: 11.5, color: 'var(--color-muted)' }}>
+          {dostupne.length === 0
+            ? `Úroveň ${menoUrovne(data.urovne[uroven])} neriadi žiadny zväz s dostatkom dát.`
+            : `Úroveň ${menoUrovne(data.urovne[uroven])} riadi ${dostupne.length} ${
+                dostupne.length === 1 ? 'zväz' : dostupne.length < 5 ? 'zväzy' : 'zväzov'
+              }; výber sa prepol na ${vybrane.length} z nich (podľa počtu zápisov). Ďalšie pridáš kliknutím vyššie — zväzy bez tejto úrovne sú stlmené.`}
+        </p>
+      )}
 
       {vybrane.length === 0 ? (
         <p style={{ fontSize: 13, color: 'var(--color-muted)' }}>Vyber aspoň jeden zväz.</p>
