@@ -97,6 +97,16 @@ export SSL_CERT_FILE=$(./.venv/bin/python -c 'import certifi; print(certifi.wher
 URI patrí do `.env.local` (gitignorované). Anomálie sa logujú ako WARNING; pri nezrovnalostiach
 počtov skončí skript nenulovým exit kódom.
 
+> **`--hint` používaj striedmejšie, než sa zdá.** Je to obchádzka chýbajúceho cieleného indexu
+> ([ADR-0004](../docs/adr/0004-vykonnost-agregacii.md)) a **plný beh spomalí približne 1,5×**
+> (zmerané 8. 8. 2026: ~0,7 profilu/min s hintom oproti ~1,1 bez neho). Pusti plný beh bez neho
+> a hint nasaď až na tých pár sezón, ktoré spadnú na `MaxTimeMSExpired` — týka sa hlavne ZsFZ:
+>
+> ```bash
+> python etl/run.py --zvaz zsfz --sezona 2024/2025 \
+>   --hint appSpace_1_closed_1_competition._id_1_competitionPart._id_1_round.dateFrom_-1_startDate_-1
+> ```
+
 > **Pozor pri `index_klubu.py`:** celoslovenský prehľad musí dostať jednu konkrétnu sezónu cez
 > `--sezona-prehladu`. Bez toho berie pre každý klub jeho poslednú dostupnú sezónu a vychádza
 > 46 % klubov „bez mládeže“ namiesto skutočných 18 %.
@@ -120,3 +130,8 @@ počtov skončí skript nenulovým exit kódom.
 - Pohlavie výhradne z `competitions.parts[].rules.gender` cez `competitionPart._id`.
 - Úroveň súťaže (`competitions.level`) sa vždy vzťahuje ku konkrétnej vekovej úrovni — „1. liga“
   dospelých a U19 sú dve rôzne súťaže a nikdy sa nesčítavajú do jedného stupňa.
+- **Súťaž vs. súťažná skupina:** vykazujú sa OBE metriky súčasne (`sutaze` aj `skupiny`
+  v každom reze). Skupina = základná časť súťaže; určuje ju `run.nacitaj_skupina_mapu` dvoma
+  sitami — štruktúrnym a podľa názvu časti. Databáza typ časti nenesie. Invariant po každom
+  behu: **`skupiny >= sutaze` v každom reze**. Podrobne v metodike, kapitola
+  „SÚŤAŽ vs. SÚŤAŽNÁ SKUPINA“.

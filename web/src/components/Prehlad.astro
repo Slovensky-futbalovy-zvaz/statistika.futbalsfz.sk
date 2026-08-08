@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import KpiTrend from './KpiTrend.tsx';
+import KpiSutazeKarta from './KpiSutazeKarta.tsx';
 import SlovakiaMap from './SlovakiaMap.tsx';
 import SunburstSutaze from './SunburstSutaze.tsx';
 import SunburstOsoby from './SunburstOsoby.tsx';
@@ -50,12 +51,11 @@ for (const [sektor, blok] of Object.entries(sumar.odvetvia ?? {})) {
 
 function spolu(s: ReturnType<typeof getSumar> | undefined, k: string): number {
   if (!s) return 0;
-  let v = (s.kpi as Record<string, number>)[k] ?? 0;
-  for (const o of Object.values(s.odvetvia)) v += (o.kpi as Record<string, number>)[k] ?? 0;
+  let v = s.kpi[k] ?? 0;
+  for (const o of Object.values(s.odvetvia)) v += o.kpi[k] ?? 0;
   return v;
 }
 const kpiKarty = [
-  { key: 'sutaze', label: 'Súťaže', good: true },
   { key: 'zapasy', label: 'Odohraté zápasy', good: true },
   { key: 'druzstva', label: 'Družstvá', good: true },
   { key: 'goly', label: 'Strelené góly', good: true },
@@ -99,7 +99,8 @@ const mapData = getMapData(aktualna);
 const srDemo = getSumarDemografia();
 
 // SEO: popis + FAQ (viditeľné aj ako FAQPage structured data)
-const popis = `Slovenský futbal v číslach za sezónu ${aktualna}: ${fmt(kpiKarty[1]?.hodnota ?? 0)} odohraných zápasov, ${fmt(kpiKarty[3]?.hodnota ?? 0)} gólov a ${fmt(kpiKarty[4]?.hodnota ?? 0)} divákov naprieč SFZ, 4 regionálnymi (RFZ) a 38 oblastnými (ObFZ) zväzmi. Interaktívna mapa, rebríčky, demografia a projekty.`;
+// pozor na indexy: karta „Súťaže“ je samostatný island, v `kpiKarty` už nie je
+const popis = `Slovenský futbal v číslach za sezónu ${aktualna}: ${fmt(kpiKarty[0]?.hodnota ?? 0)} odohraných zápasov, ${fmt(kpiKarty[2]?.hodnota ?? 0)} gólov a ${fmt(kpiKarty[3]?.hodnota ?? 0)} divákov naprieč SFZ, 4 regionálnymi (RFZ) a 38 oblastnými (ObFZ) zväzmi. Interaktívna mapa, rebríčky, demografia a projekty.`;
 const faq = [
   {
     q: 'Čo je portál Štatistiky slovenského futbalu?',
@@ -171,6 +172,17 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
 
   <!-- KPI band (bez ikon, s medziročne) -->
   <section class="mt-8 grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+    {
+      <div class={CARD} style={CARD_STYLE + ' container-type:inline-size;'}>
+        <KpiSutazeKarta
+          client:visible
+          skupiny={spolu(sumar, 'skupiny') || spolu(sumar, 'sutaze')}
+          sutaze={spolu(sumar, 'sutaze')}
+          skupinyPredch={sumarPrev ? spolu(sumarPrev, 'skupiny') || spolu(sumarPrev, 'sutaze') : undefined}
+          sutazePredch={sumarPrev ? spolu(sumarPrev, 'sutaze') : undefined}
+        />
+      </div>
+    }
     {
       kpiKarty.map((k) => (
         <div class={CARD} style={CARD_STYLE + ' container-type:inline-size;'}>

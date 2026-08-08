@@ -1,3 +1,21 @@
+> ## ⚠️ POZOR — NEPUBLIKOVAŤ BEZ AKTUALIZÁCIE (8. 8. 2026)
+>
+> Tento príspevok vznikol **pred** zavedením metriky **súťažných skupín**
+> ([ADR-0009](../../adr/0009-sutaz-vs-sutazna-skupina.md)). Portál odvtedy vykazuje
+> **predvolene Skupiny, nie Súťaže**, takže:
+>
+> - **všetky čísla nižšie sú počty SÚŤAŽÍ** (132 dospelých, 55 dorasteneckých, 118 žiackych,
+>   100 prípravkárskych; ťažisko 7. liga = 40; žiaci 4. liga = 61; SsFZ 24→13; VsFZ 26–28) —
+>   pri predvolenom zobrazení portálu budú **vyššie**;
+> - **screenshoty na snímkach 2–5 už nezodpovedajú živému portálu** (iné čísla a navýše pribudol
+>   prepínač „Počítať: Skupiny / Súťaže“);
+> - veta *„Do priameho porovnania zväzov pribudla ôsma os — Súťaže“* — os sa predvolene volá
+>   **Skupiny**.
+>
+> **Čo treba spraviť pred publikovaním:** obnoviť orezy z aktuálneho portálu, prepočítať čísla
+> a pridať vysvetlenie rozdielu súťaž vs. skupina — je to samo osebe silný príbeh
+> („ZsFZ vedie jednu súťaž so šiestimi skupinami tam, kde VsFZ vedie šesť súťaží“).
+
 # Sociálne siete — nové pohľady na počty súťaží (august 2026)
 
 **Kanály:** LinkedIn SFZ, Facebook SFZ

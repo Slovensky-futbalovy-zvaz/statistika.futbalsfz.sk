@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { UrovneVCase } from '../lib/urovneTypy';
+import { METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi, type UrovneVCase } from '../lib/urovneTypy';
 import HeatmapaUrovni from './HeatmapaUrovni.tsx';
 
 interface Props {
@@ -25,6 +25,8 @@ type Gender = 'VSETCI' | 'M' | 'F';
 export default function UrovneSekcia({ data, sezona }: Props) {
   const [kat, setKat] = useState(0); // index do data.kategorie, -1 = všetky
   const [gender, setGender] = useState<Gender>('VSETCI');
+  // Predvolené sú SKUPINY — to, v čom sa reálne hrá (rozhodnutie Ján Letko, 8. 8. 2026)
+  const [metrika, setMetrika] = useState<MetrikaSutazi>(METRIKA_DEFAULT);
   const gi = gender === 'VSETCI' ? -1 : gender === 'M' ? 0 : 1;
 
   const pill = (active: boolean): React.CSSProperties => ({
@@ -73,6 +75,20 @@ export default function UrovneSekcia({ data, sezona }: Props) {
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 12, fontSize: 12.5 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+          <span style={{ color: 'var(--color-muted)' }}>Počítať:</span>
+          {(['skupiny', 'sutaze'] as MetrikaSutazi[]).map((m) => (
+            <button
+              key={m}
+              type="button"
+              style={pill(metrika === m)}
+              title={METRIKA_POPIS[m].popis}
+              onClick={() => setMetrika(m)}
+            >
+              {METRIKA_POPIS[m].label}
+            </button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <span style={{ color: 'var(--color-muted)' }}>Kategória:</span>
           {data.kategorie.slice(0, 4).map((k, i) => (
             <button key={k} type="button" style={pill(kat === i)} onClick={() => setKat(i)}>
@@ -110,7 +126,11 @@ export default function UrovneSekcia({ data, sezona }: Props) {
         </p>
       )}
 
-      <HeatmapaUrovni data={data} sezona={sezona} kat={kat} gender={gi} />
+      <p style={{ fontSize: 12, color: 'var(--color-muted)', margin: '0 0 10px', lineHeight: 1.55 }}>
+        {METRIKA_POPIS[metrika].popis}
+      </p>
+
+      <HeatmapaUrovni data={data} sezona={sezona} kat={kat} gender={gi} metrika={metrika} />
     </div>
   );
 }

@@ -4,6 +4,7 @@
 // Zdieľané pre futbal (/zvaz/[id]/[sezona]) aj odvetvia (/zvaz/[id]/[odvetvie]/[sezona]).
 import CategoryDrill from './CategoryDrill.tsx';
 import PyramidaSutazi from './PyramidaSutazi.tsx';
+import KpiSutazeKarta from './KpiSutazeKarta.tsx';
 import HeatmapaZvazuVCase from './HeatmapaZvazuVCase.tsx';
 import VekKlubu from './VekKlubu.tsx';
 import { getUrovneVCaseZvazu } from '../lib/urovne';
@@ -54,8 +55,8 @@ const prepinacOdvetvi = odvetvia.map((o) => {
 });
 
 const hraci = (p: Profil) => p.osoby?.hraci?.unikatni ?? 0;
+const maSutaze = profil.kpi.sutaze !== undefined;
 const kpiKarty = [
-  { label: 'Súťaže', hodnota: profil.kpi.sutaze, predch: predosly?.kpi.sutaze, good: true },
   { label: 'Zápasy', hodnota: profil.kpi.zapasy, predch: predosly?.kpi.zapasy, good: true },
   { label: 'Družstvá', hodnota: profil.kpi.druzstva, predch: predosly?.kpi.druzstva, good: true },
   { label: 'Góly', hodnota: profil.kpi.goly, predch: predosly?.kpi.goly, good: true },
@@ -140,6 +141,19 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
 
 <!-- KPI karty (bez ikon, s medziročne) -->
 <section class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));">
+  {
+    maSutaze && (
+      <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:16px; box-shadow:var(--shadow-card); container-type:inline-size;">
+        <KpiSutazeKarta
+          client:visible
+          skupiny={profil.kpi.skupiny ?? profil.kpi.sutaze ?? 0}
+          sutaze={profil.kpi.sutaze ?? 0}
+          skupinyPredch={predosly ? (predosly.kpi.skupiny ?? predosly.kpi.sutaze) : undefined}
+          sutazePredch={predosly?.kpi.sutaze}
+        />
+      </div>
+    )
+  }
   {
     kpiKarty.map((k) => {
       const d = delta(k.hodnota, k.predch, k.good);

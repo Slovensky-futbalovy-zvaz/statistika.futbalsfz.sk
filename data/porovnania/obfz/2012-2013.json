@@ -1,13 +1,14 @@
 {
   "uroven": "ObFZ",
   "sezona": "2012/2013",
-  "generatedAt": "2026-08-07T12:30:47+02:00",
+  "generatedAt": "2026-08-08T21:09:34+02:00",
   "pocetZvazov": 10,
   "zvazy": [
     {
       "id": "obfz-bratislava-vidiek",
       "nazov": "ObFZ Bratislava-vidiek",
       "sutaze": 8,
+      "skupiny": 8,
       "zapasy": 931,
       "druzstva": 92,
       "kontumovane": 31,
@@ -26,6 +27,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 361,
           "druzstva": 28,
           "goly": 1489,
@@ -41,6 +43,7 @@
         },
         "U19": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 209,
           "druzstva": 23,
           "goly": 1160,
@@ -56,6 +59,7 @@
         },
         "U15": {
           "sutaze": 3,
+          "skupiny": 3,
           "zapasy": 251,
           "druzstva": 31,
           "goly": 1566,
@@ -71,6 +75,7 @@
         },
         "U13": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 110,
           "druzstva": 10,
           "goly": 581,
@@ -88,7 +93,13 @@
       "sutazePohlavie": {
         "M": 8
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L3": 4,
+        "L4": 2,
+        "L6": 2
+      },
+      "urovneSkupiny": {
         "L3": 4,
         "L4": 2,
         "L6": 2
@@ -99,6 +110,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 3,
+          "skupiny": 3,
           "zapasy": 251
         },
         {
@@ -106,6 +118,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 110
         },
         {
@@ -113,6 +126,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 209
         },
         {
@@ -120,6 +134,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 361
         }
       ],
@@ -129,6 +144,7 @@
       "id": "obfz-kosice-okolie",
       "nazov": "ObFZ Košice-okolie",
       "sutaze": 10,
+      "skupiny": 10,
       "zapasy": 697,
       "druzstva": 77,
       "kontumovane": 73,
@@ -147,6 +163,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 3,
+          "skupiny": 3,
           "zapasy": 389,
           "druzstva": 36,
           "goly": 1707,
@@ -162,6 +179,7 @@
         },
         "U19": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 114,
           "druzstva": 14,
           "goly": 628,
@@ -177,6 +195,7 @@
         },
         "U15": {
           "sutaze": 5,
+          "skupiny": 5,
           "zapasy": 194,
           "druzstva": 27,
           "goly": 1080,
@@ -194,7 +213,16 @@
       "sutazePohlavie": {
         "M": 10
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L4": 1,
+        "L5": 3,
+        "L6": 1,
+        "L7": 3,
+        "L8": 1,
+        "L9": 1
+      },
+      "urovneSkupiny": {
         "L4": 1,
         "L5": 3,
         "L6": 1,
@@ -208,6 +236,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 84
         },
         {
@@ -215,6 +244,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 3,
+          "skupiny": 3,
           "zapasy": 104
         },
         {
@@ -222,6 +252,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 6
         },
         {
@@ -229,6 +260,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 181
         },
         {
@@ -236,6 +268,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 114
         },
         {
@@ -243,6 +276,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 129
         },
         {
@@ -250,6 +284,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 79
         }
       ],
@@ -259,6 +294,7 @@
       "id": "obfz-bratislava-mesto",
       "nazov": "ObFZ Bratislava-mesto",
       "sutaze": 4,
+      "skupiny": 4,
       "zapasy": 420,
       "druzstva": 35,
       "kontumovane": 25,
@@ -277,6 +313,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 135,
           "druzstva": 10,
           "goly": 613,
@@ -292,6 +329,7 @@
         },
         "U19": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 84,
           "druzstva": 6,
           "goly": 388,
@@ -307,6 +345,7 @@
         },
         "U15": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 80,
           "druzstva": 7,
           "goly": 535,
@@ -322,6 +361,7 @@
         },
         "U13": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 121,
           "druzstva": 12,
           "goly": 553,
@@ -339,7 +379,13 @@
       "sutazePohlavie": {
         "M": 4
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L3": 2,
+        "L4": 1,
+        "L6": 1
+      },
+      "urovneSkupiny": {
         "L3": 2,
         "L4": 1,
         "L6": 1
@@ -350,6 +396,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 80
         },
         {
@@ -357,6 +404,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 121
         },
         {
@@ -364,6 +412,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 84
         },
         {
@@ -371,6 +420,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 135
         }
       ],
@@ -380,6 +430,7 @@
       "id": "tfz-turiec",
       "nazov": "Turčiansky futbalový zväz",
       "sutaze": 2,
+      "skupiny": 2,
       "zapasy": 254,
       "druzstva": 23,
       "kontumovane": 1,
@@ -398,6 +449,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 254,
           "druzstva": 23,
           "goly": 883,
@@ -415,7 +467,12 @@
       "sutazePohlavie": {
         "M": 2
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L7": 1,
+        "L8": 1
+      },
+      "urovneSkupiny": {
         "L7": 1,
         "L8": 1
       },
@@ -425,6 +482,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 182
         },
         {
@@ -432,6 +490,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 72
         }
       ],
@@ -441,6 +500,7 @@
       "id": "pfz-poprad",
       "nazov": "Podtatranský futbalový zväz",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 240,
       "druzstva": 16,
       "kontumovane": 1,
@@ -459,6 +519,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 240,
           "druzstva": 16,
           "goly": 994,
@@ -476,7 +537,11 @@
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
         "L7": 1
       },
       "sutazeUroven": [
@@ -485,6 +550,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 240
         }
       ],
@@ -494,6 +560,7 @@
       "id": "obfz-trnava",
       "nazov": "ObFZ Trnava",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 238,
       "druzstva": 16,
       "kontumovane": 2,
@@ -512,6 +579,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 238,
           "druzstva": 16,
           "goly": 1008,
@@ -529,7 +597,11 @@
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
         "L7": 1
       },
       "sutazeUroven": [
@@ -538,6 +610,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 238
         }
       ],
@@ -547,6 +620,7 @@
       "id": "obfz-kysuc",
       "nazov": "ObFZ Kysúc",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 182,
       "druzstva": 14,
       "kontumovane": 0,
@@ -565,6 +639,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 182,
           "druzstva": 14,
           "goly": 659,
@@ -582,7 +657,11 @@
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
         "L7": 1
       },
       "sutazeUroven": [
@@ -591,6 +670,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 182
         }
       ],
@@ -600,6 +680,7 @@
       "id": "ofz-orava",
       "nazov": "Oravský futbalový zväz",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 182,
       "druzstva": 14,
       "kontumovane": 1,
@@ -618,6 +699,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 182,
           "druzstva": 14,
           "goly": 656,
@@ -635,7 +717,11 @@
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
         "L7": 1
       },
       "sutazeUroven": [
@@ -644,6 +730,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 182
         }
       ],
@@ -653,6 +740,7 @@
       "id": "oofz-svidnik",
       "nazov": "Ondavský oblastný futbalový zväz",
       "sutaze": 6,
+      "skupiny": 6,
       "zapasy": 160,
       "druzstva": 38,
       "kontumovane": 3,
@@ -671,6 +759,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 121,
           "druzstva": 22,
           "goly": 509,
@@ -686,6 +775,7 @@
         },
         "U19": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 9,
           "druzstva": 3,
           "goly": 47,
@@ -701,6 +791,7 @@
         },
         "U15": {
           "sutaze": 3,
+          "skupiny": 3,
           "zapasy": 30,
           "druzstva": 13,
           "goly": 242,
@@ -718,7 +809,12 @@
       "sutazePohlavie": {
         "M": 6
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L7": 5,
+        "L8": 1
+      },
+      "urovneSkupiny": {
         "L7": 5,
         "L8": 1
       },
@@ -728,6 +824,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 81
         },
         {
@@ -735,6 +832,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 9
         },
         {
@@ -742,6 +840,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 3,
+          "skupiny": 3,
           "zapasy": 30
         },
         {
@@ -749,6 +848,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 40
         }
       ],
@@ -758,6 +858,7 @@
       "id": "obfz-povazska-bystrica",
       "nazov": "ObFZ Považská Bystrica",
       "sutaze": 2,
+      "skupiny": 2,
       "zapasy": 0,
       "druzstva": 10,
       "kontumovane": 42,
@@ -776,6 +877,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 0,
           "druzstva": 10,
           "goly": 0,
@@ -793,7 +895,11 @@
       "sutazePohlavie": {
         "M": 2
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L9": 2
+      },
+      "urovneSkupiny": {
         "L9": 2
       },
       "sutazeUroven": [
@@ -802,6 +908,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 0
         }
       ],

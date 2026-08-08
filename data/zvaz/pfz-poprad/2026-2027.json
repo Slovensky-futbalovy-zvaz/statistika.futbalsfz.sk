@@ -2,7 +2,7 @@
   "zvaz": "pfz-poprad",
   "sezona": "2026/2027",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-06T22:13:22+02:00",
+  "generatedAt": "2026-08-08T21:06:15+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -13,14 +13,15 @@
     "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
   },
   "kpi": {
-    "sutaze": 2,
-    "zapasy": 13,
-    "uzatvorene": 14,
+    "sutaze": 3,
+    "skupiny": 3,
+    "zapasy": 19,
+    "uzatvorene": 20,
     "administrativne": 1,
-    "druzstva": 22,
-    "goly": 76,
-    "divaci": 730,
-    "zlteKarty": 27,
+    "druzstva": 28,
+    "goly": 115,
+    "divaci": 850,
+    "zlteKarty": 35,
     "cerveneKarty": 2,
     "kontumovane": 1,
     "kontumovaneAdmin": 1,
@@ -41,30 +42,65 @@
       "divaci": 730,
       "divaciPokrytych": 13,
       "sutaze": 2,
+      "skupiny": 2,
       "kontumovane": 1,
       "kontumovaneAdmin": 1,
+      "odstupene": 0,
+      "odstupeneAdmin": 0
+    },
+    "U19": {
+      "zapasy": 6,
+      "uzatvorene": 6,
+      "administrativne": 0,
+      "druzstva": 6,
+      "goly": 39,
+      "zlte": 8,
+      "cervene": 0,
+      "divaci": 120,
+      "divaciPokrytych": 6,
+      "sutaze": 1,
+      "skupiny": 1,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
       "odstupene": 0,
       "odstupeneAdmin": 0
     }
   },
   "urovne": {
+    "L5": {
+      "nazov": "5. liga",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 6
+    },
     "L7": {
       "nazov": "7. liga",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 6
     },
     "POHARE": {
       "nazov": "Poháre a turnaje",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 7
     }
   },
   "sutazeUroven": [
     {
+      "uroven": "L5",
+      "kat": "U19",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 6
+    },
+    {
       "uroven": "L7",
       "kat": "ADULTS",
       "pohlavie": "M",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 6
     },
     {
@@ -72,21 +108,23 @@
       "kat": "ADULTS",
       "pohlavie": "M",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 7
     }
   ],
   "pohlavie": {
     "M": {
-      "sutaze": 2,
-      "zapasy": 13,
-      "druzstva": 22,
-      "goly": 76,
-      "divaci": 730,
-      "zlteKarty": 27,
+      "sutaze": 3,
+      "zapasy": 19,
+      "druzstva": 28,
+      "goly": 115,
+      "divaci": 850,
+      "zlteKarty": 35,
       "cerveneKarty": 2,
       "kategorie": {
         "ADULTS": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 13,
           "druzstva": 22,
           "goly": 76,
@@ -94,33 +132,48 @@
           "cervene": 2,
           "divaci": 730,
           "divaciPokrytych": 13
+        },
+        "U19": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 6,
+          "druzstva": 6,
+          "goly": 39,
+          "zlte": 8,
+          "cervene": 0,
+          "divaci": 120,
+          "divaciPokrytych": 6
         }
       }
     }
   },
   "osoby": {
     "hraci": {
-      "unikatni": 335,
+      "unikatni": 398,
       "poKategorii": {
-        "ADULTS": 335
+        "ADULTS": 335,
+        "U19": 71
       }
     },
     "treneri": {
       "unikatni": 24,
       "poKategorii": {
-        "ADULTS": 24
+        "ADULTS": 24,
+        "U19": 5
       }
     },
     "realizacnyTim": {
-      "unikatni": 49,
+      "unikatni": 53,
       "poKategorii": {
-        "ADULTS": 49
+        "ADULTS": 49,
+        "U19": 7
       }
     },
     "rozhodcovia": {
-      "unikatni": 23,
+      "unikatni": 24,
       "poKategorii": {
-        "ADULTS": 23
+        "ADULTS": 23,
+        "U19": 4
       }
     },
     "delegati": {
@@ -128,9 +181,10 @@
       "poKategorii": {}
     },
     "personal": {
-      "unikatni": 32,
+      "unikatni": 36,
       "poKategorii": {
-        "ADULTS": 32
+        "ADULTS": 32,
+        "U19": 4
       }
     }
   }

@@ -107,6 +107,77 @@ Pyramída sa ukazuje v troch pohľadoch; každý odpovedá na inú otázku a vš
 - **Prenos dát do prehliadača:** rez pripravuje `web/src/lib/urovne.ts` (`getUrovneVCase`, `getUrovneVCaseZvazu`) a riadky serializuje ako jeden reťazec (`zvazIdx,sezonaIdx,urovenIdx,katIdx,pohlavieIdx,pocet` oddelené `;`), pretože pole polí by Astro do stránky zapísalo s obalom `[0, x]` okolo každého čísla — pri 38 ObFZ × 15 sezónach ~150 kB navyše.
 - **POZOR pri úpravách:** typy a `rozbal()` žijú v samostatnom module **`web/src/lib/urovneTypy.ts`**, ktorý nesmie importovať `lib/data` ani nič z Node. React komponenty musia brať `rozbal()` odtiaľ, nie z `lib/urovne.ts` — ten číta JSON zo súborov a Vite by celú dátovú vrstvu pribalil do klientskeho bundlu. Stačilo to raz a stránka padala na `ReferenceError: process is not defined`: island sa nehydratoval a pill filtre nereagovali (nasadené v `a046cfcc8`, opravené ešte ten deň).
 
+#### SÚŤAŽ vs. SÚŤAŽNÁ SKUPINA (rozhodnutie Ján Letko, 8. 8. 2026)
+
+ZÁKLADNÝ KĽÚČ: **„súťaž = základná časť“**. To, čo ISSF vedie ako jednu súťaž, sa často hrá
+vo viacerých **paralelných skupinách**, z ktorých každá má vlastných účastníkov a vlastnú tabuľku.
+„III. liga U19 HUMMEL ZsFZ“ 2025/2026 je jedna súťaž, ale hrajú sa v nej **skupina JV a skupina SZ**
+(obe 14 družstiev, 26 kôl) plus nadstavba. **Rovnakú realitu vykazujú zväzy rôzne** — ZsFZ vedie
+IV. ligu U19 ako jednu súťaž so skupinami A–F, VsFZ tie isté skupiny ako samostatné súťaže.
+**Počty súťaží preto medzi zväzmi nie sú porovnateľné; počty skupín áno.** To je hlavný dôvod
+existencie tejto metriky.
+
+**Databáza príznak typu časti NEMÁ.** Stĺpec „Základná / Nadstavbová časť“ existuje len v ISSF.
+Overené 8. 8. 2026 — `competitions.parts[]` nesie iba `name`, `publicComment`, `type`, `format`,
+`signup`, `published`, `rules`, `settings`, `dateFrom`, `dateTo`, `__issfId`, `_id`, `rounds`,
+`teams`, `resultsTable`. `type` je collective/race (druh športu) a dátumy sú pri všetkých
+častiach rovnaké. **Žiadosť na Sportnet: preniesť typ časti z ISSF do `parts[]`** — pozri `docs/TODO.md`.
+
+Skupina sa preto určuje **dvoma sitami** (`run.nacitaj_skupina_mapu`):
+
+1. **Štruktúrny signál** — nadstavba si družstvá preberá zo základných častí, nikdy neprivedie nové.
+   *Časť je základná skupina, ak obsahuje aspoň jedno družstvo, ktoré nie je v žiadnej inej časti
+   tej istej súťaže.* Identita družstva je `organization._id | category | ageCategory` — rovnaký
+   kľúč ako pri Indexe klubu.
+2. **Názov časti** (`run.je_nadstavbova_cast`) — sito č. 1 zlyháva tam, kde nadstavba nové družstvo
+   priviesť naozaj môže: baráž o postup, kde súper prichádza z inej súťaže. Vyraďujú sa časti,
+   ktorých názov (bez diakritiky, malými) obsahuje `baraz`, `nadstavb`, `o udrzanie`, `o postup`,
+   `o titul`, `o umiestnenie`, `play-off`, `o majstra`, `majster okresu`, `kvalifikac`, `finale`,
+   `finalov`, `semifinale`, `stvrtfinale`, `osemfinale`, `o N-M miesto`, `superpohar`.
+
+**Prečo sa tu názvom veriť môže:** zásada „názvom neveriť“ sa týka **názvov SÚŤAŽÍ**, ktoré sa
+menia podľa partnerov ročníka („III. liga U19 **HUMMEL** ZsFZ“). Názvy **ČASTÍ** sú štruktúrny
+popis („Baráž o postup“, „Nadstavba o 5.–8. miesto“, „ŠTVRŤFINÁLE“) a nemenia sa.
+
+**Vzor `o pohar` bol zámerne vyradený** — zachytával legítímne paralelné turnajové skupiny
+(„Halový turnaj O pohár predsedu ObFZ Trnava sk. A / sk. B“). Zmerané 8. 8. 2026 na 2025/2026:
+549 → 537 základných skupín, 12 preklasifikovaných, žiadna skutočná liga sa nestratila.
+
+**FALLBACK:** ak sa v súťaži nedá rozlíšiť ani jedna základná skupina — všetky časti majú tých
+istých účastníkov (turnajové prípravky, delenie na jesennú a jarnú časť), alebo všetky vypadli cez
+sito názvov (Niké liga, Slovenský pohár SF) — **celá súťaž sa započíta ako JEDNA skupina.**
+Konzervatívne: radšej podpočítať než nafukovať. Fallback sa vyhodnocuje **v rámci každého rezu
+samostatne** (`run._skupiny_rezy`), nie globálne za súťaž — inak vznikajú rezy so `skupiny = 0`
+pri `sutaze = 1`.
+
+**Invariant (kontroluje sa po každom behu): `skupiny >= sutaze` v každom reze.**
+
+**Výstupná schéma:** `kpi.skupiny`, `kategorie.*.skupiny`, `urovne.*.skupiny`,
+`pohlavie.*.skupiny`, `sutazeUroven[].skupiny`; v porovnaniach `skupiny`, `skupinyPohlavie`,
+`urovneSkupiny`; v súhrne aj listy `sunburstSutaze` (`skupiny`, `skupinyPohlavie`).
+
+**Publikované čísla sa neprepisujú** (rozhodnutie Ján Letko) — obe metriky sú vo výstupe súčasne
+a frontend medzi nimi prepína. **Predvolená je metrika Skupiny** (`METRIKA_DEFAULT`
+v `web/src/lib/urovneTypy.ts`). Prepínač je v: KPI karte „Súťaže“, pyramíde súťaží, oboch
+heatmapách úrovní, sunburste súťaží, radare a grafe vývoja v Porovnaniach aj v tabuľke zväzov.
+Tabuľka má prepínač, nie dva stĺpce vedľa seba — je to zoraditeľný rebríček a dva stĺpce by
+pozývali zoradiť podľa „Súťaže“, čo dáva poradie, ktoré medzi zväzmi neplatí.
+
+Profily KLUBOV metriku `skupiny` nemajú (počíta ju `etl/run.py` pre zväzy, nie `etl/kluby.py`),
+preto sa na stránke klubu prepínač **nezobrazí** — `KpiTrend` si prítomnosť metriky overuje
+v dátach a pill skryje. Ticho ukazovať hodnoty `sutaze` pod názvom „Skupiny“ by bolo horšie
+než prepínač nemať.
+
+**Meranie po plných behoch (8. 8. 2026, celoslovensky, výsledné čísla s oboma sitami):**
+
+| Sezóna | Súťaže | Skupiny | SFZ | RFZ | ObFZ |
+|---|---|---|---|---|---|
+| 2025/2026 | 397 | **557** | 27 → 56 | 83 → 125 | 287 → 376 |
+| 2024/2025 | 401 | **569** | 27 → 50 | 86 → 121 | 288 → 398 |
+
+Sito názvov ubralo oproti samotnému štruktúrnemu signálu 6 skupín v 2025/2026 a 3 v 2024/2025.
+Kontrola všetkých **609 profilov** prešla bez chyby a bez varovania.
+
 ### Vek hráčov a Index klubu — stránka Trendy (7. 8. 2026)
 
 Metodika v plných podrobnostiach: `claude/plan-trendy-vek.md` a `claude/metodika-index-klubu.md`

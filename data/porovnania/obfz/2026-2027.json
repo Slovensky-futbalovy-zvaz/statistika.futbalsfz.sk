@@ -1,31 +1,33 @@
 {
   "uroven": "ObFZ",
   "sezona": "2026/2027",
-  "generatedAt": "2026-08-07T12:30:47+02:00",
-  "pocetZvazov": 11,
+  "generatedAt": "2026-08-08T21:09:34+02:00",
+  "pocetZvazov": 20,
   "zvazy": [
     {
       "id": "pfz-poprad",
       "nazov": "Podtatranský futbalový zväz",
-      "sutaze": 2,
-      "zapasy": 13,
-      "druzstva": 22,
+      "sutaze": 3,
+      "skupiny": 3,
+      "zapasy": 19,
+      "druzstva": 28,
       "kontumovane": 1,
-      "goly": 76,
-      "divaci": 730,
-      "zlteKarty": 27,
+      "goly": 115,
+      "divaci": 850,
+      "zlteKarty": 35,
       "cerveneKarty": 2,
-      "hraci": 335,
+      "hraci": 398,
       "treneri": 24,
-      "rozhodcovia": 23,
-      "realizacnyTim": 49,
+      "rozhodcovia": 24,
+      "realizacnyTim": 53,
       "delegati": 0,
-      "personal": 32,
-      "golyNaZapas": 5.85,
-      "divaciNaZapas": 56.2,
+      "personal": 36,
+      "golyNaZapas": 6.05,
+      "divaciNaZapas": 44.7,
       "kat": {
         "ADULTS": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 13,
           "druzstva": 22,
           "goly": 76,
@@ -38,21 +40,53 @@
           "realizacnyTim": 49,
           "delegati": 0,
           "personal": 32
+        },
+        "U19": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 6,
+          "druzstva": 6,
+          "goly": 39,
+          "divaci": 120,
+          "zlteKarty": 8,
+          "cerveneKarty": 0,
+          "hraci": 71,
+          "treneri": 5,
+          "rozhodcovia": 4,
+          "realizacnyTim": 7,
+          "delegati": 0,
+          "personal": 4
         }
       },
       "sutazePohlavie": {
-        "M": 2
+        "M": 3
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L5": 1,
+        "L7": 1,
+        "POHARE": 1
+      },
+      "urovneSkupiny": {
+        "L5": 1,
         "L7": 1,
         "POHARE": 1
       },
       "sutazeUroven": [
         {
+          "uroven": "L5",
+          "kat": "U19",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 6
+        },
+        {
           "uroven": "L7",
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 6
         },
         {
@@ -60,15 +94,123 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 7
         }
       ],
       "rfz": "VsFZ"
     },
     {
+      "id": "obfz-nitra",
+      "nazov": "ObFZ Nitra",
+      "sutaze": 5,
+      "skupiny": 5,
+      "zapasy": 14,
+      "druzstva": 47,
+      "kontumovane": 7,
+      "goly": 78,
+      "divaci": 1300,
+      "zlteKarty": 36,
+      "cerveneKarty": 2,
+      "hraci": 431,
+      "treneri": 17,
+      "rozhodcovia": 25,
+      "realizacnyTim": 46,
+      "delegati": 1,
+      "personal": 17,
+      "golyNaZapas": 5.57,
+      "divaciNaZapas": 92.9,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 4,
+          "skupiny": 4,
+          "zapasy": 14,
+          "druzstva": 35,
+          "goly": 78,
+          "divaci": 1300,
+          "zlteKarty": 36,
+          "cerveneKarty": 2,
+          "hraci": 431,
+          "treneri": 17,
+          "rozhodcovia": 25,
+          "realizacnyTim": 46,
+          "delegati": 1,
+          "personal": 17
+        },
+        "U15": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 0,
+          "druzstva": 12,
+          "goly": 0,
+          "divaci": 0,
+          "zlteKarty": 0,
+          "cerveneKarty": 0,
+          "hraci": 0,
+          "treneri": 0,
+          "rozhodcovia": 0,
+          "realizacnyTim": 0,
+          "delegati": 0,
+          "personal": 0
+        }
+      },
+      "sutazePohlavie": {
+        "M": 5
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L4": 1,
+        "L7": 1,
+        "L8": 2,
+        "POHARE": 1
+      },
+      "urovneSkupiny": {
+        "L4": 1,
+        "L7": 1,
+        "L8": 2,
+        "POHARE": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L4",
+          "kat": "U15",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 0
+        },
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        },
+        {
+          "uroven": "L8",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 2,
+          "skupiny": 2,
+          "zapasy": 3
+        },
+        {
+          "uroven": "POHARE",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 10
+        }
+      ],
+      "rfz": "ZsFZ"
+    },
+    {
       "id": "obfz-humenne",
       "nazov": "ObFZ Humenné",
       "sutaze": 2,
+      "skupiny": 2,
       "zapasy": 13,
       "druzstva": 15,
       "kontumovane": 0,
@@ -87,6 +229,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 13,
           "druzstva": 15,
           "goly": 68,
@@ -104,7 +247,11 @@
       "sutazePohlavie": {
         "M": 2
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L7": 2
+      },
+      "urovneSkupiny": {
         "L7": 2
       },
       "sutazeUroven": [
@@ -113,68 +260,271 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 13
         }
       ],
       "rfz": "VsFZ"
     },
     {
-      "id": "obfz-nitra",
-      "nazov": "ObFZ Nitra",
-      "sutaze": 2,
-      "zapasy": 10,
-      "druzstva": 45,
-      "kontumovane": 7,
-      "goly": 56,
-      "divaci": 900,
-      "zlteKarty": 24,
+      "id": "obfz-trencin",
+      "nazov": "ObFZ Trenčín",
+      "sutaze": 3,
+      "skupiny": 3,
+      "zapasy": 8,
+      "druzstva": 39,
+      "kontumovane": 0,
+      "goly": 22,
+      "divaci": 1070,
+      "zlteKarty": 30,
       "cerveneKarty": 0,
-      "hraci": 317,
-      "treneri": 13,
-      "rozhodcovia": 20,
-      "realizacnyTim": 31,
-      "delegati": 0,
-      "personal": 11,
-      "golyNaZapas": 5.6,
-      "divaciNaZapas": 90.0,
+      "hraci": 246,
+      "treneri": 17,
+      "rozhodcovia": 21,
+      "realizacnyTim": 35,
+      "delegati": 4,
+      "personal": 17,
+      "golyNaZapas": 2.75,
+      "divaciNaZapas": 133.8,
       "kat": {
         "ADULTS": {
-          "sutaze": 1,
-          "zapasy": 10,
-          "druzstva": 33,
-          "goly": 56,
-          "divaci": 900,
-          "zlteKarty": 24,
+          "sutaze": 2,
+          "skupiny": 2,
+          "zapasy": 6,
+          "druzstva": 25,
+          "goly": 18,
+          "divaci": 950,
+          "zlteKarty": 28,
           "cerveneKarty": 0,
-          "hraci": 317,
+          "hraci": 188,
           "treneri": 13,
-          "rozhodcovia": 20,
-          "realizacnyTim": 31,
-          "delegati": 0,
-          "personal": 11
+          "rozhodcovia": 18,
+          "realizacnyTim": 26,
+          "delegati": 4,
+          "personal": 15
         },
-        "U15": {
+        "U19": {
           "sutaze": 1,
-          "zapasy": 0,
-          "druzstva": 12,
-          "goly": 0,
-          "divaci": 0,
-          "zlteKarty": 0,
+          "skupiny": 1,
+          "zapasy": 2,
+          "druzstva": 14,
+          "goly": 4,
+          "divaci": 120,
+          "zlteKarty": 2,
           "cerveneKarty": 0,
-          "hraci": 0,
-          "treneri": 0,
-          "rozhodcovia": 0,
-          "realizacnyTim": 0,
+          "hraci": 58,
+          "treneri": 4,
+          "rozhodcovia": 5,
+          "realizacnyTim": 9,
           "delegati": 0,
-          "personal": 0
+          "personal": 2
         }
       },
       "sutazePohlavie": {
-        "M": 2
+        "M": 3
       },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L5": 1,
+        "L7": 1,
+        "L9": 1
+      },
+      "urovneSkupiny": {
+        "L5": 1,
+        "L7": 1,
+        "L9": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L5",
+          "kat": "U19",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 2
+        },
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 6
+        },
+        {
+          "uroven": "L9",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 0
+        }
+      ],
+      "rfz": "ZsFZ"
+    },
+    {
+      "id": "obfz-dunajska-streda",
+      "nazov": "ObFZ Dunajská Streda",
+      "sutaze": 3,
+      "skupiny": 3,
+      "zapasy": 7,
+      "druzstva": 14,
+      "kontumovane": 0,
+      "goly": 39,
+      "divaci": 539,
+      "zlteKarty": 29,
+      "cerveneKarty": 0,
+      "hraci": 216,
+      "treneri": 16,
+      "rozhodcovia": 16,
+      "realizacnyTim": 32,
+      "delegati": 4,
+      "personal": 10,
+      "golyNaZapas": 5.57,
+      "divaciNaZapas": 77.0,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 2,
+          "skupiny": 2,
+          "zapasy": 4,
+          "druzstva": 8,
+          "goly": 19,
+          "divaci": 436,
+          "zlteKarty": 20,
+          "cerveneKarty": 0,
+          "hraci": 132,
+          "treneri": 9,
+          "rozhodcovia": 12,
+          "realizacnyTim": 19,
+          "delegati": 4,
+          "personal": 7
+        },
+        "U19": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 3,
+          "druzstva": 6,
+          "goly": 20,
+          "divaci": 103,
+          "zlteKarty": 9,
+          "cerveneKarty": 0,
+          "hraci": 84,
+          "treneri": 7,
+          "rozhodcovia": 9,
+          "realizacnyTim": 13,
+          "delegati": 0,
+          "personal": 3
+        }
+      },
+      "sutazePohlavie": {
+        "M": 3
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L5": 1,
+        "L7": 1,
+        "L8": 1
+      },
+      "urovneSkupiny": {
+        "L5": 1,
+        "L7": 1,
+        "L8": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L5",
+          "kat": "U19",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 3
+        },
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        },
+        {
+          "uroven": "L8",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 3
+        }
+      ],
+      "rfz": "ZsFZ"
+    },
+    {
+      "id": "obfz-levice",
+      "nazov": "ObFZ Levice",
+      "sutaze": 3,
+      "skupiny": 3,
+      "zapasy": 6,
+      "druzstva": 22,
+      "kontumovane": 0,
+      "goly": 45,
+      "divaci": 307,
+      "zlteKarty": 9,
+      "cerveneKarty": 0,
+      "hraci": 191,
+      "treneri": 7,
+      "rozhodcovia": 14,
+      "realizacnyTim": 21,
+      "delegati": 0,
+      "personal": 8,
+      "golyNaZapas": 7.5,
+      "divaciNaZapas": 51.2,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 2,
+          "skupiny": 2,
+          "zapasy": 3,
+          "druzstva": 6,
+          "goly": 17,
+          "divaci": 257,
+          "zlteKarty": 9,
+          "cerveneKarty": 0,
+          "hraci": 98,
+          "treneri": 4,
+          "rozhodcovia": 9,
+          "realizacnyTim": 9,
+          "delegati": 0,
+          "personal": 6
+        },
+        "U15": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 3,
+          "druzstva": 16,
+          "goly": 28,
+          "divaci": 50,
+          "zlteKarty": 0,
+          "cerveneKarty": 0,
+          "hraci": 93,
+          "treneri": 3,
+          "rozhodcovia": 8,
+          "realizacnyTim": 12,
+          "delegati": 0,
+          "personal": 2
+        }
+      },
+      "sutazePohlavie": {
+        "M": 3
+      },
+      "skupinyPohlavie": {},
       "urovne": {
         "L4": 1,
-        "POHARE": 1
+        "L7": 1,
+        "L8": 1
+      },
+      "urovneSkupiny": {
+        "L4": 1,
+        "L7": 1,
+        "L8": 1
       },
       "sutazeUroven": [
         {
@@ -182,22 +532,189 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 1,
-          "zapasy": 0
+          "skupiny": 1,
+          "zapasy": 3
         },
         {
-          "uroven": "POHARE",
+          "uroven": "L7",
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
-          "zapasy": 10
+          "skupiny": 1,
+          "zapasy": 2
+        },
+        {
+          "uroven": "L8",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
         }
       ],
       "rfz": "ZsFZ"
     },
     {
+      "id": "lfz-liptov",
+      "nazov": "Liptovský futbalový zväz",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 6,
+      "druzstva": 12,
+      "kontumovane": 0,
+      "goly": 42,
+      "divaci": 168,
+      "zlteKarty": 11,
+      "cerveneKarty": 1,
+      "hraci": 168,
+      "treneri": 13,
+      "rozhodcovia": 18,
+      "realizacnyTim": 25,
+      "delegati": 0,
+      "personal": 6,
+      "golyNaZapas": 7.0,
+      "divaciNaZapas": 28.0,
+      "kat": {
+        "U19": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 6,
+          "druzstva": 12,
+          "goly": 42,
+          "divaci": 168,
+          "zlteKarty": 11,
+          "cerveneKarty": 1,
+          "hraci": 168,
+          "treneri": 13,
+          "rozhodcovia": 18,
+          "realizacnyTim": 25,
+          "delegati": 0,
+          "personal": 6
+        }
+      },
+      "sutazePohlavie": {
+        "M": 1
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L5": 1
+      },
+      "urovneSkupiny": {
+        "L5": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L5",
+          "kat": "U19",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 6
+        }
+      ],
+      "rfz": "SsFZ"
+    },
+    {
+      "id": "obfz-zilina",
+      "nazov": "ObFZ Žilina",
+      "sutaze": 3,
+      "skupiny": 3,
+      "zapasy": 5,
+      "druzstva": 10,
+      "kontumovane": 0,
+      "goly": 29,
+      "divaci": 320,
+      "zlteKarty": 13,
+      "cerveneKarty": 0,
+      "hraci": 153,
+      "treneri": 1,
+      "rozhodcovia": 12,
+      "realizacnyTim": 14,
+      "delegati": 1,
+      "personal": 8,
+      "golyNaZapas": 5.8,
+      "divaciNaZapas": 64.0,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 2,
+          "skupiny": 2,
+          "zapasy": 3,
+          "druzstva": 6,
+          "goly": 16,
+          "divaci": 220,
+          "zlteKarty": 7,
+          "cerveneKarty": 0,
+          "hraci": 93,
+          "treneri": 1,
+          "rozhodcovia": 8,
+          "realizacnyTim": 9,
+          "delegati": 1,
+          "personal": 6
+        },
+        "U19": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 2,
+          "druzstva": 4,
+          "goly": 13,
+          "divaci": 100,
+          "zlteKarty": 6,
+          "cerveneKarty": 0,
+          "hraci": 60,
+          "treneri": 0,
+          "rozhodcovia": 4,
+          "realizacnyTim": 5,
+          "delegati": 0,
+          "personal": 2
+        }
+      },
+      "sutazePohlavie": {
+        "M": 3
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L5": 1,
+        "L7": 1,
+        "L8": 1
+      },
+      "urovneSkupiny": {
+        "L5": 1,
+        "L7": 1,
+        "L8": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L5",
+          "kat": "U19",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 2
+        },
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 2
+        },
+        {
+          "uroven": "L8",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        }
+      ],
+      "rfz": "SsFZ"
+    },
+    {
       "id": "obfz-presov",
       "nazov": "ObFZ Prešov",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 4,
       "druzstva": 8,
       "kontumovane": 0,
@@ -216,6 +733,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 4,
           "druzstva": 8,
           "goly": 25,
@@ -233,7 +751,11 @@
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "POHARE": 1
+      },
+      "urovneSkupiny": {
         "POHARE": 1
       },
       "sutazeUroven": [
@@ -242,51 +764,178 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 4
         }
       ],
       "rfz": "VsFZ"
     },
     {
-      "id": "obfz-trnava",
-      "nazov": "ObFZ Trnava",
+      "id": "obfz-komarno",
+      "nazov": "ObFZ Komárno",
       "sutaze": 1,
-      "zapasy": 0,
-      "druzstva": 2,
-      "kontumovane": 1,
-      "goly": 0,
-      "divaci": 0,
-      "zlteKarty": 0,
+      "skupiny": 1,
+      "zapasy": 3,
+      "druzstva": 6,
+      "kontumovane": 0,
+      "goly": 16,
+      "divaci": 260,
+      "zlteKarty": 8,
       "cerveneKarty": 0,
-      "hraci": 0,
-      "treneri": 0,
-      "rozhodcovia": 0,
-      "realizacnyTim": 0,
-      "delegati": 0,
-      "personal": 0,
-      "golyNaZapas": 0.0,
-      "divaciNaZapas": 0.0,
+      "hraci": 95,
+      "treneri": 3,
+      "rozhodcovia": 8,
+      "realizacnyTim": 16,
+      "delegati": 2,
+      "personal": 5,
+      "golyNaZapas": 5.33,
+      "divaciNaZapas": 86.7,
       "kat": {
         "ADULTS": {
           "sutaze": 1,
-          "zapasy": 0,
-          "druzstva": 2,
-          "goly": 0,
-          "divaci": 0,
-          "zlteKarty": 0,
+          "skupiny": 1,
+          "zapasy": 3,
+          "druzstva": 6,
+          "goly": 16,
+          "divaci": 260,
+          "zlteKarty": 8,
           "cerveneKarty": 0,
-          "hraci": 0,
-          "treneri": 0,
-          "rozhodcovia": 0,
-          "realizacnyTim": 0,
-          "delegati": 0,
-          "personal": 0
+          "hraci": 95,
+          "treneri": 3,
+          "rozhodcovia": 8,
+          "realizacnyTim": 16,
+          "delegati": 2,
+          "personal": 5
         }
       },
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
+        "L7": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 3
+        }
+      ],
+      "rfz": "ZsFZ"
+    },
+    {
+      "id": "obfz-lucenec",
+      "nazov": "ObFZ Lučenec",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 2,
+      "druzstva": 4,
+      "kontumovane": 0,
+      "goly": 9,
+      "divaci": 180,
+      "zlteKarty": 6,
+      "cerveneKarty": 0,
+      "hraci": 68,
+      "treneri": 3,
+      "rozhodcovia": 6,
+      "realizacnyTim": 11,
+      "delegati": 2,
+      "personal": 4,
+      "golyNaZapas": 4.5,
+      "divaciNaZapas": 90.0,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 2,
+          "druzstva": 4,
+          "goly": 9,
+          "divaci": 180,
+          "zlteKarty": 6,
+          "cerveneKarty": 0,
+          "hraci": 68,
+          "treneri": 3,
+          "rozhodcovia": 6,
+          "realizacnyTim": 11,
+          "delegati": 2,
+          "personal": 4
+        }
+      },
+      "sutazePohlavie": {
+        "M": 1
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
+        "L7": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 2
+        }
+      ],
+      "rfz": "SsFZ"
+    },
+    {
+      "id": "obfz-trnava",
+      "nazov": "ObFZ Trnava",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 1,
+      "druzstva": 4,
+      "kontumovane": 1,
+      "goly": 11,
+      "divaci": 80,
+      "zlteKarty": 2,
+      "cerveneKarty": 0,
+      "hraci": 30,
+      "treneri": 1,
+      "rozhodcovia": 3,
+      "realizacnyTim": 4,
+      "delegati": 0,
+      "personal": 1,
+      "golyNaZapas": 11.0,
+      "divaciNaZapas": 80.0,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1,
+          "druzstva": 4,
+          "goly": 11,
+          "divaci": 80,
+          "zlteKarty": 2,
+          "cerveneKarty": 0,
+          "hraci": 30,
+          "treneri": 1,
+          "rozhodcovia": 3,
+          "realizacnyTim": 4,
+          "delegati": 0,
+          "personal": 1
+        }
+      },
+      "sutazePohlavie": {
+        "M": 1
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "POHARE": 1
+      },
+      "urovneSkupiny": {
         "POHARE": 1
       },
       "sutazeUroven": [
@@ -295,15 +944,257 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
-          "zapasy": 0
+          "skupiny": 1,
+          "zapasy": 1
         }
       ],
       "rfz": "ZsFZ"
     },
     {
+      "id": "ofz-orava",
+      "nazov": "Oravský futbalový zväz",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 1,
+      "druzstva": 2,
+      "kontumovane": 0,
+      "goly": 5,
+      "divaci": 250,
+      "zlteKarty": 7,
+      "cerveneKarty": 0,
+      "hraci": 31,
+      "treneri": 0,
+      "rozhodcovia": 3,
+      "realizacnyTim": 5,
+      "delegati": 0,
+      "personal": 2,
+      "golyNaZapas": 5.0,
+      "divaciNaZapas": 250.0,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1,
+          "druzstva": 2,
+          "goly": 5,
+          "divaci": 250,
+          "zlteKarty": 7,
+          "cerveneKarty": 0,
+          "hraci": 31,
+          "treneri": 0,
+          "rozhodcovia": 3,
+          "realizacnyTim": 5,
+          "delegati": 0,
+          "personal": 2
+        }
+      },
+      "sutazePohlavie": {
+        "M": 1
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
+        "L7": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        }
+      ],
+      "rfz": "SsFZ"
+    },
+    {
+      "id": "obfz-banska-bystrica",
+      "nazov": "ObFZ Banská Bystrica",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 1,
+      "druzstva": 12,
+      "kontumovane": 0,
+      "goly": 7,
+      "divaci": 50,
+      "zlteKarty": 2,
+      "cerveneKarty": 0,
+      "hraci": 30,
+      "treneri": 2,
+      "rozhodcovia": 3,
+      "realizacnyTim": 3,
+      "delegati": 0,
+      "personal": 2,
+      "golyNaZapas": 7.0,
+      "divaciNaZapas": 50.0,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1,
+          "druzstva": 12,
+          "goly": 7,
+          "divaci": 50,
+          "zlteKarty": 2,
+          "cerveneKarty": 0,
+          "hraci": 30,
+          "treneri": 2,
+          "rozhodcovia": 3,
+          "realizacnyTim": 3,
+          "delegati": 0,
+          "personal": 2
+        }
+      },
+      "sutazePohlavie": {
+        "M": 1
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
+        "L7": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        }
+      ],
+      "rfz": "SsFZ"
+    },
+    {
+      "id": "obfz-zvolen",
+      "nazov": "ObFZ Zvolen",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 1,
+      "druzstva": 2,
+      "kontumovane": 0,
+      "goly": 4,
+      "divaci": 60,
+      "zlteKarty": 3,
+      "cerveneKarty": 0,
+      "hraci": 31,
+      "treneri": 2,
+      "rozhodcovia": 3,
+      "realizacnyTim": 5,
+      "delegati": 0,
+      "personal": 2,
+      "golyNaZapas": 4.0,
+      "divaciNaZapas": 60.0,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1,
+          "druzstva": 2,
+          "goly": 4,
+          "divaci": 60,
+          "zlteKarty": 3,
+          "cerveneKarty": 0,
+          "hraci": 31,
+          "treneri": 2,
+          "rozhodcovia": 3,
+          "realizacnyTim": 5,
+          "delegati": 0,
+          "personal": 2
+        }
+      },
+      "sutazePohlavie": {
+        "M": 1
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
+        "L7": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        }
+      ],
+      "rfz": "SsFZ"
+    },
+    {
+      "id": "obfz-roznava",
+      "nazov": "ObFZ Rožňava",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 1,
+      "druzstva": 2,
+      "kontumovane": 0,
+      "goly": 4,
+      "divaci": 100,
+      "zlteKarty": 2,
+      "cerveneKarty": 0,
+      "hraci": 29,
+      "treneri": 0,
+      "rozhodcovia": 3,
+      "realizacnyTim": 2,
+      "delegati": 1,
+      "personal": 2,
+      "golyNaZapas": 4.0,
+      "divaciNaZapas": 100.0,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1,
+          "druzstva": 2,
+          "goly": 4,
+          "divaci": 100,
+          "zlteKarty": 2,
+          "cerveneKarty": 0,
+          "hraci": 29,
+          "treneri": 0,
+          "rozhodcovia": 3,
+          "realizacnyTim": 2,
+          "delegati": 1,
+          "personal": 2
+        }
+      },
+      "sutazePohlavie": {
+        "M": 1
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
+        "L7": 1
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L7",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        }
+      ],
+      "rfz": "VsFZ"
+    },
+    {
       "id": "obfz-senica",
       "nazov": "ObFZ Senica",
       "sutaze": 2,
+      "skupiny": 2,
       "zapasy": 0,
       "druzstva": 24,
       "kontumovane": 0,
@@ -322,6 +1213,7 @@
       "kat": {
         "U13": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0,
           "druzstva": 10,
           "goly": 0,
@@ -337,6 +1229,7 @@
         },
         "U11": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0,
           "druzstva": 14,
           "goly": 0,
@@ -354,7 +1247,12 @@
       "sutazePohlavie": {
         "M": 2
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L3": 1,
+        "L4": 1
+      },
+      "urovneSkupiny": {
         "L3": 1,
         "L4": 1
       },
@@ -364,6 +1262,7 @@
           "kat": "U11",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0
         },
         {
@@ -371,59 +1270,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 1,
-          "zapasy": 0
-        }
-      ],
-      "rfz": "ZsFZ"
-    },
-    {
-      "id": "obfz-trencin",
-      "nazov": "ObFZ Trenčín",
-      "sutaze": 1,
-      "zapasy": 0,
-      "druzstva": 13,
-      "kontumovane": 0,
-      "goly": 0,
-      "divaci": 0,
-      "zlteKarty": 0,
-      "cerveneKarty": 0,
-      "hraci": 0,
-      "treneri": 0,
-      "rozhodcovia": 0,
-      "realizacnyTim": 0,
-      "delegati": 0,
-      "personal": 0,
-      "golyNaZapas": 0.0,
-      "divaciNaZapas": 0.0,
-      "kat": {
-        "ADULTS": {
-          "sutaze": 1,
-          "zapasy": 0,
-          "druzstva": 13,
-          "goly": 0,
-          "divaci": 0,
-          "zlteKarty": 0,
-          "cerveneKarty": 0,
-          "hraci": 0,
-          "treneri": 0,
-          "rozhodcovia": 0,
-          "realizacnyTim": 0,
-          "delegati": 0,
-          "personal": 0
-        }
-      },
-      "sutazePohlavie": {
-        "M": 1
-      },
-      "urovne": {
-        "L9": 1
-      },
-      "sutazeUroven": [
-        {
-          "uroven": "L9",
-          "kat": "ADULTS",
-          "pohlavie": "M",
-          "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0
         }
       ],
@@ -433,6 +1280,7 @@
       "id": "obfz-prievidza",
       "nazov": "ObFZ Prievidza",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 0,
       "druzstva": 12,
       "kontumovane": 0,
@@ -451,6 +1299,7 @@
       "kat": {
         "U11": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0,
           "druzstva": 12,
           "goly": 0,
@@ -468,7 +1317,11 @@
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L3": 1
+      },
+      "urovneSkupiny": {
         "L3": 1
       },
       "sutazeUroven": [
@@ -477,6 +1330,7 @@
           "kat": "U11",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0
         }
       ],
@@ -486,6 +1340,7 @@
       "id": "obfz-nove-zamky",
       "nazov": "ObFZ Nové Zámky",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 0,
       "druzstva": 13,
       "kontumovane": 0,
@@ -504,6 +1359,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0,
           "druzstva": 13,
           "goly": 0,
@@ -521,7 +1377,11 @@
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L8": 1
+      },
+      "urovneSkupiny": {
         "L8": 1
       },
       "sutazeUroven": [
@@ -530,68 +1390,17 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0
         }
       ],
       "rfz": "ZsFZ"
     },
     {
-      "id": "obfz-banska-bystrica",
-      "nazov": "ObFZ Banská Bystrica",
-      "sutaze": 1,
-      "zapasy": 0,
-      "druzstva": 12,
-      "kontumovane": 0,
-      "goly": 0,
-      "divaci": 0,
-      "zlteKarty": 0,
-      "cerveneKarty": 0,
-      "hraci": 0,
-      "treneri": 0,
-      "rozhodcovia": 0,
-      "realizacnyTim": 0,
-      "delegati": 0,
-      "personal": 0,
-      "golyNaZapas": 0.0,
-      "divaciNaZapas": 0.0,
-      "kat": {
-        "ADULTS": {
-          "sutaze": 1,
-          "zapasy": 0,
-          "druzstva": 12,
-          "goly": 0,
-          "divaci": 0,
-          "zlteKarty": 0,
-          "cerveneKarty": 0,
-          "hraci": 0,
-          "treneri": 0,
-          "rozhodcovia": 0,
-          "realizacnyTim": 0,
-          "delegati": 0,
-          "personal": 0
-        }
-      },
-      "sutazePohlavie": {
-        "M": 1
-      },
-      "urovne": {
-        "L7": 1
-      },
-      "sutazeUroven": [
-        {
-          "uroven": "L7",
-          "kat": "ADULTS",
-          "pohlavie": "M",
-          "sutaze": 1,
-          "zapasy": 0
-        }
-      ],
-      "rfz": "SsFZ"
-    },
-    {
       "id": "sofz-spisska-nova-ves",
       "nazov": "Spišský oblastný futbalový zväz",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 0,
       "druzstva": 14,
       "kontumovane": 0,
@@ -610,6 +1419,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0,
           "druzstva": 14,
           "goly": 0,
@@ -627,7 +1437,11 @@
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L7": 1
+      },
+      "urovneSkupiny": {
         "L7": 1
       },
       "sutazeUroven": [
@@ -636,6 +1450,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0
         }
       ],

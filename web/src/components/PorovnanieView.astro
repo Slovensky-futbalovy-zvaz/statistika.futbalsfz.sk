@@ -16,7 +16,16 @@ const { porovnanie, bump, bumpVyberDefault, urovne } = Astro.props;
 // V riadkoch tabuľky a radaru by sa serializoval dvakrát a zbytočne nafukoval stránku.
 const rows = porovnanie.zvazy.map(({ sutazeUroven: _s, ...r }) => r);
 
+// Prvý stĺpec je PREPÍNATEĽNÝ: Skupiny ↔ Súťaže (rozhodnutie Ján Letko, 8. 8. 2026).
+// Pôvodne tu boli oba stĺpce vedľa seba, ale tabuľka je REBRÍČEK — dva stĺpce pozývajú
+// zoradiť podľa „Súťaže“, čo dáva poradie, ktoré medzi zväzmi POROVNATEĽNÉ NIE JE
+// (ZsFZ vedie jednu súťaž so šiestimi skupinami tam, kde VsFZ vedie šesť súťaží).
+// Prepínač s predvolenými Skupinami ukáže predvolene to porovnateľné číslo a je zároveň
+// rovnaký ovládací prvok ako všade inde na portáli.
+const METRIKA_SUTAZI = { key: 'skupiny', label: 'Skupiny', fixed: 0 };
+
 const stlpce = [
+  METRIKA_SUTAZI,
   { key: 'zapasy', label: 'Zápasy', fixed: 0 },
   { key: 'druzstva', label: 'Družstvá', fixed: 0 },
   { key: 'goly', label: 'Góly', fixed: 0 },
@@ -53,7 +62,24 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
   <!-- zoraditeľná tabuľka -->
   <section class={CARD} style={`${CARD_STYLE} margin-top:18px;`}>
     <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Rebríček</div>
-    <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 10px;">Tabuľka zväzov</h2>
+    <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 8px;">Tabuľka zväzov</h2>
+
+    <div class="flex flex-wrap items-center gap-1.5 mb-3" style="font-size:12.5px;">
+      <span class="text-muted">Počítať súťaže ako:</span>
+      <button
+        type="button"
+        data-metrika="skupiny"
+        title="Súťažná skupina je to, v čom sa reálne hrá — má vlastných účastníkov a vlastnú tabuľku. Jedna súťaž ich môže mať viac: IV. liga U19 ZsFZ má šesť skupín A–F."
+        class="rounded-2xl px-3 py-1 font-semibold cursor-pointer"
+      >Skupiny</button>
+      <button
+        type="button"
+        data-metrika="sutaze"
+        title="Súťaž je zastrešujúci celok tak, ako ho vypisuje riadiaci zväz — všetky jej skupiny sa rátajú ako jedna položka."
+        class="rounded-2xl px-3 py-1 font-semibold cursor-pointer"
+      >Súťaže</button>
+    </div>
+
     <div class="overflow-x-auto">
       <table class="w-full text-sm border-collapse" data-tabulka>
         <thead>
@@ -65,7 +91,7 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
                   class="py-2 px-2 font-semibold text-right cursor-pointer select-none hover:text-sfz-blue"
                   data-sort={s.key}
                 >
-                  {s.label} <span class="sort-ind"></span>
+                  <span class="sort-label">{s.label}</span> <span class="sort-ind"></span>
                 </th>
               ))
             }
@@ -74,7 +100,15 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         <tbody></tbody>
       </table>
     </div>
-    <p class="mt-3 text-xs text-muted">Klikni na hlavičku stĺpca pre zoradenie, na riadok pre profil zväzu.</p>
+    <p class="mt-3 text-xs text-muted" style="line-height:1.55;">
+      Klikni na hlavičku stĺpca pre zoradenie, na riadok pre profil zväzu.
+      <strong>Skupina</strong> je to, v čom sa reálne hrá — má vlastných účastníkov a vlastnú tabuľku;
+      <strong>súťaž</strong> je zastrešujúci celok tak, ako ju vypisuje riadiaci zväz, a môže
+      obsahovať viac skupín (IV. liga U19 ZsFZ má skupiny A–F). Rovnakú realitu pritom zväzy
+      vykazujú rôzne — to, čo ZsFZ vedie ako jednu súťaž so šiestimi skupinami, má VsFZ ako šesť
+      samostatných súťaží. <strong>Počty súťaží preto medzi zväzmi porovnateľné nie sú, počty
+      skupín áno</strong> — predvolený je preto rebríček podľa skupín.
+    </p>
   </section>
 </div>
 
@@ -87,8 +121,11 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
   type Row = Record<string, number | string>;
   type Stlpec = { key: string; label: string; fixed: number };
 
-  const root = document.querySelector<HTMLElement>('[data-porovnanie]');
-  if (root) {
+  const korenNullable = document.querySelector<HTMLElement>('[data-porovnanie]');
+  if (korenNullable) {
+    // Zuženie typu cez `if` sa do vnútra funkcií nižšie neprenesie — preto samostatný
+    // nenulový alias, aby `astro check` nehlásil chybu pri každom použití.
+    const root: HTMLElement = korenNullable;
     const rows = JSON.parse(root.dataset.rows ?? '[]') as Row[];
     const stlpce = JSON.parse(root.dataset.stlpce ?? '[]') as Stlpec[];
 
@@ -102,6 +139,37 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       return fixed ? nf1.format(v) : nf.format(v);
     }
 
+    // ---- prepínač Skupiny / Súťaže ----
+    // Mení VZŤAH prvého stĺpca, nie jeho pozíciu: `data-sort` na hlavičke aj kľúč v `stlpce`
+    // sa prepisujú na 'skupiny' alebo 'sutaze'. Predvolené sú SKUPINY — jediné číslo,
+    // ktoré je medzi zväzmi porovnateľné.
+    const METRIKY: Record<string, string> = { skupiny: 'Skupiny', sutaze: 'Súťaže' };
+    let metrika = 'skupiny';
+    const hlavickaMetriky = root.querySelector<HTMLElement>('th[data-sort="skupiny"]')!;
+    const tlacidlaMetriky = Array.from(root.querySelectorAll<HTMLElement>('[data-metrika]'));
+
+    function styluj(btn: HTMLElement, aktivne: boolean) {
+      btn.style.border = aktivne ? '1px solid transparent' : '1px solid #dcdfe4';
+      btn.style.background = aktivne ? 'var(--color-sfz-blue)' : 'var(--color-card)';
+      btn.style.color = aktivne ? '#fff' : 'var(--color-ink)';
+    }
+
+    function nastavMetriku(nova: string) {
+      const bolaAktivna = sortKey === metrika;
+      metrika = nova;
+      stlpce[0].key = nova;
+      stlpce[0].label = METRIKY[nova];
+      hlavickaMetriky.dataset.sort = nova;
+      hlavickaMetriky.querySelector('.sort-label')!.textContent = METRIKY[nova];
+      if (bolaAktivna) sortKey = nova; // zoradenie ostane na tom istom stĺpci
+      tlacidlaMetriky.forEach((b) => styluj(b, b.dataset.metrika === nova));
+      renderTabulka();
+    }
+
+    tlacidlaMetriky.forEach((b) =>
+      b.addEventListener('click', () => nastavMetriku(b.dataset.metrika!)),
+    );
+
     // ---- tabuľka so sortom ----
     const tbody = root.querySelector<HTMLElement>('[data-tabulka] tbody')!;
     let sortKey = 'zapasy';
@@ -111,7 +179,11 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       tbody.innerHTML = sorted
         .map((r, i) => {
           const bunky = stlpce
-            .map((s) => `<td class="py-2 px-2 text-right tabular-nums">${fmtVal(r[s.key] as number, s.fixed)}</td>`)
+            .map((s) => {
+              // `skupiny` môže chýbať v starších porovnaniach — fallback na `sutaze`
+              const v = (r[s.key] ?? (s.key === 'skupiny' ? r.sutaze : 0)) as number;
+              return `<td class="py-2 px-2 text-right tabular-nums">${fmtVal(v, s.fixed)}</td>`;
+            })
             .join('');
           return `<tr class="border-b border-line cursor-pointer ${i % 2 ? 'bg-black/[.015]' : ''}" data-id="${r.id}">
             <td class="py-2 pr-4"><span style="display:inline-block;width:9px;height:9px;border-radius:3px;background:${farbaRiadku(r)};margin-right:8px;"></span><a class="text-sfz-blue hover:underline" href="/zvaz/${r.id}">${r.nazov}</a></td>
@@ -140,6 +212,7 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         renderTabulka();
       }),
     );
+    tlacidlaMetriky.forEach((b) => styluj(b, b.dataset.metrika === metrika));
     renderTabulka();
   }
 </script>

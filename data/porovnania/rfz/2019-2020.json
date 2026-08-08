@@ -1,13 +1,14 @@
 {
   "uroven": "RFZ",
   "sezona": "2019/2020",
-  "generatedAt": "2026-08-07T12:30:47+02:00",
+  "generatedAt": "2026-08-08T21:09:34+02:00",
   "pocetZvazov": 4,
   "zvazy": [
     {
       "id": "zsfz",
       "nazov": "Západoslovenský futbalový zväz",
       "sutaze": 27,
+      "skupiny": 30,
       "zapasy": 2551,
       "druzstva": 372,
       "kontumovane": 13,
@@ -26,6 +27,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 8,
+          "skupiny": 8,
           "zapasy": 944,
           "druzstva": 124,
           "goly": 3400,
@@ -41,6 +43,7 @@
         },
         "U19": {
           "sutaze": 8,
+          "skupiny": 8,
           "zapasy": 677,
           "druzstva": 101,
           "goly": 3384,
@@ -56,6 +59,7 @@
         },
         "U17": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 127,
           "druzstva": 16,
           "goly": 526,
@@ -71,6 +75,7 @@
         },
         "U15": {
           "sutaze": 4,
+          "skupiny": 4,
           "zapasy": 293,
           "druzstva": 40,
           "goly": 1561,
@@ -86,6 +91,7 @@
         },
         "U13": {
           "sutaze": 3,
+          "skupiny": 3,
           "zapasy": 281,
           "druzstva": 36,
           "goly": 1684,
@@ -101,6 +107,7 @@
         },
         "U11": {
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 90,
           "druzstva": 20,
           "goly": 655,
@@ -116,6 +123,7 @@
         },
         "U10": {
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 49,
           "druzstva": 15,
           "goly": 345,
@@ -131,6 +139,7 @@
         },
         "U09": {
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 90,
           "druzstva": 20,
           "goly": 879,
@@ -149,8 +158,16 @@
         "M": 26,
         "F": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
         "L1": 3,
+        "L2": 3,
+        "L3": 7,
+        "L4": 4,
+        "L5": 10
+      },
+      "urovneSkupiny": {
+        "L1": 6,
         "L2": 3,
         "L3": 7,
         "L4": 4,
@@ -162,6 +179,7 @@
           "kat": "U11",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 90
         },
         {
@@ -169,6 +187,7 @@
           "kat": "U10",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 49
         },
         {
@@ -176,6 +195,7 @@
           "kat": "U09",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 90
         },
         {
@@ -183,6 +203,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 125
         },
         {
@@ -190,6 +211,7 @@
           "kat": "U15",
           "pohlavie": "F",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 12
         },
         {
@@ -197,6 +219,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 125
         },
         {
@@ -204,6 +227,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 127
         },
         {
@@ -211,6 +235,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 127
         },
         {
@@ -218,6 +243,7 @@
           "kat": "U17",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 127
         },
         {
@@ -225,6 +251,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 156
         },
         {
@@ -232,6 +259,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 156
         },
         {
@@ -239,6 +267,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 253
         },
         {
@@ -246,6 +275,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 235
         },
         {
@@ -253,6 +283,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 5,
+          "skupiny": 5,
           "zapasy": 564
         },
         {
@@ -260,6 +291,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 5,
+          "skupiny": 5,
           "zapasy": 315
         }
       ]
@@ -268,6 +300,7 @@
       "id": "vsfz",
       "nazov": "Východoslovenský futbalový zväz",
       "sutaze": 28,
+      "skupiny": 36,
       "zapasy": 2072,
       "druzstva": 367,
       "kontumovane": 19,
@@ -286,6 +319,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 8,
+          "skupiny": 8,
           "zapasy": 869,
           "druzstva": 118,
           "goly": 3308,
@@ -301,6 +335,7 @@
         },
         "U19": {
           "sutaze": 6,
+          "skupiny": 6,
           "zapasy": 475,
           "druzstva": 79,
           "goly": 2444,
@@ -316,6 +351,7 @@
         },
         "U17": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 118,
           "druzstva": 15,
           "goly": 517,
@@ -331,6 +367,7 @@
         },
         "U15": {
           "sutaze": 5,
+          "skupiny": 5,
           "zapasy": 225,
           "druzstva": 49,
           "goly": 1531,
@@ -346,6 +383,7 @@
         },
         "U13": {
           "sutaze": 4,
+          "skupiny": 4,
           "zapasy": 196,
           "druzstva": 41,
           "goly": 1384,
@@ -361,6 +399,7 @@
         },
         "U11": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 12,
           "druzstva": 4,
           "goly": 42,
@@ -376,6 +415,7 @@
         },
         "U10": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 12,
           "druzstva": 4,
           "goly": 50,
@@ -391,6 +431,7 @@
         },
         "NEZNAMA": {
           "sutaze": 2,
+          "skupiny": 10,
           "zapasy": 165,
           "druzstva": 57,
           "goly": 892,
@@ -409,6 +450,7 @@
         "M": 27,
         "F": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
         "L1": 3,
         "L2": 8,
@@ -417,12 +459,21 @@
         "L5": 5,
         "NEURCENE": 2
       },
+      "urovneSkupiny": {
+        "L1": 3,
+        "L2": 8,
+        "L3": 3,
+        "L4": 7,
+        "L5": 5,
+        "NEURCENE": 10
+      },
       "sutazeUroven": [
         {
           "uroven": "L1",
           "kat": "U15",
           "pohlavie": "F",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 28
         },
         {
@@ -430,6 +481,7 @@
           "kat": "U11",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 12
         },
         {
@@ -437,6 +489,7 @@
           "kat": "U10",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 12
         },
         {
@@ -444,6 +497,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 4,
+          "skupiny": 4,
           "zapasy": 197
         },
         {
@@ -451,6 +505,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 4,
+          "skupiny": 4,
           "zapasy": 196
         },
         {
@@ -458,6 +513,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 136
         },
         {
@@ -465,6 +521,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 119
         },
         {
@@ -472,6 +529,7 @@
           "kat": "U17",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 118
         },
         {
@@ -479,6 +537,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 272
         },
         {
@@ -486,6 +545,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 5,
+          "skupiny": 5,
           "zapasy": 356
         },
         {
@@ -493,6 +553,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 5,
+          "skupiny": 5,
           "zapasy": 461
         },
         {
@@ -500,6 +561,7 @@
           "kat": "NEZNAMA",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 10,
           "zapasy": 165
         }
       ]
@@ -508,6 +570,7 @@
       "id": "ssfz",
       "nazov": "Stredoslovenský futbalový zväz",
       "sutaze": 24,
+      "skupiny": 26,
       "zapasy": 2071,
       "druzstva": 331,
       "kontumovane": 30,
@@ -526,6 +589,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 7,
+          "skupiny": 7,
           "zapasy": 665,
           "druzstva": 100,
           "goly": 2463,
@@ -541,6 +605,7 @@
         },
         "U19": {
           "sutaze": 7,
+          "skupiny": 7,
           "zapasy": 482,
           "druzstva": 84,
           "goly": 2471,
@@ -556,6 +621,7 @@
         },
         "U17": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 55,
           "druzstva": 11,
           "goly": 250,
@@ -571,6 +637,7 @@
         },
         "U15": {
           "sutaze": 5,
+          "skupiny": 6,
           "zapasy": 443,
           "druzstva": 71,
           "goly": 2666,
@@ -586,6 +653,7 @@
         },
         "U13": {
           "sutaze": 4,
+          "skupiny": 5,
           "zapasy": 426,
           "druzstva": 65,
           "goly": 3057,
@@ -604,8 +672,15 @@
         "M": 23,
         "F": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
         "L2": 3,
+        "L3": 9,
+        "L4": 4,
+        "L5": 8
+      },
+      "urovneSkupiny": {
+        "L2": 5,
         "L3": 9,
         "L4": 4,
         "L5": 8
@@ -616,6 +691,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 182
         },
         {
@@ -623,6 +699,7 @@
           "kat": "U15",
           "pohlavie": "F",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 15
         },
         {
@@ -630,6 +707,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 181
         },
         {
@@ -637,6 +715,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 120
         },
         {
@@ -644,6 +723,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 60
         },
         {
@@ -651,6 +731,7 @@
           "kat": "U17",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 55
         },
         {
@@ -658,6 +739,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 3,
+          "skupiny": 3,
           "zapasy": 246
         },
         {
@@ -665,6 +747,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 3,
+          "skupiny": 3,
           "zapasy": 245
         },
         {
@@ -672,6 +755,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 181
         },
         {
@@ -679,6 +763,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 166
         },
         {
@@ -686,6 +771,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 4,
+          "skupiny": 4,
           "zapasy": 364
         },
         {
@@ -693,6 +779,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 4,
+          "skupiny": 4,
           "zapasy": 256
         }
       ]
@@ -701,6 +788,7 @@
       "id": "bfz",
       "nazov": "Bratislavský futbalový zväz",
       "sutaze": 23,
+      "skupiny": 42,
       "zapasy": 1608,
       "druzstva": 280,
       "kontumovane": 9,
@@ -719,6 +807,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 4,
+          "skupiny": 6,
           "zapasy": 275,
           "druzstva": 41,
           "goly": 1075,
@@ -734,6 +823,7 @@
         },
         "U19": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 122,
           "druzstva": 18,
           "goly": 621,
@@ -749,6 +839,7 @@
         },
         "U17": {
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 120,
           "druzstva": 18,
           "goly": 653,
@@ -764,6 +855,7 @@
         },
         "U15": {
           "sutaze": 3,
+          "skupiny": 4,
           "zapasy": 148,
           "druzstva": 22,
           "goly": 951,
@@ -779,6 +871,7 @@
         },
         "U13": {
           "sutaze": 2,
+          "skupiny": 2,
           "zapasy": 179,
           "druzstva": 26,
           "goly": 1287,
@@ -794,6 +887,7 @@
         },
         "U11": {
           "sutaze": 6,
+          "skupiny": 9,
           "zapasy": 270,
           "druzstva": 64,
           "goly": 2656,
@@ -809,6 +903,7 @@
         },
         "U10": {
           "sutaze": 2,
+          "skupiny": 3,
           "zapasy": 84,
           "druzstva": 20,
           "goly": 776,
@@ -824,6 +919,7 @@
         },
         "U09": {
           "sutaze": 2,
+          "skupiny": 4,
           "zapasy": 154,
           "druzstva": 35,
           "goly": 1529,
@@ -839,6 +935,7 @@
         },
         "U08": {
           "sutaze": 1,
+          "skupiny": 10,
           "zapasy": 256,
           "druzstva": 36,
           "goly": 2854,
@@ -857,6 +954,7 @@
         "M": 22,
         "F": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
         "L1": 3,
         "L2": 9,
@@ -866,12 +964,22 @@
         "L10P": 1,
         "POHARE": 3
       },
+      "urovneSkupiny": {
+        "L1": 6,
+        "L2": 12,
+        "L3": 15,
+        "L4": 1,
+        "L5": 1,
+        "L10P": 3,
+        "POHARE": 4
+      },
       "sutazeUroven": [
         {
           "uroven": "L1",
           "kat": "U11",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 64
         },
         {
@@ -879,6 +987,7 @@
           "kat": "U10",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 64
         },
         {
@@ -886,6 +995,7 @@
           "kat": "U09",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 64
         },
         {
@@ -893,6 +1003,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 91
         },
         {
@@ -900,6 +1011,7 @@
           "kat": "U15",
           "pohlavie": "F",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 11
         },
         {
@@ -907,6 +1019,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 91
         },
         {
@@ -914,6 +1027,7 @@
           "kat": "U11",
           "pohlavie": "M",
           "sutaze": 4,
+          "skupiny": 6,
           "zapasy": 176
         },
         {
@@ -921,6 +1035,7 @@
           "kat": "U10",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 20
         },
         {
@@ -928,6 +1043,7 @@
           "kat": "U09",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 90
         },
         {
@@ -935,6 +1051,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 120
         },
         {
@@ -942,6 +1059,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 98
         },
         {
@@ -949,6 +1067,7 @@
           "kat": "U17",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 120
         },
         {
@@ -956,6 +1075,7 @@
           "kat": "U11",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 30
         },
         {
@@ -963,6 +1083,7 @@
           "kat": "U08",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 10,
           "zapasy": 256
         },
         {
@@ -970,6 +1091,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 106
         },
         {
@@ -977,6 +1099,7 @@
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 24
         },
         {
@@ -984,6 +1107,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 3,
           "zapasy": 47
         },
         {
@@ -991,6 +1115,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 2
         },
         {
@@ -998,6 +1123,7 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 2,
           "zapasy": 46
         },
         {
@@ -1005,6 +1131,7 @@
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 88
         }
       ]

@@ -1,97 +1,128 @@
 {
   "uroven": "RFZ",
   "sezona": "2026/2027",
-  "generatedAt": "2026-08-07T12:30:47+02:00",
+  "generatedAt": "2026-08-08T21:09:34+02:00",
   "pocetZvazov": 4,
   "zvazy": [
     {
-      "id": "ssfz",
-      "nazov": "Stredoslovenský futbalový zväz",
-      "sutaze": 4,
-      "zapasy": 1,
-      "druzstva": 70,
+      "id": "zsfz",
+      "nazov": "Západoslovenský futbalový zväz",
+      "sutaze": 15,
+      "skupiny": 25,
+      "zapasy": 68,
+      "druzstva": 159,
       "kontumovane": 0,
-      "goly": 3,
-      "divaci": 170,
-      "zlteKarty": 2,
-      "cerveneKarty": 0,
-      "hraci": 32,
-      "treneri": 3,
-      "rozhodcovia": 3,
-      "realizacnyTim": 5,
-      "delegati": 1,
-      "personal": 3,
-      "golyNaZapas": 3.0,
-      "divaciNaZapas": 170.0,
+      "goly": 384,
+      "divaci": 7147,
+      "zlteKarty": 127,
+      "cerveneKarty": 7,
+      "hraci": 2144,
+      "treneri": 164,
+      "rozhodcovia": 114,
+      "realizacnyTim": 218,
+      "delegati": 23,
+      "personal": 88,
+      "golyNaZapas": 5.65,
+      "divaciNaZapas": 105.1,
       "kat": {
         "ADULTS": {
-          "sutaze": 1,
-          "zapasy": 1,
-          "druzstva": 28,
-          "goly": 3,
-          "divaci": 170,
-          "zlteKarty": 2,
-          "cerveneKarty": 0,
-          "hraci": 32,
-          "treneri": 3,
-          "rozhodcovia": 3,
-          "realizacnyTim": 5,
-          "delegati": 1,
-          "personal": 3
+          "sutaze": 8,
+          "skupiny": 8,
+          "zapasy": 18,
+          "druzstva": 52,
+          "goly": 70,
+          "divaci": 4300,
+          "zlteKarty": 63,
+          "cerveneKarty": 4,
+          "hraci": 604,
+          "treneri": 59,
+          "rozhodcovia": 54,
+          "realizacnyTim": 93,
+          "delegati": 18,
+          "personal": 50
         },
         "U19": {
+          "sutaze": 2,
+          "skupiny": 9,
+          "zapasy": 25,
+          "druzstva": 57,
+          "goly": 138,
+          "divaci": 1421,
+          "zlteKarty": 52,
+          "cerveneKarty": 3,
+          "hraci": 767,
+          "treneri": 68,
+          "rozhodcovia": 53,
+          "realizacnyTim": 92,
+          "delegati": 7,
+          "personal": 28
+        },
+        "U17": {
           "sutaze": 1,
-          "zapasy": 0,
+          "skupiny": 2,
+          "zapasy": 7,
           "druzstva": 14,
-          "goly": 0,
-          "divaci": 0,
-          "zlteKarty": 0,
+          "goly": 52,
+          "divaci": 523,
+          "zlteKarty": 10,
           "cerveneKarty": 0,
-          "hraci": 0,
-          "treneri": 0,
-          "rozhodcovia": 0,
-          "realizacnyTim": 0,
+          "hraci": 223,
+          "treneri": 30,
+          "rozhodcovia": 21,
+          "realizacnyTim": 29,
           "delegati": 0,
-          "personal": 0
+          "personal": 9
         },
         "U15": {
-          "sutaze": 1,
-          "zapasy": 0,
-          "druzstva": 14,
-          "goly": 0,
-          "divaci": 0,
-          "zlteKarty": 0,
+          "sutaze": 2,
+          "skupiny": 3,
+          "zapasy": 9,
+          "druzstva": 18,
+          "goly": 55,
+          "divaci": 481,
+          "zlteKarty": 2,
           "cerveneKarty": 0,
-          "hraci": 0,
-          "treneri": 0,
-          "rozhodcovia": 0,
-          "realizacnyTim": 0,
+          "hraci": 279,
+          "treneri": 23,
+          "rozhodcovia": 18,
+          "realizacnyTim": 31,
           "delegati": 0,
-          "personal": 0
+          "personal": 9
         },
         "U13": {
-          "sutaze": 1,
-          "zapasy": 0,
-          "druzstva": 14,
-          "goly": 0,
-          "divaci": 0,
+          "sutaze": 2,
+          "skupiny": 3,
+          "zapasy": 9,
+          "druzstva": 18,
+          "goly": 69,
+          "divaci": 422,
           "zlteKarty": 0,
           "cerveneKarty": 0,
-          "hraci": 0,
-          "treneri": 0,
-          "rozhodcovia": 0,
-          "realizacnyTim": 0,
+          "hraci": 290,
+          "treneri": 22,
+          "rozhodcovia": 18,
+          "realizacnyTim": 30,
           "delegati": 0,
-          "personal": 0
+          "personal": 9
         }
       },
       "sutazePohlavie": {
-        "M": 4
+        "M": 15
       },
+      "skupinyPohlavie": {},
       "urovne": {
         "L2": 2,
-        "L5": 1,
-        "L6": 1
+        "L3": 4,
+        "L4": 2,
+        "L5": 2,
+        "L6": 5
+      },
+      "urovneSkupiny": {
+        "L2": 2,
+        "L3": 8,
+        "L4": 8,
+        "L5": 2,
+        "L6": 5
       },
       "sutazeUroven": [
         {
@@ -99,53 +130,334 @@
           "kat": "U15",
           "pohlavie": "M",
           "sutaze": 1,
-          "zapasy": 0
+          "skupiny": 1,
+          "zapasy": 4
         },
         {
           "uroven": "L2",
           "kat": "U13",
           "pohlavie": "M",
           "sutaze": 1,
-          "zapasy": 0
+          "skupiny": 1,
+          "zapasy": 4
+        },
+        {
+          "uroven": "L3",
+          "kat": "U19",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 2,
+          "zapasy": 7
+        },
+        {
+          "uroven": "L3",
+          "kat": "U17",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 2,
+          "zapasy": 7
+        },
+        {
+          "uroven": "L3",
+          "kat": "U15",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 2,
+          "zapasy": 5
+        },
+        {
+          "uroven": "L3",
+          "kat": "U13",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 2,
+          "zapasy": 5
+        },
+        {
+          "uroven": "L4",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 4
+        },
+        {
+          "uroven": "L4",
+          "kat": "U19",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 7,
+          "zapasy": 18
+        },
+        {
+          "uroven": "L5",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 2,
+          "skupiny": 2,
+          "zapasy": 5
+        },
+        {
+          "uroven": "L6",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 5,
+          "skupiny": 5,
+          "zapasy": 9
+        }
+      ]
+    },
+    {
+      "id": "ssfz",
+      "nazov": "Stredoslovenský futbalový zväz",
+      "sutaze": 11,
+      "skupiny": 25,
+      "zapasy": 52,
+      "druzstva": 155,
+      "kontumovane": 0,
+      "goly": 284,
+      "divaci": 3757,
+      "zlteKarty": 82,
+      "cerveneKarty": 2,
+      "hraci": 1555,
+      "treneri": 99,
+      "rozhodcovia": 74,
+      "realizacnyTim": 164,
+      "delegati": 14,
+      "personal": 81,
+      "golyNaZapas": 5.46,
+      "divaciNaZapas": 72.2,
+      "kat": {
+        "ADULTS": {
+          "sutaze": 3,
+          "skupiny": 6,
+          "zapasy": 11,
+          "druzstva": 47,
+          "goly": 38,
+          "divaci": 2030,
+          "zlteKarty": 41,
+          "cerveneKarty": 2,
+          "hraci": 365,
+          "treneri": 29,
+          "rozhodcovia": 31,
+          "realizacnyTim": 58,
+          "delegati": 11,
+          "personal": 32
+        },
+        "U19": {
+          "sutaze": 3,
+          "skupiny": 7,
+          "zapasy": 19,
+          "druzstva": 44,
+          "goly": 122,
+          "divaci": 971,
+          "zlteKarty": 27,
+          "cerveneKarty": 0,
+          "hraci": 555,
+          "treneri": 43,
+          "rozhodcovia": 41,
+          "realizacnyTim": 71,
+          "delegati": 4,
+          "personal": 38
+        },
+        "U17": {
+          "sutaze": 1,
+          "skupiny": 2,
+          "zapasy": 4,
+          "druzstva": 8,
+          "goly": 11,
+          "divaci": 170,
+          "zlteKarty": 4,
+          "cerveneKarty": 0,
+          "hraci": 123,
+          "treneri": 13,
+          "rozhodcovia": 12,
+          "realizacnyTim": 14,
+          "delegati": 0,
+          "personal": 6
+        },
+        "U15": {
+          "sutaze": 2,
+          "skupiny": 5,
+          "zapasy": 9,
+          "druzstva": 28,
+          "goly": 52,
+          "divaci": 311,
+          "zlteKarty": 8,
+          "cerveneKarty": 0,
+          "hraci": 271,
+          "treneri": 20,
+          "rozhodcovia": 9,
+          "realizacnyTim": 30,
+          "delegati": 0,
+          "personal": 11
+        },
+        "U13": {
+          "sutaze": 2,
+          "skupiny": 5,
+          "zapasy": 9,
+          "druzstva": 28,
+          "goly": 61,
+          "divaci": 275,
+          "zlteKarty": 2,
+          "cerveneKarty": 0,
+          "hraci": 247,
+          "treneri": 17,
+          "rozhodcovia": 9,
+          "realizacnyTim": 28,
+          "delegati": 0,
+          "personal": 10
+        }
+      },
+      "sutazePohlavie": {
+        "M": 11
+      },
+      "skupinyPohlavie": {},
+      "urovne": {
+        "L2": 2,
+        "L3": 4,
+        "L4": 2,
+        "L5": 2,
+        "L6": 1
+      },
+      "urovneSkupiny": {
+        "L2": 8,
+        "L3": 6,
+        "L4": 4,
+        "L5": 3,
+        "L6": 4
+      },
+      "sutazeUroven": [
+        {
+          "uroven": "L2",
+          "kat": "U15",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 4,
+          "zapasy": 8
+        },
+        {
+          "uroven": "L2",
+          "kat": "U13",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 4,
+          "zapasy": 8
+        },
+        {
+          "uroven": "L3",
+          "kat": "U19",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 2,
+          "zapasy": 4
+        },
+        {
+          "uroven": "L3",
+          "kat": "U17",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 2,
+          "zapasy": 4
+        },
+        {
+          "uroven": "L3",
+          "kat": "U15",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        },
+        {
+          "uroven": "L3",
+          "kat": "U13",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        },
+        {
+          "uroven": "L4",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 5
+        },
+        {
+          "uroven": "L4",
+          "kat": "U19",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 3,
+          "zapasy": 7
+        },
+        {
+          "uroven": "L5",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 2
         },
         {
           "uroven": "L5",
           "kat": "U19",
           "pohlavie": "M",
           "sutaze": 1,
-          "zapasy": 0
+          "skupiny": 2,
+          "zapasy": 8
         },
         {
           "uroven": "L6",
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
-          "zapasy": 1
+          "skupiny": 4,
+          "zapasy": 4
         }
       ]
     },
     {
       "id": "bfz",
       "nazov": "Bratislavský futbalový zväz",
-      "sutaze": 1,
-      "zapasy": 0,
-      "druzstva": 10,
+      "sutaze": 3,
+      "skupiny": 3,
+      "zapasy": 2,
+      "druzstva": 14,
       "kontumovane": 0,
-      "goly": 0,
-      "divaci": 0,
-      "zlteKarty": 0,
+      "goly": 3,
+      "divaci": 219,
+      "zlteKarty": 6,
       "cerveneKarty": 0,
-      "hraci": 0,
-      "treneri": 0,
-      "rozhodcovia": 0,
-      "realizacnyTim": 0,
-      "delegati": 0,
-      "personal": 0,
-      "golyNaZapas": 0.0,
-      "divaciNaZapas": 0.0,
+      "hraci": 68,
+      "treneri": 4,
+      "rozhodcovia": 6,
+      "realizacnyTim": 7,
+      "delegati": 2,
+      "personal": 6,
+      "golyNaZapas": 1.5,
+      "divaciNaZapas": 109.5,
       "kat": {
+        "ADULTS": {
+          "sutaze": 2,
+          "skupiny": 2,
+          "zapasy": 2,
+          "druzstva": 4,
+          "goly": 3,
+          "divaci": 219,
+          "zlteKarty": 6,
+          "cerveneKarty": 0,
+          "hraci": 68,
+          "treneri": 4,
+          "rozhodcovia": 6,
+          "realizacnyTim": 7,
+          "delegati": 2,
+          "personal": 6
+        },
         "U15": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0,
           "druzstva": 10,
           "goly": 0,
@@ -161,10 +473,19 @@
         }
       },
       "sutazePohlavie": {
+        "M": 2,
         "F": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
-        "L2": 1
+        "L2": 1,
+        "L4": 1,
+        "L5": 1
+      },
+      "urovneSkupiny": {
+        "L2": 1,
+        "L4": 1,
+        "L5": 1
       },
       "sutazeUroven": [
         {
@@ -172,59 +493,24 @@
           "kat": "U15",
           "pohlavie": "F",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0
-        }
-      ]
-    },
-    {
-      "id": "zsfz",
-      "nazov": "Západoslovenský futbalový zväz",
-      "sutaze": 2,
-      "zapasy": 0,
-      "druzstva": 24,
-      "kontumovane": 0,
-      "goly": 0,
-      "divaci": 0,
-      "zlteKarty": 0,
-      "cerveneKarty": 0,
-      "hraci": 0,
-      "treneri": 2,
-      "rozhodcovia": 6,
-      "realizacnyTim": 2,
-      "delegati": 2,
-      "personal": 3,
-      "golyNaZapas": 0.0,
-      "divaciNaZapas": 0.0,
-      "kat": {
-        "ADULTS": {
-          "sutaze": 2,
-          "zapasy": 0,
-          "druzstva": 24,
-          "goly": 0,
-          "divaci": 0,
-          "zlteKarty": 0,
-          "cerveneKarty": 0,
-          "hraci": 0,
-          "treneri": 2,
-          "rozhodcovia": 6,
-          "realizacnyTim": 2,
-          "delegati": 2,
-          "personal": 3
-        }
-      },
-      "sutazePohlavie": {
-        "M": 2
-      },
-      "urovne": {
-        "L6": 2
-      },
-      "sutazeUroven": [
+        },
         {
-          "uroven": "L6",
+          "uroven": "L4",
           "kat": "ADULTS",
           "pohlavie": "M",
-          "sutaze": 2,
-          "zapasy": 0
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
+        },
+        {
+          "uroven": "L5",
+          "kat": "ADULTS",
+          "pohlavie": "M",
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 1
         }
       ]
     },
@@ -232,6 +518,7 @@
       "id": "vsfz",
       "nazov": "Východoslovenský futbalový zväz",
       "sutaze": 1,
+      "skupiny": 1,
       "zapasy": 0,
       "druzstva": 14,
       "kontumovane": 0,
@@ -250,6 +537,7 @@
       "kat": {
         "ADULTS": {
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0,
           "druzstva": 14,
           "goly": 0,
@@ -267,7 +555,11 @@
       "sutazePohlavie": {
         "M": 1
       },
+      "skupinyPohlavie": {},
       "urovne": {
+        "L6": 1
+      },
+      "urovneSkupiny": {
         "L6": 1
       },
       "sutazeUroven": [
@@ -276,6 +568,7 @@
           "kat": "ADULTS",
           "pohlavie": "M",
           "sutaze": 1,
+          "skupiny": 1,
           "zapasy": 0
         }
       ]

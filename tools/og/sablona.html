@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(115deg, #0b2fa0 0%, #1450df 55%, #1e5cf0 100%);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  /* dekoratívny kruh vpravo hore */
+  .kruh {
+    position: absolute;
+    right: -70px; top: -110px;
+    width: 460px; height: 460px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+  }
+  /* tematický piktogram v kruhu */
+  .pikto {
+    position: absolute;
+    right: 86px; top: 52px;
+    width: 96px; height: 96px;
+    opacity: 0.92;
+  }
+  .hlavicka {
+    position: absolute;
+    left: 56px; top: 44px;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .hlavicka img { width: 54px; height: 54px; }
+  .hlavicka .znacka {
+    font-size: 19px; font-weight: 800;
+    letter-spacing: 0.055em; text-transform: uppercase;
+    line-height: 1.25; max-width: 330px;
+  }
+  .obsah { position: absolute; left: 56px; top: 206px; right: 300px; }
+  h1 {
+    font-size: 66px; font-weight: 800; line-height: 1.06;
+    letter-spacing: -0.018em;
+  }
+  p.podtitulok {
+    margin-top: 22px;
+    font-size: 25px; line-height: 1.38;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .pata {
+    position: absolute; left: 56px; bottom: 62px;
+    font-size: 22px;
+  }
+  .pata .domena { font-weight: 800; }
+  .pata .zvaz { color: rgba(255, 255, 255, 0.75); }
+  .pruh {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 16px; background: #ec1c24;
+  }
+</style>
+</head>
+<body>
+  <div class="kruh"></div>
+  <div class="pikto" data-pikto></div>
+
+  <div class="hlavicka">
+    <img src="sfz-logo-official.svg" alt="" />
+    <div class="znacka">Štatistiky slovenského<br />futbalu</div>
+  </div>
+
+  <div class="obsah">
+    <h1 data-titulok>Titulok</h1>
+    <p class="podtitulok" data-podtitulok>Podtitulok</p>
+  </div>
+
+  <div class="pata">
+    <span class="domena">statistika.futbalsfz.sk</span>
+    <span class="zvaz"> · Slovenský futbalový zväz</span>
+  </div>
+  <div class="pruh"></div>
+</body>
+</html>

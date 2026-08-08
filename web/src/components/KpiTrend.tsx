@@ -5,6 +5,7 @@ import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/compon
 import { CanvasRenderer } from 'echarts/renderers';
 import { fmt } from '../lib/format';
 import { GROUPS, GROUP_COLOR } from '../lib/palette';
+import { METRIKA_POPIS } from '../lib/urovneTypy';
 
 echarts.use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
@@ -23,6 +24,8 @@ interface Props {
 }
 
 const ZAPASY_METRIKY = [
+  // „Skupiny“ sa zobrazujú len tam, kde ich dáta naozaj nesú — pozri `maSkupiny` nižšie
+  { k: 'skupiny', label: 'Skupiny' },
   { k: 'sutaze', label: 'Súťaže' },
   { k: 'zapasy', label: 'Zápasy' },
   { k: 'goly', label: 'Góly' },
@@ -66,6 +69,16 @@ export default function KpiTrend({
   const jeOsoba = OSOBA_KEYS.has(metric);
   const maSporty = sporty.length > 1;
 
+  // Profily KLUBOV metriku `skupiny` zatiaľ nemajú (počíta sa v `etl/run.py` pre zväzy).
+  // Bez tejto kontroly by pill „Skupiny“ na stránke klubu ticho ukazoval hodnoty `sutaze`,
+  // čo je horšie než ho nezobraziť vôbec.
+  const maSkupiny = sezony.some((s) =>
+    Object.values(perSeason[s] ?? {}).some((k) => (k as Record<string, number>)?.skupiny != null),
+  );
+  const zapasyMetriky = maSkupiny
+    ? ZAPASY_METRIKY
+    : ZAPASY_METRIKY.filter((m) => m.k !== 'skupiny');
+
   // ktoré osobné roly majú vôbec dáta (kluby nemajú rozhodcov/delegátov/personál)
   const osobyAvail = OSOBY_METRIKY.filter((m) =>
     sezony.some((s) => {
@@ -85,7 +98,11 @@ export default function KpiTrend({
     let suma = 0;
     for (const sport of maSporty ? selSport : [FUTBAL]) {
       const kk = (sport === FUTBAL ? perSeason : perSeasonOdvetvia[sport])?.[s] || {};
-      suma += g.cats.reduce((a, c) => a + (kk[c]?.[metric] ?? 0), 0);
+      // skupiny sú fallbackom na súťaže — staršie profily pole `skupiny` nemajú
+      suma += g.cats.reduce(
+        (a, c) => a + (metric === 'skupiny' ? (kk[c]?.skupiny ?? kk[c]?.sutaze ?? 0) : (kk[c]?.[metric] ?? 0)),
+        0,
+      );
     }
     return suma;
   }
@@ -135,8 +152,16 @@ export default function KpiTrend({
   return (
     <div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, margin: '2px 0 4px' }}>
-        {ZAPASY_METRIKY.map((m) => (
-          <button key={m.k} type="button" onClick={() => setMetric(m.k)} style={btn(m.k === metric)}>{m.label}</button>
+        {zapasyMetriky.map((m) => (
+          <button
+            key={m.k}
+            type="button"
+            onClick={() => setMetric(m.k)}
+            title={m.k === 'skupiny' || m.k === 'sutaze' ? METRIKA_POPIS[m.k].popis : undefined}
+            style={btn(m.k === metric)}
+          >
+            {m.label}
+          </button>
         ))}
       </div>
       {osobyAvail.length > 0 && (
@@ -170,11 +195,11 @@ export default function KpiTrend({
         ))}
       </div>
       <div ref={el} style={{ width: '100%', height: 320 }} />
-      {metric === 'sutaze' && (
-        <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
-          Súťaž = súťaž s aspoň jedným odohraným zápasom v danej sezóne. Súťaž, ktorej zápasy patria
-          do viacerých vekových úrovní, sa započíta v každej z nich — súčet skupín preto môže byť
-          mierne vyšší než celkový počet súťaží.
+      {(metric === 'sutaze' || metric === 'skupiny') && (
+        <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)', lineHeight: 1.55 }}>
+          {METRIKA_POPIS[metric].popis} Počítajú sa len súťaže s aspoň jedným odohraným zápasom
+          v danej sezóne; súťaž, ktorej zápasy patria do viacerých vekových úrovní, sa započíta
+          v každej z nich — súčet cez vekové skupiny preto môže byť mierne vyšší než celkový počet.
         </p>
       )}
       {jeOsoba && (

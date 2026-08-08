@@ -21,6 +21,7 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
   description="Ako vznikajú čísla na portáli Štatistiky slovenského futbalu — zdroj dát, definície ukazovateľov a presné pravidlá výpočtu: ako sa počítajú odohraté zápasy, ako sa nakladá s kontumáciami a odstúpenými družstvami a ako funguje pyramída líg podľa vekových kategórií."
   keywords="metodika futbalové štatistiky, ako sa počítajú zápasy, kontumácia, odstúpené družstvo, pyramída líg, úroveň súťaže, SFZ dokumentácia"
   jsonLd={[dokLd]}
+  image="/og/dokumentacia.png"
 >
   <header class="mb-6">
     <div class={KICKER}>O portáli</div>
@@ -147,6 +148,36 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         Za súťaž považujeme súťaž s <strong class="text-ink">aspoň jedným odohratým zápasom</strong>
         v danej sezóne. Každá súťaž je priradená zväzu, ktorý ju riadi — SFZ, regionálnemu (RFZ)
         alebo oblastnému (ObFZ). Súťaž, ktorá sa ešte nezačala hrať, sa nepočíta.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Súťaž a súťažná skupina — dve rôzne veci</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Súťaž</strong> je zastrešujúci celok tak, ako ho vypisuje riadiaci
+        zväz. Má jednu úroveň, jednu vekovú úroveň a jedno pohlavie — napríklad „IV. liga U19 ZsFZ“.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Súťažná skupina</strong> je to, v čom sa reálne hrá — má vlastných
+        účastníkov, vlastný rozpis a vlastnú tabuľku. <strong class="text-ink">Jedna súťaž ich môže
+        mať viac:</strong> spomínaná IV. liga U19 ZsFZ má šesť skupín A až F, každú s vlastnými
+        klubmi. III. liga U19 ZsFZ má dve — skupinu JV a skupinu SZ.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Prečo to rozlišujeme:</strong> zväzy zapisujú tú istú realitu
+        rôzne. ZsFZ má šesť skupín IV. ligy U19 ako jednu súťaž so šiestimi časťami, kým VsFZ má
+        svoje skupiny IV. ligy zapísané ako päť samostatných súťaží. Pri počítaní súťaží by teda
+        VsFZ vyzeral, že riadi viac súťaží než ZsFZ — hoci je to len iná evidencia toho istého.
+        <strong class="text-ink">Počet skupín oba zápisy zrovnoprávňuje</strong>, preto je na grafoch
+        predvolený; prepínačom sa dá kedykoľvek prejsť na počet súťaží.
+      </p>
+      <p class="mt-3 text-sm text-muted" style="line-height:1.6;">
+        Do počtu skupín sa rátajú <strong class="text-ink">základné časti</strong> súťaže.
+        Nadstavbové časti — kvalifikačné stretnutia, skupina o postup, skupina o udržanie —
+        samostatné súťaže nie sú a nepočítajú sa; hrajú ich družstvá, ktoré už boli v základných
+        skupinách. Databáza príznak typu časti neobsahuje, preto sa základná skupina rozpoznáva
+        podľa toho, že prináša aspoň jedno družstvo, ktoré v inej časti tej istej súťaže nie je.
+        Ak sa skupiny rozlíšiť nedajú — pri turnajových prípravkách alebo pri rozdelení na jesennú
+        a jarnú časť hrajú všetky časti tí istí účastníci — započíta sa celá súťaž ako jedna
+        skupina. Týka sa to zhruba dvanástich percent súťaží.
       </p>
 
       <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Prečo pyramíd nie je jedna, ale štyri</h3>

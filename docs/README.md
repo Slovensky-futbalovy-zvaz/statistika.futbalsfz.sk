@@ -27,6 +27,7 @@ zmenilo, starší ADR sa nemaže; dostane do hlavičky poznámku, ktorý ADR ho 
 | [0006](adr/0006-hosting-vercel-namiesto-cloudflare.md) | **Hosting na Verceli**, DNS zostáva na WebSupport |
 | [0007](adr/0007-react-islands-redizajn.md) | React islands namiesto vanilla `.astro` skriptov |
 | [0008](adr/0008-odohrane-zapasy-bez-administrativnych.md) | „Odohraté zápasy“ bez administratívnych kontumácií a odstúpení |
+| [0009](adr/0009-sutaz-vs-sutazna-skupina.md) | **Súťaž vs. súťažná skupina** — dve metriky vedľa seba, predvolená je skupina |
 
 ## Projekt a dáta
 
@@ -49,4 +50,6 @@ zmenilo, starší ADR sa nemaže; dostane do hlavičky poznámku, ktorý ADR ho 
 
 - **[brand/](brand/)** — dizajn manuál SFZ (PDF), zdroj brand tokenov
 - **[social/](social/)** — podklady pre príspevky na sociálne siete (carousel, PNG, texty)
+- **[../tools/og/](../tools/og/)** — generátor OG obrázkov (1200×630) pre sociálne siete:
+  `node tools/og/generuj.mjs <stranka…>`
 - **[archiv/](archiv/)** — dokumenty, ktoré už doslúžili; pozri [archiv/README.md](archiv/README.md)

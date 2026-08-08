@@ -24,6 +24,7 @@ export interface Index {
 
 export interface Kpi {
   sutaze?: number; // počet súťaží (od 19. 7. 2026; staršie profily ho nemajú)
+  skupiny?: number; // počet súťažných skupín = základných častí (od 8. 8. 2026)
   zapasy: number;
   druzstva: number;
   goly: number;
@@ -31,10 +32,16 @@ export interface Kpi {
   zlteKarty: number;
   cerveneKarty: number;
   kontumovane?: number; // #kontumácie: počet zápasov s contumation.isContumated=true, súčasť zapasy (nie odpočítané)
+  odstupene?: number; // počet zápasov odstúpeného družstva (ADR-0008)
+  // Index signature: KPI sa na viacerých miestach čítajú dynamicky podľa kľúča
+  // (`spolu(sumar, 'skupiny')`, prepínače metrík). Bez nej si to každé volanie vynucuje
+  // pretypovaním cez `as Record<string, number>`, čo `astro check` správne označí za chybu.
+  [metrika: string]: number | undefined;
 }
 
 export interface Kategoria {
   sutaze?: number; // počet súťaží vo vekovej úrovni (staršie profily ho nemajú)
+  skupiny?: number; // počet súťažných skupín vo vekovej úrovni
   zapasy: number;
   druzstva: number;
   goly: number;
@@ -65,6 +72,8 @@ export interface UrovenRiadok {
   kat: string; // ADULTS | U19 | … | NEZNAMA
   pohlavie: string; // M | F | NEURCENE
   sutaze: number;
+  /** Súťažné skupiny = základné časti súťaží (Ján Letko, 8. 8. 2026). */
+  skupiny?: number;
   zapasy: number;
 }
 
@@ -172,6 +181,8 @@ export interface PorovnanieRiadok {
   nazov: string;
   rfz?: string;
   sutaze?: number;
+  /** Súťažné skupiny = základné časti súťaží (Ján Letko, 8. 8. 2026). */
+  skupiny?: number;
   zapasy: number;
   druzstva: number;
   kontumovane?: number;
@@ -189,8 +200,12 @@ export interface PorovnanieRiadok {
   divaciNaZapas: number;
   /** Počet súťaží po pohlaví (etapa 2; staršie porovnania kľúč nemajú). */
   sutazePohlavie?: Record<string, number>;
+  /** Počet súťažných skupín po pohlaví. */
+  skupinyPohlavie?: Record<string, number>;
   /** Počet súťaží po úrovniach súťaže, kód → počet (etapa 2). */
   urovne?: Record<string, number>;
+  /** Počet súťažných skupín po úrovniach súťaže. */
+  urovneSkupiny?: Record<string, number>;
   /** Plochý rez úroveň × veková úroveň × pohlavie (podklad pre heatmapu a trend úrovní). */
   sutazeUroven?: UrovenRiadok[];
 }
@@ -246,7 +261,7 @@ function getBumpData(urovenSlug: string): BumpData {
   const kat: BumpData['kat'] = {};
   const zvazMap = new Map<string, string>();
   const metriky = [
-    'sutaze', 'zapasy', 'druzstva', 'kontumovane', 'goly', 'zlteKarty', 'cerveneKarty',
+    'sutaze', 'skupiny', 'zapasy', 'druzstva', 'kontumovane', 'goly', 'zlteKarty', 'cerveneKarty',
     'hraci', 'treneri', 'rozhodcovia', 'realizacnyTim', 'delegati', 'personal',
     'divaci', 'golyNaZapas', 'divaciNaZapas',
   ];
@@ -391,6 +406,8 @@ export interface SunburstUzol {
   sutaze?: number; // len listy sunburstSutaze — počet súťaží zväzu (prepínač metriky)
   pohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → zápasy)
   sutazePohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → súťaže)
+  skupiny?: number; // len listy sunburstSutaze — počet súťažných skupín (základných častí)
+  skupinyPohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → skupiny)
   children?: SunburstUzol[];
 }
 

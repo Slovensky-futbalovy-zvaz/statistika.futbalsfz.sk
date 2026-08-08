@@ -6,6 +6,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import type { SunburstUzol } from '../lib/data';
 import { fmt } from '../lib/format';
 import { REGION } from '../lib/palette';
+import { METRIKA_POPIS } from '../lib/urovneTypy';
 
 echarts.use([SunburstChart, TooltipComponent, CanvasRenderer]);
 
@@ -14,9 +15,9 @@ interface Props {
 }
 
 type Gender = 'VSETCI' | 'M' | 'F';
-type Metrika = 'zapasy' | 'sutaze';
+type Metrika = 'zapasy' | 'skupiny' | 'sutaze';
 
-/** Sunburst pyramídy so spoločnými filtrami metrika (zápasy/súťaže), šport a pohlavie. */
+/** Sunburst pyramídy so spoločnými filtrami metrika (zápasy/skupiny/súťaže), šport a pohlavie. */
 export default function SunburstSutaze({ strom }: Props) {
   const el = useRef<HTMLDivElement>(null);
   const chart = useRef<echarts.ECharts | null>(null);
@@ -24,6 +25,7 @@ export default function SunburstSutaze({ strom }: Props) {
   const [futsal, setFutsal] = useState(true);
   const [gender, setGender] = useState<Gender>('VSETCI');
   const [metrika, setMetrika] = useState<Metrika>('zapasy');
+  const jeSutaz = metrika === 'sutaze' || metrika === 'skupiny';
 
   // farbenie uzla podľa mena (RFZ / SFZ vlastné / odvetvie)
   function farba(name: string, depth: number): string | undefined {
@@ -41,14 +43,19 @@ export default function SunburstSutaze({ strom }: Props) {
     function pretvor(u: SunburstUzol, depth: number): SunburstUzol | null {
       // list
       if (!u.children || u.children.length === 0) {
+        // skupiny sú fallbackom na súťaže — staršie súhrny ešte pole `skupiny` nemajú
         const val =
-          metrika === 'sutaze'
+          metrika === 'skupiny'
             ? gender === 'VSETCI'
-              ? (u.sutaze ?? 0)
-              : (u.sutazePohlavie?.[gender] ?? 0)
-            : gender === 'VSETCI'
-              ? (u.value ?? 0)
-              : (u.pohlavie?.[gender] ?? 0);
+              ? (u.skupiny ?? u.sutaze ?? 0)
+              : (u.skupinyPohlavie?.[gender] ?? u.sutazePohlavie?.[gender] ?? 0)
+            : metrika === 'sutaze'
+              ? gender === 'VSETCI'
+                ? (u.sutaze ?? 0)
+                : (u.sutazePohlavie?.[gender] ?? 0)
+              : gender === 'VSETCI'
+                ? (u.value ?? 0)
+                : (u.pohlavie?.[gender] ?? 0);
         if (val <= 0) return null;
         return { name: u.name, value: val, itemStyle: { color: farba(u.name, depth) } } as SunburstUzol & { itemStyle?: unknown };
       }
@@ -105,7 +112,22 @@ export default function SunburstSutaze({ strom }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: 'var(--color-muted)' }}>Metrika:</span>
           <button type="button" style={pill(metrika === 'zapasy')} onClick={() => setMetrika('zapasy')}>Zápasy</button>
-          <button type="button" style={pill(metrika === 'sutaze')} onClick={() => setMetrika('sutaze')}>Súťaže</button>
+          <button
+            type="button"
+            style={pill(metrika === 'skupiny')}
+            title={METRIKA_POPIS.skupiny.popis}
+            onClick={() => setMetrika('skupiny')}
+          >
+            Skupiny
+          </button>
+          <button
+            type="button"
+            style={pill(metrika === 'sutaze')}
+            title={METRIKA_POPIS.sutaze.popis}
+            onClick={() => setMetrika('sutaze')}
+          >
+            Súťaže
+          </button>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: 'var(--color-muted)' }}>Šport:</span>
@@ -140,10 +162,15 @@ export default function SunburstSutaze({ strom }: Props) {
       </div>
       <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
         Kruhy zvnútra von: odvetvie → SFZ → RFZ → ObFZ → súťaž.
-        {metrika === 'sutaze' && ' Súťaž = súťaž s aspoň jedným odohraným zápasom, priradená svojmu riadiacemu zväzu.'}
-        {metrika === 'sutaze' && gender !== 'VSETCI' &&
+        {jeSutaz && ' Počítajú sa len súťaže s aspoň jedným odohraným zápasom, priradené svojmu riadiacemu zväzu.'}
+        {jeSutaz && gender !== 'VSETCI' &&
           ' Pohlavie súťaže sa určuje z častí súťaže — súťaž s mužskými aj ženskými časťami sa započíta v oboch skupinách.'}
       </p>
+      {jeSutaz && (
+        <p style={{ marginTop: 4, fontSize: 11.5, color: 'var(--color-muted)', lineHeight: 1.55 }}>
+          {METRIKA_POPIS[metrika].popis}
+        </p>
+      )}
     </div>
   );
 }

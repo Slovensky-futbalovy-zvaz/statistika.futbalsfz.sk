@@ -46,12 +46,12 @@ ROLA_NAZOV = {
     "delegati": "Delegáti",
     "personal": "Personál",
 }
-KPI_KLUCE = ["sutaze", "zapasy", "uzatvorene", "administrativne", "druzstva", "goly", "divaci", "zlteKarty", "cerveneKarty", "kontumovane", "kontumovaneAdmin", "kontumovaneOdohrane", "odstupene", "odstupeneAdmin", "odstupeneOdohrane"]
+KPI_KLUCE = ["sutaze", "skupiny", "zapasy", "uzatvorene", "administrativne", "druzstva", "goly", "divaci", "zlteKarty", "cerveneKarty", "kontumovane", "kontumovaneAdmin", "kontumovaneOdohrane", "odstupene", "odstupeneAdmin", "odstupeneOdohrane"]
 #: Metriky sčítané po vekových kategóriách (pre celoslovenský trend po úrovniach).
 #: `sutaze` = počet súťaží s aspoň jedným uzavretým zápasom v danej vekovej úrovni
 #: (doplnené 6. 8. 2026). Súťaž, ktorej zápasy spadajú do viacerých vekových úrovní,
 #: sa započíta v každej z nich — súčet po kategóriách preto môže prevýšiť kpi.sutaze.
-KAT_METRIKY = ["sutaze", "zapasy", "uzatvorene", "administrativne", "druzstva", "goly", "zlte", "cervene", "divaci"]
+KAT_METRIKY = ["sutaze", "skupiny", "zapasy", "uzatvorene", "administrativne", "druzstva", "goly", "zlte", "cervene", "divaci"]
 
 #: Úrovne pyramídy pre rozpad súťaží podľa riadiaceho zväzu.
 RIADIACE_UROVNE = [("sfz", "SFZ"), ("rfz", "RFZ"), ("obfz", "ObFZ")]
@@ -131,15 +131,18 @@ def _zber_urovni(p: dict, urovne_acc: dict, riadky_acc: dict, pohlavie_acc: dict
     for kod, u in (p.get("urovne") or {}).items():
         a = urovne_acc.setdefault(
             kod,
-            {"nazov": u.get("nazov") or pipelines.UROVEN_NAZOV.get(kod, kod), "sutaze": 0, "zapasy": 0},
+            {"nazov": u.get("nazov") or pipelines.UROVEN_NAZOV.get(kod, kod),
+             "sutaze": 0, "skupiny": 0, "zapasy": 0},
         )
         a["sutaze"] += u.get("sutaze", 0) or 0
+        a["skupiny"] += u.get("skupiny", 0) or 0
         a["zapasy"] += u.get("zapasy", 0) or 0
     for r in p.get("sutazeUroven") or []:
         a = riadky_acc.setdefault(
-            (r["uroven"], r["kat"], r["pohlavie"]), {"sutaze": 0, "zapasy": 0}
+            (r["uroven"], r["kat"], r["pohlavie"]), {"sutaze": 0, "skupiny": 0, "zapasy": 0}
         )
         a["sutaze"] += r.get("sutaze", 0) or 0
+        a["skupiny"] += r.get("skupiny", 0) or 0
         a["zapasy"] += r.get("zapasy", 0) or 0
     for g, s in _pohlavie_sutaze(p).items():
         pohlavie_acc[g] = pohlavie_acc.get(g, 0) + s
@@ -155,6 +158,16 @@ def _pohlavie_sutaze(p: dict) -> dict:
     out = {}
     for g, blok in (p.get("pohlavie") or {}).items():
         s = (blok or {}).get("sutaze", 0) or 0
+        if s:
+            out[g] = s
+    return out
+
+
+def _pohlavie_skupiny(p: dict) -> dict:
+    """Súťažné skupiny po pohlaví — analógia `_pohlavie_sutaze` (8. 8. 2026)."""
+    out = {}
+    for g, blok in (p.get("pohlavie") or {}).items():
+        s = (blok or {}).get("skupiny", 0) or 0
         if s:
             out[g] = s
     return out
@@ -176,8 +189,10 @@ def sunburst_sutaze(zvazy_cfg: dict, out_dir: Path, sezona: str) -> dict:
             "name": nazov,
             "value": p["kpi"]["zapasy"],
             "sutaze": p["kpi"].get("sutaze", 0) or 0,
+            "skupiny": p["kpi"].get("skupiny", 0) or 0,
             "pohlavie": _pohlavie_zapasy(p),
             "sutazePohlavie": _pohlavie_sutaze(p),
+            "skupinyPohlavie": _pohlavie_skupiny(p),
         }
         if zvaz_id:
             d["id"] = zvaz_id
@@ -370,14 +385,16 @@ def main() -> None:
             uz = uroven_zvazu.get(z["id"])
             if uz:
                 racc = riadiaci.setdefault(
-                    uz, {"sutaze": 0, "zapasy": 0, "pocetZvazov": 0, "kategorie": {}}
+                    uz, {"sutaze": 0, "skupiny": 0, "zapasy": 0, "pocetZvazov": 0, "kategorie": {}}
                 )
                 racc["sutaze"] += p["kpi"].get("sutaze", 0) or 0
+                racc["skupiny"] += p["kpi"].get("skupiny", 0) or 0
                 racc["zapasy"] += p["kpi"].get("zapasy", 0) or 0
                 racc["pocetZvazov"] += 1
                 for c, cd in (p.get("kategorie") or {}).items():
-                    rk = racc["kategorie"].setdefault(c, {"sutaze": 0, "zapasy": 0})
+                    rk = racc["kategorie"].setdefault(c, {"sutaze": 0, "skupiny": 0, "zapasy": 0})
                     rk["sutaze"] += cd.get("sutaze", 0) or 0
+                    rk["skupiny"] += cd.get("skupiny", 0) or 0
                     rk["zapasy"] += cd.get("zapasy", 0) or 0
             for rola in ROLY:
                 osoby[rola] += p.get("osoby", {}).get(rola, {}).get("unikatni", 0)

@@ -1,0 +1,130 @@
+{
+  "zvaz": "lfz-liptov",
+  "sezona": "2026/2027",
+  "sportSector": "futbal",
+  "generatedAt": "2026-08-08T21:01:38+02:00",
+  "methodologyFlags": {
+    "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
+    "divaciPokrytie": 1.0,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
+    "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
+    "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
+    "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
+  },
+  "kpi": {
+    "sutaze": 1,
+    "skupiny": 1,
+    "zapasy": 6,
+    "uzatvorene": 6,
+    "administrativne": 0,
+    "druzstva": 12,
+    "goly": 42,
+    "divaci": 168,
+    "zlteKarty": 11,
+    "cerveneKarty": 1,
+    "kontumovane": 0,
+    "kontumovaneAdmin": 0,
+    "kontumovaneOdohrane": 0,
+    "odstupene": 0,
+    "odstupeneAdmin": 0,
+    "odstupeneOdohrane": 0
+  },
+  "kategorie": {
+    "U19": {
+      "zapasy": 6,
+      "uzatvorene": 6,
+      "administrativne": 0,
+      "druzstva": 12,
+      "goly": 42,
+      "zlte": 11,
+      "cervene": 1,
+      "divaci": 168,
+      "divaciPokrytych": 6,
+      "sutaze": 1,
+      "skupiny": 1,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 0,
+      "odstupeneAdmin": 0
+    }
+  },
+  "urovne": {
+    "L5": {
+      "nazov": "5. liga",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 6
+    }
+  },
+  "sutazeUroven": [
+    {
+      "uroven": "L5",
+      "kat": "U19",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 6
+    }
+  ],
+  "pohlavie": {
+    "M": {
+      "sutaze": 1,
+      "zapasy": 6,
+      "druzstva": 12,
+      "goly": 42,
+      "divaci": 168,
+      "zlteKarty": 11,
+      "cerveneKarty": 1,
+      "kategorie": {
+        "U19": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 6,
+          "druzstva": 12,
+          "goly": 42,
+          "zlte": 11,
+          "cervene": 1,
+          "divaci": 168,
+          "divaciPokrytych": 6
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 168,
+      "poKategorii": {
+        "U19": 168
+      }
+    },
+    "treneri": {
+      "unikatni": 13,
+      "poKategorii": {
+        "U19": 13
+      }
+    },
+    "realizacnyTim": {
+      "unikatni": 25,
+      "poKategorii": {
+        "U19": 25
+      }
+    },
+    "rozhodcovia": {
+      "unikatni": 18,
+      "poKategorii": {
+        "U19": 18
+      }
+    },
+    "delegati": {
+      "unikatni": 0,
+      "poKategorii": {}
+    },
+    "personal": {
+      "unikatni": 6,
+      "poKategorii": {
+        "U19": 6
+      }
+    }
+  }
+}

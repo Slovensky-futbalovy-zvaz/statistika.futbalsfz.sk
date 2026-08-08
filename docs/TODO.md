@@ -15,6 +15,15 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
     { name: "etl_appSpace_closed_sport_season" })
   ```
   Zrýchli všetky ETL agregácie pre všetky zväzy. Vyžaduje DBA na strane Sportnetu.
+- [ ] **Typ časti súťaže do `competitions.parts[]`** (žiadosť na Sportnet / Bart.sk).
+  ISSF rozlišuje „Základná časť“ vs. „Nadstavbová časť“, ale do MongoDB sa tento stĺpec
+  neprepísal — `parts[]` nesie len `name`, `type` (collective/race), `format`, `rules`,
+  `dateFrom`/`dateTo` (pri všetkých častiach rovnaké) a `teams`. Bez neho musí ETL typ časti
+  **odhadovať** dvoma sitami — štruktúrnym (nadstavba neprivedie nové družstvo) a podľa názvu
+  časti (`baraz`, `nadstavb`, `play-off`…); pozri `run.nacitaj_skupina_mapu` a kapitolu
+  „SÚŤAŽ vs. SÚŤAŽNÁ SKUPINA“ v [metodike](metodika.md). Odhad funguje, ale explicitný príznak
+  by ho nahradil presným údajom a odstránil posúdenie hraničných prípadov (baráže so súperom
+  z inej súťaže, finálové turnaje prípraviek).
 - [ ] **Odoslať podklady Bart.sk** pre produkčný beh — [draft](archiv/podklady-bart-produkcny-beh.md).
 - [ ] **Nahlásiť chybný záznam divákov** — [draft](sportnet-nahlasenie-divaci.md).
 
@@ -29,6 +38,14 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
   divákov = administratívna kontumácia). Pozri [ADR-0008](adr/0008-odohrane-zapasy-bez-administrativnych.md).
 
 ## Frontend
+
+- [ ] **41 typových chýb v dynamických route súboroch** (`astro check`, 8. 8. 2026). Všetky sú
+  ten istý vzor: `Astro.params` je typovaný ako `string | number`, takže `id!`, `sezonaUrl!`
+  a `odvetvie!` nesadá do funkcií čakajúcich `string`. Build ani beh portálu to neovplyvňuje,
+  ale kontrola preto nekončí čisto. Týka sa `klub/[id]/[sezona]`, `klub/[id]/[odvetvie]/[sezona]`,
+  `zvaz/[id]*`, `porovnania/*`, `demografia/[id]`. Riešenie: obaliť parametre `String(…)`
+  alebo dotypovať `getStaticPaths`. `@astrojs/check` je už v `devDependencies`
+  (`npx astro check`).
 
 - [ ] **Payload stránok.** Úvodná stránka 628 kB HTML, `/trendy` 600 kB, profil klubu 1,17 MB
   (gzip to zráža na desatinu, ale je čo orezávať). Dominuje `KpiTrend` a sunburst dáta starých

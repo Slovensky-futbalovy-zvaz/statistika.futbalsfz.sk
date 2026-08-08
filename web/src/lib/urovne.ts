@@ -36,7 +36,7 @@ function zostav(
 ): UrovneVCase {
   const kategorie = [...GROUPS.map((g) => g.key), 'Ostatné'];
   const pouzite = new Set<string>();
-  interface Surovy { zi: number; si: number; kod: string; k: number; g: number; n: number }
+  interface Surovy { zi: number; si: number; kod: string; k: number; g: number; n: number; sk: number }
   const surove: Surovy[] = [];
 
   zvazy.forEach((z, zi) =>
@@ -45,23 +45,24 @@ function zostav(
       if (!riadky?.length) return;
       // agregácia na (úroveň, kategória, pohlavie) — vekové úrovne sa v rámci
       // kategórie sčítajú; presný rez po vekovej úrovni rieši pyramída na profile
-      const acc = new Map<string, number>();
+      const acc = new Map<string, [number, number]>();
       for (const r of riadky) {
         const gi = POHLAVIA_PORADIE.indexOf(r.pohlavie);
         const kluc = `${r.uroven}|${kategoriaVeku(r.kat)}|${gi < 0 ? 2 : gi}`;
-        acc.set(kluc, (acc.get(kluc) ?? 0) + r.sutaze);
+        const [a, b] = acc.get(kluc) ?? [0, 0];
+        acc.set(kluc, [a + r.sutaze, b + (r.skupiny ?? r.sutaze)]);
         pouzite.add(r.uroven);
       }
-      for (const [kluc, n] of acc) {
+      for (const [kluc, [n, sk]] of acc) {
         const [kod, k, g] = kluc.split('|');
-        surove.push({ zi, si, kod, k: Number(k), g: Number(g), n });
+        surove.push({ zi, si, kod, k: Number(k), g: Number(g), n, sk });
       }
     }),
   );
 
   const urovne = UROVEN_PORADIE.filter((u) => pouzite.has(u));
   const rows = surove
-    .map((r) => `${r.zi},${r.si},${urovne.indexOf(r.kod)},${r.k},${r.g},${r.n}`)
+    .map((r) => `${r.zi},${r.si},${urovne.indexOf(r.kod)},${r.k},${r.g},${r.n},${r.sk}`)
     .join(';');
 
   return {

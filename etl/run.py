@@ -21,7 +21,9 @@ import argparse
 import json
 import logging
 import os
+import re
 import sys
+import unicodedata
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -132,6 +134,118 @@ def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
     return mapa
 
 
+# Vzory názvov NADSTAVBOVÝCH častí súťaže (bez diakritiky, malými písmenami).
+# Doplnok k štruktúrnemu signálu v `nacitaj_skupina_mapu` — pozri jeho docstring.
+NADSTAVBA_VZORY = [
+    r"baraz", r"nadstavb", r"o udrzanie", r"o postup", r"o titul",
+    r"o umiestnenie", r"play\s*-?\s*off", r"playoff",
+    r"o majstra", r"majster okresu", r"kvalifikac",
+    r"finale", r"finalov", r"semifinale", r"stvrtfinale", r"osemfinale",
+    r"o \d+\s*[-–.]\s*\d+\s*miesto", r"o \d+\.? miesto",
+    r"superpohar",
+]
+NADSTAVBA_RE = re.compile("|".join(NADSTAVBA_VZORY))
+
+
+def _bez_diakritiky(s: str) -> str:
+    return "".join(
+        c for c in unicodedata.normalize("NFD", (s or "").lower())
+        if unicodedata.category(c) != "Mn"
+    )
+
+
+def je_nadstavbova_cast(nazov: str) -> bool:
+    """Nadstavbová časť podľa NÁZVU časti (baráž, play-off, finále, o umiestnenie…).
+
+    Zásada „názvom neveriť“ z metodiky sa týka NÁZVOV SÚŤAŽÍ — tie sa menia podľa
+    partnerov ročníka. Názvy ČASTÍ sú štruktúrny popis („Baráž o postup“,
+    „Nadstavba o 5.–8. miesto“, „ŠTVRŤFINÁLE“), nie marketing, a menia sa len
+    výnimočne. Zmerané 8. 8. 2026 na 2025/2026: 12 preklasifikovaných častí,
+    žiadna skutočná liga sa nestratila.
+    """
+    return bool(NADSTAVBA_RE.search(_bez_diakritiky(nazov)))
+
+
+def nacitaj_skupina_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
+    """Mapa partId(str) → kľúč SKUPINY súťaže (str), alebo bez záznamu = do počtu nevstupuje.
+
+    ZADANIE (Ján Letko, 8. 8. 2026): „súťaž = základná časť“. Súťaž môže obsahovať viac
+    PARALELNÝCH základných skupín, ktoré sú fakticky samostatné súťaže — „III. liga U19
+    HUMMEL ZsFZ“ 2025/2026 má skupinu JV a skupinu SZ (obe 14 družstiev, 26 kôl) — a k tomu
+    NADSTAVBOVÉ časti (kvalifikácia, skupina o postup), ktoré samostatné súťaže nie sú.
+
+    POZOR: databáza príznak typu časti NEMÁ. Stĺpec „Základná / Nadstavbová časť“ existuje
+    len v ISSF. Overené 8. 8. 2026 — `competitions.parts[]` nesie iba: name, publicComment,
+    type, format, signup, published, rules, settings, dateFrom, dateTo, __issfId, _id,
+    rounds, teams, resultsTable. `type` je collective/race (druh športu), dátumy sú pri
+    všetkých častiach rovnaké. Názov časti sa používa až ako DRUHÉ sito (nižšie) —
+    zásada „názvom neveriť“ z metodiky sa týka názvov SÚŤAŽÍ, nie názvov ČASTÍ.
+
+    Používa sa preto ŠTRUKTURÁLNY SIGNÁL: **nadstavba si družstvá vždy preberá zo
+    základných častí, nikdy neprivedie nové.**
+
+        Časť je ZÁKLADNÁ SKUPINA, ak obsahuje aspoň jedno družstvo, ktoré nie je
+        v žiadnej inej časti tej istej súťaže.
+
+    Identita družstva je `organization._id | category | ageCategory` — rovnaký kľúč ako pri
+    Indexe klubu; bez `category` by sa to isté áčko hrajúce ligu aj pohár počítalo dvakrát.
+
+    DRUHÉ SITO — NÁZOV ČASTI (`je_nadstavbova_cast`). Štruktúrny signál zlyháva tam, kde
+    nadstavba priviesť nové družstvo naozaj môže — baráž o postup, kde súper prichádza
+    z inej súťaže („Baráž o účasť v Niké lige“, „O Majstra regiónu III. ligy Východ“,
+    „Finálový turnaj prípraviek“). Takéto časti sa vyraďujú podľa názvu. Zmerané
+    8. 8. 2026 na 2025/2026: 549 → 537 skupín, 12 preklasifikovaných, žiadna skutočná
+    liga sa nestratila (paralelné turnajové skupiny typu „O pohár predsedu … sk. A/B“
+    ostali zachované — vzor „o pohar“ bol pre šírku vyradený).
+
+    FALLBACK (rozhodnutie Ján Letko): ak sa v súťaži nedá rozlíšiť ani jedna základná
+    skupina — všetky časti majú tých istých účastníkov (turnajové prípravky, rozdelenie na
+    jesennú a jarnú časť) — celá súťaž sa započíta ako JEDNA skupina. Týka sa to 50
+    zo 432 súťaží v 2025/2026 (12 %); konzervatívne, radšej podpočítať než nafukovať.
+
+    Overené 8. 8. 2026: III. liga U19 ZsFZ → 2, IV. liga U19 ZsFZ → 6 (sk. A–F),
+    Zimný pohár ObFZ Prešov → 4 skupiny (2 nadstavby vylúčené), VI. liga SsFZ → 4.
+    """
+    app = spaces[0] if len(spaces) == 1 else {"$in": spaces}
+    cur = db.competitions.find(
+        {"appSpace": app, "season.name": {"$in": varianty}},
+        {
+            "parts._id": 1,
+            "parts.name": 1,
+            "parts.teams.organization._id": 1,
+            "parts.teams.category": 1,
+            "parts.teams.ageCategory": 1,
+        },
+    )
+    mapa: dict[str, str] = {}
+    for c in cur:
+        casti = c.get("parts") or []
+        if not casti:
+            continue
+        # kľúče družstiev pre každú časť + v koľkých častiach sa ktoré družstvo vyskytuje
+        kluce: list[set[str]] = []
+        vyskyt: dict[str, int] = {}
+        for p in casti:
+            s = set()
+            for t in p.get("teams") or []:
+                org = ((t.get("organization") or {}).get("_id")) or ""
+                s.add(f"{org}|{t.get('category') or '-'}|{t.get('ageCategory') or '-'}")
+            kluce.append(s)
+            for k in s:
+                vyskyt[k] = vyskyt.get(k, 0) + 1
+        zakladne = [i for i, s in enumerate(kluce) if any(vyskyt[k] == 1 for k in s)]
+        # druhé sito — názov časti (baráž, play-off, finálový turnaj, o umiestnenie…)
+        zakladne = [i for i in zakladne if not je_nadstavbova_cast(casti[i].get("name", ""))]
+        if zakladne:
+            for i in zakladne:
+                mapa[str(casti[i]["_id"])] = str(casti[i]["_id"])
+        else:
+            # fallback — celá súťaž je jedna skupina
+            for p in casti:
+                mapa[str(p["_id"])] = str(c["_id"])
+    return mapa
+
+
 def nacitaj_comp_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
     """Mapa competitionId(str) → kód úrovne súťaže z `competitions.level`.
 
@@ -193,6 +307,8 @@ def _zloz_pohlavie(
     druz_g_raw: list[dict],
     sut_g: dict | None = None,
     sut_gk: dict | None = None,
+    skup_g: dict | None = None,
+    skup_gk: dict | None = None,
 ) -> dict:
     """Blok `pohlavie` — per pohlavie súhrn (ako KPI) + kategórie (rozhodnutie O6, 12. 7. 2026).
 
@@ -208,6 +324,8 @@ def _zloz_pohlavie(
     }
     sut_gk = sut_gk or {}
     sut_g = sut_g or {}
+    skup_gk = skup_gk or {}
+    skup_g = skup_g or {}
     bloky: dict[str, dict] = {}
     for r in kat_g_raw:
         g = _gender_kluc(r["_id"].get("gender"))
@@ -215,6 +333,7 @@ def _zloz_pohlavie(
         blok = bloky.setdefault(g, {})
         blok[cat] = {
             "sutaze": sut_gk.get((g, r["_id"].get("cat")), 0),
+            "skupiny": skup_gk.get((g, cat), 0),
             "zapasy": r["zapasy"],
             "druzstva": druz.get((g, r["_id"].get("cat")), 0),
             "goly": r["goly"],
@@ -241,7 +360,70 @@ def _zloz_pohlavie(
     return vysledok
 
 
-def _zloz_urovne(rozpad: dict) -> tuple[dict, list[dict]]:
+def _skupiny_rezy(casti_raw: list[dict], skup_map: dict) -> dict:
+    """Počty SÚŤAŽNÝCH SKUPÍN vo všetkých rezoch naraz.
+
+    Súťažná skupina = základná časť súťaže (rozhodnutie Ján Letko, 8. 8. 2026).
+    Jedna súťaž môže mať viac paralelných skupín — „IV. liga U19 HUMMEL ZsFZ“ ich má
+    šesť (A–F) — a k tomu nadstavbové časti, ktoré sa do počtu NEZAPOČÍTAVAJÚ.
+
+    Zmysel: dnešný počet súťaží nie je medzi zväzmi porovnateľný. ZsFZ má šesť skupín
+    IV. ligy U19 ako JEDNU súťaž so šiestimi časťami, VsFZ má tú istú realitu zapísanú
+    ako PÄŤ samostatných súťaží (sk. Š, Z, PT, KG, VD), každú s jednou časťou. Metrika
+    skupín oba zápisy zrovnoprávňuje.
+
+    Fallback: ak zo súťaže nemá záznam v mape žiadna časť so zápasom (všetky časti majú
+    tých istých účastníkov — turnajové prípravky, jesenná a jarná časť), celá súťaž sa
+    započíta ako JEDNA skupina.
+    """
+    def spocitaj(dvojice: list[tuple[str, str | None]]) -> int:
+        """Počet distinct skupín v jednom reze. `dvojice` sú (súťaž, kľúčSkupiny|None).
+
+        Fallback sa vyhodnocuje **v rámci rezu**, nie globálne. Keď má súťaž v tomto
+        reze aspoň jednu základnú skupinu, nadstavbové časti sa vynechajú. Keď v ňom
+        má iba nadstavbu (napr. kvalifikácia s neznámou vekovou kategóriou), započíta
+        sa súťaž ako jedna skupina — inak by v tom reze vyšlo menej skupín než súťaží,
+        čo je nezmysel (odhalila to kontrola 8. 8. 2026, 13 zo 604 profilov).
+        """
+        ma: dict[str, bool] = {}
+        for comp, kluc in dvojice:
+            ma[comp] = ma.get(comp, False) or bool(kluc)
+        out = set()
+        for comp, kluc in dvojice:
+            if kluc:
+                out.add(kluc)
+            elif not ma[comp]:
+                out.add(comp)
+        return len(out)
+
+    celok: list = []
+    per_kat, per_g, per_gk, per_u, per_riadok = {}, {}, {}, {}, {}
+    for r in casti_raw:
+        k = r["_id"]
+        comp = k.get("comp")
+        dvojica = (comp, skup_map.get(k.get("part")))
+        cat = k.get("cat") or "NEZNAMA"
+        g = _gender_kluc(k.get("gender"))
+        u = k.get("uroven") or pipelines.UROVEN_NEURCENE
+        celok.append(dvojica)
+        per_kat.setdefault(cat, []).append(dvojica)
+        per_g.setdefault(g, []).append(dvojica)
+        per_gk.setdefault((g, cat), []).append(dvojica)
+        per_u.setdefault(u, []).append(dvojica)
+        per_riadok.setdefault((u, cat, g), []).append(dvojica)
+
+    poc = lambda d: {kk: spocitaj(vv) for kk, vv in d.items()}  # noqa: E731
+    return {
+        "celok": spocitaj(celok),
+        "kat": poc(per_kat),
+        "pohlavie": poc(per_g),
+        "pohlavieKat": poc(per_gk),
+        "uroven": poc(per_u),
+        "riadky": poc(per_riadok),
+    }
+
+
+def _zloz_urovne(rozpad: dict, skupiny: dict | None = None) -> tuple[dict, list[dict]]:
     """Blok `urovne` (súhrn na úroveň) + plochý zoznam `sutazeUroven`.
 
     `sutazeUroven` je rez úroveň súťaže × veková úroveň × pohlavie — táto trojica
@@ -260,6 +442,7 @@ def _zloz_urovne(rozpad: dict) -> tuple[dict, list[dict]]:
         urovne[kod] = {
             "nazov": pipelines.UROVEN_NAZOV.get(kod, kod),
             "sutaze": r["sutaze"],
+            "skupiny": (skupiny or {}).get("uroven", {}).get(kod, 0),
             "zapasy": r.get("zapasy", 0),
         }
     urovne = {k: urovne[k] for k in pipelines.UROVEN_PORADIE if k in urovne}
@@ -270,6 +453,14 @@ def _zloz_urovne(rozpad: dict) -> tuple[dict, list[dict]]:
             "kat": (r["_id"].get("cat") or "NEZNAMA"),
             "pohlavie": _gender_kluc(r["_id"].get("g")),
             "sutaze": r["sutaze"],
+            "skupiny": (skupiny or {}).get("riadky", {}).get(
+                (
+                    (r["_id"].get("u") or pipelines.UROVEN_NEURCENE),
+                    (r["_id"].get("cat") or "NEZNAMA"),
+                    _gender_kluc(r["_id"].get("g")),
+                ),
+                0,
+            ),
             "zapasy": r.get("zapasy", 0),
         }
         for r in rozpad.get("riadky", [])
@@ -298,6 +489,7 @@ def vygeneruj(
     )  # futsal patrí pod SFZ, ale žije na vlastnom appSpace
     part_map = nacitaj_part_mapu(db, spaces, varianty)
     comp_map = nacitaj_comp_mapu(db, spaces, varianty)
+    skup_map = nacitaj_skupina_mapu(db, spaces, varianty)
 
     kat_raw = agreguj(
         db, pipelines.kategorie(spaces, varianty, sport_sector, part_map, corrections), "kategorie"
@@ -359,7 +551,15 @@ def vygeneruj(
         (_gender_kluc(r["_id"].get("g")), r["_id"].get("cat")): r["sutaze"]
         for r in rozpad.get("pohlavieKategorie", [])
     }
-    urovne, sutaze_uroven = _zloz_urovne(rozpad)
+    # súťažné skupiny — distinct základná časť so zápasom, vo všetkých rezoch naraz
+    casti_raw = agreguj(
+        db,
+        pipelines.casti_so_zapasmi(spaces, varianty, sport_sector, part_map, comp_map),
+        "casti-so-zapasmi",
+    )
+    skupiny = _skupiny_rezy(casti_raw, skup_map)
+
+    urovne, sutaze_uroven = _zloz_urovne(rozpad, skupiny)
 
     druz = {r["_id"]: r["druzstva"] for r in druz_raw}
     kategorie = {}
@@ -376,6 +576,7 @@ def vygeneruj(
             "divaci": r["divaci"],
             "divaciPokrytych": r["divaciPokrytych"],
             "sutaze": sut_map.get(cat, 0),
+            "skupiny": skupiny["kat"].get(cat, 0),
             "kontumovane": r.get("kontumovane", 0),
             "kontumovaneAdmin": r.get("kontumovaneAdmin", 0),
             "odstupene": r.get("odstupene", 0),
@@ -425,6 +626,9 @@ def vygeneruj(
         },
         "kpi": {
             "sutaze": pocet_sutazi,
+            # súťažné skupiny = základné časti súťaží (Ján Letko, 8. 8. 2026);
+            # jedna súťaž môže mať viac paralelných skupín, nadstavby sa nerátajú
+            "skupiny": skupiny["celok"],
             "zapasy": zapasy,
             "uzatvorene": uzatvorene,
             "administrativne": administrativne,
@@ -443,7 +647,10 @@ def vygeneruj(
         "kategorie": kategorie,
         "urovne": urovne,
         "sutazeUroven": sutaze_uroven,
-        "pohlavie": _zloz_pohlavie(kat_g_raw, druz_g_raw, sut_g, sut_gk),
+        "pohlavie": _zloz_pohlavie(
+            kat_g_raw, druz_g_raw, sut_g, sut_gk,
+            skupiny["pohlavie"], skupiny["pohlavieKat"],
+        ),
         "osoby": {
             "hraci": _facet_osoby(hraci_raw),
             "treneri": _facet_osoby(treneri_raw),

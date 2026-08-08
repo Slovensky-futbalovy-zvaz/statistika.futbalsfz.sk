@@ -62,6 +62,7 @@ def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
     for lvl, k in (profil.get("kategorie") or {}).items():
         kat[lvl] = {
             "sutaze": k.get("sutaze", 0),
+            "skupiny": k.get("skupiny", 0),
             "zapasy": k.get("zapasy", 0),
             "druzstva": k.get("druzstva", 0),
             "goly": k.get("goly", 0),
@@ -80,8 +81,17 @@ def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
         g: (blok or {}).get("sutaze", 0) or 0
         for g, blok in (profil.get("pohlavie") or {}).items()
     }
+    # súťažné skupiny — základné časti súťaží (Ján Letko, 8. 8. 2026)
+    skupiny_pohlavie = {
+        g: (blok or {}).get("skupiny", 0) or 0
+        for g, blok in (profil.get("pohlavie") or {}).items()
+    }
     urovne = {
         kod: (u or {}).get("sutaze", 0) or 0
+        for kod, u in (profil.get("urovne") or {}).items()
+    }
+    urovne_skupiny = {
+        kod: (u or {}).get("skupiny", 0) or 0
         for kod, u in (profil.get("urovne") or {}).items()
     }
     osoby = profil.get("osoby", {}) or {}
@@ -89,6 +99,7 @@ def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
         "id": zvaz["id"],
         "nazov": zvaz["nazov"],
         "sutaze": kpi.get("sutaze", 0) or 0,
+        "skupiny": kpi.get("skupiny", 0) or 0,
         "zapasy": zapasy,
         "druzstva": kpi.get("druzstva", 0),
         "kontumovane": kpi.get("kontumovane", 0) or 0,
@@ -106,7 +117,9 @@ def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
         "divaciNaZapas": round(kpi.get("divaci", 0) / zapasy, 1) if zapasy else 0.0,
         "kat": kat,
         "sutazePohlavie": {g: n for g, n in sutaze_pohlavie.items() if n},
+        "skupinyPohlavie": {g: n for g, n in skupiny_pohlavie.items() if n},
         "urovne": {kod: n for kod, n in urovne.items() if n},
+        "urovneSkupiny": {kod: n for kod, n in urovne_skupiny.items() if n},
         # plochý rez úroveň × veková úroveň × pohlavie — podklad pre heatmapu
         # a graf vývoja počtu súťaží danej úrovne v čase (7. 8. 2026)
         "sutazeUroven": profil.get("sutazeUroven") or [],

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { rozbal, type UrovneVCase } from '../lib/urovneTypy';
+import { rozbal, METRIKA_DEFAULT, type MetrikaSutazi, type UrovneVCase } from '../lib/urovneTypy';
 import { fmt } from '../lib/format';
 import { UROVEN_LABEL, UROVEN_LABEL_KRATKY } from '../lib/palette';
 
@@ -11,6 +11,8 @@ export interface HeatmapaProps {
   kat: number;
   /** Index pohlavia v POHLAVIA_PORADIE (-1 = všetci). */
   gender: number;
+  /** Čo sa počíta — súťažné skupiny (predvolené) alebo zastrešujúce súťaže. */
+  metrika?: MetrikaSutazi;
 }
 
 /**
@@ -19,18 +21,19 @@ export interface HeatmapaProps {
  *
  * Filtre vekovej kategórie a pohlavia drží nadradená sekcia.
  */
-export default function HeatmapaUrovni({ data, sezona, kat, gender }: HeatmapaProps) {
+export default function HeatmapaUrovni({ data, sezona, kat, gender, metrika = METRIKA_DEFAULT }: HeatmapaProps) {
   const si = data.sezony.indexOf(sezona);
+  const skupiny = metrika === 'skupiny';
 
   const { bunky, urovneIdx, zvazyIdx, max } = useMemo(() => {
     const m = new Map<string, number>();
     const pouziteU = new Set<number>();
     const pouziteZ = new Set<number>();
-    for (const [zi, s, ui, ki, g, n] of rozbal(data.rows)) {
+    for (const [zi, s, ui, ki, g, n, sk] of rozbal(data.rows)) {
       if (s !== si) continue;
       if (kat >= 0 && ki !== kat) continue;
       if (gender >= 0 && g !== gender) continue;
-      m.set(`${zi}|${ui}`, (m.get(`${zi}|${ui}`) ?? 0) + n);
+      m.set(`${zi}|${ui}`, (m.get(`${zi}|${ui}`) ?? 0) + (skupiny ? (sk ?? n) : n));
       pouziteU.add(ui);
       pouziteZ.add(zi);
     }
@@ -40,7 +43,7 @@ export default function HeatmapaUrovni({ data, sezona, kat, gender }: HeatmapaPr
       zvazyIdx: data.zvazy.map((_, i) => i).filter((i) => pouziteZ.has(i)),
       max: Math.max(1, ...m.values()),
     };
-  }, [data, si, kat, gender]);
+  }, [data, si, kat, gender, skupiny]);
 
   const bunka = (n: number): React.CSSProperties => {
     // Pri reze, kde je všade najviac jedna súťaž, by pomer n/max spravil všetky

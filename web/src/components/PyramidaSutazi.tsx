@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { UrovenRiadok } from '../lib/data';
 import { fmt } from '../lib/format';
 import { GROUPS, UROVEN_LABEL, UROVEN_LABEL_KRATKY, UROVEN_PORADIE } from '../lib/palette';
+import { METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi } from '../lib/urovneTypy';
 
 type Gender = 'VSETCI' | 'M' | 'F';
 
@@ -43,6 +44,12 @@ interface Stupen {
   sutaze: number;
 }
 
+/** Skloňovaný názov metriky pre popisky „12 súťaží / 12 skupín“. */
+const POCET_SLOVO: Record<MetrikaSutazi, (n: number) => string> = {
+  sutaze: (n) => (n === 1 ? 'súťaž' : n >= 2 && n <= 4 ? 'súťaže' : 'súťaží'),
+  skupiny: (n) => (n === 1 ? 'skupina' : n >= 2 && n <= 4 ? 'skupiny' : 'skupín'),
+};
+
 /**
  * Počet súťaží podľa úrovne súťaže — samostatná pyramída pre každú vekovú
  * kategóriu (Dospelí, Dorast, Žiaci, Prípravky).
@@ -58,6 +65,10 @@ interface Stupen {
  */
 export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Props) {
   const [gender, setGender] = useState<Gender>('VSETCI');
+  // Predvolené sú SKUPINY — to, v čom sa reálne hrá (rozhodnutie Ján Letko, 8. 8. 2026)
+  const [metrika, setMetrika] = useState<MetrikaSutazi>(METRIKA_DEFAULT);
+  const slovo = POCET_SLOVO[metrika];
+  const hodnota = (r: UrovenRiadok) => (metrika === 'skupiny' ? (r.skupiny ?? r.sutaze) : r.sutaze);
   const sektory = Object.keys(odvetvia ?? {});
   const [aktivneSektory, setAktivneSektory] = useState<string[]>(['futbal', ...sektory]);
   /** Vybraná veková úroveň v rámci kategórie ('' = medzisúčet celej kategórie). */
@@ -130,6 +141,20 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
   return (
     <div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 14, fontSize: 12.5 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+          <span style={{ color: 'var(--color-muted)' }}>Počítať:</span>
+          {(['skupiny', 'sutaze'] as MetrikaSutazi[]).map((m) => (
+            <button
+              key={m}
+              type="button"
+              style={pill(metrika === m)}
+              title={METRIKA_POPIS[m].popis}
+              onClick={() => setMetrika(m)}
+            >
+              {METRIKA_POPIS[m].label}
+            </button>
+          ))}
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: 'var(--color-muted)' }}>Pohlavie:</span>
           {(['VSETCI', 'M', 'F'] as Gender[]).map((g) => (
@@ -173,7 +198,7 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
             const vybrana = vybranaUroven[p.kategoria] ?? '';
             const filtrovane = vybrana ? p.riadky.filter((r) => r.kat === vybrana) : p.riadky;
             const acc = new Map<string, number>();
-            for (const r of filtrovane) acc.set(r.uroven, (acc.get(r.uroven) ?? 0) + r.sutaze);
+            for (const r of filtrovane) acc.set(r.uroven, (acc.get(r.uroven) ?? 0) + hodnota(r));
             const vsetky: Stupen[] = UROVEN_PORADIE.filter((u) => (acc.get(u) ?? 0) > 0).map((u) => ({
               kod: u,
               label: UROVEN_LABEL_KRATKY[u] ?? u,
@@ -205,7 +230,7 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
               tvary.push(
                 <g key={t.kod}>
                   <polygon points={body} fill={farbaStupna(t.kod, i, ligove.length, p.farba)}>
-                    <title>{`${t.labelPlny}: ${fmt(t.sutaze)} súťaží`}</title>
+                    <title>{`${t.labelPlny}: ${fmt(t.sutaze)} ${slovo(t.sutaze)}`}</title>
                   </polygon>
                   <text x={LAB - 10} y={y + H / 2 + 4} textAnchor="end" fontSize={FONT_LAB} fontWeight={600} fill="var(--color-muted)">
                     <title>{t.labelPlny}</title>
@@ -248,7 +273,7 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
                 tvary.push(
                   <g key={t.kod}>
                     <rect x={CX - h1} y={y} width={h1 * 2} height={vyska} rx={4} fill={farbaStupna(t.kod, 0, 1, p.farba)}>
-                      <title>{`${t.labelPlny}: ${fmt(t.sutaze)} súťaží`}</title>
+                      <title>{`${t.labelPlny}: ${fmt(t.sutaze)} ${slovo(t.sutaze)}`}</title>
                     </rect>
                     <text x={LAB - 10} y={y + vyska / 2 + 4} textAnchor="end" fontSize={FONT_LAB} fontWeight={600} fill="var(--color-muted)">
                       <title>{t.labelPlny}</title>
@@ -283,7 +308,7 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 2 }}>
                   <span style={{ width: 9, height: 9, borderRadius: 3, background: p.farba, display: 'inline-block' }} />
                   <span style={{ fontWeight: 800, fontSize: 14 }}>{p.kategoria}</span>
-                  <span style={{ fontSize: 12, color: 'var(--color-muted)' }}>{fmt(spolu)} súťaží</span>
+                  <span style={{ fontSize: 12, color: 'var(--color-muted)' }}>{fmt(spolu)} {slovo(spolu)}</span>
                 </div>
 
                 {p.urovneVeku.length > 1 && (
@@ -329,8 +354,12 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
         </div>
       )}
 
-      <p style={{ marginTop: 12, fontSize: 11.5, color: 'var(--color-muted)' }}>
-        Šírka stupňa zodpovedá počtu súťaží, preto silueta ukazuje, kde je ťažisko súťaží danej
+      <p style={{ marginTop: 12, fontSize: 11.5, color: 'var(--color-muted)', lineHeight: 1.55 }}>
+        {METRIKA_POPIS[metrika].popis}
+      </p>
+
+      <p style={{ marginTop: 8, fontSize: 11.5, color: 'var(--color-muted)' }}>
+        Šírka stupňa zodpovedá počtu, preto silueta ukazuje, kde je ťažisko súťaží danej
         kategórie. Úroveň súťaže (liga) sa vzťahuje vždy ku konkrétnej vekovej úrovni — „1. liga“
         dospelých, „1. liga“ U19 a „1. liga“ U13 sú tri rôzne súťaže v troch samostatných
         pyramídach, preto sa nikdy nesčítavajú do jedného stupňa. Vekové kategórie sú medzisúčty pre

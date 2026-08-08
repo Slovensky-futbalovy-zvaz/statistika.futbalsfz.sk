@@ -383,6 +383,48 @@ def uroven_expr(comp_map: dict | None):
     return {"$switch": {"branches": branches, "default": UROVEN_NEURCENE}}
 
 
+def casti_so_zapasmi(
+    app_spaces, season_variants, sport_sector="futbal", part_map=None, comp_map=None
+):
+    """Distinct ČASTI SÚŤAŽE s aspoň jedným uzavretým zápasom + ich rez.
+
+    Podklad pre metriku **skupiny** (rozhodnutie Ján Letko, 8. 8. 2026: súťaž = základná
+    časť). Samotné mapovanie časť → skupina robí Python — `run.nacitaj_skupina_mapu()` —
+    lebo vyžaduje pohľad na VŠETKY časti súťaže naraz (porovnáva súbory družstiev), čo sa
+    v agregačnej pipeline nad `matches` spraviť nedá.
+
+    Vracia štvoricu (časť, súťaž, pohlavie, veková úroveň, úroveň súťaže) s počtom reálne
+    odohraných zápasov — z toho sa v Pythone dopočítajú všetky rezy naraz.
+    """
+    g = gender_expr(part_map)
+    u = uroven_expr(comp_map)
+    return [
+        _match_stage(app_spaces, season_variants, sport_sector),
+        {
+            "$project": {
+                "part": {"$toString": "$competitionPart._id"},
+                "comp": {"$toString": "$competition._id"},
+                "gender": g if g is not None else {"$literal": None},
+                "cat": _cat_zapas(part_map),
+                "uroven": u if u is not None else {"$literal": UROVEN_NEURCENE},
+                "admin": _ADMIN_NEODOHRANY_EXPR,
+            }
+        },
+        {
+            "$group": {
+                "_id": {
+                    "part": "$part",
+                    "comp": "$comp",
+                    "gender": "$gender",
+                    "cat": "$cat",
+                    "uroven": "$uroven",
+                },
+                "zapasy": {"$sum": {"$cond": ["$admin", 0, 1]}},
+            }
+        },
+    ]
+
+
 def pocet_sutazi_rozpad(
     app_spaces, season_variants, sport_sector="futbal", part_map=None, comp_map=None
 ):

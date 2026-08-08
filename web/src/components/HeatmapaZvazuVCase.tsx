@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { rozbal, type UrovneVCase } from '../lib/urovneTypy';
+import { rozbal, METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi, type UrovneVCase } from '../lib/urovneTypy';
 import { fmt } from '../lib/format';
 import { UROVEN_LABEL, UROVEN_LABEL_KRATKY } from '../lib/palette';
 
@@ -24,6 +24,8 @@ type Gender = 'VSETCI' | 'M' | 'F';
 export default function HeatmapaZvazuVCase({ data }: Props) {
   const [kat, setKat] = useState(0); // index do data.kategorie, -1 = všetky
   const [gender, setGender] = useState<Gender>('VSETCI');
+  // Predvolené sú SKUPINY — to, v čom sa reálne hrá (rozhodnutie Ján Letko, 8. 8. 2026)
+  const [metrika, setMetrika] = useState<MetrikaSutazi>(METRIKA_DEFAULT);
   const gi = gender === 'VSETCI' ? -1 : gender === 'M' ? 0 : 1;
 
   const prebiehaOd = useMemo(() => {
@@ -34,10 +36,10 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
   const { bunky, urovneIdx, max } = useMemo(() => {
     const m = new Map<string, number>();
     const pouzite = new Set<number>();
-    for (const [, si, ui, ki, g, n] of rozbal(data.rows)) {
+    for (const [, si, ui, ki, g, n, sk] of rozbal(data.rows)) {
       if (kat >= 0 && ki !== kat) continue;
       if (gi >= 0 && g !== gi) continue;
-      m.set(`${si}|${ui}`, (m.get(`${si}|${ui}`) ?? 0) + n);
+      m.set(`${si}|${ui}`, (m.get(`${si}|${ui}`) ?? 0) + (metrika === 'skupiny' ? (sk ?? n) : n));
       pouzite.add(ui);
     }
     return {
@@ -45,7 +47,7 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
       urovneIdx: data.urovne.map((_, i) => i).filter((i) => pouzite.has(i)),
       max: Math.max(1, ...m.values()),
     };
-  }, [data, kat, gi]);
+  }, [data, kat, gi, metrika]);
 
   const pill = (active: boolean): React.CSSProperties => ({
     padding: '4px 12px',
@@ -83,6 +85,8 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
           setKat={setKat}
           gender={gender}
           setGender={setGender}
+          metrika={metrika}
+          setMetrika={setMetrika}
           pill={pill}
         />
         <p style={{ fontSize: 13, color: 'var(--color-muted)' }}>
@@ -94,7 +98,7 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
 
   return (
     <div>
-      <Filtre data={data} kat={kat} setKat={setKat} gender={gender} setGender={setGender} pill={pill} />
+      <Filtre data={data} kat={kat} setKat={setKat} gender={gender} setGender={setGender} metrika={metrika} setMetrika={setMetrika} pill={pill} />
 
       <div style={{ overflowX: 'auto' }}>
         <table style={{ borderCollapse: 'separate', borderSpacing: 3, width: '100%', fontSize: 12 }}>
@@ -177,6 +181,8 @@ function Filtre({
   setKat,
   gender,
   setGender,
+  metrika,
+  setMetrika,
   pill,
 }: {
   data: UrovneVCase;
@@ -184,10 +190,26 @@ function Filtre({
   setKat: (n: number) => void;
   gender: Gender;
   setGender: (g: Gender) => void;
+  metrika: MetrikaSutazi;
+  setMetrika: (m: MetrikaSutazi) => void;
   pill: (active: boolean) => React.CSSProperties;
 }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 12, fontSize: 12.5 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+        <span style={{ color: 'var(--color-muted)' }}>Počítať:</span>
+        {(['skupiny', 'sutaze'] as MetrikaSutazi[]).map((m) => (
+          <button
+            key={m}
+            type="button"
+            style={pill(metrika === m)}
+            title={METRIKA_POPIS[m].popis}
+            onClick={() => setMetrika(m)}
+          >
+            {METRIKA_POPIS[m].label}
+          </button>
+        ))}
+      </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
         <span style={{ color: 'var(--color-muted)' }}>Kategória:</span>
         {data.kategorie.slice(0, 4).map((k, i) => (

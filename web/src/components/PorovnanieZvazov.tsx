@@ -6,6 +6,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import type { PorovnanieRiadok, BumpData } from '../lib/data';
 import { PALETTE, METRICS_RADAR, GROUPS } from '../lib/palette';
 import { fmt, fmt1 } from '../lib/format';
+import { METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi } from '../lib/urovneTypy';
 
 echarts.use([RadarChart, LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
@@ -22,6 +23,7 @@ interface Props {
 
 /** 16 metrík pre graf „Vývoj v čase“ (reálne hodnoty). */
 const CAS_METRIKY: { k: string; label: string; fixed: number }[] = [
+  // popisok tejto metriky sa mení podľa prepínača „Počítať“ (Skupiny / Súťaže)
   { k: 'sutaze', label: 'Súťaže', fixed: 0 },
   { k: 'zapasy', label: 'Zápasy', fixed: 0 },
   { k: 'druzstva', label: 'Družstvá', fixed: 0 },
@@ -70,6 +72,13 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
   const [vyber, setVyber] = useState<string[]>(initVyber);
   const [subset, setSubset] = useState<string[] | null>(null); // vekový filter (radar); null = celý zväz
   const [metric, setMetric] = useState<string>('zapasy');
+  // Predvolené sú SKUPINY — to, v čom sa reálne hrá (rozhodnutie Ján Letko, 8. 8. 2026)
+  const [metrikaSutazi, setMetrikaSutazi] = useState<MetrikaSutazi>(METRIKA_DEFAULT);
+
+  /** `sutaze` sa podľa prepínača číta buď ako súťaže, alebo ako súťažné skupiny. */
+  const kluc = (k: string) => (k === 'sutaze' && metrikaSutazi === 'skupiny' ? 'skupiny' : k);
+  const popisMetriky = (k: string, label: string) =>
+    k === 'sutaze' ? METRIKA_POPIS[metrikaSutazi].label : label;
 
   const maSezony = bump.sezony.length > 1;
 
@@ -81,14 +90,15 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
   }, [rows]);
 
   function rowMetric(r: Row, k: string): number {
-    if (!subset) return Number((r as unknown as Record<string, number>)[k] ?? 0);
+    if (!subset) return Number((r as unknown as Record<string, number>)[kluc(k)] ?? 0);
     const kat = r.kat ?? {};
+    const kSu = kluc('sutaze');
     let z = 0, g = 0, dv = 0, dr = 0, h = 0, su = 0;
     for (const l of subset) {
       const c = kat[l];
       if (!c) continue;
       z += c.zapasy || 0; g += c.goly || 0; dv += c.divaci || 0; dr += c.druzstva || 0; h += c.hraci || 0;
-      su += c.sutaze || 0;
+      su += c[kSu] || 0;
     }
     switch (k) {
       case 'zapasy': return z;
@@ -134,13 +144,13 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
               `<b>${r.nazov}</b><br/>` +
               METRICS_RADAR.map(
                 (m, i) =>
-                  `${m.label}: <b>${m.k.includes('NaZapas') ? fmt1(rowMetric(r, m.k)) : fmt(rowMetric(r, m.k))}</b> (${Math.round(p.value[i])} %)`,
+                  `${popisMetriky(m.k, m.label)}: <b>${m.k.includes('NaZapas') ? fmt1(rowMetric(r, m.k)) : fmt(rowMetric(r, m.k))}</b> (${Math.round(p.value[i])} %)`,
               ).join('<br/>')
             );
           },
         },
         radar: {
-          indicator: METRICS_RADAR.map((m) => ({ name: m.label, max: 100 })),
+          indicator: METRICS_RADAR.map((m) => ({ name: popisMetriky(m.k, m.label), max: 100 })),
           radius: '62%',
           axisName: { fontSize: 11, color: '#475569' },
         },
@@ -162,7 +172,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
     const ro = new ResizeObserver(() => radarCh.current?.resize());
     ro.observe(radarEl.current);
     return () => ro.disconnect();
-  }, [vybrane, subset, rows]);
+  }, [vybrane, subset, rows, metrikaSutazi]);
 
   // ---- LINE (vývoj v čase, reálne hodnoty) ----
   useEffect(() => {
@@ -175,7 +185,8 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
     }
     if (!lineCh.current) lineCh.current = echarts.init(lineEl.current, undefined, { renderer: 'canvas' });
     const fixed = CAS_METRIKY.find((m) => m.k === metric)?.fixed ?? 0;
-    const catHodnota = (sez: string, id: string, m: string): number | null => {
+    const catHodnota = (sez: string, id: string, mRaw: string): number | null => {
+      const m = kluc(mRaw);
       if (!subset) {
         const v = bump.hodnoty[sez]?.[id]?.[m];
         return v == null ? null : v;
@@ -223,7 +234,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
     const ro = new ResizeObserver(() => lineCh.current?.resize());
     ro.observe(lineEl.current);
     return () => ro.disconnect();
-  }, [vyber, vybrane.length, metric, subset, bump, maSezony]);
+  }, [vyber, vybrane.length, metric, subset, bump, maSezony, metrikaSutazi]);
 
   // ak je zvolená kategória a metrika nemá vekový rozpad, prepni na Zápasy
   useEffect(() => {
@@ -283,6 +294,23 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
         <p style={P}>
           Jeden výber pre obe vizualizácie nižšie. Vyber 2–{maxVyber} zväzov (napr. všetky ObFZ jedného RFZ) spomedzi {pocet}.
         </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 6, marginBottom: 12, fontSize: 12.5 }}>
+          <span style={{ color: 'var(--color-muted)' }}>Počítať súťaže ako:</span>
+          {(['skupiny', 'sutaze'] as MetrikaSutazi[]).map((m) => (
+            <button
+              key={m}
+              type="button"
+              style={pill(metrikaSutazi === m)}
+              title={METRIKA_POPIS[m].popis}
+              onClick={() => setMetrikaSutazi(m)}
+            >
+              {METRIKA_POPIS[m].label}
+            </button>
+          ))}
+          <span style={{ color: 'var(--color-muted)', flexBasis: '100%', fontSize: 11.5, lineHeight: 1.55, marginTop: 2 }}>
+            {METRIKA_POPIS[metrikaSutazi].popis}
+          </span>
+        </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }} role="group" aria-label="Výber zväzov na porovnanie">
           {rows.map((r) => {
             const idx = vyber.indexOf(r.id);
@@ -341,10 +369,10 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
         ) : (
           <p style={{ fontSize: 14, color: 'var(--color-muted)' }}>Vyber aspoň 2 zväzy.</p>
         )}
-        <p style={{ fontSize: 11.5, color: 'var(--color-muted)', margin: '8px 0 0' }}>
-          Súťaž = súťaž s aspoň jedným odohraným zápasom v danej sezóne. Pri filtri vekovej
+        <p style={{ fontSize: 11.5, color: 'var(--color-muted)', margin: '8px 0 0', lineHeight: 1.55 }}>
+          Počítajú sa len súťaže s aspoň jedným odohraným zápasom v danej sezóne. Pri filtri vekovej
           skupiny sa súťaž, ktorej zápasy patria do viacerých vekových úrovní, započíta
-          v každej z nich — súčet cez skupiny preto môže prevýšiť počet súťaží celého zväzu.
+          v každej z nich — súčet cez vekové skupiny preto môže prevýšiť počet za celý zväz.
         </p>
       </section>
 
@@ -364,11 +392,17 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
                   key={m.k}
                   type="button"
                   disabled={dis}
-                  title={dis ? 'Táto metrika zatiaľ nemá vekový rozpad — zruš filter kategórie' : undefined}
+                  title={
+                    dis
+                      ? 'Táto metrika zatiaľ nemá vekový rozpad — zruš filter kategórie'
+                      : m.k === 'sutaze'
+                        ? METRIKA_POPIS[metrikaSutazi].popis
+                        : undefined
+                  }
                   style={{ ...pill(metric === m.k), ...(dis ? { opacity: 0.4, cursor: 'not-allowed' } : {}) }}
                   onClick={() => { if (!dis) setMetric(m.k); }}
                 >
-                  {m.label}
+                  {popisMetriky(m.k, m.label)}
                 </button>
               );
             })}
