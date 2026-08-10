@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { delta, fmt } from '../lib/format';
 import { METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi } from '../lib/urovneTypy';
+import { useTooltip } from './Tooltip.tsx';
 
 interface Props {
   /** Počet súťažných skupín (základných častí) v zobrazenej sezóne. */
@@ -25,6 +26,7 @@ interface Props {
 export default function KpiSutazeKarta({ skupiny, sutaze, skupinyPredch, sutazePredch }: Props) {
   // Predvolené sú SKUPINY — to, v čom sa reálne hrá
   const [metrika, setMetrika] = useState<MetrikaSutazi>(METRIKA_DEFAULT);
+  const tip = useTooltip();
   const jeSkupiny = metrika === 'skupiny';
   const hodnota = jeSkupiny ? skupiny : sutaze;
   const predch = jeSkupiny ? skupinyPredch : sutazePredch;
@@ -44,13 +46,15 @@ export default function KpiSutazeKarta({ skupiny, sutaze, skupinyPredch, sutazeP
 
   return (
     <>
+      <tip.Tooltip />
       <div className="text-[11px] font-bold uppercase tracking-wider text-muted">
         {jeSkupiny ? 'Súťažné skupiny' : 'Súťaže'}
       </div>
       <div
         className="tnum mt-1.5 font-extrabold"
         style={{ fontSize: 'clamp(20px,17cqi,32px)', lineHeight: 1.05, whiteSpace: 'nowrap' }}
-        title={METRIKA_POPIS[metrika].popis}
+        aria-label={METRIKA_POPIS[metrika].popis}
+        {...tip.viazat(<div style={{ whiteSpace: 'normal' }}>{METRIKA_POPIS[metrika].popis}</div>)}
       >
         {fmt(hodnota)}
       </div>
@@ -68,7 +72,8 @@ export default function KpiSutazeKarta({ skupiny, sutaze, skupinyPredch, sutazeP
             key={m}
             type="button"
             style={pill(metrika === m)}
-            title={METRIKA_POPIS[m].popis}
+            aria-label={METRIKA_POPIS[m].popis}
+            {...tip.viazat(<div style={{ whiteSpace: 'normal' }}>{METRIKA_POPIS[m].popis}</div>)}
             onClick={() => setMetrika(m)}
           >
             {METRIKA_POPIS[m].label}

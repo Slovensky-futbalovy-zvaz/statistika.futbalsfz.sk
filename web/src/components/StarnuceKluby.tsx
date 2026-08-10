@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { fmt, fmt1 } from '../lib/format';
+import { useTooltip } from './Tooltip.tsx';
 
 interface Props {
   /**
@@ -31,6 +32,7 @@ const STRANA = 25;
  */
 export default function StarnuceKluby({ rows, okno }: Props) {
   const [strana, setStrana] = useState(0);
+  const tip = useTooltip();
 
   const data = useMemo<Riadok[]>(() => {
     if (!rows) return [];
@@ -59,21 +61,34 @@ export default function StarnuceKluby({ rows, okno }: Props) {
   }
 
   return (
-    <div>
+    <div onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead>
             <tr style={{ textAlign: 'left', color: 'var(--color-muted)', fontSize: 12 }}>
               <th style={{ padding: '6px 8px 6px 0', width: 44 }}>#</th>
               <th style={{ padding: '6px 8px 6px 0' }}>Klub</th>
-              <th style={{ padding: '6px 8px', textAlign: 'center' }} title="Sklon mediánu veku za tri sezóny">
+              <th
+                style={{ padding: '6px 8px', textAlign: 'center' }}
+                aria-label="Sklon mediánu veku za tri sezóny"
+                {...tip.viazat('Sklon mediánu veku za tri sezóny — nie medziročná zmena. Jednorazový výkyv tak o poradí nerozhoduje.')}
+              >
                 Starne o
               </th>
               <th style={{ padding: '6px 8px', textAlign: 'center' }}>Medián veku</th>
-              <th style={{ padding: '6px 8px', textAlign: 'center' }} title="Zmena počtu zápisov hráčov medzi prvou a poslednou sezónou okna">
+              <th
+                style={{ padding: '6px 8px', textAlign: 'center' }}
+                aria-label="Zmena počtu zápisov hráčov medzi prvou a poslednou sezónou okna"
+                {...tip.viazat('Zmena počtu zápisov hráčov medzi prvou a poslednou sezónou okna. Číta sa spolu so stĺpcom Starne o: klesajúci vek môže byť omladenie aj rozpad kádra.')}
+              >
                 Hráčov
               </th>
-              <th style={{ padding: '6px 8px', textAlign: 'center' }} title="Podiel zápisov hráčov do 21 rokov">
+              <th
+                style={{ padding: '6px 8px', textAlign: 'center' }}
+                aria-label="Podiel zápisov hráčov do 21 rokov"
+                {...tip.viazat('Podiel zápisov hráčov do 21 rokov v súťažiach dospelých.')}
+              >
                 Do 21 r.
               </th>
             </tr>

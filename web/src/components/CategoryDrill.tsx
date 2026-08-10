@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { fmt } from '../lib/format';
 import { GROUPS } from '../lib/palette';
+import { TipNadpis, TipRiadok, useTooltip } from './Tooltip.tsx';
 
 interface Kat {
   sutaze?: number;
@@ -18,6 +19,21 @@ interface Props {
 /** Zápasy podľa vekových skupín; klik na skupinu rozbalí jej U-úrovne. */
 export default function CategoryDrill({ kategorie }: Props) {
   const [open, setOpen] = useState<string | null>(null);
+  const tip = useTooltip();
+
+  /** Rozpísaný popisok — v riadku sú čísla len skratkami („12 z. · 4 d.“). */
+  const popisok = (nadpis: string, k: { sutaze?: number; zapasy: number; druzstva: number; goly: number }) => (
+    <>
+      <TipNadpis>{nadpis}</TipNadpis>
+      {(k.sutaze ?? 0) > 0 && <TipRiadok popis="Súťaže" hodnota={fmt(k.sutaze ?? 0)} />}
+      <TipRiadok popis="Odohraté zápasy" hodnota={fmt(k.zapasy)} />
+      <TipRiadok popis="Družstvá" hodnota={fmt(k.druzstva)} />
+      <TipRiadok popis="Góly" hodnota={fmt(k.goly)} />
+      {k.zapasy > 0 && (
+        <TipRiadok popis="Góly na zápas" hodnota={(k.goly / k.zapasy).toFixed(1)} />
+      )}
+    </>
+  );
 
   const skupiny = GROUPS.map((g) => {
     const uKody = g.cats
@@ -34,7 +50,8 @@ export default function CategoryDrill({ kategorie }: Props) {
   const max = Math.max(1, ...skupiny.map((s) => s.zapasy));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }} onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       {skupiny.map((g) => {
         const rozbalene = open === g.key;
         return (
@@ -53,7 +70,11 @@ export default function CategoryDrill({ kategorie }: Props) {
                   {g.sutaze > 0 && <> · {fmt(g.sutaze)} súť.</>} · {fmt(g.druzstva)} druž.
                 </span>
               </div>
-              <div style={{ height: 10, borderRadius: 5, background: 'var(--color-track)' }}>
+              <div
+                style={{ height: 10, borderRadius: 5, background: 'var(--color-track)' }}
+                aria-label={`${g.key}: ${fmt(g.zapasy)} zápasov`}
+                {...tip.viazat(popisok(g.key, g))}
+              >
                 <div style={{ height: '100%', width: `${(g.zapasy / max) * 100}%`, borderRadius: 5, background: g.color, transition: 'width .3s' }} />
               </div>
             </button>
@@ -69,7 +90,11 @@ export default function CategoryDrill({ kategorie }: Props) {
                         {fmt(u.zapasy)} z. · {fmt(u.druzstva)} d. · {fmt(u.goly)} g.
                       </span>
                     </div>
-                    <div style={{ height: 7, borderRadius: 4, background: 'var(--color-track)' }}>
+                    <div
+                      style={{ height: 7, borderRadius: 4, background: 'var(--color-track)' }}
+                      aria-label={`${u.cat}: ${fmt(u.zapasy)} zápasov`}
+                      {...tip.viazat(popisok(`${g.key} · ${u.cat}`, u))}
+                    >
                       <div style={{ height: '100%', width: `${(u.zapasy / max) * 100}%`, borderRadius: 4, background: g.color, opacity: 0.7 }} />
                     </div>
                   </div>

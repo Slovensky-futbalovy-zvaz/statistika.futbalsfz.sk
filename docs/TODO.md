@@ -39,6 +39,9 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
 
 ## Frontend
 
+- [x] ~~**Zjednotiť kontextové popisky v grafoch.**~~ Hotové 10. 8. 2026 — jeden zdieľaný
+  `Tooltip.tsx` naprieč všetkými ručne kreslenými grafmi, vrátane dotyku a dvoch grafov,
+  ktoré popisok nemali vôbec. Pozri metodiku, kap. „Kontextové popisky v grafoch“.
 - [ ] **41 typových chýb v dynamických route súboroch** (`astro check`, 8. 8. 2026). Všetky sú
   ten istý vzor: `Astro.params` je typovaný ako `string | number`, takže `id!`, `sezonaUrl!`
   a `odvetvie!` nesadá do funkcií čakajúcich `string`. Build ani beh portálu to neovplyvňuje,

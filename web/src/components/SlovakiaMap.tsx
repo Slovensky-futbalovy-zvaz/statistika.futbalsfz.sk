@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { MapData, MapRegion } from '../lib/data';
 import { fmt, choroColor } from '../lib/format';
 import { METRICS } from '../lib/palette';
+import { TipNadpis, TipRiadok, useTooltip } from './Tooltip.tsx';
 
 interface Props {
   mapData: MapData;
@@ -13,7 +14,10 @@ type Level = 'SFZ' | 'RFZ' | 'ObFZ';
 export default function SlovakiaMap({ mapData }: Props) {
   const [level, setLevel] = useState<Level>('RFZ');
   const [metric, setMetric] = useState<string>('zapasy');
-  const [hover, setHover] = useState<{ name: string; value: number; x: number; y: number } | null>(null);
+  // `aktivny` už neničí popisok — drží len červený obrys zvýrazneného regiónu.
+  // Popisok rieši spoločný `useTooltip` (rovnaký ako v ostatných grafoch).
+  const [aktivny, setAktivny] = useState<string | null>(null);
+  const tip = useTooltip();
 
   const regions: MapRegion[] = level === 'RFZ' ? mapData.rfz : level === 'ObFZ' ? mapData.obfz : [];
   const values = regions.map((r) => r.values[metric] ?? 0).filter((v) => v > 0);
@@ -113,16 +117,25 @@ export default function SlovakiaMap({ mapData }: Props) {
                 stroke="#fff"
                 strokeWidth={1}
                 style={{ cursor: 'default' }}
-                onMouseMove={(e) =>
-                  setHover({ name: 'Slovenský futbalový zväz', value: sfzVal, x: e.clientX, y: e.clientY })
-                }
-                onMouseLeave={() => setHover(null)}
+                aria-label={`Slovenský futbalový zväz — ${metricLabel}: ${fmt(sfzVal)}`}
+                {...tip.viazat(
+                  <>
+                    <TipNadpis>Slovenský futbalový zväz</TipNadpis>
+                    <TipRiadok popis={metricLabel} hodnota={fmt(sfzVal)} />
+                  </>,
+                )}
               />
             ) : (
               regions.map((r) => {
                 const v = r.values[metric] ?? 0;
                 const t = max > min ? (v - min) / (max - min) : 0.5;
-                const aktiv = hover?.name === r.name;
+                const aktiv = aktivny === r.name;
+                const viaz = tip.viazat(
+                  <>
+                    <TipNadpis>{r.name}</TipNadpis>
+                    <TipRiadok popis={metricLabel} hodnota={fmt(v)} />
+                  </>,
+                );
                 return (
                   <path
                     key={r.name}
@@ -131,8 +144,20 @@ export default function SlovakiaMap({ mapData }: Props) {
                     stroke={aktiv ? 'var(--color-sfz-red)' : '#fff'}
                     strokeWidth={aktiv ? 2.2 : 0.9}
                     style={{ cursor: 'pointer', transition: 'fill .15s' }}
-                    onMouseMove={(e) => setHover({ name: r.name, value: v, x: e.clientX, y: e.clientY })}
-                    onMouseLeave={() => setHover(null)}
+                    aria-label={`${r.name} — ${metricLabel}: ${fmt(v)}`}
+                    {...viaz}
+                    onMouseMove={(e) => {
+                      setAktivny(r.name);
+                      viaz.onMouseMove(e);
+                    }}
+                    onMouseLeave={() => {
+                      setAktivny(null);
+                      viaz.onMouseLeave();
+                    }}
+                    onTouchStart={(e) => {
+                      setAktivny(r.name);
+                      viaz.onTouchStart(e);
+                    }}
                     onClick={() => goProfil(r.id)}
                   />
                 );
@@ -156,25 +181,7 @@ export default function SlovakiaMap({ mapData }: Props) {
             </div>
           )}
 
-          {hover && (
-            <div
-              style={{
-                position: 'fixed',
-                left: hover.x + 14,
-                top: hover.y + 14,
-                background: 'var(--color-ink)',
-                color: '#fff',
-                padding: '6px 10px',
-                borderRadius: 8,
-                fontSize: 12,
-                pointerEvents: 'none',
-                zIndex: 70,
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {hover.name}: <b className="tnum">{fmt(hover.value)}</b>
-            </div>
-          )}
+          <tip.Tooltip />
           </div>
         </div>
         {/* REBRÍČEK — vlastná karta */}

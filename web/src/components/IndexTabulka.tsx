@@ -1,6 +1,16 @@
 import { useMemo, useState } from 'react';
 import { ZLOZKY_POPIS, INDEX_LIMITY } from '../lib/trendyTypy';
 import { fmt } from '../lib/format';
+import { TipNadpis, useTooltip } from './Tooltip.tsx';
+
+/** Skrátené názvy zložiek indexu v hlavičke tabuľky (plný popis je v popisku). */
+const ZLOZKY_NAZOV: Record<'A' | 'B' | 'C' | 'D' | 'E', string> = {
+  A: 'Šírka',
+  B: 'Deti',
+  C: 'Družstvá',
+  D: 'Kontinuita',
+  E: 'Prechod',
+};
 
 interface Props {
   /**
@@ -38,6 +48,7 @@ export default function IndexTabulka({ rows, sezona, zvazy, klubZvaz }: Props) {
   const [zvaz, setZvaz] = useState('');
   const [strana, setStrana] = useState(0);
   const [detail, setDetail] = useState<string | null>(null);
+  const tip = useTooltip();
 
   const data = useMemo<Riadok[]>(() => {
     if (!rows) return [];
@@ -80,7 +91,8 @@ export default function IndexTabulka({ rows, sezona, zvazy, klubZvaz }: Props) {
   );
 
   return (
-    <div>
+    <div onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       <p style={{
         background: '#fff7e6', border: '1px solid #f5d9a3', borderRadius: 10,
         padding: '10px 13px', fontSize: 12.5, color: '#7a4d00', margin: '0 0 14px', lineHeight: 1.55,
@@ -158,11 +170,21 @@ export default function IndexTabulka({ rows, sezona, zvazy, klubZvaz }: Props) {
               <th style={{ padding: '6px 8px 6px 0', width: 44 }}>#</th>
               <th style={{ padding: '6px 8px 6px 0' }}>Klub</th>
               <th style={{ padding: '6px 8px', textAlign: 'center', width: 70 }}>Index</th>
-              <th style={{ padding: '6px 8px', textAlign: 'center' }} title={ZLOZKY_POPIS.A.popis}>Šírka</th>
-              <th style={{ padding: '6px 8px', textAlign: 'center' }} title={ZLOZKY_POPIS.B.popis}>Deti</th>
-              <th style={{ padding: '6px 8px', textAlign: 'center' }} title={ZLOZKY_POPIS.C.popis}>Družstvá</th>
-              <th style={{ padding: '6px 8px', textAlign: 'center' }} title={ZLOZKY_POPIS.D.popis}>Kontinuita</th>
-              <th style={{ padding: '6px 8px', textAlign: 'center' }} title={ZLOZKY_POPIS.E.popis}>Prechod</th>
+              {(['A', 'B', 'C', 'D', 'E'] as const).map((k) => (
+                <th
+                  key={k}
+                  style={{ padding: '6px 8px', textAlign: 'center' }}
+                  aria-label={ZLOZKY_POPIS[k].popis}
+                  {...tip.viazat(
+                    <>
+                      <TipNadpis>{ZLOZKY_NAZOV[k]}</TipNadpis>
+                      <div style={{ whiteSpace: 'normal' }}>{ZLOZKY_POPIS[k].popis}</div>
+                    </>,
+                  )}
+                >
+                  {ZLOZKY_NAZOV[k]}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>

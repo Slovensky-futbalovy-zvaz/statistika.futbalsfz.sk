@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { rozbal, METRIKA_DEFAULT, type MetrikaSutazi, type UrovneVCase } from '../lib/urovneTypy';
+import { rozbal, pocetSlovo, METRIKA_DEFAULT, type MetrikaSutazi, type UrovneVCase } from '../lib/urovneTypy';
 import { fmt } from '../lib/format';
 import { UROVEN_LABEL, UROVEN_LABEL_KRATKY } from '../lib/palette';
+import { TipNadpis, TipRiadok, useTooltip } from './Tooltip.tsx';
 
 export interface HeatmapaProps {
   data: UrovneVCase;
@@ -24,6 +25,8 @@ export interface HeatmapaProps {
 export default function HeatmapaUrovni({ data, sezona, kat, gender, metrika = METRIKA_DEFAULT }: HeatmapaProps) {
   const si = data.sezony.indexOf(sezona);
   const skupiny = metrika === 'skupiny';
+  const tip = useTooltip();
+  const slovo = (n: number) => pocetSlovo(n, metrika);
 
   const { bunky, urovneIdx, zvazyIdx, max } = useMemo(() => {
     const m = new Map<string, number>();
@@ -71,7 +74,8 @@ export default function HeatmapaUrovni({ data, sezona, kat, gender, metrika = ME
   }
 
   return (
-    <div>
+    <div onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       <div style={{ overflowX: 'auto' }}>
         <table style={{ borderCollapse: 'separate', borderSpacing: 3, width: '100%', fontSize: 12 }}>
           <thead>
@@ -84,7 +88,8 @@ export default function HeatmapaUrovni({ data, sezona, kat, gender, metrika = ME
               {urovneIdx.map((ui) => (
                 <th
                   key={ui}
-                  title={UROVEN_LABEL[data.urovne[ui]]}
+                  aria-label={UROVEN_LABEL[data.urovne[ui]]}
+                  {...tip.viazat(UROVEN_LABEL[data.urovne[ui]] ?? data.urovne[ui])}
                   style={{ color: 'var(--color-muted)', fontWeight: 600, padding: '0 2px 4px', whiteSpace: 'nowrap', width: 78 }}
                 >
                   {UROVEN_LABEL_KRATKY[data.urovne[ui]] ?? data.urovne[ui]}
@@ -111,7 +116,16 @@ export default function HeatmapaUrovni({ data, sezona, kat, gender, metrika = ME
                       <td
                         key={ui}
                         style={bunka(n)}
-                        title={`${data.zvazy[zi].nazov} · ${UROVEN_LABEL[data.urovne[ui]]}: ${fmt(n)} súťaží`}
+                        aria-label={`${data.zvazy[zi].nazov} · ${UROVEN_LABEL[data.urovne[ui]]}: ${fmt(n)} ${slovo(n)}`}
+                        {...tip.viazat(
+                          <>
+                            <TipNadpis>{data.zvazy[zi].nazov}</TipNadpis>
+                            <TipRiadok
+                              popis={UROVEN_LABEL[data.urovne[ui]] ?? data.urovne[ui]}
+                              hodnota={n ? `${fmt(n)} ${slovo(n)}` : 'bez súťaže'}
+                            />
+                          </>,
+                        )}
                       >
                         {n || ''}
                       </td>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi, type UrovneVCase } from '../lib/urovneTypy';
 import HeatmapaUrovni from './HeatmapaUrovni.tsx';
+import { useTooltip } from './Tooltip.tsx';
 
 interface Props {
   data: UrovneVCase;
@@ -28,6 +29,7 @@ export default function UrovneSekcia({ data, sezona }: Props) {
   // Predvolené sú SKUPINY — to, v čom sa reálne hrá (rozhodnutie Ján Letko, 8. 8. 2026)
   const [metrika, setMetrika] = useState<MetrikaSutazi>(METRIKA_DEFAULT);
   const gi = gender === 'VSETCI' ? -1 : gender === 'M' ? 0 : 1;
+  const tip = useTooltip();
 
   const pill = (active: boolean): React.CSSProperties => ({
     padding: '4px 12px',
@@ -64,7 +66,8 @@ export default function UrovneSekcia({ data, sezona }: Props) {
   };
 
   return (
-    <div style={KARTA}>
+    <div style={KARTA} onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       <div style={KICKER}>Počet súťaží</div>
       <h2 style={H2}>Kto čo riadi — zväzy × úrovne súťaže</h2>
       <p style={POPIS}>
@@ -81,7 +84,8 @@ export default function UrovneSekcia({ data, sezona }: Props) {
               key={m}
               type="button"
               style={pill(metrika === m)}
-              title={METRIKA_POPIS[m].popis}
+              aria-label={METRIKA_POPIS[m].popis}
+              {...tip.viazat(<div style={{ whiteSpace: 'normal' }}>{METRIKA_POPIS[m].popis}</div>)}
               onClick={() => setMetrika(m)}
             >
               {METRIKA_POPIS[m].label}

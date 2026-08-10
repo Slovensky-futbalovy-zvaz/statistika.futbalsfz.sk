@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
+import { fmt } from '../lib/format';
 import { PALETTE, UROVEN_LABEL_KRATKY } from '../lib/palette';
 import type { VekVCase } from '../lib/trendyTypy';
+import { TipNadpis, TipRiadok, useTooltip } from './Tooltip.tsx';
 
 interface Props {
   data: VekVCase;
@@ -49,6 +51,7 @@ export default function VekTrendZvazov({
 
   const [vybrane, setVybrane] = useState<number[]>(predvolene);
   const [uroven, setUroven] = useState(0);
+  const tip = useTooltip();
 
   /**
    * Pre každú úroveň zoznam zväzov, ktoré v nej majú dáta, zoradený podľa počtu
@@ -155,7 +158,8 @@ export default function VekTrendZvazov({
   const menoUrovne = (u: string) => (u ? (UROVEN_LABEL_KRATKY[u] ?? u) : 'Všetky súťaže');
 
   return (
-    <div>
+    <div onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       {data.urovne.length > 1 && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center', marginBottom: 8, fontSize: 12 }}>
           <span style={{ color: 'var(--color-muted)' }}>{rezSlovo}:</span>
@@ -187,7 +191,14 @@ export default function VekTrendZvazov({
               key={z.id}
               type="button"
               style={chip(on, farba(zi), !maData)}
-              title={maData ? undefined : `${z.nazov} nemá v reze „${menoUrovne(data.urovne[uroven])}“ žiadne dáta`}
+              aria-label={maData ? undefined : `${z.nazov} nemá v reze „${menoUrovne(data.urovne[uroven])}“ žiadne dáta`}
+              {...(maData
+                ? {}
+                : tip.viazat(
+                    <div style={{ whiteSpace: 'normal' }}>
+                      {`${z.nazov} nemá v reze „${menoUrovne(data.urovne[uroven])}“ žiadne dáta.`}
+                    </div>,
+                  ))}
               onClick={() => setVybrane((v) => (on ? v.filter((i) => i !== zi) : [...v, zi]))}
             >
               {z.nazov}
@@ -236,9 +247,41 @@ export default function VekTrendZvazov({
                 const v = val(zi, si);
                 if (v === null) return null;
                 return (
-                  <circle key={s} cx={x(si)} cy={y(v)} r={2.4} fill={farba(zi)} opacity={si >= prebiehaOd || si < porovnatelneOd ? 0.6 : 1}>
-                    <title>{`${data.subjekty[zi].nazov} · ${s}: medián ${v} ${jednotka} (${hodnoty.get(`${zi}|${si}`)?.n ?? 0} ${pocetSlovo})`}</title>
-                  </circle>
+                  <g key={s}>
+                    <circle
+                      cx={x(si)}
+                      cy={y(v)}
+                      r={2.4}
+                      fill={farba(zi)}
+                      opacity={si >= prebiehaOd || si < porovnatelneOd ? 0.6 : 1}
+                    />
+                    {/* neviditeľná väčšia plocha — do bodu s polomerom 2,4 px sa myšou netrafiť */}
+                    <circle
+                      cx={x(si)}
+                      cy={y(v)}
+                      r={9}
+                      fill="transparent"
+                      aria-label={`${data.subjekty[zi].nazov} · ${s}: medián ${v} ${jednotka}`}
+                      {...tip.viazat(
+                        <>
+                          <TipNadpis>{data.subjekty[zi].nazov}</TipNadpis>
+                          <TipRiadok popis={`Sezóna ${s}`} hodnota={`medián ${v} ${jednotka}`} />
+                          <TipRiadok
+                            popis={pocetSlovo.charAt(0).toUpperCase() + pocetSlovo.slice(1)}
+                            hodnota={fmt(hodnoty.get(`${zi}|${si}`)?.n ?? 0)}
+                          />
+                          {si >= prebiehaOd && (
+                            <div style={{ opacity: 0.75, marginTop: 3 }}>Prebiehajúca sezóna.</div>
+                          )}
+                          {si < porovnatelneOd && (
+                            <div style={{ opacity: 0.75, marginTop: 3 }}>
+                              Staršie sezóny nie sú plne porovnateľné.
+                            </div>
+                          )}
+                        </>,
+                      )}
+                    />
+                  </g>
                 );
               })}
               <text x={W - R + 8} y={T + 12 + k * 14} fontSize={10.5} fontWeight={700} fill={farba(zi)}>

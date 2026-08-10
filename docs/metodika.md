@@ -178,6 +178,37 @@ než prepínač nemať.
 Sito názvov ubralo oproti samotnému štruktúrnemu signálu 6 skupín v 2025/2026 a 3 v 2024/2025.
 Kontrola všetkých **609 profilov** prešla bez chyby a bez varovania.
 
+#### Kontextové popisky v grafoch (rozhodnutie Ján Letko, 10. 8. 2026)
+
+Portál mal tri rôzne správania: grafy na ECharts (trendy, sunbursty, radar, demografia) mali
+tmavý popisok idúci za kurzorom, mapy mali vlastný takmer zhodný, a ručne kreslené SVG grafy
+len natívny `<title>`. Ten čaká asi sekundu, nedá sa naštýlovať a **na dotykových zariadeniach
+sa nezobrazí vôbec**, takže mobilní návštevníci o detailné čísla úplne prichádzali.
+
+Jediným miestom pravdy je **`web/src/components/Tooltip.tsx`** (`useTooltip`, `TipNadpis`,
+`TipRiadok`). Vzhľad je odvodený z popisku máp, aby zostal zhodný s ECharts a nebolo treba
+prekresľovať osem existujúcich grafov.
+
+- **Natívny `<title>` a `title=` sa v grafoch už nepoužívajú.** Prístupnosť rieši `aria-label`
+  na spúšťacom prvku; popisok je `aria-hidden`.
+- **Dotyk:** ťuknutie popisok zobrazí, ťuknutie inam ho zavrie (handler na prvku volá
+  `stopPropagation`, dokumentový listener zavrie zvyšok). Zavíra ho aj skrolovanie.
+- **Preklopenie k okraju okna** — bez neho popisok pri pravom okraji vytŕčal von a na úzkych
+  displejoch rozširoval stránku o vodorovné posúvanie.
+- **Malé body čiarových grafov** (r = 2,4–2,8 px) majú neviditeľnú záchytnú plochu r = 9 px —
+  do samotného bodu sa myšou netrafiť.
+- **Čísla vykreslené na stupni pyramídy majú `pointer-events: none`**, inak by nad číslom
+  popisok nevyskočil (nájdené pri kontrole v prehliadači 10. 8. 2026).
+- **POZOR na poradie hookov:** `useTooltip()` musí byť nad každým podmieneným `return`
+  (napr. `if (!body.length)` vo `VekKlubu`), inak sa volá podmienene.
+- `useLayoutEffect` je vymenený za `useEffect` mimo prehliadača — Astro islands sa serverovo
+  renderujú a React by pri buildte 24 000 stránok zaplavil log varovaním.
+
+Pokryté: pyramída súťaží, obe heatmapy úrovní, vek klubu, vekový trend zväzov, starnúce kluby,
+tabuľka aj karta Indexu klubu, obe mapy, veková pyramída a drill-down kategórií (posledné dva
+nemali popisok žiadny), a prepínače metriky Skupiny/Súťaže — tie nesú vysvetlenie pojmov, takže
+natívny popisok pri nich škodil najviac.
+
 ### Vek hráčov a Index klubu — stránka Trendy (7. 8. 2026)
 
 Metodika v plných podrobnostiach: `claude/plan-trendy-vek.md` a `claude/metodika-index-klubu.md`

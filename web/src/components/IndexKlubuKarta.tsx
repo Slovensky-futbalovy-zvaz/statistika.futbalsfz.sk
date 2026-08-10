@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ZLOZKY_POPIS, INDEX_LIMITY, type IndexSezona } from '../lib/trendyTypy';
 import { fmt } from '../lib/format';
+import { TipNadpis, TipRiadok, useTooltip } from './Tooltip.tsx';
 
 interface Props {
   /** Index po sezónach (z data/index-klubu/{klub}.json). */
@@ -21,6 +22,7 @@ const KLUCE = ['A', 'B', 'C', 'D', 'E'] as const;
  */
 export default function IndexKlubuKarta({ sezony, sezona, nazov }: Props) {
   const [otvorena, setOtvorena] = useState<string | null>(null);
+  const tip = useTooltip();
   const v = sezony[sezona];
   const vsetky = Object.keys(sezony).sort();
 
@@ -39,7 +41,8 @@ export default function IndexKlubuKarta({ sezony, sezona, nazov }: Props) {
   const maxIdx = Math.max(100, ...vsetky.map((s) => sezony[s].index));
 
   return (
-    <div>
+    <div onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 22, alignItems: 'flex-start' }}>
         <div style={{ minWidth: 130 }}>
           {bezMladeze ? (
@@ -140,7 +143,23 @@ export default function IndexKlubuKarta({ sezony, sezona, nazov }: Props) {
               const iv = sezony[s];
               const akt = s === sezona;
               return (
-                <div key={s} style={{ flex: 1, textAlign: 'center', minWidth: 0 }} title={`${s}: ${iv.index}`}>
+                <div
+                  key={s}
+                  style={{ flex: 1, textAlign: 'center', minWidth: 0 }}
+                  aria-label={`${s}: index ${iv.index}`}
+                  {...tip.viazat(
+                    <>
+                      <TipNadpis>{s}</TipNadpis>
+                      <TipRiadok
+                        popis="Index klubu"
+                        hodnota={iv.stav === 'bez-mladeze' ? 'bez mládeže' : `${iv.index} zo 100`}
+                      />
+                      {akt && (
+                        <div style={{ opacity: 0.75, marginTop: 3 }}>Zobrazená sezóna.</div>
+                      )}
+                    </>,
+                  )}
+                >
                   <div
                     style={{
                       height: Math.max(2, (iv.index / maxIdx) * 56),

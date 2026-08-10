@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react';
 import type { UrovenRiadok } from '../lib/data';
 import { fmt } from '../lib/format';
 import { GROUPS, UROVEN_LABEL, UROVEN_LABEL_KRATKY, UROVEN_PORADIE } from '../lib/palette';
-import { METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi } from '../lib/urovneTypy';
+import { METRIKA_DEFAULT, METRIKA_POPIS, pocetSlovo, type MetrikaSutazi } from '../lib/urovneTypy';
+import { TipNadpis, TipRiadok, useTooltip } from './Tooltip.tsx';
 
 type Gender = 'VSETCI' | 'M' | 'F';
 
@@ -44,12 +45,6 @@ interface Stupen {
   sutaze: number;
 }
 
-/** Skloňovaný názov metriky pre popisky „12 súťaží / 12 skupín“. */
-const POCET_SLOVO: Record<MetrikaSutazi, (n: number) => string> = {
-  sutaze: (n) => (n === 1 ? 'súťaž' : n >= 2 && n <= 4 ? 'súťaže' : 'súťaží'),
-  skupiny: (n) => (n === 1 ? 'skupina' : n >= 2 && n <= 4 ? 'skupiny' : 'skupín'),
-};
-
 /**
  * Počet súťaží podľa úrovne súťaže — samostatná pyramída pre každú vekovú
  * kategóriu (Dospelí, Dorast, Žiaci, Prípravky).
@@ -65,9 +60,10 @@ const POCET_SLOVO: Record<MetrikaSutazi, (n: number) => string> = {
  */
 export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Props) {
   const [gender, setGender] = useState<Gender>('VSETCI');
+  const tip = useTooltip();
   // Predvolené sú SKUPINY — to, v čom sa reálne hrá (rozhodnutie Ján Letko, 8. 8. 2026)
   const [metrika, setMetrika] = useState<MetrikaSutazi>(METRIKA_DEFAULT);
-  const slovo = POCET_SLOVO[metrika];
+  const slovo = (n: number) => pocetSlovo(n, metrika);
   const hodnota = (r: UrovenRiadok) => (metrika === 'skupiny' ? (r.skupiny ?? r.sutaze) : r.sutaze);
   const sektory = Object.keys(odvetvia ?? {});
   const [aktivneSektory, setAktivneSektory] = useState<string[]>(['futbal', ...sektory]);
@@ -148,7 +144,8 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
               key={m}
               type="button"
               style={pill(metrika === m)}
-              title={METRIKA_POPIS[m].popis}
+              aria-label={METRIKA_POPIS[m].popis}
+              {...tip.viazat(<div style={{ whiteSpace: 'normal' }}>{METRIKA_POPIS[m].popis}</div>)}
               onClick={() => setMetrika(m)}
             >
               {METRIKA_POPIS[m].label}
@@ -227,15 +224,32 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
                 .map((q) => q.join(','))
                 .join(' ');
               const siroky = Math.min(h1, h2) * 2 > 30;
+              const tipObsah = (
+                <>
+                  <TipNadpis>{t.labelPlny}</TipNadpis>
+                  <TipRiadok popis={p.kategoria} hodnota={`${fmt(t.sutaze)} ${slovo(t.sutaze)}`} />
+                </>
+              );
               tvary.push(
                 <g key={t.kod}>
-                  <polygon points={body} fill={farbaStupna(t.kod, i, ligove.length, p.farba)}>
-                    <title>{`${t.labelPlny}: ${fmt(t.sutaze)} ${slovo(t.sutaze)}`}</title>
-                  </polygon>
-                  <text x={LAB - 10} y={y + H / 2 + 4} textAnchor="end" fontSize={FONT_LAB} fontWeight={600} fill="var(--color-muted)">
-                    <title>{t.labelPlny}</title>
+                  <polygon
+                    points={body}
+                    fill={farbaStupna(t.kod, i, ligove.length, p.farba)}
+                    aria-label={`${t.labelPlny}: ${fmt(t.sutaze)} ${slovo(t.sutaze)}`}
+                    {...tip.viazat(tipObsah)}
+                  />
+                  <text
+                    x={LAB - 10}
+                    y={y + H / 2 + 4}
+                    textAnchor="end"
+                    fontSize={FONT_LAB}
+                    fontWeight={600}
+                    fill="var(--color-muted)"
+                    {...tip.viazat(tipObsah)}
+                  >
                     {t.label}
                   </text>
+                  {/* číslo leží na stupni — musí prepúšťať myš, inak nad ním popisok nevyskočí */}
                   <text
                     x={siroky ? CX : CX + Math.max(h1, h2) + 7}
                     y={y + H / 2 + 4}
@@ -243,6 +257,7 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
                     fontSize={10.5}
                     fontWeight={800}
                     fill={siroky ? '#fff' : 'var(--color-ink)'}
+                    style={{ pointerEvents: 'none' }}
                   >
                     {fmt(t.sutaze)}
                   </text>
@@ -270,13 +285,33 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
                 const h1 = half(t.sutaze);
                 const vyska = H - 6;
                 const siroky = h1 * 2 > 30;
+                const tipObsah = (
+                  <>
+                    <TipNadpis>{t.labelPlny}</TipNadpis>
+                    <TipRiadok popis={p.kategoria} hodnota={`${fmt(t.sutaze)} ${slovo(t.sutaze)}`} />
+                  </>
+                );
                 tvary.push(
                   <g key={t.kod}>
-                    <rect x={CX - h1} y={y} width={h1 * 2} height={vyska} rx={4} fill={farbaStupna(t.kod, 0, 1, p.farba)}>
-                      <title>{`${t.labelPlny}: ${fmt(t.sutaze)} ${slovo(t.sutaze)}`}</title>
-                    </rect>
-                    <text x={LAB - 10} y={y + vyska / 2 + 4} textAnchor="end" fontSize={FONT_LAB} fontWeight={600} fill="var(--color-muted)">
-                      <title>{t.labelPlny}</title>
+                    <rect
+                      x={CX - h1}
+                      y={y}
+                      width={h1 * 2}
+                      height={vyska}
+                      rx={4}
+                      fill={farbaStupna(t.kod, 0, 1, p.farba)}
+                      aria-label={`${t.labelPlny}: ${fmt(t.sutaze)} ${slovo(t.sutaze)}`}
+                      {...tip.viazat(tipObsah)}
+                    />
+                    <text
+                      x={LAB - 10}
+                      y={y + vyska / 2 + 4}
+                      textAnchor="end"
+                      fontSize={FONT_LAB}
+                      fontWeight={600}
+                      fill="var(--color-muted)"
+                      {...tip.viazat(tipObsah)}
+                    >
                       {t.label}
                     </text>
                     <text
@@ -286,6 +321,7 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
                       fontSize={10.5}
                       fontWeight={800}
                       fill={siroky ? '#fff' : 'var(--color-ink)'}
+                      style={{ pointerEvents: 'none' }}
                     >
                       {fmt(t.sutaze)}
                     </text>
@@ -338,6 +374,7 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
                   style={{ display: 'block', width: '100%', height: 'auto', overflow: 'visible' }}
                   role="img"
                   aria-label={`Pyramída líg — ${p.kategoria}`}
+                  onMouseLeave={tip.skry}
                 >
                   {tvary}
                 </svg>
@@ -353,6 +390,8 @@ export default function PyramidaSutazi({ riadky, odvetvia, odvetvieLabel }: Prop
           })}
         </div>
       )}
+
+      <tip.Tooltip />
 
       <p style={{ marginTop: 12, fontSize: 11.5, color: 'var(--color-muted)', lineHeight: 1.55 }}>
         {METRIKA_POPIS[metrika].popis}

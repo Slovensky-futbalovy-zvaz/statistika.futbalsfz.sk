@@ -7,6 +7,7 @@ import type { SunburstUzol } from '../lib/data';
 import { fmt } from '../lib/format';
 import { REGION } from '../lib/palette';
 import { METRIKA_POPIS } from '../lib/urovneTypy';
+import { useTooltip } from './Tooltip.tsx';
 
 echarts.use([SunburstChart, TooltipComponent, CanvasRenderer]);
 
@@ -25,6 +26,7 @@ export default function SunburstSutaze({ strom }: Props) {
   const [futsal, setFutsal] = useState(true);
   const [gender, setGender] = useState<Gender>('VSETCI');
   const [metrika, setMetrika] = useState<Metrika>('zapasy');
+  const tip = useTooltip();
   const jeSutaz = metrika === 'sutaze' || metrika === 'skupiny';
 
   // farbenie uzla podľa mena (RFZ / SFZ vlastné / odvetvie)
@@ -107,7 +109,8 @@ export default function SunburstSutaze({ strom }: Props) {
   });
 
   return (
-    <div>
+    <div onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 10, fontSize: 12.5 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: 'var(--color-muted)' }}>Metrika:</span>
@@ -115,7 +118,8 @@ export default function SunburstSutaze({ strom }: Props) {
           <button
             type="button"
             style={pill(metrika === 'skupiny')}
-            title={METRIKA_POPIS.skupiny.popis}
+            aria-label={METRIKA_POPIS.skupiny.popis}
+            {...tip.viazat(<div style={{ whiteSpace: 'normal' }}>{METRIKA_POPIS.skupiny.popis}</div>)}
             onClick={() => setMetrika('skupiny')}
           >
             Skupiny
@@ -123,7 +127,8 @@ export default function SunburstSutaze({ strom }: Props) {
           <button
             type="button"
             style={pill(metrika === 'sutaze')}
-            title={METRIKA_POPIS.sutaze.popis}
+            aria-label={METRIKA_POPIS.sutaze.popis}
+            {...tip.viazat(<div style={{ whiteSpace: 'normal' }}>{METRIKA_POPIS.sutaze.popis}</div>)}
             onClick={() => setMetrika('sutaze')}
           >
             Súťaže

@@ -56,6 +56,17 @@ export const METRIKA_POPIS: Record<MetrikaSutazi, { label: string; popis: string
   },
 };
 
+/**
+ * Skloňovaný názov metriky: 1 skupina / 2–4 skupiny / 5+ skupín.
+ *
+ * Používa sa v popiskoch grafov aj v `aria-label`. Bez toho svietilo v matici
+ * „1 skupín“ (nájdené pri kontrole v prehliadači 10. 8. 2026).
+ */
+export function pocetSlovo(n: number, metrika: MetrikaSutazi): string {
+  if (metrika === 'skupiny') return n === 1 ? 'skupina' : n >= 2 && n <= 4 ? 'skupiny' : 'skupín';
+  return n === 1 ? 'súťaž' : n >= 2 && n <= 4 ? 'súťaže' : 'súťaží';
+}
+
 /** Rozbalí `UrovneVCase.rows` späť na sedmice čísel. */
 export function rozbal(rows: string): number[][] {
   if (!rows) return [];

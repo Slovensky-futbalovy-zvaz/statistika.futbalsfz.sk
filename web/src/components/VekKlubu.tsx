@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { fmt, fmt1 } from '../lib/format';
 import { UROVEN_LABEL } from '../lib/palette';
+import { TipNadpis, TipRiadok, useTooltip } from './Tooltip.tsx';
 
 interface Props {
   /**
@@ -31,6 +32,8 @@ interface Bod {
  */
 export default function VekKlubu({ rows, poslednaKompletna, labelCelok = 'Všetky súťaže' }: Props) {
   const [rez, setRez] = useState('');
+  // POZOR: hook musí byť nad `if (!body.length) return` — inak by sa volal podmienečne
+  const tip = useTooltip();
 
   const { body, urovne, sutaze, sezony } = useMemo(() => {
     const b: Bod[] = (rows ? rows.split('\n') : []).map((r) => {
@@ -125,7 +128,8 @@ export default function VekKlubu({ rows, poslednaKompletna, labelCelok = 'Všetk
   };
 
   return (
-    <div>
+    <div onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       {(urovne.length > 0 || sutaze.length > 0) && (
         <div style={{ marginBottom: 12, fontSize: 12 }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, alignItems: 'center' }}>
@@ -184,10 +188,34 @@ export default function VekKlubu({ rows, poslednaKompletna, labelCelok = 'Všetk
         )}
         {vybrane.map((b, i) =>
           b ? (
-            <circle key={b.sezona} cx={x(i)} cy={y(b.median)} r={2.8} fill="var(--color-sfz-blue)"
-                    opacity={i >= prebiehaOd ? 0.6 : 1}>
-              <title>{`${b.sezona}: medián ${b.median}, stredná polovica ${b.p25}–${b.p75} (${fmt(b.n)} zápisov)`}</title>
-            </circle>
+            <g key={b.sezona}>
+              <circle
+                cx={x(i)}
+                cy={y(b.median)}
+                r={2.8}
+                fill="var(--color-sfz-blue)"
+                opacity={i >= prebiehaOd ? 0.6 : 1}
+              />
+              {/* neviditeľná väčšia plocha — do bodu s polomerom 2,8 px sa myšou netrafiť */}
+              <circle
+                cx={x(i)}
+                cy={y(b.median)}
+                r={9}
+                fill="transparent"
+                aria-label={`${b.sezona}: medián ${b.median}`}
+                {...tip.viazat(
+                  <>
+                    <TipNadpis>{b.sezona}</TipNadpis>
+                    <TipRiadok popis="Medián veku" hodnota={`${b.median} r.`} />
+                    <TipRiadok popis="Stredná polovica" hodnota={`${b.p25}–${b.p75} r.`} />
+                    <TipRiadok popis="Zápisov" hodnota={fmt(b.n)} />
+                    {i >= prebiehaOd && (
+                      <div style={{ opacity: 0.75, marginTop: 3 }}>Prebiehajúca sezóna.</div>
+                    )}
+                  </>,
+                )}
+              />
+            </g>
           ) : null,
         )}
         {sezony.map((s, i) =>

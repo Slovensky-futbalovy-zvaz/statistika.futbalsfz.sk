@@ -7,6 +7,7 @@ import type { PorovnanieRiadok, BumpData } from '../lib/data';
 import { PALETTE, METRICS_RADAR, GROUPS } from '../lib/palette';
 import { fmt, fmt1 } from '../lib/format';
 import { METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi } from '../lib/urovneTypy';
+import { useTooltip } from './Tooltip.tsx';
 
 echarts.use([RadarChart, LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
@@ -74,6 +75,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
   const [metric, setMetric] = useState<string>('zapasy');
   // Predvolené sú SKUPINY — to, v čom sa reálne hrá (rozhodnutie Ján Letko, 8. 8. 2026)
   const [metrikaSutazi, setMetrikaSutazi] = useState<MetrikaSutazi>(METRIKA_DEFAULT);
+  const tip = useTooltip();
 
   /** `sutaze` sa podľa prepínača číta buď ako súťaže, alebo ako súťažné skupiny. */
   const kluc = (k: string) => (k === 'sutaze' && metrikaSutazi === 'skupiny' ? 'skupiny' : k);
@@ -286,7 +288,8 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
   const ux = pritomne.filter((l) => l !== 'ADULTS');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }} onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       {/* Spoločný výber zväzov */}
       <section style={CARD}>
         <div style={KICK}>Výber zväzov</div>
@@ -301,7 +304,8 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
               key={m}
               type="button"
               style={pill(metrikaSutazi === m)}
-              title={METRIKA_POPIS[m].popis}
+              aria-label={METRIKA_POPIS[m].popis}
+              {...tip.viazat(<div style={{ whiteSpace: 'normal' }}>{METRIKA_POPIS[m].popis}</div>)}
               onClick={() => setMetrikaSutazi(m)}
             >
               {METRIKA_POPIS[m].label}
@@ -392,13 +396,22 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
                   key={m.k}
                   type="button"
                   disabled={dis}
-                  title={
+                  aria-label={
                     dis
                       ? 'Táto metrika zatiaľ nemá vekový rozpad — zruš filter kategórie'
                       : m.k === 'sutaze'
                         ? METRIKA_POPIS[metrikaSutazi].popis
                         : undefined
                   }
+                  {...(dis || m.k === 'sutaze'
+                    ? tip.viazat(
+                        <div style={{ whiteSpace: 'normal' }}>
+                          {dis
+                            ? 'Táto metrika zatiaľ nemá vekový rozpad — zruš filter kategórie.'
+                            : METRIKA_POPIS[metrikaSutazi].popis}
+                        </div>,
+                      )
+                    : {})}
                   style={{ ...pill(metric === m.k), ...(dis ? { opacity: 0.4, cursor: 'not-allowed' } : {}) }}
                   onClick={() => { if (!dis) setMetric(m.k); }}
                 >

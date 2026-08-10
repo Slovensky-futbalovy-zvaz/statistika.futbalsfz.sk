@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { rozbal, METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi, type UrovneVCase } from '../lib/urovneTypy';
+import { rozbal, pocetSlovo, METRIKA_DEFAULT, METRIKA_POPIS, type MetrikaSutazi, type UrovneVCase } from '../lib/urovneTypy';
 import { fmt } from '../lib/format';
 import { UROVEN_LABEL, UROVEN_LABEL_KRATKY } from '../lib/palette';
+import { TipNadpis, TipRiadok, useTooltip, type TooltipApi } from './Tooltip.tsx';
 
 interface Props {
   /** Rez pre JEDEN zväz (getUrovneVCaseZvazu). */
@@ -27,6 +28,8 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
   // Predvolené sú SKUPINY — to, v čom sa reálne hrá (rozhodnutie Ján Letko, 8. 8. 2026)
   const [metrika, setMetrika] = useState<MetrikaSutazi>(METRIKA_DEFAULT);
   const gi = gender === 'VSETCI' ? -1 : gender === 'M' ? 0 : 1;
+  const tip = useTooltip();
+  const slovo = (n: number) => pocetSlovo(n, metrika);
 
   const prebiehaOd = useMemo(() => {
     const i = data.sezony.indexOf(data.poslednaKompletna);
@@ -88,6 +91,7 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
           metrika={metrika}
           setMetrika={setMetrika}
           pill={pill}
+          tipViazat={tip.viazat}
         />
         <p style={{ fontSize: 13, color: 'var(--color-muted)' }}>
           Pre tento rez nemá zväz v žiadnej sezóne súťaže.
@@ -97,8 +101,9 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
   }
 
   return (
-    <div>
-      <Filtre data={data} kat={kat} setKat={setKat} gender={gender} setGender={setGender} metrika={metrika} setMetrika={setMetrika} pill={pill} />
+    <div onMouseLeave={tip.skry}>
+      <Filtre data={data} kat={kat} setKat={setKat} gender={gender} setGender={setGender} metrika={metrika} setMetrika={setMetrika} pill={pill} tipViazat={tip.viazat} />
+      <tip.Tooltip />
 
       <div style={{ overflowX: 'auto' }}>
         <table style={{ borderCollapse: 'separate', borderSpacing: 3, width: '100%', fontSize: 12 }}>
@@ -112,7 +117,8 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
               {urovneIdx.map((ui) => (
                 <th
                   key={ui}
-                  title={UROVEN_LABEL[data.urovne[ui]]}
+                  aria-label={UROVEN_LABEL[data.urovne[ui]]}
+                  {...tip.viazat(UROVEN_LABEL[data.urovne[ui]] ?? data.urovne[ui])}
                   style={{ color: 'var(--color-muted)', fontWeight: 600, padding: '0 2px 4px', whiteSpace: 'nowrap', width: 78 }}
                 >
                   {UROVEN_LABEL_KRATKY[data.urovne[ui]] ?? data.urovne[ui]}
@@ -131,7 +137,14 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
                 <tr key={s}>
                   <td style={{ padding: '0 6px 0 0', whiteSpace: 'nowrap', color: prebieha ? 'var(--color-muted)' : undefined }}>
                     {s}
-                    {prebieha && <span title="prebiehajúca sezóna — čísla sa ešte dopĺňajú"> ⧗</span>}
+                    {prebieha && (
+                      <span
+                        aria-label="prebiehajúca sezóna — čísla sa ešte dopĺňajú"
+                        {...tip.viazat('Prebiehajúca sezóna — čísla sa ešte dopĺňajú, nižšia hodnota nie je pokles.')}
+                      >
+                        {' ⧗'}
+                      </span>
+                    )}
                   </td>
                   {urovneIdx.map((ui) => {
                     const n = bunky.get(`${si}|${ui}`) ?? 0;
@@ -139,7 +152,20 @@ export default function HeatmapaZvazuVCase({ data }: Props) {
                       <td
                         key={ui}
                         style={{ ...bunka(n), opacity: prebieha ? 0.55 : 1 }}
-                        title={`${s} · ${UROVEN_LABEL[data.urovne[ui]]}: ${fmt(n)} súťaží`}
+                        aria-label={`${s} · ${UROVEN_LABEL[data.urovne[ui]]}: ${fmt(n)} ${slovo(n)}`}
+                        {...tip.viazat(
+                          <>
+                            <TipNadpis>
+                              {UROVEN_LABEL[data.urovne[ui]] ?? data.urovne[ui]}
+                            </TipNadpis>
+                            <TipRiadok popis={`Sezóna ${s}`} hodnota={n ? `${fmt(n)} ${slovo(n)}` : 'bez súťaže'} />
+                            {prebieha && (
+                              <div style={{ opacity: 0.75, marginTop: 3 }}>
+                                Prebiehajúca sezóna — čísla sa ešte dopĺňajú.
+                              </div>
+                            )}
+                          </>,
+                        )}
                       >
                         {n || ''}
                       </td>
@@ -184,6 +210,7 @@ function Filtre({
   metrika,
   setMetrika,
   pill,
+  tipViazat,
 }: {
   data: UrovneVCase;
   kat: number;
@@ -193,6 +220,8 @@ function Filtre({
   metrika: MetrikaSutazi;
   setMetrika: (m: MetrikaSutazi) => void;
   pill: (active: boolean) => React.CSSProperties;
+  /** `tip.viazat` z nadradeného komponentu — filtre sú samostatná funkcia, hook tu volať nemôžme. */
+  tipViazat: TooltipApi['viazat'];
 }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 12, fontSize: 12.5 }}>
@@ -203,7 +232,8 @@ function Filtre({
             key={m}
             type="button"
             style={pill(metrika === m)}
-            title={METRIKA_POPIS[m].popis}
+            aria-label={METRIKA_POPIS[m].popis}
+            {...tipViazat(<div style={{ whiteSpace: 'normal' }}>{METRIKA_POPIS[m].popis}</div>)}
             onClick={() => setMetrika(m)}
           >
             {METRIKA_POPIS[m].label}

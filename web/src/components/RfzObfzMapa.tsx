@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { RfzObfzMapa as MapaData, MapRegion } from '../lib/data';
 import { fmt, choroColor } from '../lib/format';
 import { METRICS } from '../lib/palette';
+import { TipNadpis, TipRiadok, useTooltip } from './Tooltip.tsx';
 
 interface Props {
   mapa: MapaData;
@@ -11,7 +12,9 @@ interface Props {
 /** Choropleth mapa ObFZ jedného RFZ + rebríček. Prepínač metriky. */
 export default function RfzObfzMapa({ mapa, rebricekNadpis = 'Rebríček ObFZ' }: Props) {
   const [metric, setMetric] = useState<string>('zapasy');
-  const [hover, setHover] = useState<{ name: string; value: number; x: number; y: number } | null>(null);
+  // `aktivny` drží len červený obrys zvýrazneného regiónu; popisok rieši `useTooltip`.
+  const [aktivny, setAktivny] = useState<string | null>(null);
+  const tip = useTooltip();
 
   const regions: MapRegion[] = mapa.regions;
   const values = regions.map((r) => r.values[metric] ?? 0).filter((v) => v > 0);
@@ -73,7 +76,13 @@ export default function RfzObfzMapa({ mapa, rebricekNadpis = 'Rebríček ObFZ' }
               {regions.map((r) => {
                 const v = r.values[metric] ?? 0;
                 const t = max > min ? (v - min) / (max - min) : 0.5;
-                const aktiv = hover?.name === r.name;
+                const aktiv = aktivny === r.name;
+                const viaz = tip.viazat(
+                  <>
+                    <TipNadpis>{r.name}</TipNadpis>
+                    <TipRiadok popis={metricLabel} hodnota={fmt(v)} />
+                  </>,
+                );
                 return (
                   <path
                     key={r.name}
@@ -82,8 +91,20 @@ export default function RfzObfzMapa({ mapa, rebricekNadpis = 'Rebríček ObFZ' }
                     stroke={aktiv ? 'var(--color-sfz-red)' : '#fff'}
                     strokeWidth={aktiv ? 2.2 : 0.9}
                     style={{ cursor: 'pointer', transition: 'fill .15s' }}
-                    onMouseMove={(e) => setHover({ name: r.name, value: v, x: e.clientX, y: e.clientY })}
-                    onMouseLeave={() => setHover(null)}
+                    aria-label={`${r.name} — ${metricLabel}: ${fmt(v)}`}
+                    {...viaz}
+                    onMouseMove={(e) => {
+                      setAktivny(r.name);
+                      viaz.onMouseMove(e);
+                    }}
+                    onMouseLeave={() => {
+                      setAktivny(null);
+                      viaz.onMouseLeave();
+                    }}
+                    onTouchStart={(e) => {
+                      setAktivny(r.name);
+                      viaz.onTouchStart(e);
+                    }}
                     onClick={() => goProfil(r.id)}
                   />
                 );
@@ -94,25 +115,7 @@ export default function RfzObfzMapa({ mapa, rebricekNadpis = 'Rebríček ObFZ' }
               <span style={{ flex: 1, height: 8, borderRadius: 4, background: 'linear-gradient(90deg, #dbe6ff, #1450df)' }} />
               <span className="tnum">{fmt(max)}</span>
             </div>
-            {hover && (
-              <div
-                style={{
-                  position: 'fixed',
-                  left: hover.x + 14,
-                  top: hover.y + 14,
-                  background: 'var(--color-ink)',
-                  color: '#fff',
-                  padding: '6px 10px',
-                  borderRadius: 8,
-                  fontSize: 12,
-                  pointerEvents: 'none',
-                  zIndex: 70,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {hover.name}: <b className="tnum">{fmt(hover.value)}</b>
-              </div>
-            )}
+            <tip.Tooltip />
           </div>
         </div>
 

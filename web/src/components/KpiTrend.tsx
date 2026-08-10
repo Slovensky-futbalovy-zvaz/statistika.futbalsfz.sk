@@ -6,6 +6,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { fmt } from '../lib/format';
 import { GROUPS, GROUP_COLOR } from '../lib/palette';
 import { METRIKA_POPIS } from '../lib/urovneTypy';
+import { useTooltip } from './Tooltip.tsx';
 
 echarts.use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
@@ -57,6 +58,7 @@ export default function KpiTrend({
   const chart = useRef<echarts.ECharts | null>(null);
   const [metric, setMetric] = useState('zapasy');
   const [sel, setSel] = useState<string[]>(GROUPS.map((g) => g.key));
+  const tip = useTooltip();
 
   // šport: futbal + odvetvia, ktoré majú dáta (pill filter sa zobrazí len ak je čo prepínať)
   const sporty = [
@@ -150,14 +152,18 @@ export default function KpiTrend({
   });
 
   return (
-    <div>
+    <div onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, margin: '2px 0 4px' }}>
         {zapasyMetriky.map((m) => (
           <button
             key={m.k}
             type="button"
             onClick={() => setMetric(m.k)}
-            title={m.k === 'skupiny' || m.k === 'sutaze' ? METRIKA_POPIS[m.k].popis : undefined}
+            aria-label={m.k === 'skupiny' || m.k === 'sutaze' ? METRIKA_POPIS[m.k].popis : undefined}
+            {...(m.k === 'skupiny' || m.k === 'sutaze'
+              ? tip.viazat(<div style={{ whiteSpace: 'normal' }}>{METRIKA_POPIS[m.k].popis}</div>)
+              : {})}
             style={btn(m.k === metric)}
           >
             {m.label}
@@ -180,7 +186,8 @@ export default function KpiTrend({
               key={o.k}
               type="button"
               disabled={jeOsoba}
-              title={jeOsoba ? 'Osoby sa vykazujú len za futbal' : undefined}
+              aria-label={jeOsoba ? 'Osoby sa vykazujú len za futbal' : undefined}
+              {...(jeOsoba ? tip.viazat('Osoby sa vykazujú len za futbal.') : {})}
               onClick={() => toggleSport(o.k)}
               style={{ ...btn(selSport.includes(o.k)), ...(jeOsoba ? { cursor: 'not-allowed' } : {}) }}
             >

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import type { Demografia } from '../lib/data';
 import { fmt, endYear } from '../lib/format';
 import { ROLA_LABEL, ROLY_PORADIE } from '../lib/palette';
+import { TipNadpis, TipRiadok, useTooltip } from './Tooltip.tsx';
 
 interface Props {
   // Pick<...> namiesto celeho Demografia — umoznuje znovupouzitie aj pre
@@ -31,6 +32,7 @@ export default function AgePyramid({ demo, sezona }: Props) {
   const akt = sezona && demo.sezony[sezona] ? sezona : sezony[sezony.length - 1];
   const dostupneRoly = ROLY_PORADIE.filter((r) => sezony.some((s) => (demo.sezony[s]?.[r]?.osoby ?? 0) > 0));
   const [rola, setRola] = useState(dostupneRoly[0] ?? 'hraci');
+  const tip = useTooltip();
 
   const { riadky, sumM, sumF } = useMemo(() => {
     const r = demo.sezony[akt]?.[rola];
@@ -61,8 +63,11 @@ export default function AgePyramid({ demo, sezona }: Props) {
     color: aktiv ? '#fff' : 'var(--color-ink)',
   });
 
+  const spoluVsetci = sumM + sumF;
+
   return (
-    <div>
+    <div onMouseLeave={tip.skry}>
+      <tip.Tooltip />
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
         {dostupneRoly.map((r) => (
           <button key={r} type="button" style={pill(rola === r)} onClick={() => setRola(r)}>
@@ -79,7 +84,25 @@ export default function AgePyramid({ demo, sezona }: Props) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {riadky.map((r) => (
-          <div key={r.label} style={{ display: 'grid', gridTemplateColumns: '1fr 64px 1fr', alignItems: 'center', gap: 4 }}>
+          <div
+            key={r.label}
+            style={{ display: 'grid', gridTemplateColumns: '1fr 64px 1fr', alignItems: 'center', gap: 4 }}
+            aria-label={`${r.label} rokov: muži ${fmt(r.M)}, ženy ${fmt(r.F)}`}
+            {...tip.viazat(
+              <>
+                <TipNadpis>{`${r.label} rokov · ${ROLA_LABEL[rola]}`}</TipNadpis>
+                <TipRiadok popis="Muži" hodnota={fmt(r.M)} />
+                <TipRiadok popis="Ženy" hodnota={fmt(r.F)} />
+                <TipRiadok popis="Spolu" hodnota={fmt(r.M + r.F)} />
+                {spoluVsetci > 0 && (
+                  <TipRiadok
+                    popis="Podiel z roly"
+                    hodnota={`${(((r.M + r.F) / spoluVsetci) * 100).toFixed(1)} %`}
+                  />
+                )}
+              </>,
+            )}
+          >
             {/* muži vľavo */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 8 }}>
               {r.M > 0 && <span className="tnum" style={{ fontSize: 12, color: 'var(--color-muted)' }}>{fmt(r.M)}</span>}
