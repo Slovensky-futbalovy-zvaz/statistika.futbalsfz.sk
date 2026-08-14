@@ -15,8 +15,9 @@
 > - **Vizuály (finálna sada, 1080 × 1350 px, s logom SFZ):** `01-preco-len-dospeli.png`,
 >   `02-karta-pocet-klubov.png`, `03-vyvoj-po-sezonach.png`, `04-stav-mladez.png`,
 >   `05-toky-klubov.png`, `06-miera-zaniku.png`, `07-hraci-po-kategoriach.png`,
->   `08-zanik-vs-vznik.png`, `09-priciny.png`, `10-delegovane-osoby.png`. Pre LinkedIn je
->   z nich zložený dokument `pocet-klubov-linkedin-carousel.pdf` (10 strán v tom istom poradí).
+>   `08-zanik-vs-vznik.png`, `09-priciny.png`, `10-delegovane-osoby.png`, `11-starnutie.png`,
+>   `12-index-klubu.png`. Pre LinkedIn je z nich zložený dokument
+>   `pocet-klubov-linkedin-carousel.pdf` (12 strán v tom istom poradí).
 > - **Snímky 09 a 10 nie sú dátové** — 09 je označená ako názor SFZ („Náš pohľad, nie údaj
 >   z portálu“), 10 je faktické vysvetlenie financovania delegovaných osôb. Obe majú v pätičke
 >   Slovenský futbalový zväz namiesto „Zdroj: ISSF“.
@@ -24,7 +25,7 @@
 # Sociálne siete — počet klubov a mládež (august 2026), verzia 2
 
 **Kanály:** LinkedIn SFZ, Facebook SFZ
-**Formát:** carousel, 10 snímok, 1080 × 1350 px (LinkedIn: priložiť PDF ako dokument)
+**Formát:** carousel, 12 snímok, 1080 × 1350 px (LinkedIn: priložiť PDF ako dokument)
 **Odkaz:** https://statistika.futbalsfz.sk
 
 ---
@@ -68,6 +69,18 @@ nezmenšuje.
 A ešte jeden pohyb, ktorý sa nespomína: **550-krát** si klub, ktorý mal len dospelých, pridal
 mládežnícke družstvo. Opačným smerom, teda stratou mládeže, to bolo **482-krát**. Pridávanie
 teda mierne prevyšuje stratu.
+
+**A ešte dve veci z Trendov, ktoré k tomu patria.** Súťaže dospelých **starnú**: medián veku
+hráčov v zápise stúpol za trinásť sezón z 25 na **28 rokov**. Zaujímavé je, ako — mladých
+v dospelých súťažiach ubudlo len mierne (25 % → 22 % zápisov), ale podiel hráčov
+**35-ročných a starších sa takmer zdvojnásobil** (15 % → 25 %). Kluby dopĺňajú kádre skúsenými
+hráčmi, nie mladými.
+
+Prácu s mládežou meriame **Indexom klubu** — číslom od 0 do 100 z piatich zložiek (šírka
+mládeže, počet detí, počet družstiev, kontinuita a prechod do dospelých). Medián je **66
+bodov**, 539 klubov je nad 76 bodmi a 239 má nulu, pretože mládež nemá. Index pritom **nehovorí
+nič** o kvalite trénerskej práce, zázemí ani o prístupe k deťom a systematicky zvýhodňuje veľké
+kluby — malý klub s jednou prípravkou môže byť pre dieťa z tej obce tou najlepšou voľbou.
 
 ---
 
@@ -153,6 +166,17 @@ Medziročne 2024/2025 → 2025/2026: **−11 klubov** (1 417 → 1 406). Futsal 
 | Klub stratil mládež (dospelí + mládež → len dospelí) | 482 |
 | Klub stratil dospelých, mládež si udržal | **220** |
 
+### Vek v súťažiach dospelých a Index klubu (2025/2026)
+
+| Ukazovateľ | Hodnota |
+|---|---|
+| Medián veku hráčov v súťažiach dospelých | **28 rokov** (2013/2014: 25) |
+| Podiel zápisov hráčov 35 a viac | **24,5 %** (2013/2014: 14,8 %) |
+| Podiel zápisov hráčov do 21 rokov | **21,6 %** (2013/2014: 24,5 %) |
+| Zápisov, na ktorých to stojí | 539 504 |
+| Medián Indexu klubu | **66 bodov** (priemer 59, kvartily 41 / 66 / 86) |
+| Klubov nad 76 bodov / s nulou | 539 / 239 |
+
 ### Zanikanie a vznikanie klubov (2016/2017 – 2024/2025)
 
 | Ukazovateľ | Hodnota |
@@ -186,3 +210,7 @@ Medziročne 2024/2025 → 2025/2026: **−11 klubov** (1 417 → 1 406). Futsal 
    partneri, tréneri, infraštruktúra, demografia a záujem.
 10. **10** Jedna vec, ktorá sa zamlčuje: náklady na delegované osoby v mládežníckych súťažiach
     platí celé SFZ, klub si platí len súťaže dospelých — a tieto poplatky nie sú príjmom zväzov.
+11. **11** Starnutie súťaží dospelých: medián veku hráčov stúpol z 25 na 28 rokov, podiel
+    hráčov nad 35 rokov z 15 % na 25 %.
+12. **12** Index klubu: rozdelenie 1 410 klubov podľa bodov (539 nad 76 bodov, 239 s nulou)
+    a upozornenie, čo index nemeria.
