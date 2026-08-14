@@ -15,13 +15,16 @@
 > - **Vizuály (finálna sada, 1080 × 1350 px, s logom SFZ):** `01-preco-len-dospeli.png`,
 >   `02-karta-pocet-klubov.png`, `03-vyvoj-po-sezonach.png`, `04-stav-mladez.png`,
 >   `05-toky-klubov.png`, `06-miera-zaniku.png`, `07-hraci-po-kategoriach.png`,
->   `08-zanik-vs-vznik.png`, `09-karta-profil-zvazu.png`. Pre LinkedIn je z nich zložený
->   dokument `pocet-klubov-linkedin-carousel.pdf` (9 strán v tom istom poradí).
+>   `08-zanik-vs-vznik.png`, `09-priciny.png`, `10-delegovane-osoby.png`. Pre LinkedIn je
+>   z nich zložený dokument `pocet-klubov-linkedin-carousel.pdf` (10 strán v tom istom poradí).
+> - **Snímky 09 a 10 nie sú dátové** — 09 je označená ako názor SFZ („Náš pohľad, nie údaj
+>   z portálu“), 10 je faktické vysvetlenie financovania delegovaných osôb. Obe majú v pätičke
+>   Slovenský futbalový zväz namiesto „Zdroj: ISSF“.
 
 # Sociálne siete — počet klubov a mládež (august 2026), verzia 2
 
 **Kanály:** LinkedIn SFZ, Facebook SFZ
-**Formát:** carousel, 9 snímok, 1080 × 1350 px (LinkedIn: priložiť PDF ako dokument)
+**Formát:** carousel, 10 snímok, 1080 × 1350 px (LinkedIn: priložiť PDF ako dokument)
 **Odkaz:** https://statistika.futbalsfz.sk
 
 ---
@@ -179,5 +182,7 @@ Medziročne 2024/2025 → 2025/2026: **−11 klubov** (1 417 → 1 406). Futsal 
    v mládeži je o 42 % hráčov viac než v 2014/2015.
 8. **08** Zanikanie a vznikanie klubov po sezónach: 468 zaniknutých oproti 180 novým za deväť
    sezón.
-9. **09** Karta Počet klubov na profile ObFZ Nitra: 72 klubov, z toho 58 má tento zväz ako
-   domovský, 13 je bez mládeže.
+9. **09** Čo kluby naozaj ničí — náš pohľad, nie údaj z portálu: mestá a obce, štát, komerční
+   partneri, tréneri, infraštruktúra, demografia a záujem.
+10. **10** Jedna vec, ktorá sa zamlčuje: náklady na delegované osoby v mládežníckych súťažiach
+    platí celé SFZ, klub si platí len súťaže dospelých — a tieto poplatky nie sú príjmom zväzov.
