@@ -209,6 +209,117 @@ tabuľka aj karta Indexu klubu, obe mapy, veková pyramída a drill-down kategó
 nemali popisok žiadny), a prepínače metriky Skupiny/Súťaže — tie nesú vysvetlenie pojmov, takže
 natívny popisok pri nich škodil najviac.
 
+### Počet klubov (dimenzia, rozhodnutia Ján Letko 14. 8. 2026)
+
+ETL: `etl/kluby.py` a `etl/kluby_zvazy.py`, artefakt `data/kluby/<sezona>.json` (bloky
+`celkovo`, `zvazy`, `podlaDomovskehoZvazu`, `vylucene`). Zobrazenie: karta na úvodnej stránke
+a na profile zväzu, metrika a deviata os radaru v Porovnaniach, metrika v sunburste.
+
+#### Kto je aktívny klub
+
+**Aktívny klub = klub s aspoň jedným reálne odohraným zápasom v sezóne.** Nie klub v registri
+a nie klub s prihláseným družstvom — klub, ktorý naozaj hral. „Reálne odohraný“ je tá istá
+definícia ako v kapitole „Odohraný zápas“: `closed: true` bez administratívnych kontumácií
+a odstúpení bez zápisu.
+
+Klub je účastník **regulárnej súťaže riadenej slovenským zväzom** — zápas, ktorého `appSpace`
+nie je v `zvazy.json`, sa nezapočíta. Tým z počtu vypadnú zahraničné kluby z európskych
+pohárov, reprezentácie (`appSpace = uefa`), futsalové priestory pri futbalovom reze
+a testovacie profily. Práve pohároví súperi Slovana boli dôvodom, prečo hrubé číslo bez filtra
+tvrdilo medziročný pokles −33 namiesto skutočných −11.
+
+#### Klub sa počíta v každom zväze, kde hral
+
+**Rozhodnutie:** klub je aktívny v každom zväze, v ktorého súťaži odohral aspoň jeden zápas.
+Bežný prípad — ačko v 5. lige ZsFZ a prípravka v ObFZ Nitra — je klubom oboch zväzov a v oboch
+sa počíta.
+
+**Dôsledok, ktorý treba uvádzať pri každom zobrazení:** súčet klubov po zväzoch je vyšší než
+celoslovenský počet. Celoslovenské číslo je počet **unikátnych** klubov, nie súčet, preto ho
+`etl/sumar.py` berie priamo z artefaktu a **nikdy nesčítava** po zväzoch.
+
+Doplnkovo sa publikuje blok `podlaDomovskehoZvazu` — klub je v ňom započítaný raz, v zväze,
+v ktorého súťažiach odohral najviac zápasov. Toto číslo **sčítateľné je** a používa sa všade,
+kde vizualizácia sčítava vetvy: v **sunburste** (SR → RFZ → ObFZ) sa metrika Kluby počíta nad
+domovským zväzom, inak by rodičovský prstenec ukazoval viac než celoslovenské číslo.
+Vysvetlivka je priamo pri grafe aj v karte.
+
+Filter pohlavia je pri metrike Kluby **zašednutý** — počet klubov sa podľa pohlavia nerozpadá,
+klub s mužským aj ženským družstvom je jeden klub.
+
+Do **pyramídy a heatmáp úrovní sa metrika Kluby zámerne nedáva.** Klub hrá naraz v štyroch až
+piatich úrovniach, stupne by sa nedali sčítať a tvar pyramídy by klamal.
+
+#### Mládež
+
+Mládež = **akákoľvek veková úroveň okrem dospelých**. Klub je práve v jednom z troch stavov:
+`lenDospeli`, `dospeliAMladez`, `lenMladez`; `sMladezou` je súčet posledných dvoch.
+
+**Sezóny pred 2024/2025 stoja na fallbacku** `competitions.parts[].rules.category`, lebo
+`teams.ageCategory` je vyplnené až od 2024/2025. Rozpad na mládež je tam menej presný — trend
+je spoľahlivý v smere a ráde, nie na jednotky klubov. Pri desaťročných porovnaniach to treba
+uviesť.
+
+**Prebiehajúca sezóna** má nízky počet klubov s mládežou (2026/2027: 908 klubov, z toho 562
+„bez mládeže“), lebo mládežnícke súťaže sa začínajú neskôr. V grafe je šrafovaná a nesmie sa
+čítať ako prepad.
+
+#### Filter neregulárnych súťaží
+
+**Štrukturálny príznak „regulárna súťaž / turnaj“ v `competitions` neexistuje.** RT U14,
+Vysokoškolská liga aj turnaj ZŠ mesta Košice sa od ligovej súťaže ničím nelíšia a `level = null`
+sa použiť nedá (nemá ho ani VII. liga SOFZ). Preto ručný číselník
+`etl/config/vylucene_sutaze.json` s kľúčom `competitionGroupId` (12 položiek): turnaj ZŠ mesta
+Košice, reprezentačné turnaje RT U14/U15/U17/U19/WU14, Memoriál Gejzu Princa, Regions' Cup
+a testovacie záznamy. **Číselník treba udržiavať** — nová neregulárna súťaž doň musí pribudnúť
+ručne. Požiadavka na príznak zo strany ISSF/Sportnetu je v `docs/TODO.md`.
+
+**Vysokoškolská liga je regulárna súťaž** (rozhodnutie Ján Letko) — fakulty sa počítajú ako
+kluby. Školské a výberové (reprezentačné) turnaje nie.
+
+**Pasca, ktorá stála prvý beh:** `competition.competitionGroupId` je v kolekcii `matches`
+**ObjectId, nie string** — porovnávať treba cez `str()`, inak filter ticho nevylúči nič.
+
+Filter platí pre **celý portál** vrátane Indexu klubu a rebríčkov. `etl/index_klubu.py` má
+poistku proti vylúčeným subjektom; **`etl/trendy.py` a `etl/demografia_klub.py` filter zatiaľ
+nemajú** a pri najbližšom behu znova vyrobia artefakty aj pre vylúčené subjekty (zapísané
+v `docs/TODO.md`).
+
+Očistením vypadlo z `data/` **297 publikovaných profilov** subjektov, ktoré klubmi nie sú
+(zahraničné kluby, reprezentácie, 40 košických škôl, testovacie profily). Sú archivované
+lokálne v `data/_archiv-klubov/`, ktorý je v `.gitignore` — nič sa nemazalo.
+
+#### Výsledky a krížová kontrola (14. 8. 2026, futbal)
+
+| Sezóna | Kluby | S mládežou | Bez mládeže | Len mládež |
+|---|---|---|---|---|
+| 2015/2016 | 1 715 | 1 254 | 461 | 65 |
+| 2020/2021 | 1 549 | 1 232 | 317 | 105 |
+| 2024/2025 | 1 417 | 1 177 | 240 | 143 |
+| **2025/2026** | **1 406** | **1 167** | **239** | **143** |
+
+Klubov ubúda, ale **klubov bez mládeže ubudlo takmer o polovicu** (461 → 239, podiel
+27 % → 17 %) a klubov **len s mládežou je dvojnásobok** (65 → 143).
+
+#### Vzťah k Indexu klubu
+
+Index klubu má **vlastnú definíciu započítaného družstva** (družstvo sa počíta, len ak odohralo
+viac než polovicu mediánu zápasov v tej istej časti súťaže) a beží nad mierne odlišným súborom
+klubov (1 410 oproti 1 406). Čísla preto **nie sú tá istá metrika**, hoci v sezóne 2025/2026
+sedia:
+
+| | Počet klubov | Index klubu |
+|---|---|---|
+| Bez mládeže | 239 (`lenDospeli`) | 239 (`stav = bez-mladeze`, index 0) |
+| Bez dospelých | 143 (`lenMladez`) | 156 (`stav = bez-dospelych`) |
+
+Rozdiel pri kluboch bez dospelých (156 oproti 143) je dôsledkom prahu zápasov: klub, ktorého
+dospelé družstvo odohralo len pár zápasov, je pre index „bez dospelých“, pre Počet klubov už
+nie. **V dokumentácii treba obe metriky pomenovať**, inak to vyzerá ako nesúlad. Údaj „260
+klubov bez mládeže“ z pôvodnej metodiky Indexu klubu bol meraný **pred zavedením filtra**
+neregulárnych súťaží a už neplatí.
+
+
 ### Vek hráčov a Index klubu — stránka Trendy (7. 8. 2026)
 
 Metodika v plných podrobnostiach: `claude/plan-trendy-vek.md` a `claude/metodika-index-klubu.md`
@@ -276,7 +387,7 @@ prechod do dospelých 15 b. Prahy sú kalibrované na rozdelení 1 450 klubov (m
 - **Družstvo je unikátna dvojica (veková úroveň, `teams.category`)**, nie záznam v časti súťaže —
   to isté ačko hrajúce ligu aj pohár je jedno družstvo.
 - Klub **bez družstva dospelých** (156 klubov) sa hodnotí zo štyroch zložiek prepočítaných na 100.
-  Klub **bez mládeže** (260 klubov, 18,2 %) má index 0 a zobrazuje sa slovne ako „bez mládeže“.
+  Klub **bez mládeže** (239 klubov, 17,0 % — prepočítané 14. 8. 2026 po zavedení filtra neregulárnych súťaží; pôvodné meranie hovorilo 260) má index 0 a zobrazuje sa slovne ako „bez mládeže“.
 - **Kapitola „Čo index nemeria“ je povinnou súčasťou každého zobrazenia**, nie odkazom v pätičke:
   index nehovorí nič o kvalite trénerskej práce, zázemí, prístupe k deťom ani o športovej
   úspešnosti a systematicky zvýhodňuje veľké kluby.

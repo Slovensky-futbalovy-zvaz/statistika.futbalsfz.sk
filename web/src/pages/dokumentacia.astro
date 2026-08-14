@@ -235,6 +235,92 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     </div>
   </section>
 
+  <!-- Pocet klubov -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Kluby</div>
+      <h2 class={H2} style="font-size:20px; margin:4px 0 8px;">Počet klubov</h2>
+      <p class="text-muted" style="line-height:1.6;">
+        Za aktívny klub považujeme klub, ktorý v sezóne
+        <strong class="text-ink">odohral aspoň jeden zápas</strong>. Nie klub zapísaný
+        v registri a nie klub s prihláseným družstvom — klub, ktorý naozaj hral. Zápasy, ktoré
+        sa neodohrali a skončili administratívne (kontumácia bez zápisu, odstúpenie zo súťaže),
+        klub medzi aktívne nedostanú.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Čo sa do počtu nezapočítava</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        Klub je účastník <strong class="text-ink">regulárnej súťaže riadenej slovenským
+        zväzom</strong>. Nepočítajú sa preto zahraničné kluby, ktoré k nám prišli na zápas
+        európskeho pohára, ani reprezentačné družstvá. Nepočítajú sa ani
+        <strong class="text-ink">školské a výberové turnaje</strong> — napríklad turnaj
+        základných škôl mesta Košice alebo reprezentačné turnaje výberov U14 až U19. Sú to
+        podujatia, nie kluby v súťaži, a v číslach by pôsobili ako desiatky nových klubov,
+        ktoré o rok „zaniknú“.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Vysokoškolská liga je naopak regulárna súťaž</strong>
+        a jej účastníci — fakulty — sa ako kluby počítajú.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">S mládežou a bez mládeže</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        Pri každom klube sledujeme, či má mládež. <strong class="text-ink">Mládež</strong>
+        znamená akúkoľvek vekovú úroveň okrem dospelých — od prípraviek po dorast. Klub je preto
+        v jednom z troch stavov: má len dospelých, má dospelých aj mládež, alebo má
+        <strong class="text-ink">len mládež</strong> a žiadne dospelé družstvo (mládežnícke
+        akadémie a kluby, ktoré dospelých neudržali, ale prácu s deťmi áno).
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Prečo je súčet po zväzoch vyšší</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        Klub hráva v súťažiach viacerých zväzov naraz — áčko napríklad v regionálnej lige
+        a prípravku v oblastnej. <strong class="text-ink">Taký klub je započítaný v každom
+        zväze, v ktorého súťaži hral</strong>, pretože pre oba zväzy je to ich klub. Preto je
+        súčet klubov po zväzoch vyšší než celoslovenské číslo — a celoslovenské číslo nie je
+        súčet, ale <strong class="text-ink">počet rôznych klubov</strong>.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        Je jedna výnimka. V <strong class="text-ink">kruhovom grafe</strong> (SR → regióny →
+        oblasti) sa hodnoty vo vnútorných prstencoch sčítavajú, takže tam by rovnaký klub
+        vystupoval viackrát. Pri metrike Kluby sa preto každý klub započíta
+        <strong class="text-ink">raz, v zväze, v ktorého súťažiach odohral najviac
+        zápasov</strong>. Vďaka tomu graf sedí na celoslovenské číslo.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Kde počet klubov nájdete</h3>
+      <p class="mt-1 text-muted" style="line-height:1.6;">
+        Na <strong class="text-ink">úvodnej stránke</strong> a na
+        <strong class="text-ink">profile každého zväzu</strong> je karta s počtom klubov,
+        medziročnou zmenou, rozdelením na kluby s mládežou a bez nej a s vývojom po sezónach.
+        V <strong class="text-ink">Porovnaniach</strong> sú kluby ako metrika v tabuľke aj ako
+        os v pavúkovom grafe a v <strong class="text-ink">kruhovom grafe</strong> sa dajú
+        prepnúť namiesto zápasov či súťaží.
+      </p>
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        Do <strong class="text-ink">pyramídy líg kluby nedávame</strong> zámerne. Klub hrá naraz
+        v štyroch aj piatich úrovniach súťaže, takže by sa stupne pyramídy nedali sčítať a jej
+        tvar by klamal.
+      </p>
+
+      <p class="mt-3 text-sm text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Prebiehajúca sezóna</strong> je v grafe vývoja odlíšená
+        šrafovaním. Mládežnícke súťaže sa rozbiehajú neskôr než súťaže dospelých, takže na
+        začiatku sezóny je klubov aj klubov s mládežou zdanlivo málo — nie je to pokles.
+        Pri porovnaniach spred sezóny 2024/2025 platí, že rozdelenie na mládež a dospelých sa
+        vtedy odvodzuje z vekovej kategórie súťaže, takže trend je spoľahlivý v smere a ráde,
+        nie na jednotlivé kluby.
+      </p>
+      <p class="mt-3 text-sm text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Vzťah k Indexu klubu:</strong> index má vlastné pravidlo, kedy
+        sa družstvo započíta (musí odohrať aspoň polovicu obvyklého počtu zápasov svojej
+        súťaže), takže jeho počty klubov bez mládeže a bez dospelých sa môžu od tohto bloku
+        o niekoľko klubov líšiť. V sezóne 2025/2026 obe metriky hovoria o 239 kluboch bez
+        mládeže; klubov bez dospelých má index 156, tento blok 143.
+      </p>
+    </div>
+  </section>
+
   <!-- Vek hracov a Index klubu -->
   <section class="mb-8">
     <div class={CARD} style={CARD_STYLE}>
