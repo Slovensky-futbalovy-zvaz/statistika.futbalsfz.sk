@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import KpiTrend from './KpiTrend.tsx';
 import KpiSutazeKarta from './KpiSutazeKarta.tsx';
+import KlubyKarta from './KlubyKarta.tsx';
 import SlovakiaMap from './SlovakiaMap.tsx';
 import SunburstSutaze from './SunburstSutaze.tsx';
 import SunburstOsoby from './SunburstOsoby.tsx';
@@ -31,6 +32,7 @@ for (const s of sezony) {
 }
 const trendOsoby = demoTrend(getSumarDemografia());
 
+
 interface Props {
   sezona: string;
 }
@@ -38,6 +40,16 @@ const { sezona } = Astro.props;
 const aktualna = sezona;
 const idx = sezony.indexOf(aktualna);
 const predosla = idx > 0 ? sezony[idx - 1] : undefined;
+
+// vývoj počtu aktívnych klubov po sezónach (blok kluby v sumári, od 14. 8. 2026);
+// sezóny novšie než zobrazovaná ešte len bežia — kreslia sa šrafovane
+const klubyRows = sezony
+  .map((s, i) => ({
+    sezona: s,
+    kluby: ((sumreMap.get(s) as any)?.kluby?.kluby ?? 0) as number,
+    prebieha: i > idx,
+  }))
+  .filter((r) => r.kluby > 0);
 const sumar = sumreMap.get(aktualna)!;
 const sumarPrev = predosla ? sumreMap.get(predosla) : undefined;
 
@@ -198,6 +210,25 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       ))
     }
   </section>
+
+  {
+    sumar.kluby && (
+      <section class="mt-10">
+        <div class={CARD} style={CARD_STYLE}>
+          <KlubyKarta
+            client:visible
+            kluby={sumar.kluby.kluby}
+            klubyPredch={sumarPrev?.kluby?.kluby}
+            lenDospeli={sumar.kluby.lenDospeli}
+            dospeliAMladez={sumar.kluby.dospeliAMladez}
+            lenMladez={sumar.kluby.lenMladez}
+            podnadpis="Celé Slovensko, futbal"
+            rows={klubyRows}
+          />
+        </div>
+      </section>
+    )
+  }
 
   <!-- Mapa + rebríček (dve samostatné karty) -->
   <section class="mt-10">

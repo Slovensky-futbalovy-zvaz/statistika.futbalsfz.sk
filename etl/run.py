@@ -33,6 +33,7 @@ CONFIG = REPO / "etl" / "config"
 sys.path.insert(0, str(REPO / "etl"))
 import pipelines  # noqa: E402
 import validate  # noqa: E402
+import kluby_zvazy  # noqa: E402  — blok „Počet klubov“ z artefaktu, bez DB
 
 log = logging.getLogger("etl")
 
@@ -791,6 +792,9 @@ def main() -> int:
             log.info("%s: žiadne uzavreté zápasy — preskakujem.", sezona)
             continue
 
+        # blok „Počet klubov“ z data/kluby/{sezona}.json (vyrába etl/kluby.py) —
+        # bez dotazu do databázy, aby prežil aj samostatný beh jedného zväzu
+        kluby_zvazy.doplnit_do_profilu(doc, out_dir, zvaz["id"], sezona, args.sport_sector)
         anomalie = validate.validuj(doc)
         for a in anomalie:
             log.warning("ANOMÁLIA %s/%s: %s", zvaz["id"], sezona, a)

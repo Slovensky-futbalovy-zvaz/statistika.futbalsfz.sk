@@ -216,6 +216,11 @@ def main() -> int:
         sezony = sorted(sezony_data)
         if not sezony:
             continue
+        # Klub bez publikovaneho profilu v data/klub uz nie je aktivnym klubom
+        # (vylucene subjekty — skolske a vyberove turnaje, filter zo 14. 8. 2026).
+        # Bez tejto poistky sa do rebricka dostali prazdne riadky s indexom 0.
+        if not any((klub_dir / slug).glob('*.json')):
+            continue
 
         nazov = ""
         vysledky: dict[str, dict] = {}

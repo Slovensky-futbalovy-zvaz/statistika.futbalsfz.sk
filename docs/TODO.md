@@ -100,3 +100,12 @@ a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
 
 Podrobný priebeh jednotlivých etáp je v commit messages — tie sú v tomto projekte písané ako
 záznam rozhodnutí, nie ako jednoriadkové poznámky.
+
+## Filter neregularnych sutazi v trendoch a demografii klubov (14. 8. 2026)
+
+`etl/kluby.py` uz vylucuje sutaze mimo slovenskych zvazov a neregularne sutaze
+(`etl/config/vylucene_sutaze.json`). **`etl/trendy.py` a `etl/demografia_klub.py` ten filter
+este nemaju** — pri svojom najblizsom behu znova vyrobia `data/vek-klub/*.json`
+a `data/demografia-klub/*.json` aj pre vylucene subjekty (skoly, vybery zvazov, zahranicne
+kluby). Dnes su tieto artefakty odlozene v `data/_archiv-klubov/` a `etl/index_klubu.py` ma
+poistku, ale spravne riesenie je doplnit rovnaky filter do oboch skriptov.

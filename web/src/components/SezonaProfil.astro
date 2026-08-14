@@ -5,6 +5,7 @@
 import CategoryDrill from './CategoryDrill.tsx';
 import PyramidaSutazi from './PyramidaSutazi.tsx';
 import KpiSutazeKarta from './KpiSutazeKarta.tsx';
+import KlubyKarta from './KlubyKarta.tsx';
 import HeatmapaZvazuVCase from './HeatmapaZvazuVCase.tsx';
 import VekKlubu from './VekKlubu.tsx';
 import { getUrovneVCaseZvazu } from '../lib/urovne';
@@ -173,6 +174,25 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
   }
 </section>
 {predoslaSezona && <p class="mt-2 text-xs text-muted">Medziročná zmena oproti sezóne {predoslaSezona}.</p>}
+
+{
+  profil.kluby && (
+    <section class="mt-8">
+      <div class="border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
+        <KlubyKarta
+          client:visible
+          kluby={profil.kluby.kluby}
+          klubyPredch={predosly?.kluby?.kluby}
+          lenDospeli={profil.kluby.lenDospeli}
+          dospeliAMladez={profil.kluby.dospeliAMladez}
+          lenMladez={profil.kluby.lenMladez}
+          domaci={profil.kluby.domaci}
+          podnadpis={`Kluby v súťažiach ${z.nazov}`}
+        />
+      </div>
+    </section>
+  )
+}
 
 {
   obfzMapa && obfzMapa.regions.length > 0 && (

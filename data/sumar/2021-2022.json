@@ -1,6 +1,6 @@
 {
  "sezona": "2021/2022",
- "generatedAt": "2026-08-08T21:09:34+02:00",
+ "generatedAt": "2026-08-14T12:25:17+02:00",
  "pocetZvazov": 43,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
@@ -24,7 +24,53 @@
   "kontumovaneOdohrane": 472,
   "odstupene": 2618,
   "odstupeneAdmin": 1886,
-  "odstupeneOdohrane": 732
+  "odstupeneOdohrane": 732,
+  "kluby": 1492
+ },
+ "kluby": {
+  "kluby": 1492,
+  "sMladezou": 1179,
+  "lenDospeli": 313,
+  "dospeliAMladez": 1068,
+  "lenMladez": 111,
+  "neurcene": 0,
+  "kategorie": {
+   "U10": 116,
+   "U11": 698,
+   "U17": 105,
+   "U16": 14,
+   "U14": 40,
+   "U15": 732,
+   "U12": 40,
+   "U08": 54,
+   "U09": 336,
+   "ADULTS": 1381,
+   "U19": 583,
+   "U13": 499,
+   "NEZNAMA": 2
+  },
+  "pohlavie": {
+   "M": 1490,
+   "F": 51,
+   "NEURCENE": 2
+  },
+  "urovne": {
+   "POHARE": 438,
+   "L3": 606,
+   "L1": 156,
+   "L2": 418,
+   "L4": 640,
+   "L8": 144,
+   "L7": 430,
+   "L6": 624,
+   "L5": 411
+  },
+  "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov.",
+  "vylucene": {
+   "neregularneSutaze": 12,
+   "mimoSlovenskychZvazov": 0,
+   "subjektov": 4
+  }
  },
  "kategorie": {
   "ADULTS": {
@@ -1118,6 +1164,7 @@
         "value": 6191,
         "sutaze": 22,
         "skupiny": 42,
+        "kluby": 47,
         "pohlavie": {
          "M": 5350,
          "F": 841
@@ -1138,6 +1185,7 @@
           "value": 3526,
           "sutaze": 19,
           "skupiny": 26,
+          "kluby": 57,
           "pohlavie": {
            "M": 3454,
            "F": 72
@@ -1154,6 +1202,7 @@
           "value": 857,
           "sutaze": 4,
           "skupiny": 6,
+          "kluby": 12,
           "pohlavie": {
            "M": 857
           },
@@ -1168,6 +1217,7 @@
           "value": 611,
           "sutaze": 5,
           "skupiny": 7,
+          "kluby": 15,
           "pohlavie": {
            "M": 611
           },
@@ -1188,6 +1238,7 @@
           "value": 4888,
           "sutaze": 25,
           "skupiny": 28,
+          "kluby": 67,
           "pohlavie": {
            "M": 4849,
            "F": 39
@@ -1204,6 +1255,7 @@
           "value": 1728,
           "sutaze": 16,
           "skupiny": 17,
+          "kluby": 61,
           "pohlavie": {
            "M": 1728
           },
@@ -1218,6 +1270,7 @@
           "value": 1192,
           "sutaze": 7,
           "skupiny": 7,
+          "kluby": 40,
           "pohlavie": {
            "M": 1192
           },
@@ -1232,6 +1285,7 @@
           "value": 646,
           "sutaze": 5,
           "skupiny": 5,
+          "kluby": 26,
           "pohlavie": {
            "M": 646
           },
@@ -1246,6 +1300,7 @@
           "value": 1484,
           "sutaze": 9,
           "skupiny": 10,
+          "kluby": 45,
           "pohlavie": {
            "M": 1484
           },
@@ -1260,6 +1315,7 @@
           "value": 1619,
           "sutaze": 10,
           "skupiny": 16,
+          "kluby": 64,
           "pohlavie": {
            "M": 1619
           },
@@ -1274,6 +1330,7 @@
           "value": 1747,
           "sutaze": 14,
           "skupiny": 22,
+          "kluby": 72,
           "pohlavie": {
            "M": 1747
           },
@@ -1288,6 +1345,7 @@
           "value": 910,
           "sutaze": 7,
           "skupiny": 9,
+          "kluby": 40,
           "pohlavie": {
            "M": 910
           },
@@ -1302,6 +1360,7 @@
           "value": 1913,
           "sutaze": 13,
           "skupiny": 19,
+          "kluby": 66,
           "pohlavie": {
            "M": 1913
           },
@@ -1316,6 +1375,7 @@
           "value": 1102,
           "sutaze": 6,
           "skupiny": 12,
+          "kluby": 36,
           "pohlavie": {
            "M": 1102
           },
@@ -1330,6 +1390,7 @@
           "value": 774,
           "sutaze": 4,
           "skupiny": 4,
+          "kluby": 35,
           "pohlavie": {
            "M": 774
           },
@@ -1344,6 +1405,7 @@
           "value": 470,
           "sutaze": 6,
           "skupiny": 6,
+          "kluby": 16,
           "pohlavie": {
            "M": 470
           },
@@ -1358,6 +1420,7 @@
           "value": 766,
           "sutaze": 6,
           "skupiny": 6,
+          "kluby": 31,
           "pohlavie": {
            "M": 766
           },
@@ -1378,6 +1441,7 @@
           "value": 3715,
           "sutaze": 13,
           "skupiny": 22,
+          "kluby": 72,
           "pohlavie": {
            "M": 3661,
            "F": 54
@@ -1394,6 +1458,7 @@
           "value": 1427,
           "sutaze": 11,
           "skupiny": 24,
+          "kluby": 46,
           "pohlavie": {
            "M": 1427
           },
@@ -1408,6 +1473,7 @@
           "value": 399,
           "sutaze": 6,
           "skupiny": 6,
+          "kluby": 17,
           "pohlavie": {
            "M": 399
           },
@@ -1422,6 +1488,7 @@
           "value": 1132,
           "sutaze": 6,
           "skupiny": 14,
+          "kluby": 34,
           "pohlavie": {
            "M": 1132
           },
@@ -1436,6 +1503,7 @@
           "value": 1146,
           "sutaze": 9,
           "skupiny": 11,
+          "kluby": 43,
           "pohlavie": {
            "M": 1146
           },
@@ -1450,6 +1518,7 @@
           "value": 666,
           "sutaze": 8,
           "skupiny": 9,
+          "kluby": 27,
           "pohlavie": {
            "M": 665,
            "NEURCENE": 1
@@ -1466,6 +1535,7 @@
           "value": 982,
           "sutaze": 6,
           "skupiny": 13,
+          "kluby": 38,
           "pohlavie": {
            "M": 982
           },
@@ -1480,6 +1550,7 @@
           "value": 412,
           "sutaze": 5,
           "skupiny": 5,
+          "kluby": 18,
           "pohlavie": {
            "M": 412
           },
@@ -1494,6 +1565,7 @@
           "value": 493,
           "sutaze": 5,
           "skupiny": 5,
+          "kluby": 26,
           "pohlavie": {
            "M": 493
           },
@@ -1508,6 +1580,7 @@
           "value": 418,
           "sutaze": 6,
           "skupiny": 8,
+          "kluby": 18,
           "pohlavie": {
            "M": 418
           },
@@ -1522,6 +1595,7 @@
           "value": 329,
           "sutaze": 4,
           "skupiny": 4,
+          "kluby": 18,
           "pohlavie": {
            "M": 329
           },
@@ -1536,6 +1610,7 @@
           "value": 141,
           "sutaze": 5,
           "skupiny": 5,
+          "kluby": 7,
           "pohlavie": {
            "M": 141
           },
@@ -1556,6 +1631,7 @@
           "value": 3403,
           "sutaze": 26,
           "skupiny": 26,
+          "kluby": 58,
           "pohlavie": {
            "M": 3361,
            "F": 42
@@ -1572,6 +1648,7 @@
           "value": 843,
           "sutaze": 8,
           "skupiny": 12,
+          "kluby": 34,
           "pohlavie": {
            "M": 843
           },
@@ -1586,6 +1663,7 @@
           "value": 304,
           "sutaze": 5,
           "skupiny": 10,
+          "kluby": 9,
           "pohlavie": {
            "M": 304
           },
@@ -1600,6 +1678,7 @@
           "value": 2180,
           "sutaze": 14,
           "skupiny": 16,
+          "kluby": 65,
           "pohlavie": {
            "M": 2180
           },
@@ -1614,6 +1693,7 @@
           "value": 1005,
           "sutaze": 7,
           "skupiny": 16,
+          "kluby": 33,
           "pohlavie": {
            "M": 1005
           },
@@ -1628,6 +1708,7 @@
           "value": 596,
           "sutaze": 7,
           "skupiny": 8,
+          "kluby": 27,
           "pohlavie": {
            "M": 596
           },
@@ -1642,6 +1723,7 @@
           "value": 401,
           "sutaze": 9,
           "skupiny": 9,
+          "kluby": 11,
           "pohlavie": {
            "M": 401
           },
@@ -1656,6 +1738,7 @@
           "value": 422,
           "sutaze": 4,
           "skupiny": 4,
+          "kluby": 21,
           "pohlavie": {
            "M": 422
           },
@@ -1670,6 +1753,7 @@
           "value": 250,
           "sutaze": 3,
           "skupiny": 4,
+          "kluby": 14,
           "pohlavie": {
            "M": 250
           },
@@ -1684,6 +1768,7 @@
           "value": 544,
           "sutaze": 8,
           "skupiny": 10,
+          "kluby": 31,
           "pohlavie": {
            "M": 544
           },
@@ -1698,6 +1783,7 @@
           "value": 425,
           "sutaze": 6,
           "skupiny": 9,
+          "kluby": 21,
           "pohlavie": {
            "M": 425
           },
@@ -1712,6 +1798,7 @@
           "value": 785,
           "sutaze": 12,
           "skupiny": 12,
+          "kluby": 38,
           "pohlavie": {
            "M": 785
           },
@@ -1726,6 +1813,7 @@
           "value": 357,
           "sutaze": 5,
           "skupiny": 7,
+          "kluby": 19,
           "pohlavie": {
            "M": 357
           },
@@ -1740,6 +1828,7 @@
           "value": 263,
           "sutaze": 3,
           "skupiny": 4,
+          "kluby": 17,
           "pohlavie": {
            "M": 263
           },
@@ -1763,6 +1852,7 @@
       "value": 159,
       "sutaze": 3,
       "skupiny": 4,
+      "kluby": 11,
       "pohlavie": {
        "M": 159
       },

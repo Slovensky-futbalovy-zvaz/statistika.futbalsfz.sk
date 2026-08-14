@@ -25,6 +25,7 @@ export interface Index {
 export interface Kpi {
   sutaze?: number; // počet súťaží (od 19. 7. 2026; staršie profily ho nemajú)
   skupiny?: number; // počet súťažných skupín = základných častí (od 8. 8. 2026)
+  kluby?: number; // počet aktívnych klubov (od 14. 8. 2026; staršie profily ho nemajú)
   zapasy: number;
   druzstva: number;
   goly: number;
@@ -77,6 +78,31 @@ export interface UrovenRiadok {
   zapasy: number;
 }
 
+/**
+ * Blok „Počet klubov“ (etl/kluby_zvazy.py, od 14. 8. 2026).
+ * Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Na profile zväzu ide
+ * o kluby, ktoré hrali v súťažiach TOHTO zväzu — klub pôsobiaci vo viacerých zväzoch
+ * je započítaný v každom z nich, preto súčet po zväzoch prevyšuje celoslovenský počet.
+ */
+export interface KlubyBlok {
+  kluby: number;
+  /** Kluby s mládežou = dospeliAMladez + lenMladez. */
+  sMladezou: number;
+  /** Kluby bez mládeže — majú len kategóriu dospelých. */
+  lenDospeli: number;
+  dospeliAMladez: number;
+  lenMladez: number;
+  neurcene: number;
+  kategorie?: Record<string, number>;
+  pohlavie?: Record<string, number>;
+  urovne?: Record<string, number>;
+  /** Len profil zväzu: kluby, pre ktoré je tento zväz domovský (sčítateľné číslo). */
+  domaci?: number;
+  poznamka?: string;
+  /** Len sumár: koľko subjektov filter vylúčil (transparentnosť). */
+  vylucene?: Record<string, number>;
+}
+
 export interface Profil {
   zvaz: string;
   sezona: string;
@@ -89,6 +115,8 @@ export interface Profil {
   urovne?: Record<string, UrovenSuhrn>;
   /** Rozpad úroveň × kategória × pohlavie (etapa 2; staršie profily blok nemajú). */
   sutazeUroven?: UrovenRiadok[];
+  /** Počet klubov a ich rozpad podľa mládeže (od 14. 8. 2026). */
+  kluby?: KlubyBlok;
   pohlavie: Record<string, unknown>;
   osoby: Record<string, OsobaSkupina>;
 }
@@ -177,6 +205,11 @@ export function fmt(n: number): string {
 // ---- F4: porovnania a radenie zväzov ----
 
 export interface PorovnanieRiadok {
+  /** Počet aktívnych klubov zväzu (od 14. 8. 2026). */
+  kluby?: number;
+  klubySMladezou?: number;
+  klubyLenDospeli?: number;
+  klubyLenMladez?: number;
   id: string;
   nazov: string;
   rfz?: string;
@@ -407,6 +440,7 @@ export interface SunburstUzol {
   pohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → zápasy)
   sutazePohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → súťaže)
   skupiny?: number; // len listy sunburstSutaze — počet súťažných skupín (základných častí)
+  kluby?: number; // len listy sunburstSutaze — kluby s domovským zväzom (disjunktné, sčítateľné)
   skupinyPohlavie?: Record<string, number>; // len listy sunburstSutaze (M/F/NEURCENE → skupiny)
   children?: SunburstUzol[];
 }
@@ -418,6 +452,8 @@ export interface Sumar {
   methodologyFlags: Record<string, string>;
   kpi: Kpi;
   osoby: Record<string, number>; // roly + spolu
+  /** Počet klubov za celú SR — NIE súčet po zväzoch (od 14. 8. 2026). */
+  kluby?: KlubyBlok;
   kategorie?: Record<string, Kategoria>; // súčty po vekových úrovniach (futbal, 43 zväzov)
   /** Rozpad súťaží podľa riadiaceho zväzu (SFZ / RFZ / ObFZ). */
   sutazePodlaRiadiacehoZvazu?: Record<

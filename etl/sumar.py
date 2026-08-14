@@ -36,7 +36,8 @@ CONFIG = REPO / "etl" / "config"
 
 sys.path.insert(0, str(REPO / "etl"))
 import pipelines  # noqa: E402  — len číselník úrovní (UROVEN_PORADIE/NAZOV), bez DB
-import validate  # noqa: E402  — poradie vekových kategórií
+import validate  # noqa: E402
+import kluby_zvazy  # noqa: E402  — poradie vekových kategórií
 
 ROLY = ["hraci", "treneri", "rozhodcovia", "delegati", "personal"]
 ROLA_NAZOV = {
@@ -190,6 +191,9 @@ def sunburst_sutaze(zvazy_cfg: dict, out_dir: Path, sezona: str) -> dict:
             "value": p["kpi"]["zapasy"],
             "sutaze": p["kpi"].get("sutaze", 0) or 0,
             "skupiny": p["kpi"].get("skupiny", 0) or 0,
+            # kluby v sunburste = DOMOVSKÝ zväz (kde klub odohral najviac zápasov):
+            # prstence sa sčítavajú, takže tu musí byť disjunktné číslo sediace na SR
+            "kluby": (p.get("kluby") or {}).get("domaci", 0) or 0,
             "pohlavie": _pohlavie_zapasy(p),
             "sutazePohlavie": _pohlavie_sutaze(p),
             "skupinyPohlavie": _pohlavie_skupiny(p),
@@ -433,6 +437,11 @@ def main() -> None:
                 "sutazePohlavie": {g: o_pohlavie[g] for g in POHLAVIA if o_pohlavie.get(g)},
             }
 
+        # Počet klubov: celoslovenské číslo sa NESMIE skladať sčítaním po zväzoch
+        # (klub hrá vo viacerých zväzoch) — berie sa z artefaktu data/kluby/{sezona}.json.
+        kluby_sr = kluby_zvazy.blok_sr(kluby_zvazy.nacitaj(out_dir, sezona))
+        if kluby_sr:
+            kpi["kluby"] = kluby_sr["kluby"]
         vystup = {
             "sezona": sezona,
             "generatedAt": teraz(),
@@ -462,6 +471,7 @@ def main() -> None:
                 ),
             },
             "kpi": kpi,
+            "kluby": kluby_sr,
             "kategorie": kat,
             "urovne": _zoradene_urovne(urovne_acc),
             "sutazeUroven": _zoradene_riadky(uroven_riadky),

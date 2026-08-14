@@ -122,6 +122,12 @@ def riadok(profil: dict, zvaz: dict, rfz_skratka: str | None) -> dict:
         "urovneSkupiny": {kod: n for kod, n in urovne_skupiny.items() if n},
         # plochý rez úroveň × veková úroveň × pohlavie — podklad pre heatmapu
         # a graf vývoja počtu súťaží danej úrovne v čase (7. 8. 2026)
+        # počet klubov — klub je aktívny v každom zväze, kde hral (súčet po zväzoch
+        # je vyšší než celoslovenský počet); viď etl/kluby_zvazy.py
+        "kluby": (profil.get("kluby") or {}).get("kluby", 0) or 0,
+        "klubySMladezou": (profil.get("kluby") or {}).get("sMladezou", 0) or 0,
+        "klubyLenDospeli": (profil.get("kluby") or {}).get("lenDospeli", 0) or 0,
+        "klubyLenMladez": (profil.get("kluby") or {}).get("lenMladez", 0) or 0,
         "sutazeUroven": profil.get("sutazeUroven") or [],
     }
     if rfz_skratka:

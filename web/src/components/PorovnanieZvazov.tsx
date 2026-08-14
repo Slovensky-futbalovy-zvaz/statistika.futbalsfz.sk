@@ -27,6 +27,7 @@ const CAS_METRIKY: { k: string; label: string; fixed: number }[] = [
   // popisok tejto metriky sa mení podľa prepínača „Počítať“ (Skupiny / Súťaže)
   { k: 'sutaze', label: 'Súťaže', fixed: 0 },
   { k: 'zapasy', label: 'Zápasy', fixed: 0 },
+  { k: 'kluby', label: 'Kluby', fixed: 0 },
   { k: 'druzstva', label: 'Družstvá', fixed: 0 },
   { k: 'goly', label: 'Góly', fixed: 0 },
   { k: 'zlteKarty', label: 'Žlté karty', fixed: 0 },

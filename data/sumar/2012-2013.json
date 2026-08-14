@@ -1,6 +1,6 @@
 {
  "sezona": "2012/2013",
- "generatedAt": "2026-08-08T21:09:34+02:00",
+ "generatedAt": "2026-08-14T12:25:16+02:00",
  "pocetZvazov": 15,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
@@ -24,7 +24,47 @@
   "kontumovaneOdohrane": 205,
   "odstupene": 543,
   "odstupeneAdmin": 367,
-  "odstupeneOdohrane": 176
+  "odstupeneOdohrane": 176,
+  "kluby": 578
+ },
+ "kluby": {
+  "kluby": 578,
+  "sMladezou": 264,
+  "lenDospeli": 314,
+  "dospeliAMladez": 227,
+  "lenMladez": 37,
+  "neurcene": 0,
+  "kategorie": {
+   "U17": 73,
+   "ADULTS": 541,
+   "U15": 166,
+   "U19": 191,
+   "U12": 22,
+   "U13": 86,
+   "U16": 10,
+   "U11": 16
+  },
+  "pohlavie": {
+   "M": 567,
+   "F": 27
+  },
+  "urovne": {
+   "L1": 87,
+   "L4": 167,
+   "L2": 95,
+   "L3": 110,
+   "L5": 131,
+   "L6": 167,
+   "L7": 115,
+   "L9": 20,
+   "L8": 29
+  },
+  "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov.",
+  "vylucene": {
+   "neregularneSutaze": 0,
+   "mimoSlovenskychZvazov": 0,
+   "subjektov": 0
+  }
  },
  "kategorie": {
   "ADULTS": {
@@ -601,6 +641,7 @@
         "value": 3896,
         "sutaze": 25,
         "skupiny": 25,
+        "kluby": 67,
         "pohlavie": {
          "M": 3576,
          "F": 320
@@ -621,6 +662,7 @@
           "value": 1353,
           "sutaze": 13,
           "skupiny": 13,
+          "kluby": 33,
           "pohlavie": {
            "M": 1353
           },
@@ -635,6 +677,7 @@
           "value": 420,
           "sutaze": 4,
           "skupiny": 4,
+          "kluby": 13,
           "pohlavie": {
            "M": 420
           },
@@ -649,6 +692,7 @@
           "value": 931,
           "sutaze": 8,
           "skupiny": 8,
+          "kluby": 38,
           "pohlavie": {
            "M": 931
           },
@@ -669,6 +713,7 @@
           "value": 866,
           "sutaze": 5,
           "skupiny": 5,
+          "kluby": 45,
           "pohlavie": {
            "M": 866
           },
@@ -683,6 +728,7 @@
           "value": 238,
           "sutaze": 1,
           "skupiny": 1,
+          "kluby": 16,
           "pohlavie": {
            "M": 238
           },
@@ -703,6 +749,7 @@
           "value": 1302,
           "sutaze": 7,
           "skupiny": 7,
+          "kluby": 91,
           "pohlavie": {
            "M": 1302
           },
@@ -717,6 +764,7 @@
           "value": 182,
           "sutaze": 1,
           "skupiny": 1,
+          "kluby": 11,
           "pohlavie": {
            "M": 182
           },
@@ -731,6 +779,7 @@
           "value": 182,
           "sutaze": 1,
           "skupiny": 1,
+          "kluby": 14,
           "pohlavie": {
            "M": 182
           },
@@ -745,6 +794,7 @@
           "value": 254,
           "sutaze": 2,
           "skupiny": 2,
+          "kluby": 23,
           "pohlavie": {
            "M": 254
           },
@@ -765,6 +815,7 @@
           "value": 3896,
           "sutaze": 23,
           "skupiny": 23,
+          "kluby": 142,
           "pohlavie": {
            "M": 3896
           },
@@ -779,6 +830,7 @@
           "value": 697,
           "sutaze": 10,
           "skupiny": 10,
+          "kluby": 40,
           "pohlavie": {
            "M": 697
           },
@@ -793,6 +845,7 @@
           "value": 240,
           "sutaze": 1,
           "skupiny": 1,
+          "kluby": 14,
           "pohlavie": {
            "M": 240
           },
@@ -807,6 +860,7 @@
           "value": 160,
           "sutaze": 6,
           "skupiny": 6,
+          "kluby": 22,
           "pohlavie": {
            "M": 160
           },

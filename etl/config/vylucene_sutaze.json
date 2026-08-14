@@ -1,0 +1,18 @@
+{
+  "poznamka": "Suutaze, ktore NIE su regularnymi sutazami — ich ucastnici nie su kluby (skolske turnaje, reprezentacne/vyberove turnaje, testovacie zaznamy). Rozhodnutie Jan Letko, 14. 8. 2026. V datach neexistuje pole, ktore by regularnu sutaz odlisilo od turnaja (overene na dokumentoch competitions), preto explicitny ciselnik. Kluc je competitionGroupId — stabilny naprieс sezonami, na rozdiel od nazvu.",
+  "todoPO": "Poziadat Sportnet/ISSF o priznak 'regularna sutaz / turnaj' v competitions, aby sa ciselnik dal nahradit udajom.",
+  "sutaze": [
+    {"competitionGroupId": "5dcbc3a1bc462e394c389ed7", "nazov": "Regions' Cup", "zvaz": "sfz", "dovod": "turnaj vyberov regionalnych zvazov, nie klubov"},
+    {"competitionGroupId": "62553769cd14e9ecd1bfc3bf", "nazov": "RT U14", "zvaz": "sfz", "dovod": "reprezentacny/regionalny turnaj vyberov"},
+    {"competitionGroupId": "624c22abb7086fe52a885d12", "nazov": "RT - WU14", "zvaz": "sfz", "dovod": "reprezentacny/regionalny turnaj vyberov"},
+    {"competitionGroupId": "64ba65a5ed0d07c34784a436", "nazov": "RT - U15: Memorial Gejzu Princa", "zvaz": "sfz", "dovod": "reprezentacny/regionalny turnaj vyberov"},
+    {"competitionGroupId": "672b40f7ce51493104a5c178", "nazov": "RT - U17", "zvaz": "sfz", "dovod": "reprezentacny/regionalny turnaj vyberov"},
+    {"competitionGroupId": "661cda89ca6a08370a54372c", "nazov": "RT - U19", "zvaz": "sfz", "dovod": "reprezentacny/regionalny turnaj vyberov"},
+    {"competitionGroupId": "5e30065a94f2303d560e786a", "nazov": "Memorial Gejzu Princa (VsFZ)", "zvaz": "vsfz", "dovod": "starsi rocnik vyberoveho turnaja pod VsFZ"},
+    {"competitionGroupId": "67dae06dce0b5a8693dc58bf", "nazov": "Futbalovy turnaj zakladnych skol mesta Kosice", "zvaz": "vsfz", "dovod": "skolsky turnaj, ucastnici su skoly"},
+    {"competitionGroupId": "5f186158e09aa57c2d5e7e02", "nazov": "LTK pokus", "zvaz": "sfz", "dovod": "testovaci zaznam"},
+    {"competitionGroupId": "61f94d784a87ec17e7aa9135", "nazov": "TEST VAR", "zvaz": "sfz", "dovod": "testovaci zaznam"},
+    {"competitionGroupId": "5dcbbd36def90a37e545fea2", "nazov": "TEST", "zvaz": "vsfz", "dovod": "testovaci zaznam"},
+    {"competitionGroupId": "5dedfe8747c2d4645e1fdf68", "nazov": "test-prihlasovanie", "zvaz": "vsfz", "dovod": "testovaci zaznam"}
+  ]
+}

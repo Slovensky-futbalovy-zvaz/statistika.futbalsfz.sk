@@ -90,6 +90,9 @@ export const METRICS_RADAR: Metric[] = [
   { k: 'goly', label: 'Góly' },
   { k: 'druzstva', label: 'Družstvá' },
   { k: 'sutaze', label: 'Súťaže' },
+  // Kluby aktívne v súťažiach zväzu — klub hrajúci vo viacerých zväzoch je
+  // započítaný v každom z nich (metodika 14. 8. 2026).
+  { k: 'kluby', label: 'Kluby' },
 ];
 
 /**

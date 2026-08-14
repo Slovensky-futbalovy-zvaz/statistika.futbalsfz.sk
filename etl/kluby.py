@@ -69,6 +69,62 @@ def klub_id_slug(org_id: str) -> str:
 KAT_NORMALIZACIA = {"Dospelí": "ADULTS", "U15 mix": "U15"}
 
 
+def nacitaj_vylucene() -> tuple[set, dict]:
+    """Súťaže, ktoré nie sú regulárne (školské a výberové turnaje, testovacie záznamy) —
+    ich účastníci nie sú kluby. Číselník etl/config/vylucene_sutaze.json (competitionGroupId).
+    Rozhodnutie Ján Letko, 14. 8. 2026; v dátach neexistuje pole, ktoré by turnaj odlíšilo."""
+    cfg = load_json(CONFIG / "vylucene_sutaze.json")
+    return {z["competitionGroupId"] for z in cfg.get("sutaze", [])}, cfg
+
+
+def nacitaj_part_gender(db, varianty: list[str]) -> dict:
+    """Mapa partId(str) → pohlavie (M/F/NEURCENE) z competitions.parts[].rules.gender."""
+    mapa: dict[str, str] = {}
+    for c in db.competitions.find({"season.name": {"$in": varianty}}, {"parts._id": 1, "parts.rules.gender": 1}):
+        for pp in c.get("parts", []):
+            g = ((pp.get("rules") or {}).get("gender"))
+            mapa[str(pp["_id"])] = g if g in ("M", "F") else "NEURCENE"
+    return mapa
+
+
+def nacitaj_comp_uroven(db, varianty: list[str]) -> dict:
+    """Mapa competitionId(str) → kód úrovne súťaže (L1…L9, L10P, POHARE, NEURCENE)."""
+    from pipelines import uroven_kod
+    return {str(c["_id"]): uroven_kod(c.get("level"))
+            for c in db.competitions.find({"season.name": {"$in": varianty}}, {"level": 1})}
+
+
+def mladez_stav(kategorie) -> str:
+    """Zaradenie klubu: lenDospeli (bez mládeže) / dospeliAMladez / lenMladez / neurcene."""
+    znama = {c for c in kategorie if c and c != "NEZNAMA"}
+    if not znama:
+        return "neurcene"
+    mladez = any(c != "ADULTS" for c in znama)
+    dospeli = "ADULTS" in znama
+    if mladez and dospeli:
+        return "dospeliAMladez"
+    return "lenMladez" if mladez else "lenDospeli"
+
+
+def _novy_rez() -> dict:
+    return {"kluby": 0, "sMladezou": 0, "lenDospeli": 0, "dospeliAMladez": 0,
+            "lenMladez": 0, "neurcene": 0, "kategorie": {}, "pohlavie": {}, "urovne": {}}
+
+
+def _pridaj_do_rezu(rez: dict, kategorie, pohlavia, urovne) -> None:
+    rez["kluby"] += 1
+    stav = mladez_stav(kategorie)
+    rez[stav] += 1
+    if stav in ("dospeliAMladez", "lenMladez"):
+        rez["sMladezou"] += 1
+    for c in kategorie:
+        rez["kategorie"][c] = rez["kategorie"].get(c, 0) + 1
+    for g in pohlavia:
+        rez["pohlavie"][g] = rez["pohlavie"].get(g, 0) + 1
+    for u in urovne:
+        rez["urovne"][u] = rez["urovne"].get(u, 0) + 1
+
+
 def nacitaj_part_kat(db, varianty: list[str]) -> dict:
     """Mapa partId(str) → veková kategória z competitions.parts[].rules.category
     (fallback pre historické sezóny, keď teams.ageCategory nie je vyplnené) — naprieč
@@ -85,14 +141,20 @@ def nacitaj_part_kat(db, varianty: list[str]) -> dict:
     return mapa
 
 
-def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: dict, coach_positions: list[str]) -> tuple[dict, list]:
+def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: dict, coach_positions: list[str]) -> tuple[dict, list, dict]:
     as2z = appspace_na_zvaz(zvazy)
     coach_set = set(coach_positions)
     part_kat = nacitaj_part_kat(db, varianty)
+    vylucene_ids, _ = nacitaj_vylucene()
+    part_gender = nacitaj_part_gender(db, varianty)
+    comp_uroven = nacitaj_comp_uroven(db, varianty)
+    vylucene_org: set = set()
+    vylucene_pocty = {"neregularneSutaze": 0, "mimoSlovenskychZvazov": 0}
     cur = db.matches.find(
         {"closed": True, "season.name": {"$in": varianty}, "rules.sport_sector": sport_sector},
         {
             "appSpace": 1,
+            "competition._id": 1, "competition.competitionGroupId": 1,
             "competitionPart._id": 1,
             "teams._id": 1, "teams.organization._id": 1, "teams.organization.name": 1, "teams.ageCategory": 1,
             "protocol.events.eventType": 1, "protocol.events.team": 1, "protocol.audience": 1,
@@ -112,6 +174,7 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
         if not k:
             k = kluby[org_id] = {
                 "nazov": nazov, "appSpaceCount": {},
+                "zvazy": {},  # zvazId → {zapasy, kat:set, pohlavie:set, urovne:set}
                 "kat": {},  # cat → {zapasy,druzstva:set(teamId),goly,zlte,cervene,divaci,divaciPokrytych}
                 "hraci": {"unik": set(), "kat": {}},   # cat → set(pid)
                 "treneri": {"unik": set(), "kat": {}},
@@ -124,6 +187,19 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
 
     for m in cur:
         aps = m.get("appSpace")
+        # Filter (rozhodnutie Ján Letko, 14. 8. 2026): klub = účastník REGULÁRNEJ súťaže
+        # riadenej slovenským zväzom. Zahraničné kluby a reprezentácie majú appSpace mimo
+        # zvazy.json; školské a výberové turnaje sú v etl/config/vylucene_sutaze.json.
+        _comp = m.get("competition") or {}
+        _mimo = (sport_sector == "futbal" and aps not in as2z)
+        _neregularna = str(_comp.get("competitionGroupId")) in vylucene_ids
+        if _mimo or _neregularna:
+            vylucene_pocty["mimoSlovenskychZvazov" if _mimo else "neregularneSutaze"] += 1
+            for _t in m.get("teams", []):
+                _oid = (_t.get("organization") or {}).get("_id")
+                if _oid:
+                    vylucene_org.add(_oid)
+            continue
         audience = (m.get("protocol") or {}).get("audience")
         # administratívne ukončený zápas BEZ reálneho odohratia (viď docs/metodika.md):
         # KONTUMOVANY/ODSTUPENE_DRUZSTVO + žiadne udalosti v protokole + žiadni diváci.
@@ -133,6 +209,8 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
         _bez_nominacie = not any((n or {}).get("closed") for n in (m.get("nominations") or []))
         _admin = _status in ("KONTUMOVANY", "ODSTUPENE_DRUZSTVO") and _bez_udalosti and _bez_divakov and _bez_nominacie
         _fb = part_kat.get(str((m.get("competitionPart") or {}).get("_id")))
+        _gender = part_gender.get(str((m.get("competitionPart") or {}).get("_id")), "NEURCENE")
+        _uroven = comp_uroven.get(str(_comp.get("_id")), "NEURCENE")
         # mapa teamId(str) → (org_id, nazov, cat)
         tmap = {}
         for t in m.get("teams", []):
@@ -149,6 +227,12 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
         for tid, (oid, nazov, cat) in tmap.items():
             k = klub(oid, nazov)
             k["appSpaceCount"][aps] = k["appSpaceCount"].get(aps, 0) + 1
+            _zid = "sfz" if sport_sector != "futbal" else as2z[aps]["id"]
+            _zz = k["zvazy"].setdefault(_zid, {"zapasy": 0, "kat": set(), "pohlavie": set(), "urovne": set()})
+            _zz["zapasy"] += 1
+            _zz["kat"].add(cat)
+            _zz["pohlavie"].add(_gender)
+            _zz["urovne"].add(_uroven)
             kc = k["kat"].setdefault(cat, {"zapasy": 0, "uzatvorene": 0, "administrativne": 0, "druzstva": set(), "goly": 0, "zlte": 0, "cervene": 0, "divaci": 0, "divaciPokrytych": 0})
             kc["uzatvorene"] += 1
             if _admin:
@@ -271,7 +355,43 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
         })
 
     index_kluby.sort(key=lambda x: -x["zapasy"])
-    return profily, index_kluby
+
+    # Rezy pre blok „Počet klubov" (data/kluby/<sezona>.json). Klub je AKTÍVNY V KAŽDOM
+    # zväze, v ktorého súťaži odohral aspoň jeden zápas — súčet po zväzoch je preto vyšší
+    # než celoslovenský počet (rovnako ako pri osobách). Celkové číslo sa NESMIE skladať
+    # sčítaním po zväzoch, berie sa z bloku „celkovo".
+    celkovo = _novy_rez()
+    rez_zvazy: dict[str, dict] = {}
+    rez_domov: dict[str, dict] = {}
+    for oid, k in kluby.items():
+        kat_vsetky = set(k["kat"].keys())
+        poh_vsetky: set = set()
+        uro_vsetky: set = set()
+        for zid, zz in k["zvazy"].items():
+            poh_vsetky |= zz["pohlavie"]
+            uro_vsetky |= zz["urovne"]
+            _pridaj_do_rezu(rez_zvazy.setdefault(zid, _novy_rez()), zz["kat"], zz["pohlavie"], zz["urovne"])
+        _pridaj_do_rezu(celkovo, kat_vsetky, poh_vsetky, uro_vsetky)
+        dom = profily[klub_id_slug(oid)].get("zvaz")
+        if dom:
+            _pridaj_do_rezu(rez_domov.setdefault(dom, _novy_rez()), kat_vsetky, poh_vsetky, uro_vsetky)
+
+    rezy = {
+        "sezona": sezona,
+        "sportSector": sport_sector,
+        "generatedAt": teraz(),
+        "metodika": {
+            "aktivnyKlub": "klub s aspoň jedným reálne odohraným zápasom (closed:true bez administratívnych kontumácií a odstúpení bez zápisu)",
+            "prislusnost": "klub je započítaný v každom zväze, v ktorého súťaži odohral zápas — súčet po zväzoch je vyšší než celoslovenský počet",
+            "mladez": "mládež = akákoľvek veková úroveň okrem ADULTS; sMladezou = dospeliAMladez + lenMladez",
+            "filter": "len regulárne súťaže riadené slovenským zväzom (etl/config/vylucene_sutaze.json)",
+        },
+        "celkovo": celkovo,
+        "zvazy": rez_zvazy,
+        "podlaDomovskehoZvazu": rez_domov,
+        "vylucene": {**vylucene_pocty, "subjektov": len([o for o in vylucene_org if o not in kluby])},
+    }
+    return profily, index_kluby, rezy
 
 
 def main() -> int:
@@ -316,7 +436,7 @@ def main() -> int:
     for sez in zoznam:
         varianty = sezona_varianty(sezony, sez)
         log.info("=== kluby %s [%s] ===", sez, args.sport_sector)
-        profily, index_kluby = vygeneruj(db, sez, varianty, args.sport_sector, zvazy, coach_positions)
+        profily, index_kluby, rezy = vygeneruj(db, sez, varianty, args.sport_sector, zvazy, coach_positions)
         slug_sez = sez.replace("/", "-")
         suffix = "" if args.sport_sector == "futbal" else f"-{args.sport_sector}"
         for kid, doc in profily.items():
@@ -332,7 +452,12 @@ def main() -> int:
                 if sez not in row["sezony"]:
                     row["sezony"].append(sez)
                 row["sezony"].sort()
-        log.info("   %s: %d klubov", sez, len(index_kluby))
+        (out / "kluby").mkdir(parents=True, exist_ok=True)
+        with open(out / "kluby" / f"{slug_sez}{suffix}.json", "w", encoding="utf-8") as f:
+            json.dump(rezy, f, ensure_ascii=False, separators=(",", ":"))
+        log.info("   %s: %d klubov (vylúčené: %d subjektov, %d zápasov mimo SR zväzov, %d v neregulárnych súťažiach)",
+                 sez, len(index_kluby), rezy["vylucene"]["subjektov"],
+                 rezy["vylucene"]["mimoSlovenskychZvazov"], rezy["vylucene"]["neregularneSutaze"])
     if args.sport_sector != "futbal":
         (out / "kluby").mkdir(parents=True, exist_ok=True)
         with open(out / "kluby" / f"{args.sport_sector}-index.json", "w", encoding="utf-8") as f:

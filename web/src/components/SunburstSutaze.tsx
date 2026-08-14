@@ -16,7 +16,7 @@ interface Props {
 }
 
 type Gender = 'VSETCI' | 'M' | 'F';
-type Metrika = 'zapasy' | 'skupiny' | 'sutaze';
+type Metrika = 'zapasy' | 'skupiny' | 'sutaze' | 'kluby';
 
 /** Sunburst pyramídy so spoločnými filtrami metrika (zápasy/skupiny/súťaže), šport a pohlavie. */
 export default function SunburstSutaze({ strom }: Props) {
@@ -28,6 +28,11 @@ export default function SunburstSutaze({ strom }: Props) {
   const [metrika, setMetrika] = useState<Metrika>('zapasy');
   const tip = useTooltip();
   const jeSutaz = metrika === 'sutaze' || metrika === 'skupiny';
+  const POPIS_KLUBY =
+    'Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. V tomto grafe je každý klub ' +
+    'započítaný raz — v zväze, kde odohral najviac zápasov — aby sa prstence dali sčítať. ' +
+    'Na karte Počet klubov a v Porovnaniach sa naopak klub počíta v každom zväze, kde hral, ' +
+    'preto sú tam čísla po zväzoch vyššie.';
 
   // farbenie uzla podľa mena (RFZ / SFZ vlastné / odvetvie)
   function farba(name: string, depth: number): string | undefined {
@@ -47,7 +52,9 @@ export default function SunburstSutaze({ strom }: Props) {
       if (!u.children || u.children.length === 0) {
         // skupiny sú fallbackom na súťaže — staršie súhrny ešte pole `skupiny` nemajú
         const val =
-          metrika === 'skupiny'
+          metrika === 'kluby'
+            ? (u.kluby ?? 0)
+            : metrika === 'skupiny'
             ? gender === 'VSETCI'
               ? (u.skupiny ?? u.sutaze ?? 0)
               : (u.skupinyPohlavie?.[gender] ?? u.sutazePohlavie?.[gender] ?? 0)
@@ -133,6 +140,15 @@ export default function SunburstSutaze({ strom }: Props) {
           >
             Súťaže
           </button>
+          <button
+            type="button"
+            style={pill(metrika === 'kluby')}
+            aria-label={POPIS_KLUBY}
+            {...tip.viazat(<div style={{ whiteSpace: 'normal' }}>{POPIS_KLUBY}</div>)}
+            onClick={() => setMetrika('kluby')}
+          >
+            Kluby
+          </button>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: 'var(--color-muted)' }}>Šport:</span>
@@ -142,7 +158,14 @@ export default function SunburstSutaze({ strom }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: 'var(--color-muted)' }}>Pohlavie:</span>
           {(['VSETCI', 'M', 'F'] as Gender[]).map((g) => (
-            <button key={g} type="button" style={pill(gender === g)} onClick={() => setGender(g)}>
+            <button
+              key={g}
+              type="button"
+              disabled={metrika === 'kluby'}
+              title={metrika === 'kluby' ? 'Počet klubov sa podľa pohlavia nerozpadá' : undefined}
+              style={{ ...pill(gender === g), ...(metrika === 'kluby' ? { opacity: 0.45, cursor: 'not-allowed' } : {}) }}
+              onClick={() => setGender(g)}
+            >
               {g === 'VSETCI' ? 'Všetci' : g === 'M' ? 'Muži' : 'Ženy'}
             </button>
           ))}
@@ -168,6 +191,7 @@ export default function SunburstSutaze({ strom }: Props) {
       <p style={{ marginTop: 6, fontSize: 11.5, color: 'var(--color-muted)' }}>
         Kruhy zvnútra von: odvetvie → SFZ → RFZ → ObFZ → súťaž.
         {jeSutaz && ' Počítajú sa len súťaže s aspoň jedným odohraným zápasom, priradené svojmu riadiacemu zväzu.'}
+        {metrika === 'kluby' && ' Klub je započítaný raz, v zväze, kde odohral najviac zápasov.'}
         {jeSutaz && gender !== 'VSETCI' &&
           ' Pohlavie súťaže sa určuje z častí súťaže — súťaž s mužskými aj ženskými časťami sa započíta v oboch skupinách.'}
       </p>
