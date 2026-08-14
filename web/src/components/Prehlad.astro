@@ -80,6 +80,23 @@ const kpiKarty = [
   d: delta(spolu(sumar, k.key), sumarPrev ? spolu(sumarPrev, k.key) : undefined, k.good),
 }));
 
+// Kluby: NIE cez spolu() — klub hrajúci futbal aj futsal by sa započítal dvakrát.
+// Futbal a futsal majú preto samostatnú dlaždicu (rozhodnutie Ján Letko, 14. 8. 2026).
+const klubyKarty = [
+  {
+    label: 'Kluby',
+    hodnota: sumar.kpi.kluby ?? sumar.kluby?.kluby,
+    predch: sumarPrev?.kpi.kluby ?? sumarPrev?.kluby?.kluby,
+  },
+  {
+    label: 'Kluby — futsal',
+    hodnota: sumar.odvetvia?.futsal?.kpi?.kluby,
+    predch: sumarPrev?.odvetvia?.futsal?.kpi?.kluby,
+  },
+]
+  .filter((k) => k.hodnota !== undefined)
+  .map((k) => ({ label: k.label, hodnota: k.hodnota as number, d: delta(k.hodnota as number, k.predch, true) }));
+
 function osobySpolu(s: ReturnType<typeof getSumar>, rola: string): number {
   let v = (s.osoby as Record<string, number>)[rola] ?? 0;
   for (const o of Object.values(s.odvetvia)) v += (o.osoby as Record<string, number>)[rola] ?? 0;
@@ -194,6 +211,20 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
           sutazePredch={sumarPrev ? spolu(sumarPrev, 'sutaze') : undefined}
         />
       </div>
+    }
+    {
+      klubyKarty.map((k) => (
+        <div class={CARD} style={CARD_STYLE + ' container-type:inline-size;'}>
+          <div class="text-[11px] font-bold uppercase tracking-wider text-muted">{k.label}</div>
+          <div class="tnum mt-1.5 font-extrabold" style="font-size:clamp(20px,17cqi,32px); line-height:1.05; white-space:nowrap;">{fmt(k.hodnota)}</div>
+          {k.d && (
+            <div class="mt-1 text-xs">
+              <span class="tnum font-semibold" style={`color:${k.d.color};`}>{k.d.arrow} {k.d.text}</span>
+              <span class="text-muted"> medziročne</span>
+            </div>
+          )}
+        </div>
+      ))
     }
     {
       kpiKarty.map((k) => (

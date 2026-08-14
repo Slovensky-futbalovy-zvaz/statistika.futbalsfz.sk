@@ -58,6 +58,7 @@ const prepinacOdvetvi = odvetvia.map((o) => {
 const hraci = (p: Profil) => p.osoby?.hraci?.unikatni ?? 0;
 const maSutaze = profil.kpi.sutaze !== undefined;
 const kpiKarty = [
+  { label: 'Kluby', hodnota: profil.kpi.kluby, predch: predosly?.kpi.kluby, good: true },
   { label: 'Zápasy', hodnota: profil.kpi.zapasy, predch: predosly?.kpi.zapasy, good: true },
   { label: 'Družstvá', hodnota: profil.kpi.druzstva, predch: predosly?.kpi.druzstva, good: true },
   { label: 'Góly', hodnota: profil.kpi.goly, predch: predosly?.kpi.goly, good: true },

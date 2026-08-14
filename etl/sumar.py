@@ -436,6 +436,13 @@ def main() -> None:
                 "sutazeUroven": _zoradene_riadky(o_riadky),
                 "sutazePohlavie": {g: o_pohlavie[g] for g in POHLAVIA if o_pohlavie.get(g)},
             }
+            # Počet klubov odvetvia (futsal…) z artefaktu data/kluby/{sezona}-{sektor}.json.
+            # S futbalom sa SČÍTAŤ NESMIE — klub môže hrať oba športy a bol by dvakrát;
+            # na úvodnej stránke je preto samostatná dlaždica.
+            k_sekt = kluby_zvazy.blok_sr(kluby_zvazy.nacitaj(out_dir, sezona, sektor))
+            if k_sekt:
+                o_kpi["kluby"] = k_sekt["kluby"]
+                odvetvia[sektor]["kluby"] = k_sekt
 
         # Počet klubov: celoslovenské číslo sa NESMIE skladať sčítaním po zväzoch
         # (klub hrá vo viacerých zväzoch) — berie sa z artefaktu data/kluby/{sezona}.json.
