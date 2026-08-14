@@ -294,7 +294,7 @@ function getBumpData(urovenSlug: string): BumpData {
   const kat: BumpData['kat'] = {};
   const zvazMap = new Map<string, string>();
   const metriky = [
-    'sutaze', 'skupiny', 'zapasy', 'druzstva', 'kontumovane', 'goly', 'zlteKarty', 'cerveneKarty',
+    'sutaze', 'skupiny', 'zapasy', 'kluby', 'druzstva', 'kontumovane', 'goly', 'zlteKarty', 'cerveneKarty',
     'hraci', 'treneri', 'rozhodcovia', 'realizacnyTim', 'delegati', 'personal',
     'divaci', 'golyNaZapas', 'divaciNaZapas',
   ];
