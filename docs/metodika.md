@@ -260,6 +260,11 @@ Mládež = **akákoľvek veková úroveň okrem dospelých**. Klub je práve v j
 je spoľahlivý v smere a ráde, nie na jednotky klubov. Pri desaťročných porovnaniach to treba
 uviesť.
 
+**Sezóny nábehu ISSF** (rozhodnutie Ján Letko, 14. 8. 2026): **2012/2013 a 2013/2014** sú roky,
+v ktorých sa Informačný systém slovenského futbalu ešte len nasadzoval — evidencia nie je úplná
+(2012/2013 má v dátach zlomok klubov). V karte „Počet klubov“ sú preto **šrafované** rovnako ako
+prebiehajúca sezóna a nesmú sa čítať ako stav. Číselník je v `KlubyKarta.tsx` (`NABEH_ISSF`).
+
 **Prebiehajúca sezóna** má nízky počet klubov s mládežou (2026/2027: 908 klubov, z toho 562
 „bez mládeže“), lebo mládežnícke súťaže sa začínajú neskôr. V grafe je šrafovaná a nesmie sa
 čítať ako prepad.

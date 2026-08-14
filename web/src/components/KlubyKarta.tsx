@@ -30,6 +30,11 @@ interface Props {
 const NF = new Intl.NumberFormat('sk-SK');
 const F = (n: number) => NF.format(n);
 
+// Sezóny nábehu ISSF (rozhodnutie Ján Letko, 14. 8. 2026): 2012/2013 a 2013/2014 sú roky,
+// v ktorých sa Informačný systém slovenského futbalu ešte len nasadzoval — počty klubov v nich
+// nie sú úplné a nesmú sa čítať ako stav. Kreslia sa šrafovane ako prebiehajúca sezóna.
+const NABEH_ISSF = new Set(['2012/2013', '2013/2014']);
+
 const SEGMENTY = [
   { k: 'lenDospeli', label: 'Len dospelí (bez mládeže)', color: '#94a3b8' },
   { k: 'dospeliAMladez', label: 'Dospelí aj mládež', color: '#1450df' },
@@ -114,15 +119,18 @@ export default function KlubyKarta(p: Props) {
           <div className="mt-2 flex items-end gap-[3px]" style={{ height: 72 }}>
             {rows.map((r, i) => {
               const posledna = i === rows.length - 1;
+              const nabeh = NABEH_ISSF.has(r.sezona);
               const farba = r.prebieha
                 ? 'repeating-linear-gradient(45deg,#1450df,#1450df 3px,transparent 3px,transparent 7px)'
-                : posledna || i === rows.length - 2
-                  ? '#1450df'
-                  : 'var(--color-line, #cbd5e1)';
+                : nabeh
+                  ? 'repeating-linear-gradient(45deg,#cbd5e1,#cbd5e1 3px,transparent 3px,transparent 7px)'
+                  : posledna || i === rows.length - 2
+                    ? '#1450df'
+                    : 'var(--color-line, #cbd5e1)';
               return (
                 <div
                   key={r.sezona}
-                  title={`${r.sezona}: ${F(r.kluby)} klubov${r.prebieha ? ' (prebiehajúca sezóna)' : ''}`}
+                  title={`${r.sezona}: ${F(r.kluby)} klubov${r.prebieha ? ' (prebiehajúca sezóna)' : nabeh ? ' (nábeh ISSF — číslo nie je úplné)' : ''}`}
                   style={{
                     flex: 1,
                     height: `${Math.max(2, (100 * r.kluby) / maxRow)}%`,
@@ -137,9 +145,17 @@ export default function KlubyKarta(p: Props) {
             <span>{rows[0]?.sezona}</span>
             <span>{rows[rows.length - 1]?.sezona}</span>
           </div>
-          {rows.some((r) => r.prebieha) && (
+          {(rows.some((r) => r.prebieha) || rows.some((r) => NABEH_ISSF.has(r.sezona))) && (
             <p className="mt-1.5 text-[11px] text-muted">
-              Šrafovaný stĺpec je prebiehajúca sezóna — mládežnícke súťaže sa ešte len rozbiehajú, číslo bude rásť.
+              Šrafované stĺpce sa nedajú čítať ako stav:{' '}
+              {rows.some((r) => NABEH_ISSF.has(r.sezona)) && (
+                <>2012/2013 a 2013/2014 sú roky nábehu ISSF, evidencia vtedy ešte nebola úplná</>
+              )}
+              {rows.some((r) => NABEH_ISSF.has(r.sezona)) && rows.some((r) => r.prebieha) && '; '}
+              {rows.some((r) => r.prebieha) && (
+                <>posledný stĺpec je prebiehajúca sezóna — mládežnícke súťaže sa ešte len rozbiehajú, číslo bude rásť</>
+              )}
+              .
             </p>
           )}
         </div>
