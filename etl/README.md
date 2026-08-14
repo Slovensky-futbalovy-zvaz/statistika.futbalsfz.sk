@@ -16,7 +16,8 @@ etl/
 │   ├── sezony.json         # normalizačná mapa season.name → kanonická sezóna
 │   ├── roly.json           # overený číselník rolí osôb (rozhodcovia, delegáti, personál, tréneri)
 │   ├── sporty.json         # číselník športu a odvetví (futbal/futsal/…) zo Sportnet API
-│   └── korekcie.json       # ručné korekcie chybných záznamov (napr. diváci 300 000 → 30)
+│   ├── korekcie.json       # ručné korekcie chybných záznamov (napr. diváci 300 000 → 30)
+│   └── vylucene_sutaze.json # ručný číselník NEregulárnych súťaží (školské a výberové turnaje)
 ├── pipelines/              # agregačné pipelines (kategórie, družstvá, hráči, tréneri, rozhodcovia…)
 ├── validate/               # validácie výstupov (KPI = súčet kategórií, pokrytie divákov, anomálie)
 └── *.py, prepocet.sh       # jednotlivé behy — pozri tabuľku nižšie
@@ -33,7 +34,7 @@ vygenerované JSON**. Druhá skupina je rýchla a dá sa púšťať opakovane be
 |---|---|---|
 | `run.py` | `data/zvaz/{id}/{sezona}.json` | Profil zväzu za sezónu — KPI, kategórie, družstvá, osoby, pohlavie. Základ všetkého ostatného |
 | `beh.py` | to isté, hromadne | Dávkový runner cez všetkých 43 zväzov so **zdieľaným DB spojením** (efektívnejšie než 43× `run.py`). Poradie SFZ → RFZ → ObFZ po regiónoch |
-| `kluby.py` | `data/klub/{id}/{sezona}.json` | Profil klubu za sezónu. Klub = `teams[].organization._id`, agreguje sa **naprieč všetkými súťažami celej SR**, nie podľa riadiaceho zväzu |
+| `kluby.py` | `data/klub/{id}/{sezona}.json`, `data/kluby/{sezona}.json` | Profil klubu za sezónu **a agregát bloku Počet klubov** (celoslovensky + po zväzoch + podľa stavu mládeže). Klub = `teams[].organization._id`, agreguje sa **naprieč všetkými súťažami celej SR**, nie podľa riadiaceho zväzu. Vylučuje súťaže mimo slovenských zväzov a neregulárne súťaže (`config/vylucene_sutaze.json`) |
 | `demografia.py` | `data/demografia/{id}.json` | Rok narodenia × pohlavie × rola za zväz, všetky sezóny v jednom súbore |
 | `demografia_klub.py` | `data/demografia-klub/{id}.json` | To isté za klub (hráči, tréneri, realizačný tím) |
 | `trendy.py` | `data/vek/`, `data/vek-klub/` | Vekové histogramy pre stránku Trendy — po kluboch, zväzoch, súťažiach a úrovniach ligy. **~43 s na sezónu**, celá história ~14 min |
@@ -47,6 +48,8 @@ vygenerované JSON**. Druhá skupina je rýchla a dá sa púšťať opakovane be
 | `porovnania.py` | `data/porovnania/{uroven}/{sezona}.json` | Porovnávacie tabuľky zväzov (RFZ, ObFZ) s odvodenými metrikami |
 | `porovnania_kluby.py` | `data/porovnania/kluby/{sezona}.json` | To isté pre všetky kluby |
 | `index_klubu.py` | `data/index-klubu/`, `data/index-klubu.json` | Index klubu (0–100) z piatich zložiek. Beží **nad výstupmi `trendy.py`**, do DB nesiaha |
+| `kluby_zvazy.py` | `data/zvaz/**/*.json` (dopĺňa blok) | Vloží blok **Počet klubov** z `data/kluby/{sezona}.json` do už vygenerovaných profilov zväzov. Bez databázy — vďaka tomu blok prežije aj samostatný beh `run.py` pre jeden zväz. `--doplnit` |
+| `zanikanie.py` | `data/zanikanie.json` | **Zánik a vznik klubov** po sezónach a miery definitívneho odchodu podľa toho, či klub má mládež. Beží nad `data/klub/`, do DB nesiaha. Koniec v súťažiach dospelých **nie je** zánik, pokiaľ klub má mládež. Vylučuje sezóny nábehu ISSF a prebiehajúcu sezónu |
 | `kontrola_skupin.py` | (nezapisuje) | Overuje invarianty metriky **skupiny** nad `data/` — `skupiny >= sutaze` v každom reze, súčet cez úrovne = `kpi.skupiny`, porovnania nesú `skupiny`. Nenulový exit pri chybe. Pusti po každom behu, ktorý sa dotýka počtov súťaží |
 
 ### Orchestrácia
@@ -70,6 +73,8 @@ Závislosti idú zhora nadol — čo je nižšie, potrebuje výstupy toho, čo j
     porovnania_kluby.py      → data/porovnania/kluby/ (potrebuje 2)
 5.  trendy.py                → data/vek/, data/vek-klub/
 6.  index_klubu.py           → data/index-klubu/    (potrebuje 5)
+7.  kluby_zvazy.py --doplnit → blok Počet klubov do data/zvaz/ (potrebuje 2)
+8.  zanikanie.py             → data/zanikanie.json  (potrebuje 2)
 ```
 
 `projekty.py` je nezávislý, dá sa pustiť kedykoľvek.
@@ -86,6 +91,8 @@ python etl/demografia.py --zvaz obfz-nitra --all-sezony
 python etl/trendy.py --vsetky                                          # všetky sezóny, ~14 min
 python etl/index_klubu.py --sezona-prehladu 2025/2026
 bash   etl/prepocet.sh 2025/2026
+python etl/kluby_zvazy.py --doplnit                                    # blok Počet klubov do profilov zväzov
+python etl/zanikanie.py                                                # zánik/vznik klubov, bez DB
 python etl/kontrola_skupin.py                                          # po behu: invarianty skupín
 ```
 
@@ -132,6 +139,9 @@ počtov skončí skript nenulovým exit kódom.
 - Pohlavie výhradne z `competitions.parts[].rules.gender` cez `competitionPart._id`.
 - Úroveň súťaže (`competitions.level`) sa vždy vzťahuje ku konkrétnej vekovej úrovni — „1. liga“
   dospelých a U19 sú dve rôzne súťaže a nikdy sa nesčítavajú do jedného stupňa.
+- **Počet klubov sa nesčítava** — ani po zväzoch (klub hrá v súťažiach viacerých zväzov), ani
+  cez odvetvia (klub hrá futbal aj futsal). Celoslovenské číslo sa berie z bloku „celkovo“,
+  sčítateľné je len `podlaDomovskehoZvazu`. Preto `kluby` **nie je** v `KPI_KLUCE` v `sumar.py`.
 - **Súťaž vs. súťažná skupina:** vykazujú sa OBE metriky súčasne (`sutaze` aj `skupiny`
   v každom reze). Skupina = základná časť súťaže; určuje ju `run.nacitaj_skupina_mapu` dvoma
   sitami — štruktúrnym a podľa názvu časti. Databáza typ časti nenesie. Invariant po každom

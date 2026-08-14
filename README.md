@@ -3,10 +3,11 @@
 Verejný štatistický portál slovenského futbalu — **[statistika.futbalsfz.sk](https://statistika.futbalsfz.sk)**.
 
 Interaktívna mapa všetkých troch úrovní futbalovej pyramídy (SFZ → 4 RFZ → 38 ObFZ), sezónne
-štatistiky s drill-down na vekové úrovne, profily 2 000+ klubov, porovnávanie zväzov, demografia
-osôb vo futbale a trendy v čase — vek hráčov v súťažiach dospelých a Index klubu.
+štatistiky s drill-down na vekové úrovne, profily 2 000+ klubov, **počet klubov a jeho vývoj
+v čase**, porovnávanie zväzov, demografia osôb vo futbale a trendy v čase — vek hráčov
+v súťažiach dospelých a Index klubu.
 
-> **Stav:** portál je **verejne v prevádzke**. Posledný build 24 191 stránok, dátová základňa
+> **Stav:** portál je **verejne v prevádzke**. Posledný build 24 768 stránok, dátová základňa
 > pokrýva sezóny 2012/2013 – 2026/2027 a všetkých 43 zväzov.
 > Otvorené úlohy a známe obmedzenia: [docs/TODO.md](docs/TODO.md).
 
@@ -28,30 +29,36 @@ lokálne a 17–20 minút na Verceli.
 > **Pozor pri commitoch:** commity s autorom `@futbalsfz.sk` Vercel **blokuje**. Používa sa
 > autor `jan.letko@icloud.com`.
 
+> **Pozor pred lokálnym buildom:** treba pozabíjať všetky bežiace `astro dev` servery, inak si
+> dva Vite procesy konkurujú o cache a build sa zasekne na „Re-optimizing dependencies“.
+
 ## Štruktúra repozitára
 
 | Priečinok | Obsah |
 |---|---|
 | `etl/` | ETL pipeline — agregácie zo Sportnet DB do publikovateľných JSON. Vlastné [README](etl/README.md) |
-| `data/` | **Publikované dáta** — 28 000+ JSON súborov, ktoré číta web pri builde (nie vzorky) |
+| `data/` | **Publikované dáta** — 29 000+ JSON súborov, ktoré číta web pri builde (nie vzorky) |
 | `web/` | Frontend — Astro 5 (SSG) + React islands, TypeScript, Tailwind |
 | `docs/` | Projektová dokumentácia, metodika, záznamy rozhodnutí (ADR). [Rozcestník](docs/README.md) |
+| `docs/social/` | Podklady pre sociálne siete — text príspevku, vizuály 1080 × 1350 px, PDF carousely |
 | `tools/og/` | Generátor OG obrázkov pre sociálne siete (HTML šablóna + headless Chrome) |
 | `deploy/` | Docker prostredie pre týždenný beh ETL na Synology NAS |
 | `.github/workflows/` | `tyzdenna.yml` — týždenná aktualizácia aktuálnej sezóny |
 
 ### Čo je v `data/`
 
-| Priečinok | Súborov | Obsah |
+| Priečinok / súbor | Súborov | Obsah |
 |---|---|---|
-| `zvaz/` | 601 | Profil zväzu za sezónu (43 zväzov × sezóny × odvetvia) |
-| `klub/` | 21 300 | Profil klubu za sezónu |
-| `vek/`, `vek-klub/` | 43 + 2 076 | Vekové histogramy pre stránku Trendy |
+| `zvaz/` | 609 | Profil zväzu za sezónu (43 zväzov × sezóny × odvetvia) |
+| `klub/` | 21 972 | Profil klubu za sezónu |
+| `kluby/` | 32 | **Počet klubov za sezónu** — celoslovensky, po zväzoch, podľa stavu mládeže |
+| `vek/`, `vek-klub/` | 43 + 2 047 | Vekové histogramy pre stránku Trendy |
 | `index-klubu/` | 2 076 | Index klubu po sezónach + celoslovenský prehľad `index-klubu.json` |
-| `demografia/`, `demografia-klub/` | 43 + 2 123 | Rok narodenia × pohlavie × rola |
+| `demografia/`, `demografia-klub/` | 43 + 2 029 | Rok narodenia × pohlavie × rola |
 | `porovnania/` | 45 | Porovnávacie tabuľky zväzov a klubov |
 | `sumar/` | 16 | Celoslovenský súhrn za sezónu |
 | `projekty/` | 4 | Grassroots projekty (Dajme spolu gól, Disney, McDonald's) |
+| `zanikanie.json` | 1 | Zánik a vznik klubov po sezónach, miery odchodu podľa stavu mládeže |
 
 ## Stránky portálu
 
@@ -80,6 +87,28 @@ príznak zo Sportnetu je v [docs/TODO.md](docs/TODO.md).
 
 **Publikované čísla sa spätne neprepisujú** — obe metriky sú vo výstupe vedľa seba.
 
+## Počet klubov
+
+**Aktívny klub = klub, ktorý v sezóne odohral aspoň jeden zápas** — nie klub zapísaný v registri.
+Blok Počet klubov je na úvodnej stránke, na profiloch všetkých zväzov, v Porovnaniach a ako KPI
+dlaždica; člení kluby podľa toho, či majú mládež, len dospelých, alebo len mládež.
+
+Tri veci, ktoré treba pri tomto čísle vedieť:
+
+- **Súčet po zväzoch je vyšší než celoslovenské číslo** — klub je započítaný v každom zväze,
+  v ktorého súťaži hral. Sčítateľné číslo je `podlaDomovskehoZvazu`.
+- **Do počtu vstupujú len regulárne súťaže riadené slovenskými zväzmi.** Reprezentačné a školské
+  turnaje nie, Vysokoškolská liga áno. Databáza príznak „regulárna súťaž“ nemá, preto existuje
+  ručný číselník [`etl/config/vylucene_sutaze.json`](etl/config/vylucene_sutaze.json).
+- **Sezóny 2012/2013 a 2013/2014 sú roky nábehu ISSF** — evidencia v nich nie je úplná, preto sú
+  v grafoch šrafované; rovnako šrafovaná je prebiehajúca sezóna.
+
+**Zanikanie klubov** ([`etl/zanikanie.py`](etl/zanikanie.py) → `data/zanikanie.json`) beží offline
+nad artefaktmi v `data/klub/`, teda nad tou istou definíciou klubu ako blok Počet klubov.
+Zásadné pravidlo: **koniec klubu v súťažiach dospelých nie je zánik klubu, pokiaľ má mládež.**
+Namerané: klub bez mládeže prestáva hrať v 7,9 % sezón, klub s mládežou v 2,1 %. Metodika a čísla
+sú v [docs/metodika.md](docs/metodika.md), kapitola „Zanikanie klubov“.
+
 ## Kľúčové dokumenty
 
 - [Metodika a poznatky o dátach](docs/metodika.md) — **najdôležitejší dokument v repe**;
@@ -90,6 +119,7 @@ príznak zo Sportnetu je v [docs/TODO.md](docs/TODO.md).
   ([docx verzia](docs/Statistika-futbalsfz-sk_Projektovy-plan-a-koncept_v1.0.docx))
 - [Report kvality dát](docs/report-kvality-dat.md)
 - [Záznamy rozhodnutí (ADR)](docs/adr/) — ADR-0001 až ADR-0009
+- [Podklady pre sociálne siete](docs/social/)
 
 ## Vývoj
 
@@ -104,6 +134,9 @@ npx astro check          # typová kontrola vrátane .astro súborov
 # ETL — vyžaduje prístup do MongoDB (read-only stačí)
 export MONGODB_URI="mongodb://…"
 python etl/run.py --zvaz obfz-nitra --sezona 2025/2026
+
+# Zanikanie klubov — beží offline nad data/klub/, MongoDB netreba
+python etl/zanikanie.py
 
 # OG obrázky pre sociálne siete (1200×630) — prepíše len vymenované stránky
 node tools/og/generuj.mjs trendy dokumentacia

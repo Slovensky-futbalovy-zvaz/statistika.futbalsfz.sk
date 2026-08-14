@@ -1,6 +1,6 @@
 # TODO — otvorené úlohy a známe obmedzenia
 
-**Stav k 8. 8. 2026.** Tento dokument hovorí, **čo je otvorené** — nie čo sa už spravilo.
+**Stav k 14. 8. 2026.** Tento dokument hovorí, **čo je otvorené** — nie čo sa už spravilo.
 História dokončených etáp je na konci a v histórii gitu; rozhodnutia produktového vlastníka
 sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
 
@@ -24,11 +24,27 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
   „SÚŤAŽ vs. SÚŤAŽNÁ SKUPINA“ v [metodike](metodika.md). Odhad funguje, ale explicitný príznak
   by ho nahradil presným údajom a odstránil posúdenie hraničných prípadov (baráže so súperom
   z inej súťaže, finálové turnaje prípraviek).
+- [ ] **Príznak „regulárna súťaž / turnaj“ v `competitions`** (žiadosť na Sportnet / ISSF).
+  Reprezentačné turnaje, školské turnaje a Vysokoškolská liga sa v dátach ničím nelíšia od
+  ligovej súťaže a `level` sa na rozlíšenie použiť nedá (nemá ho ani VII. liga SOFZ). Preto
+  existuje **ručný číselník** `etl/config/vylucene_sutaze.json`, ktorý treba pri každej novej
+  neregulárnej súťaži dopĺňať manuálne. Bez príznaku sa to inak spraviť nedá.
 - [ ] **Odoslať podklady Bart.sk** pre produkčný beh — [draft](archiv/podklady-bart-produkcny-beh.md).
 - [ ] **Nahlásiť chybný záznam divákov** — [draft](sportnet-nahlasenie-divaci.md).
+- [ ] **Sociálny post „Počet klubov“ na publikovanie** — text, 12 vizuálov a PDF carousel sú
+  hotové v [docs/social/2026-08-pocet-klubov/](social/2026-08-pocet-klubov/). Pred zverejnením
+  potrebuje schválenie snímky 09 (príčiny úbytku — je to **postoj SFZ**, nie údaj z portálu)
+  a snímky 10 (financovanie delegovaných osôb).
 
 ## Dáta a ETL
 
+- [ ] **Filter neregulárnych súťaží do `etl/trendy.py` a `etl/demografia_klub.py`.**
+  `etl/kluby.py` už vylučuje súťaže mimo slovenských zväzov a neregulárne súťaže
+  (`etl/config/vylucene_sutaze.json`), ale tieto dva skripty ten filter ešte nemajú — pri
+  najbližšom behu znova vyrobia `data/vek-klub/*.json` a `data/demografia-klub/*.json` aj pre
+  vylúčené subjekty (školy, výbery zväzov, zahraničné kluby). Artefakty sú dnes odložené
+  v `data/_archiv-klubov/` (lokálne, v `.gitignore`) a `etl/index_klubu.py` má poistku, ale
+  správne riešenie je doplniť rovnaký filter do oboch skriptov.
 - [ ] **Osoby × pohlavie × veková úroveň v profiloch zväzov.** Dnes je pill filter pohlavia len
   na sunburste súťaží; pre osoby chýba, lebo pohlavie osoby sa musí odvodiť z gender časti
   súťaže. Vyžaduje re-beh histórie.
@@ -36,23 +52,23 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
   (`optimizationTimeMillis ≈ 1,9 s`). Opatrne, je to zdieľaná produkčná databáza.
 - [ ] **Explicitný ISSF príznak „zápis podaný“** namiesto dnešnej proxy (bez udalostí a bez
   divákov = administratívna kontumácia). Pozri [ADR-0008](adr/0008-odohrane-zapasy-bez-administrativnych.md).
+- [ ] **Kluby vo futsale do bloku odvetví sumáru boli doplnené** (`odvetvia.futsal.kpi.kluby`),
+  ale **klub hrajúci futbal aj futsal sa sčítať nesmie** — počet unikátnych klubov cez obe
+  odvetvia nie je publikovaný. Ak ho bude niekto potrebovať, treba ho spočítať v `etl/kluby.py`
+  nad oboma sektormi naraz.
 
 ## Frontend
 
-- [x] ~~**Zjednotiť kontextové popisky v grafoch.**~~ Hotové 10. 8. 2026 — jeden zdieľaný
-  `Tooltip.tsx` naprieč všetkými ručne kreslenými grafmi, vrátane dotyku a dvoch grafov,
-  ktoré popisok nemali vôbec. Pozri metodiku, kap. „Kontextové popisky v grafoch“.
 - [ ] **41 typových chýb v dynamických route súboroch** (`astro check`, 8. 8. 2026). Všetky sú
   ten istý vzor: `Astro.params` je typovaný ako `string | number`, takže `id!`, `sezonaUrl!`
   a `odvetvie!` nesadá do funkcií čakajúcich `string`. Build ani beh portálu to neovplyvňuje,
   ale kontrola preto nekončí čisto. Týka sa `klub/[id]/[sezona]`, `klub/[id]/[odvetvie]/[sezona]`,
   `zvaz/[id]*`, `porovnania/*`, `demografia/[id]`. Riešenie: obaliť parametre `String(…)`
-  alebo dotypovať `getStaticPaths`. `@astrojs/check` je už v `devDependencies`
-  (`npx astro check`).
-
+  alebo dotypovať `getStaticPaths`.
 - [ ] **Payload stránok.** Úvodná stránka 628 kB HTML, `/trendy` 600 kB, profil klubu 1,17 MB
   (gzip to zráža na desatinu, ale je čo orezávať). Dominuje `KpiTrend` a sunburst dáta starých
-  sezón.
+  sezón. Pri `porovnania/obfz/*` (1 470 kB) dominuje `bump` payload — pomohol by rovnaký trik
+  ako v `lib/urovne.ts`: poslať matice ako reťazec s indexmi namiesto objektov s názvami metrík.
 - [ ] **Tree-shaking ECharts.** Bundluje sa celý (~1 MB) — používa ho desať komponentov, dá sa
   prejsť na `echarts/core` a importovať len potrebné moduly.
 - [ ] **SeasonPicker na Prehľade** nemení sezónu reaktívne (Prehľad je server-rendered pre
@@ -65,6 +81,10 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
 Stránka `/trendy` dnes obsahuje vek hráčov v súťažiach dospelých, rebríček starnúcich klubov
 a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
 
+- [ ] **Zanikanie klubov ako blok na portáli.** `etl/zanikanie.py` už publikuje
+  `data/zanikanie.json` (odchody po sezónach, miery odchodu podľa stavu mládeže, prechody
+  stavov, príchody). Dnes to je len podklad pre analýzu a sociálny post — na portáli by to
+  čitateľ mohol overiť sám.
 - [ ] Družstvá v čase
 - [ ] Návštevnosť v čase
 - [ ] Karty v čase
@@ -78,10 +98,26 @@ a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
 - **Tréneri sa nedajú merať.** Vyše štvrtiny klubov nemá evidovaného ani jedného mládežníckeho
   trénera — je to nevyplnený realizačný tím, nie skutočnosť. Preto tréneri nevstupujú do
   Indexu klubu.
-- **História siaha po sezónu 2013/2014**, nie 2012/2013 (tá má v dátach asi tretinu klubov).
-- **Prvých päť sezón Indexu klubu nie je porovnateľných** — zložka kontinuity nemohla byť pred
-  2018/2019 nasýtená. Podrobne v [metodike](metodika.md).
+- **Sezóny 2012/2013 a 2013/2014 sú roky nábehu ISSF** — evidencia v nich nie je úplná
+  (2012/2013 má 578 klubov oproti ~1 700 v ďalších sezónach). V karte Počet klubov sú preto
+  šrafované a do analýzy zanikania nevstupujú.
+- **Prebiehajúca sezóna sa nedá čítať ako stav.** Mládežnícke súťaže sa rozbiehajú neskôr než
+  súťaže dospelých, takže na začiatku sezóny vyzerá, že klubov s mládežou je málo. Do analýzy
+  zanikania prebiehajúca sezóna nevstupuje vôbec — inak by 501 klubov, ktoré len čakajú na
+  štart svojej súťaže, vyšlo ako zaniknuté.
+- **Súčet klubov po zväzoch je vyšší než celoslovenské číslo** — klub je započítaný v každom
+  zväze, v ktorého súťaži hral. Sčítateľné číslo je `podlaDomovskehoZvazu`.
+- **Prvých päť sezón Indexu klubu nie je porovnateľných** — zložka kontinuity dáva plných 15
+  bodov až za päť sezón mládeže po sebe, ale história začína 2013/2014, takže plný počet nemohol
+  mať nikto pred 2018/2019 (namerané mediány zložky D: 3, 3, 6, 10, 10, potom 15). Zhruba 12
+  z 28 bodov rastu celoslovenského mediánu je dobiehajúca metodika, nie zlepšenie mládeže.
+- **Index klubu a blok Počet klubov nie sú tá istá metrika** — index počíta družstvo, len ak
+  odohralo viac než polovicu mediánu zápasov svojej časti súťaže. V 2025/2026 obe metriky
+  hovoria 239 klubov bez mládeže, ale klubov bez dospelých má index 156 a blok 143.
 - **Commity s autorom `@futbalsfz.sk` Vercel blokuje** — používa sa `jan.letko@icloud.com`.
+- **Pred lokálnym buildom treba pozabíjať všetky `astro dev`** — dva Vite procesy si konkurujú
+  o cache a build sa zasekne na „Re-optimizing dependencies“ (stalo sa 14. 8. 2026, na porte
+  4399 bežali štyri staré dev servery).
 
 ---
 
@@ -89,23 +125,16 @@ a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
 
 | Kedy | Čo |
 |---|---|
-| 8. 8. 2026 | Vývoj Indexu klubu po zväzoch na `/trendy`; filter úrovní prehadzuje výber zväzov; upratanie dokumentácie repozitára |
-| 7.–8. 8. 2026 | **Trendy** — vek hráčov v súťažiach dospelých (zväzy, kluby, súťaže, úrovne), rebríček starnúcich klubov, **Index klubu** (`etl/trendy.py`, `etl/index_klubu.py`). Oprava `ageLevel` — veková úroveň osoby sa rátala o úroveň vyššie |
-| 6.–7. 8. 2026 | **Pyramída súťaží** — počty súťaží podľa úrovne, heatmapa zväzy × úrovne, vývoj pyramídy v čase; oprava hydratácie React islands (`process is not defined`) |
+| 14. 8. 2026 | **Počet klubov** — nový blok na úvode, na profiloch zväzov, v Porovnaniach a v sunburste; KPI dlaždice Kluby a Kluby — futsal; filter neregulárnych súťaží (`etl/kluby.py`, `etl/kluby_zvazy.py`, číselník); šrafované sezóny nábehu ISSF; **`etl/zanikanie.py`** — zánik klubov s mládežou vs. bez mládeže; sociálny post s 12 vizuálmi a PDF carouselom |
+| 10. 8. 2026 | Jednotné kontextové popisky vo všetkých grafoch + podpora dotyku |
+| 8.–9. 8. 2026 | Súťažné skupiny ako druhá metrika počtu súťaží; `etl/kontrola_skupin.py`; vývoj Indexu klubu po zväzoch; upratanie dokumentácie |
+| 7.–8. 8. 2026 | **Trendy** — vek hráčov v súťažiach dospelých, rebríček starnúcich klubov, **Index klubu** (`etl/trendy.py`, `etl/index_klubu.py`). Oprava `ageLevel` |
+| 6.–7. 8. 2026 | **Pyramída súťaží** — počty súťaží podľa úrovne, heatmapa zväzy × úrovne, vývoj pyramídy v čase; oprava hydratácie React islands |
 | 22. 7. 2026 | **Odohraté zápasy bez administratívnych kontumácií** ([ADR-0008](adr/0008-odohrane-zapasy-bez-administrativnych.md)); dopad 2025/2026: 63 943 uzatvorených → 60 958 odohraných |
-| 19. 7. 2026 | **Vizuálny redizajn** — React islands ([ADR-0007](adr/0007-react-islands-redizajn.md)), celoslovenský sumár na úvodnej stránke, demografia, projekty, futsal, porovnania s radarom, vekové pyramídy |
-| 19. 7. 2026 | **Produkčné nasadenie na Vercel** ([ADR-0006](adr/0006-hosting-vercel-namiesto-cloudflare.md)) — doména cez CNAME na WebSupport DNS, bez presunu nameserverov |
-| 13. 7. 2026 | **Plný dátový beh** — 43/43 zväzov, 573 sezónnych výstupov, demografia všetkých zväzov, futsal 11 sezón; korekčná vrstva divákov |
-| 12. 7. 2026 | **Dátový audit a ETL v1** — [report kvality dát](report-kvality-dat.md), register 43 zväzov, dimenzia pohlavie, normalizácie vekových kategórií |
+| 19. 7. 2026 | **Vizuálny redizajn** — React islands ([ADR-0007](adr/0007-react-islands-redizajn.md)), celoslovenský sumár, demografia, projekty, futsal, porovnania s radarom, vekové pyramídy |
+| 19. 7. 2026 | **Produkčné nasadenie na Vercel** ([ADR-0006](adr/0006-hosting-vercel-namiesto-cloudflare.md)) |
+| 13. 7. 2026 | **Plný dátový beh** — 43/43 zväzov, 573 sezónnych výstupov, futsal 11 sezón; korekčná vrstva divákov |
+| 12. 7. 2026 | **Dátový audit a ETL v1** — [report kvality dát](report-kvality-dat.md), register 43 zväzov, dimenzia pohlavie |
 
 Podrobný priebeh jednotlivých etáp je v commit messages — tie sú v tomto projekte písané ako
 záznam rozhodnutí, nie ako jednoriadkové poznámky.
-
-## Filter neregularnych sutazi v trendoch a demografii klubov (14. 8. 2026)
-
-`etl/kluby.py` uz vylucuje sutaze mimo slovenskych zvazov a neregularne sutaze
-(`etl/config/vylucene_sutaze.json`). **`etl/trendy.py` a `etl/demografia_klub.py` ten filter
-este nemaju** — pri svojom najblizsom behu znova vyrobia `data/vek-klub/*.json`
-a `data/demografia-klub/*.json` aj pre vylucene subjekty (skoly, vybery zvazov, zahranicne
-kluby). Dnes su tieto artefakty odlozene v `data/_archiv-klubov/` a `etl/index_klubu.py` ma
-poistku, ale spravne riesenie je doplnit rovnaky filter do oboch skriptov.

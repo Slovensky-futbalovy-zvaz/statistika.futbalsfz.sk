@@ -325,6 +325,67 @@ klubov bez mládeže“ z pôvodnej metodiky Indexu klubu bol meraný **pred zav
 neregulárnych súťaží a už neplatí.
 
 
+#### Zanikanie klubov — s mládežou vs. bez mládeže (rozhodnutia Ján Letko, 14. 8. 2026)
+
+**ZÁSADNÉ PRAVIDLO:** to, že klub skončil v súťažiach dospelých, **NIE JE zánik klubu**, pokiaľ
+klub má mládež. Zánik je až to, keď klub prestane hrať úplne. Bez tohto pravidla by analýza
+merala niečo iné, než o čom sa hovorí.
+
+Definície:
+
+- **aktívny v sezóne** — klub má v danej sezóne publikovaný artefakt `data/klub/{klub}/{sezona}.json`,
+  teda aspoň jeden reálne odohraný zápas v regulárnej súťaži slovenského zväzu,
+- **definitívny odchod v sezóne N** — klub bol aktívny v N a **nebol aktívny v žiadnej
+  z nasledujúcich sezón v okne**; stav pri odchode (mládež / bez mládeže) sa berie z poslednej
+  odohranej sezóny,
+- **jednorazový výpadok** — klub nehral N+1, ale neskôr sa vrátil; to nie je zánik,
+- **vznik klubu v sezóne N** — klub je aktívny v N a nebol aktívny v žiadnej predchádzajúcej
+  sezóne okna.
+
+Do okna **nevstupujú sezóny 2012/2013 a 2013/2014** (nábeh ISSF — evidencia nebola úplná, každý
+klub, ktorý sa objavil až v 2014/2015, by inak vyšiel ako „nový“) **ani prebiehajúca sezóna**
+(2026/2027 — súťaže sa ešte len rozohrávajú; pri prvom behu proti nej vyšlo 501 falošných
+zaniknutých klubov). Poslednú sezónu okna hodnotiť nemožno (nemá nasledujúcu) a predposledná je
+provizórna — klub sa ešte môže vrátiť.
+
+Výpočet robí **`etl/zanikanie.py`**. Beží **offline nad publikovanými artefaktmi v `data/klub/`**,
+nie nad MongoDB, takže má zaručene tú istú definíciu klubu a ten istý filter súťaží ako blok
+Počet klubov na portáli. Výstup je `data/zanikanie.json`.
+
+**Miera definitívneho odchodu (2014/2015 – 2023/2024):**
+
+| Stav klubu | Klubo-sezón | Definitívnych odchodov | Miera za sezónu |
+|---|---|---|---|
+| **bez mládeže** | 3 554 | 281 | **7,9 %** |
+| **s mládežou** | 12 365 | 258 | **2,1 %** |
+
+Klub bez mládeže teda prestáva hrať **takmer štyrikrát častejšie**. Definitívnych odchodov bolo
+v tomto okne spolu **539**.
+
+**Prechody stavov (celé okno):**
+
+| Prechod | Počet |
+|---|---|
+| len dospelí → dospelí + mládež (klub pridal mládež) | **550** |
+| dospelí + mládež → len dospelí (klub stratil mládež) | 482 |
+| dospelí + mládež → len mládež (**skončil v dospelých, mládež si udržal**) | **220** |
+| len mládež → dospelí + mládež | 139 |
+| len dospelí → len mládež | 15 |
+| len mládež → len dospelí | 10 |
+
+Tých **220 prípadov** je presne to, čo sa v debate o „zanikajúcich kluboch“ počíta ako zánik,
+hoci klub ďalej hrá s deťmi.
+
+**Zánik vs. vznik (2016/2017 – 2024/2025, teda okno bez prvých dvoch sezón, ktoré vznik merať
+nedokážu):** zaniklo **468** klubov (44 – 65 za sezónu), vzniklo **180** (10 – 32 za sezónu) —
+na jeden nový klub takmer tri zaniknuté a pomer sa nezmenšuje.
+
+Analýza v plnom znení vrátane tabuliek po sezónach: `claude/analyza-zanikanie-klubov.md`.
+**Príčiny** úbytku (demografia, verejné zdroje miest a obcí, podmienky pre trénerov, komerční
+partneri) v dátach **nie sú** — portál meria stavy a pohyby, nie dôvody. Kde sa uvádzajú
+(sociálny post), sú označené ako postoj SFZ.
+
+
 ### Vek hráčov a Index klubu — stránka Trendy (7. 8. 2026)
 
 Metodika v plných podrobnostiach: `claude/plan-trendy-vek.md` a `claude/metodika-index-klubu.md`
