@@ -29,6 +29,12 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
   ligovej súťaže a `level` sa na rozlíšenie použiť nedá (nemá ho ani VII. liga SOFZ). Preto
   existuje **ručný číselník** `etl/config/vylucene_sutaze.json`, ktorý treba pri každej novej
   neregulárnej súťaži dopĺňať manuálne. Bez príznaku sa to inak spraviť nedá.
+- [ ] **Príznak právneho nástupcu klubu v ISSF** (žiadosť na Sportnet / ISSF). Pri novej
+  registrácii klubu (transformácia na s. r. o., zmena právnej formy) vznikne nový subjekt bez
+  väzby na predchodcu, takže ten istý reálny klub vyjde v tokoch raz ako zánik a raz ako vznik.
+  Nameraných je aspoň 41 takých párov — pozri [metodiku](metodika.md), kap. „Zanikanie klubov“.
+  Bez príznaku sa toky klubov očistiť nedajú inak než heuristikou podľa názvu, a tú do
+  publikovaných dát nedávame.
 - [ ] **Odoslať podklady Bart.sk** pre produkčný beh — [draft](archiv/podklady-bart-produkcny-beh.md).
 - [ ] **Nahlásiť chybný záznam divákov** — [draft](sportnet-nahlasenie-divaci.md).
 - [ ] **Sociálny post „Počet klubov“ na publikovanie** — text, 12 vizuálov a PDF carousel sú
@@ -105,6 +111,9 @@ a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
   súťaže dospelých, takže na začiatku sezóny vyzerá, že klubov s mládežou je málo. Do analýzy
   zanikania prebiehajúca sezóna nevstupuje vôbec — inak by 501 klubov, ktoré len čakajú na
   štart svojej súťaže, vyšlo ako zaniknuté.
+- **Toky klubov (zánik/vznik) sú horná hranica.** Nový subjekt v ISSF nie je nutne nový klub —
+  aspoň 41 z nameraných párov je ten istý klub s novým IČO. Stavy klubov a miery odchodu to
+  neskresľuje, toky áno.
 - **Súčet klubov po zväzoch je vyšší než celoslovenské číslo** — klub je započítaný v každom
   zväze, v ktorého súťaži hral. Sčítateľné číslo je `podlaDomovskehoZvazu`.
 - **Prvých päť sezón Indexu klubu nie je porovnateľných** — zložka kontinuity dáva plných 15

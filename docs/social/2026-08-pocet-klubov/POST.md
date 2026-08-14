@@ -9,6 +9,12 @@
 > - **Príčiny úbytku (demografia, verejné zdroje, podmienky pre trénerov, komerční partneri) sú
 >   POSTOJ SFZ, nie zistenie z dát.** V texte sú zámerne oddelené od číselnej časti — portál
 >   meria stavy a pohyby, nie dôvody.
+> - **Časť „zánikov“ a „vznikov“ je ten istý klub s novým IČO.** Pri novej registrácii založí ISSF
+>   nový subjekt a väzbu na predchodcu nenesie, takže ETL to spojiť nedokáže. Párovaním podľa
+>   názvu je nameraných **aspoň 41 takých párov** (`MFK Dolný Kubín` → `MFK Dolný Kubín, s. r. o.`,
+>   `FK Senica` → `Futbalový klub Senica`, `TJ Fatran Varín` → `FK Fatran Varín`…). **468 je preto
+>   horná hranica** odchodov a 180 horná hranica vzniknutých klubov; čistý úbytok klubov to
+>   neovplyvňuje, ten sa meria na stavoch, nie na tokoch. Výhrada je aj na snímke 08.
 > - **Rozpad na mládež a dospelých pred sezónou 2024/2025** sa opiera o vekovú kategóriu časti
 >   súťaže (`teams.ageCategory` je vyplnené až od 2024/2025). Trend je spoľahlivý v smere
 >   a ráde, nie na jednotky klubov.
@@ -62,9 +68,11 @@ vyššiu pravdepodobnosť, že zanikne** — 7,9 % za sezónu oproti 2,1 % u klu
 V dátach je takých prípadov **220**: klub prestal hrať dospelú súťaž a s deťmi pokračuje.
 V debate o „zanikajúcich kluboch“ sa pritom počíta práve len áčko.
 
-**Nové kluby pritom vznikajú — len ich je málo.** Za posledných deväť sezón zaniklo 468 klubov
-a vzniklo 180. Na jeden nový klub tak pripadajú takmer tri zaniknuté a tento rozdiel sa
-nezmenšuje.
+**Nové kluby pritom vznikajú — len ich je málo.** Za posledných deväť sezón prestalo hrať 468
+klubov a 180 začalo. Na jeden nový klub tak pripadajú takmer tri zaniknuté a tento rozdiel sa
+nezmenšuje. Poctivo treba dodať, že časť z toho je ten istý klub s novým IČO — pri novej
+registrácii vznikne v ISSF nový subjekt a väzbu na predchodcu systém nenesie. Nameraných je
+aspoň 41 takých párov, 468 je preto horná hranica.
 
 A ešte jeden pohyb, ktorý sa nespomína: **550-krát** si klub, ktorý mal len dospelých, pridal
 mládežnícke družstvo. Opačným smerom, teda stratou mládeže, to bolo **482-krát**. Pridávanie
@@ -181,8 +189,9 @@ Medziročne 2024/2025 → 2025/2026: **−11 klubov** (1 417 → 1 406). Futsal 
 
 | Ukazovateľ | Hodnota |
 |---|---|
-| Zaniklo klubov | **468** (44 – 65 za sezónu) |
-| Vzniklo nových klubov | **180** (10 – 32 za sezónu) |
+| Zaniklo klubov | **468** (44 – 65 za sezónu) — horná hranica |
+| Vzniklo nových klubov | **180** (10 – 32 za sezónu) — horná hranica |
+| Z toho preukázateľne ten istý klub s novým IČO | aspoň **41** párov |
 | Pomer | na jeden nový klub takmer **tri zaniknuté** |
 
 ---
@@ -204,8 +213,8 @@ Medziročne 2024/2025 → 2025/2026: **−11 klubov** (1 417 → 1 406). Futsal 
    štyrikrát menej.
 7. **07** Pätnásťročný trend hráčov: dospelí a dorast klesajú, žiaci a prípravky rastú;
    v mládeži je o 42 % hráčov viac než v 2014/2015.
-8. **08** Zanikanie a vznikanie klubov po sezónach: 468 zaniknutých oproti 180 novým za deväť
-   sezón.
+8. **08** Zanikanie a vznikanie klubov po sezónach: 468 klubov prestalo hrať a 180 začalo za
+   deväť sezón; časť z toho je ten istý klub s novým IČO.
 9. **09** Čo kluby naozaj ničí — náš pohľad, nie údaj z portálu: mestá a obce, štát, komerční
    partneri, tréneri, infraštruktúra, demografia a záujem.
 10. **10** Jedna vec, ktorá sa zamlčuje: náklady na delegované osoby v mládežníckych súťažiach

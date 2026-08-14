@@ -380,6 +380,28 @@ hoci klub ďalej hrá s deťmi.
 nedokážu):** zaniklo **468** klubov (44 – 65 za sezónu), vzniklo **180** (10 – 32 za sezónu) —
 na jeden nový klub takmer tri zaniknuté a pomer sa nezmenšuje.
 
+**Kontrola definície (14. 8. 2026).** V okne 2014/2015 – 2025/2026 odohralo aspoň jednu sezónu
+**1 989 klubov**, v sezóne 2025/2026 hrá **1 406**; rozdiel **583** sú všetky definitívne
+odchody v okne. Nie je to odhad, je to odčítanie — a rovná sa známemu čistému úbytku
+(1 714 → 1 406, teda −308 = 583 odchodov mínus 275 príchodov). Dieru v histórii (nehral,
+neskôr sa vrátil) má **137 klubov z 1 989**, väčšinou jednosezónnu (87 prípadov). Pravdepodobnosť,
+že sa „zaniknutý“ klub ešte vráti, klesá s dĺžkou absencie: po jednej chýbajúcej sezóne 19,7 %,
+po dvoch 9,4 %, po troch 6,6 %. Preto sú dve najnovšie kohorty (2023/2024: 54, 2024/2025: 44)
+provizórne. Na miery odchodu to nemá vplyv — na skrátenom okne po 2022/2023 vychádza 8,0 %
+oproti 2,0 %.
+
+**Pozor — nový subjekt v ISSF nie je nový klub.** Pri novej registrácii (transformácia na s. r. o.,
+zmena právnej formy, premenovanie so novou registráciou) založí ISSF **nové organization ID
+a väzbu na predchodcu nenesie**. Ten istý reálny klub sa preto v tokoch objaví raz ako zánik
+a raz ako vznik. Párovaním podľa normalizovaného názvu je nameraných **aspoň 41 takých párov** —
+`MFK Dolný Kubín` → `MFK Dolný Kubín, s. r. o.`, `Futbalový klub Humenné` → `… s. r. o.`,
+`FK Senica` → `Futbalový klub Senica`, `TJ Fatran Varín` → `FK Fatran Varín`, `OTJ - Banka` →
+`FC Banka`. Je to **dolná hranica** (premenované kluby párovanie nenájde), takže **583, resp. 468
+je horná hranica odchodov** a 275, resp. 180 horná hranica vzniknutých klubov. Miery odchodu
+7,9 % / 2,1 % ani čistý úbytok klubov to neskresľuje — ten sa meria na stavoch, nie na tokoch.
+Správne riešenie je príznak právneho nástupcu v ISSF; žiadosť je v [TODO](TODO.md). Do
+`data/zanikanie.json` sa žiadne párovanie **nepublikuje** — heuristika sa nemieša s meraním.
+
 Analýza v plnom znení vrátane tabuliek po sezónach: `claude/analyza-zanikanie-klubov.md`.
 **Príčiny** úbytku (demografia, verejné zdroje miest a obcí, podmienky pre trénerov, komerční
 partneri) v dátach **nie sú** — portál meria stavy a pohyby, nie dôvody. Kde sa uvádzajú

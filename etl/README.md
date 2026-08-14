@@ -50,6 +50,7 @@ vygenerované JSON**. Druhá skupina je rýchla a dá sa púšťať opakovane be
 | `index_klubu.py` | `data/index-klubu/`, `data/index-klubu.json` | Index klubu (0–100) z piatich zložiek. Beží **nad výstupmi `trendy.py`**, do DB nesiaha |
 | `kluby_zvazy.py` | `data/zvaz/**/*.json` (dopĺňa blok) | Vloží blok **Počet klubov** z `data/kluby/{sezona}.json` do už vygenerovaných profilov zväzov. Bez databázy — vďaka tomu blok prežije aj samostatný beh `run.py` pre jeden zväz. `--doplnit` |
 | `zanikanie.py` | `data/zanikanie.json` | **Zánik a vznik klubov** po sezónach a miery definitívneho odchodu podľa toho, či klub má mládež. Beží nad `data/klub/`, do DB nesiaha. Koniec v súťažiach dospelých **nie je** zánik, pokiaľ klub má mládež. Vylučuje sezóny nábehu ISSF a prebiehajúcu sezónu |
+| `kontrola_zanikania.py` | (nezapisuje) | **Kontrola definície zániku** — uzávierka (klubov v okne − odchody = klubov v poslednej sezóne), diery a návratnosť (aká je pravdepodobnosť, že sa „zaniknutý“ klub ešte vráti) a kandidáti na **právneho nástupcu** (nový subjekt v ISSF nie je nutne nový klub). Párovanie názvov je heuristika a do publikovaných dát nevstupuje |
 | `kontrola_skupin.py` | (nezapisuje) | Overuje invarianty metriky **skupiny** nad `data/` — `skupiny >= sutaze` v každom reze, súčet cez úrovne = `kpi.skupiny`, porovnania nesú `skupiny`. Nenulový exit pri chybe. Pusti po každom behu, ktorý sa dotýka počtov súťaží |
 
 ### Orchestrácia
@@ -93,6 +94,7 @@ python etl/index_klubu.py --sezona-prehladu 2025/2026
 bash   etl/prepocet.sh 2025/2026
 python etl/kluby_zvazy.py --doplnit                                    # blok Počet klubov do profilov zväzov
 python etl/zanikanie.py                                                # zánik/vznik klubov, bez DB
+python etl/kontrola_zanikania.py                                       # diagnostika definície zániku
 python etl/kontrola_skupin.py                                          # po behu: invarianty skupín
 ```
 
