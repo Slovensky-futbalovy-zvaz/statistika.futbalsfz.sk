@@ -103,11 +103,25 @@ Tri veci, ktoré treba pri tomto čísle vedieť:
 - **Sezóny 2012/2013 a 2013/2014 sú roky nábehu ISSF** — evidencia v nich nie je úplná, preto sú
   v grafoch šrafované; rovnako šrafovaná je prebiehajúca sezóna.
 
-**Zanikanie klubov** ([`etl/zanikanie.py`](etl/zanikanie.py) → `data/zanikanie.json`) beží offline
-nad artefaktmi v `data/klub/`, teda nad tou istou definíciou klubu ako blok Počet klubov.
-Zásadné pravidlo: **koniec klubu v súťažiach dospelých nie je zánik klubu, pokiaľ má mládež.**
-Namerané: klub bez mládeže prestáva hrať v 7,9 % sezón, klub s mládežou v 2,1 %. Metodika a čísla
-sú v [docs/metodika.md](docs/metodika.md), kapitola „Zanikanie klubov“.
+## Zanikanie klubov
+
+> **Za zaniknutý klub sa považuje klub, ktorý dva roky po sebe neprihlási do súťaže žiadne
+> družstvo** (rozhodnutie Ján Letko, 15. 8. 2026).
+
+Táto definícia je záväzná pre ETL, portál aj komunikáciu. Tri veci, ktoré z nej plynú:
+
+- **koniec v súťažiach dospelých nie je zánik**, pokiaľ klub má mládež;
+- **postup do vyššej ani zostup do nižšej súťaže nie je zánik** — aktivita sa posudzuje na celom
+  Slovensku, nie vo zväze (domovský zväz sa mení pri 8,8 % dvojíc po sebe idúcich sezón; keby sa
+  aktivita merala po zväzoch, vzniklo by 658 falošných zánikov);
+- **jednosezónna pauza nie je zánik** — po nej sa ešte vracia každý piaty klub, po dvoch už len
+  necelá desatina.
+
+Počíta to [`etl/zanikanie.py`](etl/zanikanie.py) → `data/zanikanie.json` (offline nad
+`data/klub/`, bez databázy), overuje [`etl/kontrola_zanikania.py`](etl/kontrola_zanikania.py).
+Namerané za obdobie 2014/2015 – 2023/2024: **595 zaniknutých klubov**, miera **8,8 %** za sezónu
+pri klube bez mládeže oproti **2,3 %** pri klube s mládežou. Zobrazené v sekcii Zanikanie klubov
+na `/trendy`, metodika v [docs/metodika.md](docs/metodika.md).
 
 ## Kľúčové dokumenty
 

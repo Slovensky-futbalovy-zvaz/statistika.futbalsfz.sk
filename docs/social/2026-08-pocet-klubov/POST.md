@@ -1,19 +1,23 @@
 > ## ⚠️ Pred publikovaním (14. 8. 2026)
 >
+> - **Definícia zániku (Ján Letko, 15. 8. 2026): klub, ktorý dva roky po sebe neprihlási do
+>   súťaže žiadne družstvo.** Koniec v súťažiach dospelých zánik nie je, pokiaľ klub má mládež,
+>   a postup do vyššej ani zostup do nižšej súťaže zánik nie je vôbec — aktivita sa posudzuje
+>   celoslovensky, nie vo zväze. Čísla prepočítané 15. 8. 2026 podľa tejto definície.
 > - **Čísla sú exaktné**, spočítané skriptom `etl/zanikanie.py` nad publikovanými klubovými
 >   artefaktmi, teda nad rovnakou definíciou, akú má blok Počet klubov na portáli. Výstup je
 >   v `data/zanikanie.json`, metodika v `claude/analyza-zanikanie-klubov.md`.
 > - **Do analýzy nevstupujú** sezóny **2012/2013 a 2013/2014** (nábeh ISSF, evidencia nebola
->   úplná) ani **prebiehajúca 2026/2027** (súťaže sa ešte len začínajú). Posledná hodnotená
->   sezóna 2024/2025 je provizórna — klub sa ešte môže vrátiť.
+>   úplná), **prebiehajúca sezóna** ani **posledné dve sezóny** — za nimi ešte nie sú dva roky,
+>   ktoré definícia vyžaduje. Hodnotiteľné obdobie je **2014/2015 – 2023/2024**.
 > - **Príčiny úbytku (demografia, verejné zdroje, podmienky pre trénerov, komerční partneri) sú
 >   POSTOJ SFZ, nie zistenie z dát.** V texte sú zámerne oddelené od číselnej časti — portál
 >   meria stavy a pohyby, nie dôvody.
 > - **Časť „zánikov“ a „vznikov“ je ten istý klub s novým IČO.** Pri novej registrácii založí ISSF
 >   nový subjekt a väzbu na predchodcu nenesie, takže ETL to spojiť nedokáže. Párovaním podľa
 >   názvu je nameraných **aspoň 41 takých párov** (`MFK Dolný Kubín` → `MFK Dolný Kubín, s. r. o.`,
->   `FK Senica` → `Futbalový klub Senica`, `TJ Fatran Varín` → `FK Fatran Varín`…). **468 je preto
->   horná hranica** odchodov a 180 horná hranica vzniknutých klubov; čistý úbytok klubov to
+>   `FK Senica` → `Futbalový klub Senica`, `TJ Fatran Varín` → `FK Fatran Varín`…). **461 je preto
+>   horná hranica** zánikov a 158 horná hranica vzniknutých klubov; čistý úbytok klubov to
 >   neovplyvňuje, ten sa meria na stavoch, nie na tokoch. Výhrada je aj na snímke 08.
 > - **Rozpad na mládež a dospelých pred sezónou 2024/2025** sa opiera o vekovú kategóriu časti
 >   súťaže (`teams.ageCategory` je vyplnené až od 2024/2025). Trend je spoľahlivý v smere
@@ -44,7 +48,7 @@
 > Obrázky sú v tomto priečinku (`01`–`12`), pre LinkedIn je lepšie nahrať
 > `pocet-klubov-linkedin-carousel.pdf` ako dokument než 12 samostatných obrázkov.
 > **Plný text nižšie sa na LinkedIn nezmestí** — preto tá skrátená verzia; vypadli z nej
-> odstavce, ktoré sú aj tak na snímkach (hráči po kategóriách, toky 468 : 180 a 550 : 482,
+> odstavce, ktoré sú aj tak na snímkach (hráči po kategóriách, toky 461 : 158 a 550 : 482,
 > starnutie a Index klubu).
 
 **Kanály:** LinkedIn SFZ, Facebook SFZ
@@ -79,17 +83,17 @@ teda 83 % všetkých aktívnych**.
 
 **Mládež je to, čo klub drží nad vodou.** Toto je najdôležitejšie číslo celej analýzy. Keď sme
 spočítali, ktoré kluby definitívne prestali hrať, klub **bez mládeže mal takmer štyrikrát
-vyššiu pravdepodobnosť, že zanikne** — 7,9 % za sezónu oproti 2,1 % u klubu, ktorý mládež má.
+vyššiu pravdepodobnosť, že zanikne** — 8,8 % za sezónu oproti 2,3 % u klubu, ktorý mládež má.
 
 **A späť k úvodnej vete.** Ak má klub mládež, klub žije — aj keď v tabuľke dospelých už nie je.
 V dátach je takých prípadov **220**: klub prestal hrať dospelú súťaž a s deťmi pokračuje.
 V debate o „zanikajúcich kluboch“ sa pritom počíta práve len áčko.
 
-**Nové kluby pritom vznikajú — len ich je málo.** Za posledných deväť sezón prestalo hrať 468
-klubov a 180 začalo. Na jeden nový klub tak pripadajú takmer tri zaniknuté a tento rozdiel sa
-nezmenšuje. Poctivo treba dodať, že časť z toho je ten istý klub s novým IČO — pri novej
+**Nové kluby pritom vznikajú — len ich je málo.** Za posledných osem hodnotených sezón zaniklo
+461 klubov a 158 začalo. Na jeden nový klub tak pripadajú takmer tri zaniknuté a tento rozdiel
+sa nezmenšuje. Poctivo treba dodať, že časť z toho je ten istý klub s novým IČO — pri novej
 registrácii vznikne v ISSF nový subjekt a väzbu na predchodcu systém nenesie. Nameraných je
-aspoň 41 takých párov, 468 je preto horná hranica.
+aspoň 41 takých párov, 461 je preto horná hranica.
 
 A ešte jeden pohyb, ktorý sa nespomína: **550-krát** si klub, ktorý mal len dospelých, pridal
 mládežnícke družstvo. Opačným smerom, teda stratou mládeže, to bolo **482-krát**. Pridávanie
@@ -129,9 +133,11 @@ rozhodcov a delegátov, nie pre aparát.
 okrem dospelých. Do počtu vstupujú len regulárne súťaže riadené slovenskými zväzmi — školské
 a výberové turnaje nie, Vysokoškolská liga áno. Klub hrajúci v súťažiach viacerých zväzov je
 započítaný v každom z nich, preto je súčet po zväzoch vyšší než celoslovenské číslo. Za
-zaniknutý klub považujeme klub, ktorý odohral svoju poslednú sezónu a odvtedy nehral už nikdy —
-nie klub, ktorý si dal jednu sezónu pauzu. Sezóny 2012/2013 a 2013/2014 do analýzy nevstupujú,
-bol to nábeh ISSF; prebiehajúca sezóna tiež nie, tá sa ešte len rozohráva.
+zaniknutý klub považujeme klub, ktorý **dva roky po sebe neprihlási do súťaže žiadne družstvo** —
+jedna sezóna pauzy zánik nie je a postup do vyššej či zostup do nižšej súťaže už vôbec nie,
+aktivitu klubu sledujeme na celom Slovensku, nie vo zväze. Sezóny 2012/2013 a 2013/2014 do
+analýzy nevstupujú, bol to nábeh ISSF; prebiehajúca sezóna tiež nie a posledné dve sezóny sa
+hodnotiť nedajú, lebo za nimi ešte nie sú dva roky.
 
 Celá metodika je na portáli v sekcii Dokumentácia. Dáta pochádzajú z ISSF, portál je verejne
 dostupný a bezplatný.
@@ -184,9 +190,9 @@ Medziročne 2024/2025 → 2025/2026: **−11 klubov** (1 417 → 1 406). Futsal 
 
 | Ukazovateľ | Hodnota |
 |---|---|
-| Miera definitívneho odchodu — klub **bez mládeže** | **7,9 %** za sezónu (281 z 3 554 klubo-sezón) |
-| Miera definitívneho odchodu — klub **s mládežou** | **2,1 %** za sezónu (258 z 12 365) |
-| Definitívne odchody spolu | 539 |
+| Miera zániku — klub **bez mládeže** | **8,8 %** za sezónu (314 z 3 554 klubo-sezón) |
+| Miera zániku — klub **s mládežou** | **2,3 %** za sezónu (281 z 12 365) |
+| Zaniknutých spolu | 595 (z toho 56 sa po dvoch tichých sezónach vrátilo) |
 | Klub pridal mládež (len dospelí → dospelí + mládež) | **550** |
 | Klub stratil mládež (dospelí + mládež → len dospelí) | 482 |
 | Klub stratil dospelých, mládež si udržal | **220** |
@@ -202,12 +208,12 @@ Medziročne 2024/2025 → 2025/2026: **−11 klubov** (1 417 → 1 406). Futsal 
 | Medián Indexu klubu | **66 bodov** (priemer 59, kvartily 41 / 66 / 86) |
 | Klubov nad 76 bodov / s nulou | 539 / 239 |
 
-### Zanikanie a vznikanie klubov (2016/2017 – 2024/2025)
+### Zanikanie a vznikanie klubov (2016/2017 – 2023/2024)
 
 | Ukazovateľ | Hodnota |
 |---|---|
-| Zaniklo klubov | **468** (44 – 65 za sezónu) — horná hranica |
-| Vzniklo nových klubov | **180** (10 – 32 za sezónu) — horná hranica |
+| Zaniklo klubov | **461** (47 – 69 za sezónu) — horná hranica |
+| Vzniklo nových klubov | **158** (10 – 32 za sezónu) — horná hranica |
 | Z toho preukázateľne ten istý klub s novým IČO | aspoň **41** párov |
 | Pomer | na jeden nový klub takmer **tri zaniknuté** |
 
@@ -216,8 +222,8 @@ Medziročne 2024/2025 → 2025/2026: **−11 klubov** (1 417 → 1 406). Futsal 
 ## Alt texty k snímkam (prístupnosť)
 
 1. **01** Titulná snímka: „Prečo sa stále bavíme len o súťažiach dospelých? Lebo tam je najviac
-   hluku — a najmenej budúcnosti.“ plus dve čísla: klub bez mládeže zanikne v 7,9 % sezón, klub
-   s mládežou v 2,1 %.
+   hluku — a najmenej budúcnosti.“ plus dve čísla: klub bez mládeže zanikne v 8,8 % sezón, klub
+   s mládežou v 2,3 %.
 2. **02** Karta Počet klubov z úvodnej stránky: 1 406 aktívnych klubov, 1 167 s mládežou (83 %),
    239 bez mládeže (17 %).
 3. **03** Stĺpcový graf počtu klubov po sezónach od 2012/2013 po 2025/2026; šrafované stĺpce sú
@@ -225,13 +231,13 @@ Medziročne 2024/2025 → 2025/2026: **−11 klubov** (1 417 → 1 406). Futsal 
 4. **04** Stav klubov v sezónach 2015/2016 a 2025/2026: bez mládeže 461 → 239, len mládež
    65 → 143.
 5. **05** Skutočné pohyby klubov: 550× klub pridal mládež, 482× ju stratil, 220× skončil
-   v dospelých a mládež si udržal; úplne zaniklo 539 klubov.
-6. **06** Miera zániku: klub bez mládeže 7,9 % za sezónu, klub s mládežou 2,1 % — takmer
+   v dospelých a mládež si udržal; úplne zaniklo 595 klubov.
+6. **06** Miera zániku: klub bez mládeže 8,8 % za sezónu, klub s mládežou 2,3 % — takmer
    štyrikrát menej.
 7. **07** Pätnásťročný trend hráčov: dospelí a dorast klesajú, žiaci a prípravky rastú;
    v mládeži je o 42 % hráčov viac než v 2014/2015.
-8. **08** Zanikanie a vznikanie klubov po sezónach: 468 klubov prestalo hrať a 180 začalo za
-   deväť sezón; časť z toho je ten istý klub s novým IČO.
+8. **08** Zanikanie a vznikanie klubov po sezónach: 461 klubov zaniklo a 158 začalo za osem
+   sezón; časť z toho je ten istý klub s novým IČO.
 9. **09** Čo kluby naozaj ničí — náš pohľad, nie údaj z portálu: mestá a obce, štát, komerční
    partneri, tréneri, infraštruktúra, demografia a záujem.
 10. **10** Jedna vec, ktorá sa zamlčuje: náklady na delegované osoby v mládežníckych súťažiach

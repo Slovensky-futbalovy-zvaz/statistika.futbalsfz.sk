@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 """Kontrola definície zániku klubu — diagnostika, nič nezapisuje.
 
-Zadanie Ján Letko (14. 8. 2026): „nedá mi to zanikanie klubov, naozaj toľko klubov zaniklo?“
-Tento skript odpovedá tromi meraniami nad tými istými artefaktmi, nad ktorými beží
-`etl/zanikanie.py` (`data/klub/{klub}/{sezona}.json`), takže sa dá kedykoľvek zopakovať:
+ZÁVÄZNÁ DEFINÍCIA (Ján Letko, 15. 8. 2026): za zaniknutý klub sa považuje klub, ktorý DVA ROKY
+PO SEBE neprihlási do súťaže žiadne družstvo. Postup do vyššej ani zostup do nižšej súťaže nie
+je zánik — aktivita sa posudzuje na celom Slovensku, nie vo zväze.
 
-1. **Uzávierka.** Koľko klubov v okne vôbec hralo, koľko hrá v poslednej sezóne a či rozdiel
-   sedí na súčet odchodov. Ak sedí, číslo zánikov nie je odhad, je to odčítanie.
-2. **Diery a návratnosť.** Koľko klubov si dalo pauzu a vrátilo sa, a aká je pravdepodobnosť,
-   že sa „zaniknutý“ klub ešte vráti — podľa toho, koľko sezón už nehral. Z toho vidno, ktoré
-   kohorty sú definitívne a ktoré provizórne.
-3. **Kandidáti na právneho nástupcu.** Nový subjekt v ISSF nie je nutne nový klub — pri novej
+Skript beží nad tými istými artefaktmi ako `etl/zanikanie.py` (`data/klub/{klub}/{sezona}.json`)
+a overuje štyri veci:
+
+1. **Uzávierka.** Koľko klubov v okne vôbec hralo a koľko hrá v poslednej sezóne. Rozdiel musí
+   sedieť na počet klubov, ktoré do konca okna už nenastúpili — vtedy nie je číslo odhad, ale
+   odčítanie. Vedľa neho stojí počet podľa definície (dve tiché sezóny), ktorý je vyšší o kluby,
+   čo sa po dlhšej pauze ešte vrátili.
+2. **Diery a návratnosť.** Koľko klubov si dalo pauzu a vrátilo sa. Toto je priame overenie
+   dvojsezónneho pravidla: po jednej vynechanej sezóne sa vracia každý piaty klub, po dvoch už
+   len necelá desatina.
+3. **Postupy a zostupy.** Ako často klub zmení domovský zväz. Sú to presuny medzi úrovňami
+   súťaží, nie zániky — kontrola ukáže, že ani jeden z nich sa ako zánik nezapočítal.
+4. **Kandidáti na právneho nástupcu.** Nový subjekt v ISSF nie je nutne nový klub — pri novej
    registrácii (napr. transformácia na s. r. o.) vznikne nové organization ID bez väzby na
    predchodcu. Párovanie podľa normalizovaného názvu dá DOLNÚ hranicu takých prípadov.
 
@@ -73,6 +80,10 @@ def nazov(p: Path) -> str:
     return d.get("nazov") or d.get("name") or ""
 
 
+def zvaz_v_sezone(p: Path) -> str | None:
+    return json.load(open(p, encoding="utf-8")).get("zvaz")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(REPO / "data"))
@@ -96,6 +107,16 @@ def main() -> int:
     posl = sum(1 for v in kluby.values() if posledna in v)
     odchody = sum(1 for v in kluby.values() if v[-1] < posledna)
     prichody = sum(1 for v in kluby.values() if v[0] > 0)
+    # podľa definície: dve tiché sezóny po sebe, hodnotiteľné sú sezóny 0 .. posledna-2
+    podla_def = 0
+    obnovene = 0
+    for v in kluby.values():
+        aktiv = set(v)
+        for i in v:
+            if i <= posledna - 2 and (i + 1) not in aktiv and (i + 2) not in aktiv:
+                podla_def += 1
+                if any(j > i + 2 for j in v):
+                    obnovene += 1
     print(f"\n1. UZÁVIERKA\n   klubov v okne: {len(kluby)}"
           f"\n   hralo v {okno[0]}: {prva} | hrá v {okno[-1]}: {posl}"
           f"\n   definitívnych odchodov: {odchody} | príchodov: {prichody}")
@@ -103,6 +124,8 @@ def main() -> int:
           f" (má byť {posl}) → {'OK' if len(kluby) - odchody == posl else 'NESEDÍ'}")
     print(f"   kontrola: {prva} − {odchody} + {prichody} = {prva - odchody + prichody}"
           f" (má byť {posl}) → {'OK' if prva - odchody + prichody == posl else 'NESEDÍ'}")
+    print(f"   podľa definície (2 tiché sezóny): {podla_def} zaniknutých,"
+          f" z toho {obnovene} sa neskôr ešte vrátilo")
 
     # 2. diery a návratnosť
     s_dierou = 0
@@ -140,7 +163,40 @@ def main() -> int:
     print("   posledné dve kohorty sú preto provizórne: "
           + ", ".join(f"{s}: {kohorty[s]}" for s in okno[posledna - 2:posledna]))
 
-    # 3. kandidáti na právneho nástupcu
+    # 3. postupy a zostupy — nesmú sa počítať ako zánik
+    zmien = 0
+    dvojic = 0
+    so_zmenou = 0
+    falosne = 0
+    for k, v in kluby.items():
+        poradia = sorted(v)
+        zmenil = False
+        for a, b in zip(poradia, poradia[1:]):
+            za = zvaz_v_sezone(vsetko[k][okno[a]])
+            zb = zvaz_v_sezone(vsetko[k][okno[b]])
+            dvojic += 1
+            if za != zb:
+                zmien += 1
+                zmenil = True
+                # klub hral aj v nasledujúcej sezóne, takže zánik to nie je ani náhodou
+                if b - a == 1 and any(j > b for j in poradia):
+                    pass
+        so_zmenou += zmenil
+    # falošný zánik by vznikol len vtedy, keby sa aktivita posudzovala po zväzoch
+    for k, v in kluby.items():
+        poradia = sorted(v)
+        for i in poradia[:-1]:
+            z = zvaz_v_sezone(vsetko[k][okno[i]])
+            dalsie = [j for j in poradia if j > i]
+            if dalsie and all(zvaz_v_sezone(vsetko[k][okno[j]]) != z for j in dalsie):
+                falosne += 1
+    print(f"\n3. POSTUPY A ZOSTUPY\n   zmien domovského zväzu: {zmien} z {dvojic} dvojíc sezón"
+          f" = {100.0 * zmien / dvojic:.1f} % | týka sa {so_zmenou} klubov z {len(kluby)}")
+    print(f"   klub definitívne opustil súťaže svojho zväzu, ale hrá ďalej inde: {falosne}×")
+    print("   → ani jeden z nich nie je zánik; keby sa aktivita posudzovala po zväzoch,"
+          " boli by to falošné zániky")
+
+    # 4. kandidáti na právneho nástupcu
     mrtvi = collections.defaultdict(list)
     for k, v in kluby.items():
         if v[-1] < posledna:
@@ -157,7 +213,7 @@ def main() -> int:
         for k2, i2, nz2 in mrtvi.get(n, []):
             if k2 != k and v[0] >= i2:      # nástupca sa objavil až po odchode predchodcu
                 pary.append((nz2, okno[i2], nazov(vsetko[k][s]), s))
-    print(f"\n3. KANDIDÁTI NA PRÁVNEHO NÁSTUPCU (dolná hranica): {len(pary)}")
+    print(f"\n4. KANDIDÁTI NA PRÁVNEHO NÁSTUPCU (dolná hranica): {len(pary)}")
     for a, sa, b, sb in pary[: args.priklady]:
         print(f"   {a!r} ({sa}) → {b!r} ({sb})")
     print(f"\n   → odchodov {odchody} je HORNÁ hranica, príchodov {prichody} tiež."

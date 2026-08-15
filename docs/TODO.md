@@ -37,10 +37,10 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
   publikovaných dát nedávame.
 - [ ] **Odoslať podklady Bart.sk** pre produkčný beh — [draft](archiv/podklady-bart-produkcny-beh.md).
 - [ ] **Nahlásiť chybný záznam divákov** — [draft](sportnet-nahlasenie-divaci.md).
-- [x] ~~**Sociálny post „Počet klubov“ na publikovanie**~~ Schválené a odovzdané 15. 8. 2026.
-  Podklady na priame vloženie sú v [docs/social/2026-08-pocet-klubov/na-publikovanie/](social/2026-08-pocet-klubov/na-publikovanie/)
-  (LinkedIn skrátená verzia do 3 000 znakov, Facebook plná verzia, alt texty). Samotné
-  zverejnenie je ručný krok — portál ani repozitár na sociálne siete nepublikuje.
+- [ ] **Sociálny post „Počet klubov“ na publikovanie** — text, 12 vizuálov a PDF carousel sú
+  hotové v [docs/social/2026-08-pocet-klubov/](social/2026-08-pocet-klubov/). Pred zverejnením
+  potrebuje schválenie snímky 09 (príčiny úbytku — je to **postoj SFZ**, nie údaj z portálu)
+  a snímky 10 (financovanie delegovaných osôb).
 
 ## Dáta a ETL
 
@@ -111,9 +111,16 @@ a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
   súťaže dospelých, takže na začiatku sezóny vyzerá, že klubov s mládežou je málo. Do analýzy
   zanikania prebiehajúca sezóna nevstupuje vôbec — inak by 501 klubov, ktoré len čakajú na
   štart svojej súťaže, vyšlo ako zaniknuté.
+- **Zaniknutý klub = dva roky po sebe bez prihláseného družstva** (rozhodnutie Ján Letko,
+  15. 8. 2026). Postup do vyššej ani zostup do nižšej súťaže zánik NIE JE — aktivita sa posudzuje
+  celoslovensky, nie po zväzoch; inak by vzniklo 658 falošných zánikov. Rebríček zväzov sa preto
+  robí podľa podielu na všetkých zánikoch v SR, nie podľa úbytku klubov vo zväze. Podrobne
+  v [metodike](metodika.md), kap. „ZANIKANIE KLUBOV“.
 - **Toky klubov (zánik/vznik) sú horná hranica.** Nový subjekt v ISSF nie je nutne nový klub —
-  aspoň 41 z nameraných párov je ten istý klub s novým IČO. Stavy klubov a miery odchodu to
+  aspoň 41 z nameraných párov je ten istý klub s novým IČO. Stavy klubov a miery zániku to
   neskresľuje, toky áno.
+- **56 z 595 zaniknutých klubov sa po dvoch tichých sezónach ešte vrátilo.** Podľa definície
+  zostávajú zaniknuté; ich návrat sa nepočíta ako nový klub. Uvedené je to aj na portáli.
 - **Súčet klubov po zväzoch je vyšší než celoslovenské číslo** — klub je započítaný v každom
   zväze, v ktorého súťaži hral. Sčítateľné číslo je `podlaDomovskehoZvazu`.
 - **Prvých päť sezón Indexu klubu nie je porovnateľných** — zložka kontinuity dáva plných 15
@@ -134,6 +141,7 @@ a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
 
 | Kedy | Čo |
 |---|---|
+| 15. 8. 2026 | **Zanikanie klubov** — záväzná definícia (dva roky bez družstva; postup/zostup nie je zánik), rez po zväzoch v rámci SR a po obdobiach, sekcia na `/trendy`, `etl/kontrola_zanikania.py`; prepočet oboch sociálnych postov |
 | 14. 8. 2026 | **Počet klubov** — nový blok na úvode, na profiloch zväzov, v Porovnaniach a v sunburste; KPI dlaždice Kluby a Kluby — futsal; filter neregulárnych súťaží (`etl/kluby.py`, `etl/kluby_zvazy.py`, číselník); šrafované sezóny nábehu ISSF; **`etl/zanikanie.py`** — zánik klubov s mládežou vs. bez mládeže; sociálny post s 12 vizuálmi a PDF carouselom |
 | 10. 8. 2026 | Jednotné kontextové popisky vo všetkých grafoch + podpora dotyku |
 | 8.–9. 8. 2026 | Súťažné skupiny ako druhá metrika počtu súťaží; `etl/kontrola_skupin.py`; vývoj Indexu klubu po zväzoch; upratanie dokumentácie |

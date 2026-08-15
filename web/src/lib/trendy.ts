@@ -67,27 +67,39 @@ export function getIndexPrehlad(): IndexPrehlad | undefined {
  * aby sa dalo porovnať napríklad 7. ligu naprieč ObFZ. Úrovne sú naprieč sezónami
  * stabilné, na rozdiel od názvov súťaží.
  */
-/** Zanikanie a vznikanie klubov (data/zanikanie.json, vyrába etl/zanikanie.py). */
+/** Zanikanie a vznikanie klubov (data/zanikanie.json, vyrába etl/zanikanie.py).
+ *
+ * Definícia (Ján Letko, 15. 8. 2026): zaniknutý klub je klub, ktorý dva roky po sebe neprihlási
+ * do súťaže žiadne družstvo. Postup ani zostup nie je zánik — aktivita sa posudzuje celoslovensky.
+ */
 export interface Zanikanie {
   generatedAt: string;
+  definicia: string;
   sezony: string[];
-  obdobie: string[];
-  vynechane: { nabehISSF: string[]; prebiehajuca: string };
+  hodnotitelne: string[];
+  tichoSezon: number;
+  vynechane: { nabehISSF: string[]; prebiehajuca: string; bezNasledujucich: string[] };
   zanik: Record<string, Record<string, number>>;
+  jednosezonnaPauza: Record<string, number>;
+  obnovene: Record<string, number>;
+  obnovenychSpolu: number;
   prislo: Record<string, Record<string, number>>;
-  miery: Record<string, { klubosezon: number; odchodov: number; miera: number | null }>;
+  miery: Record<string, { klubosezon: number; zanikov: number; miera: number | null }>;
+  zanikovSpolu: number;
   zvazy: Record<string, {
     nazov: string; uroven?: string | null;
-    odchody: number; klubosezony: number; miera: number | null; prichody: number;
-    poObdobiach: Record<string, number>;
-    klubovPrva: number; klubovPosledna: number; zmena: number; zmenaPct: number | null;
-    poSezonach: Record<string, number>;
+    zanikov: number; podielSR: number | null; klubosezony: number; miera: number | null;
+    prichody: number; poObdobiach: Record<string, number>;
+    klubovVSutaziachZvazu: Record<string, number>;
   }>;
   poObdobiach: Record<string, {
-    sezon: number; sezonPrichodov: number; odchody: number; prichody: number;
-    odchodovNaSezonu: number | null; prichodovNaSezonu: number | null;
+    sezon: number; sezonPrichodov: number; zanikov: number; prichody: number;
+    zanikovNaSezonu: number | null; prichodovNaSezonu: number | null;
   }>;
-  poznamka: string;
+  presunyMedziZvazmi: {
+    zmien: number; dvojicSezon: number; podiel: number | null; klubovSoZmenou: number;
+    poznamka: string;
+  };
 }
 
 export function getZanikanie(): Zanikanie | undefined {

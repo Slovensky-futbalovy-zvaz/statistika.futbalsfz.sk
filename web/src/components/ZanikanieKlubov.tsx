@@ -6,39 +6,39 @@ export interface ZanikZvaz {
   id: string;
   nazov: string;
   uroven?: string | null;
-  odchody: number;
+  zanikov: number;
+  podielSR: number | null;
   klubosezony: number;
   miera: number | null;
   prichody: number;
   poObdobiach: Record<string, number>;
-  klubovPrva: number;
-  klubovPosledna: number;
-  zmena: number;
-  zmenaPct: number | null;
 }
 
 export interface ZanikObdobie {
   nazov: string;
   sezon: number;
   sezonPrichodov: number;
-  odchody: number;
+  zanikov: number;
   prichody: number;
-  odchodovNaSezonu: number | null;
+  zanikovNaSezonu: number | null;
   prichodovNaSezonu: number | null;
 }
 
 interface Props {
-  /** Sezóny okna (bez nábehu ISSF a bez prebiehajúcej). */
-  sezony: string[];
-  /** Odchody a príchody po sezónach — [sezona, odchodov, prichodov]. */
+  /** Zaniknuté a nové kluby po sezónach — [sezona, zaniklo, vzniklo]. */
   toky: [string, number, number][];
   zvazy: ZanikZvaz[];
   obdobia: ZanikObdobie[];
-  /** Prvá a posledná sezóna, z ktorých sa počíta stĺpec Zmena. */
-  oknoStavu: [string, string];
+  /** Prvá a posledná hodnotiteľná sezóna. */
+  okno: [string, string];
+  /** Zaniknutých spolu a z toho tí, čo sa po dvoch tichých sezónach vrátili. */
+  spolu: number;
+  obnovenych: number;
+  /** Presuny medzi zväzmi — dôkaz, že postup ani zostup nie je zánik. */
+  presuny: { zmien: number; dvojicSezon: number; podiel: number | null; klubovSoZmenou: number };
 }
 
-type Metrika = 'miera' | 'zmena';
+type Metrika = 'podiel' | 'miera';
 
 /** „2016/2017“ → „16/17“ — na os sa celé sezóny nezmestia. */
 const kratka = (s: string): string => `${s.slice(2, 4)}/${s.slice(7, 9)}`;
@@ -48,25 +48,27 @@ const VZNIK = '#12a06b';
 const STRANA = 15;
 
 /**
- * Zanikanie klubov — kde a kedy (zadanie Ján Letko, 15. 8. 2026).
+ * Zanikanie klubov — kde a kedy.
  *
- * Dve veci, ktoré musia byť v jednom pohľade, lebo samostatne klamú:
- * 1. TOKY po sezónach — koľko klubov definitívne prestalo hrať a koľko začalo. Bez druhého
- *    stĺpca to vyzerá, že futbal sa rúca; v skutočnosti sa zlomil prítok nových klubov,
- *    tempo odchodov je celé obdobie takmer rovnaké.
- * 2. REBRÍČEK ZVÄZOV s dvoma metrikami. Miera odchodu je porovnateľná medzi veľkými
- *    a malými zväzmi, absolútny úbytok je zrozumiteľnejší — preto sú obe vedľa seba
- *    a používateľ prepína (rovnaký prístup ako pri metrike súťaže/skupiny).
+ * ZÁVÄZNÁ DEFINÍCIA (Ján Letko, 15. 8. 2026): zaniknutý klub je klub, ktorý DVA ROKY PO SEBE
+ * neprihlási do súťaže žiadne družstvo. Koniec v dospelých nie je zánik, pokiaľ klub má mládež,
+ * a POSTUP ANI ZOSTUP NIE JE ZÁNIK — aktivita sa posudzuje celoslovensky, nie vo zväze.
+ *
+ * Rebríček zväzov sa vyhodnocuje V RÁMCI CELÉHO SLOVENSKA: hlavná metrika je podiel zväzu na
+ * všetkých zaniknutých kluboch v SR. Miera vo zväze stojí vedľa nej, lebo veľký zväz má
+ * prirodzene vyšší podiel a malý zväz zase rozkolísanú mieru.
  */
-export default function ZanikanieKlubov({ sezony, toky, zvazy, obdobia, oknoStavu }: Props) {
-  const [metrika, setMetrika] = useState<Metrika>('miera');
+export default function ZanikanieKlubov({
+  toky, zvazy, obdobia, okno, spolu, obnovenych, presuny,
+}: Props) {
+  const [metrika, setMetrika] = useState<Metrika>('podiel');
   const [strana, setStrana] = useState(0);
   const tip = useTooltip();
 
   const zoradene = useMemo(() => {
     const z = [...zvazy];
     if (metrika === 'miera') z.sort((a, b) => (b.miera ?? -1) - (a.miera ?? -1));
-    else z.sort((a, b) => a.zmena - b.zmena);
+    else z.sort((a, b) => b.zanikov - a.zanikov);
     return z;
   }, [zvazy, metrika]);
 
@@ -74,15 +76,17 @@ export default function ZanikanieKlubov({ sezony, toky, zvazy, obdobia, oknoStav
   const s = Math.min(strana, strán - 1);
   const vidno = zoradene.slice(s * STRANA, (s + 1) * STRANA);
   const priemer = useMemo(() => {
-    const o = zvazy.reduce((a, z) => a + z.odchody, 0);
+    const o = zvazy.reduce((a, z) => a + z.zanikov, 0);
     const k = zvazy.reduce((a, z) => a + z.klubosezony, 0);
     return k ? (100 * o) / k : 0;
   }, [zvazy]);
+  const maxPodiel = useMemo(() => Math.max(...zvazy.map((z) => z.podielSR ?? 0), 1), [zvazy]);
+  const maxMiera = useMemo(() => Math.max(...zvazy.map((z) => z.miera ?? 0), 1), [zvazy]);
 
   // ---- graf tokov -------------------------------------------------------------------
   const W = 1000;
   const H = 340;
-  const OS = 150;                       // y súradnica nulovej osi
+  const OS = 150;
   const max = Math.max(...toky.map((t) => Math.max(t[1], t[2])), 1);
   const krok = W / Math.max(toky.length, 1);
   const sirka = Math.min(krok * 0.44, 46);
@@ -114,27 +118,26 @@ export default function ZanikanieKlubov({ sezony, toky, zvazy, obdobia, oknoStav
           <span style={{ width: 12, height: 12, borderRadius: 3, background: VZNIK }} /> nové kluby
         </span>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: ZANIK }}>
-          <span style={{ width: 12, height: 12, borderRadius: 3, background: ZANIK }} /> prestali hrať
+          <span style={{ width: 12, height: 12, borderRadius: 3, background: ZANIK }} /> zaniknuté kluby
         </span>
       </div>
       <div style={{ overflowX: 'auto' }}>
         <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ minWidth: 560, display: 'block' }}
-             role="img"
-             aria-label="Kluby, ktoré definitívne prestali hrať, a nové kluby po sezónach">
+             role="img" aria-label="Zaniknuté a nové kluby po sezónach">
           <line x1="0" y1={OS} x2={W} y2={OS} stroke="var(--color-line, #e2e8f0)" strokeWidth="2" />
-          {toky.map(([sez, odch, pric], i) => {
+          {toky.map(([sez, zan, pric], i) => {
             const x = i * krok + krok / 2 - sirka / 2;
-            const hz = skala(odch);
+            const hz = skala(zan);
             const hv = skala(pric);
             return (
               <g key={sez}>
                 <rect
                   x={x} y={OS + 2} width={sirka} height={Math.max(hz, 2)} rx={4} fill={ZANIK}
-                  aria-label={`${sez}: ${odch} klubov prestalo hrať`}
+                  aria-label={`${sez}: zaniklo ${zan} klubov`}
                   {...tip.viazat(
                     <>
                       <TipNadpis>{sez}</TipNadpis>
-                      <TipRiadok popis="Prestalo hrať" hodnota={`${fmt(odch)} klubov`} />
+                      <TipRiadok popis="Zaniklo" hodnota={`${fmt(zan)} klubov`} />
                       <TipRiadok popis="Nových klubov" hodnota={fmt(pric)} />
                     </>,
                   )}
@@ -146,14 +149,14 @@ export default function ZanikanieKlubov({ sezony, toky, zvazy, obdobia, oknoStav
                     <>
                       <TipNadpis>{sez}</TipNadpis>
                       <TipRiadok popis="Nových klubov" hodnota={fmt(pric)} />
-                      <TipRiadok popis="Prestalo hrať" hodnota={`${fmt(odch)} klubov`} />
+                      <TipRiadok popis="Zaniklo" hodnota={`${fmt(zan)} klubov`} />
                     </>,
                   )}
                 />
                 <text x={x + sirka / 2} y={OS - 10 - hv} textAnchor="middle"
                       fontSize="16" fontWeight="700" fill="var(--color-ink)">{pric}</text>
                 <text x={x + sirka / 2} y={OS + 20 + hz} textAnchor="middle"
-                      fontSize="16" fontWeight="700" fill="var(--color-ink)">{odch}</text>
+                      fontSize="16" fontWeight="700" fill="var(--color-ink)">{zan}</text>
                 <text x={x + sirka / 2} y={H - 8} textAnchor="middle"
                       fontSize="13" fill="var(--color-muted)">{kratka(sez)}</text>
               </g>
@@ -169,8 +172,8 @@ export default function ZanikanieKlubov({ sezony, toky, zvazy, obdobia, oknoStav
           <div key={o.nazov} style={{ border: '1px solid var(--color-line, #e2e8f0)', borderRadius: 12, padding: '12px 14px' }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--color-muted)' }}>{o.nazov}</div>
             <div style={{ marginTop: 6, fontSize: 13, lineHeight: 1.7 }}>
-              <span style={{ color: ZANIK, fontWeight: 800 }}>{fmt1(o.odchodovNaSezonu ?? 0)}</span>
-              {' '}odchodov za sezónu<br />
+              <span style={{ color: ZANIK, fontWeight: 800 }}>{fmt1(o.zanikovNaSezonu ?? 0)}</span>
+              {' '}zaniknutých za sezónu<br />
               <span style={{ color: VZNIK, fontWeight: 800 }}>{fmt1(o.prichodovNaSezonu ?? 0)}</span>
               {' '}nových za sezónu
             </div>
@@ -179,18 +182,25 @@ export default function ZanikanieKlubov({ sezony, toky, zvazy, obdobia, oknoStav
       </div>
 
       <p style={{ marginTop: 12, fontSize: 12.5, lineHeight: 1.65 }}>
-        <b>Kluby nezanikajú rýchlejšie — prestali vznikať.</b> Tempo odchodov je celé sledované
-        obdobie takmer rovnaké. Čo sa zlomilo okolo covidu, je prítok nových klubov, a ten sa
+        <b>Kluby nezanikajú rýchlejšie — prestali vznikať.</b> Tempo zanikania celé sledované
+        obdobie mierne klesá. Čo sa zlomilo okolo covidu, je prítok nových klubov, a ten sa
         odvtedy nevrátil.
       </p>
 
       {/* ---- rebríček zväzov ---- */}
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', margin: '22px 0 10px' }}>
+      <p style={{ marginTop: 22, fontSize: 12.5, lineHeight: 1.65 }}>
+        Rebríček sa vyhodnocuje <b>v rámci celého Slovenska</b>. <b>Podiel</b> hovorí, aká časť
+        všetkých {fmt(spolu)} zaniknutých klubov pripadá na tento zväz — veľký zväz má prirodzene
+        väčší podiel. <b>Miera</b> je podiel z klubo-sezón zväzu, takže sa dá porovnať veľký
+        s malým, ale pri malom zväze ňou hýbe aj jeden klub. Priemer za celé Slovensko je
+        {' '}{fmt1(priemer)} % za sezónu.
+      </p>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', margin: '14px 0 10px' }}>
         <span style={{ fontSize: 12.5, color: 'var(--color-muted)', fontWeight: 600 }}>Zoradiť podľa:</span>
+        <button type="button" style={pill(metrika === 'podiel')}
+                onClick={() => { setMetrika('podiel'); setStrana(0); }}>Podielu na zánikoch v SR</button>
         <button type="button" style={pill(metrika === 'miera')}
-                onClick={() => { setMetrika('miera'); setStrana(0); }}>Miery odchodu</button>
-        <button type="button" style={pill(metrika === 'zmena')}
-                onClick={() => { setMetrika('zmena'); setStrana(0); }}>Úbytku klubov</button>
+                onClick={() => { setMetrika('miera'); setStrana(0); }}>Miery vo zväze</button>
       </div>
 
       <div style={{ overflowX: 'auto' }}>
@@ -200,14 +210,14 @@ export default function ZanikanieKlubov({ sezony, toky, zvazy, obdobia, oknoStav
               <th style={{ padding: '6px 8px 6px 0', width: 40 }}>#</th>
               <th style={{ padding: '6px 8px 6px 0' }}>Zväz</th>
               <th style={{ padding: '6px 8px', textAlign: 'center' }}
-                  {...tip.viazat('Koľko percent klubo-sezón sa skončilo tým, že klub už nikdy nenastúpil. Číslo je porovnateľné medzi veľkými a malými zväzmi.')}>
-                Miera odchodu
+                  {...tip.viazat(`Aká časť všetkých ${fmt(spolu)} klubov, ktoré na Slovensku zanikli v období ${okno[0]} – ${okno[1]}, pripadá na tento zväz.`)}>
+                Podiel na zánikoch v SR
               </th>
+              <th style={{ padding: '6px 8px', textAlign: 'center' }}>Zaniknutých</th>
               <th style={{ padding: '6px 8px', textAlign: 'center' }}
-                  {...tip.viazat(`Počet klubov, ktoré hrali v súťažiach zväzu, v sezónach ${oknoStavu[0]} a ${oknoStavu[1]}. Klub hrajúci v súťažiach viacerých zväzov je započítaný v každom z nich.`)}>
-                Klubov {kratka(oknoStavu[0])} → {kratka(oknoStavu[1])}
+                  {...tip.viazat('Koľko percent klubo-sezón zväzu sa skončilo zánikom klubu. Porovnateľné medzi veľkým a malým zväzom, ale pri malom zväze ňou hýbe aj jeden klub.')}>
+                Miera vo zväze
               </th>
-              <th style={{ padding: '6px 8px', textAlign: 'center' }}>Zmena</th>
               <th style={{ padding: '6px 8px', textAlign: 'center' }}
                   {...tip.viazat('Kluby, ktoré sa vo zväze objavili prvýkrát. Nový subjekt v ISSF ale nemusí byť nový klub — pri novej registrácii vznikne nové IČO bez väzby na predchodcu.')}>
                 Nových
@@ -215,47 +225,56 @@ export default function ZanikanieKlubov({ sezony, toky, zvazy, obdobia, oknoStav
             </tr>
           </thead>
           <tbody>
-            {vidno.map((z, i) => (
-              <tr key={z.id} style={{ borderTop: '1px solid var(--color-line, #eef0f3)' }}>
-                <td style={{ padding: '7px 8px 7px 0', color: 'var(--color-muted)', fontVariantNumeric: 'tabular-nums' }}>
-                  {s * STRANA + i + 1}
-                </td>
-                <td style={{ padding: '7px 8px 7px 0' }}>
-                  <a href={`/zvaz/${z.id}`} style={{ color: 'var(--color-sfz-blue)' }}>{z.nazov}</a>
-                </td>
-                <td
-                  style={{ padding: '7px 8px', textAlign: 'center', fontVariantNumeric: 'tabular-nums',
-                           fontWeight: (z.miera ?? 0) > priemer * 1.5 ? 800 : 500,
-                           color: (z.miera ?? 0) > priemer * 1.5 ? ZANIK : 'var(--color-ink)' }}
-                  {...tip.viazat(
-                    <>
-                      <TipNadpis>{z.nazov}</TipNadpis>
-                      <TipRiadok popis="Definitívnych odchodov" hodnota={fmt(z.odchody)} />
-                      <TipRiadok popis="Klubo-sezón" hodnota={fmt(z.klubosezony)} />
-                      {Object.entries(z.poObdobiach).map(([o, n]) => (
-                        <TipRiadok key={o} popis={o} hodnota={fmt(n)} />
-                      ))}
-                    </>,
-                  )}
-                >
-                  {z.miera === null ? '—' : `${fmt1(z.miera)} %`}
-                </td>
-                <td style={{ padding: '7px 8px', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>
-                  {fmt(z.klubovPrva)} → <b>{fmt(z.klubovPosledna)}</b>
-                </td>
-                <td style={{ padding: '7px 8px', textAlign: 'center', fontVariantNumeric: 'tabular-nums',
-                             fontWeight: 700, color: z.zmena < 0 ? ZANIK : z.zmena > 0 ? VZNIK : 'var(--color-muted)' }}>
-                  {z.zmena > 0 ? '+' : ''}{z.zmena}
-                  {z.zmenaPct !== null && (
-                    <span style={{ color: 'var(--color-muted)', fontWeight: 500 }}> ({fmt1(z.zmenaPct)} %)</span>
-                  )}
-                </td>
-                <td style={{ padding: '7px 8px', textAlign: 'center', fontVariantNumeric: 'tabular-nums',
-                             color: 'var(--color-muted)' }}>
-                  {fmt(z.prichody)}
-                </td>
-              </tr>
-            ))}
+            {vidno.map((z, i) => {
+              const sirkaP = Math.round(70 * ((z.podielSR ?? 0) / maxPodiel));
+              const sirkaM = Math.round(70 * ((z.miera ?? 0) / maxMiera));
+              return (
+                <tr key={z.id} style={{ borderTop: '1px solid var(--color-line, #eef0f3)' }}>
+                  <td style={{ padding: '7px 8px 7px 0', color: 'var(--color-muted)', fontVariantNumeric: 'tabular-nums' }}>
+                    {s * STRANA + i + 1}
+                  </td>
+                  <td style={{ padding: '7px 8px 7px 0' }}>
+                    <a href={`/zvaz/${z.id}`} style={{ color: 'var(--color-sfz-blue)' }}>{z.nazov}</a>
+                  </td>
+                  <td style={{ padding: '7px 8px', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 70, height: 8, borderRadius: 4, background: 'var(--color-line, #eef0f3)' }}>
+                        <span style={{ display: 'block', width: sirkaP, height: 8, borderRadius: 4,
+                                       background: metrika === 'miera' ? '#cbd5e1' : ZANIK }} />
+                      </span>
+                      <b>{z.podielSR === null ? '—' : `${fmt1(z.podielSR)} %`}</b>
+                    </span>
+                  </td>
+                  <td style={{ padding: '7px 8px', textAlign: 'center', fontVariantNumeric: 'tabular-nums', fontWeight: 700 }}
+                      {...tip.viazat(
+                        <>
+                          <TipNadpis>{z.nazov}</TipNadpis>
+                          {Object.entries(z.poObdobiach).map(([o, n]) => (
+                            <TipRiadok key={o} popis={o} hodnota={fmt(n)} />
+                          ))}
+                          <TipRiadok popis="Klubo-sezón" hodnota={fmt(z.klubosezony)} />
+                        </>,
+                      )}>
+                    {fmt(z.zanikov)}
+                  </td>
+                  <td style={{ padding: '7px 8px', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 70, height: 8, borderRadius: 4, background: 'var(--color-line, #eef0f3)' }}>
+                        <span style={{ display: 'block', width: sirkaM, height: 8, borderRadius: 4,
+                                       background: metrika === 'miera' ? ZANIK : '#cbd5e1' }} />
+                      </span>
+                      <b style={{ color: (z.miera ?? 0) > priemer * 1.5 ? ZANIK : 'var(--color-ink)' }}>
+                        {z.miera === null ? '—' : `${fmt1(z.miera)} %`}
+                      </b>
+                    </span>
+                  </td>
+                  <td style={{ padding: '7px 8px', textAlign: 'center', fontVariantNumeric: 'tabular-nums',
+                               color: 'var(--color-muted)' }}>
+                    {fmt(z.prichody)}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -268,15 +287,20 @@ export default function ZanikanieKlubov({ sezony, toky, zvazy, obdobia, oknoStav
         </div>
       )}
 
-      <p style={{ marginTop: 12, fontSize: 11.5, color: 'var(--color-muted)', lineHeight: 1.6 }}>
-        <b>Zánik</b> je to, keď klub odohral svoju poslednú sezónu a odvtedy nenastúpil už nikdy —
-        nie jednosezónna pauza a <b>nie koniec v súťažiach dospelých</b>, pokiaľ klub má mládež.
-        Priemer za celé Slovensko je {fmt1(priemer)} % za sezónu. Odchod sa pripisuje
-        <b> domovskému zväzu</b> klubu (tomu, v ktorom odohral najviac zápasov), lebo klub zaniká
-        raz; stĺpec <b>Klubov</b> naproti tomu počíta klub v každom zväze, v ktorého súťaži hral —
-        je to to isté číslo, aké má zväz na svojom profile. Sezóny nábehu ISSF (2012/2013
-        a 2013/2014) ani prebiehajúca sezóna do analýzy nevstupujú a posledné dve hodnotené
-        sezóny sú provizórne — klub sa ešte môže vrátiť.
+      <p style={{ marginTop: 14, fontSize: 11.5, color: 'var(--color-muted)', lineHeight: 1.6 }}>
+        <b>Za zaniknutý klub sa považuje klub, ktorý dva roky po sebe neprihlási do súťaže žiadne
+        družstvo.</b> Jedna vynechaná sezóna teda zánik nie je — po nej sa ešte vracia každý piaty
+        klub, po dvoch už len necelá desatina. <b>Koniec v súťažiach dospelých</b> zánik nie je,
+        pokiaľ klub má mládež. A <b>postup do vyššej ani zostup do nižšej súťaže zánik nie je</b> —
+        aktivita klubu sa posudzuje na celom Slovensku, nie vo zväze; klub, ktorý postúpi
+        z oblastnej súťaže do regionálnej, prestane hrať súťaže svojho ObFZ, ale hrá ďalej.
+        Domovský zväz sa takto zmenil pri {fmt1(presuny.podiel ?? 0)} % dvojíc po sebe idúcich
+        sezón a týka sa to {fmt(presuny.klubovSoZmenou)} klubov. Zánik sa pripisuje domovskému
+        zväzu klubu v jeho poslednej odohranej sezóne. Prihlásené družstvo sa v dátach meria
+        reálne odohraným zápasom. Hodnotiteľné je obdobie {okno[0]} – {okno[1]}: sezóny nábehu
+        ISSF (2012/2013 a 2013/2014), prebiehajúca sezóna ani posledné dve sezóny (ešte za nimi
+        nie sú dva roky) doň nevstupujú. Zo {fmt(spolu)} zaniknutých klubov sa {fmt(obnovenych)}
+        {' '}po dvoch tichých sezónach ešte vrátilo — podľa definície zostávajú zaniknuté.
       </p>
     </div>
   );

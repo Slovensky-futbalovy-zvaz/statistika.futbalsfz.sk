@@ -15,24 +15,6 @@ const vekZvazov = getVekZvazovVCase();
 const indexZvazov = getIndexZvazovVCase();
 const zanikanie = getZanikanie();
 
-// Toky po sezónach. Posledná sezóna okna sa hodnotiť nedá (nemá nasledujúcu), preto
-// v grafe nie je; príchody sa počítajú až od tretej sezóny okna — v druhej sa objavia
-// všetky kluby, ktoré si prvú vynechali, a číslo by bolo nafúknuté.
-const zanikSezony = zanikanie?.sezony ?? [];
-const zanikToky: [string, number, number][] = zanikSezony
-  .slice(2, -1)
-  .map((sez) => [sez, zanikanie?.zanik[sez]?.spolu ?? 0, zanikanie?.prislo[sez]?.spolu ?? 0]);
-
-const zanikZvazy = Object.entries(zanikanie?.zvazy ?? {})
-  .map(([id, z]) => ({ id, ...z }))
-  .filter((z) => z.klubosezony > 0);
-
-const zanikObdobia = Object.entries(zanikanie?.poObdobiach ?? {}).map(([nazov, o]) => ({ nazov, ...o }));
-
-const zanikOkno: [string, string] = zanikSezony.length
-  ? [zanikSezony[0], zanikSezony[zanikSezony.length - 1]]
-  : ['', ''];
-
 const INDEX_POZNAMKA =
   'Medián Indexu klubu medzi klubmi zväzu. Kluby bez mládeže sa započítavajú s nulou — sú ' +
   'súčasťou reality zväzu, nie chybou merania. ' +
@@ -73,6 +55,24 @@ const starnuceRows = starnuce
   .join('\n');
 
 const okno = starnuce.length ? starnuce[0].sezony : [];
+
+// Toky po sezónach. Hodnotiteľné sú len sezóny, za ktorými sú ešte dve nasledujúce (definícia:
+// dva roky bez družstva). Príchody sa navyše počítajú až od tretej sezóny okna — v druhej by sa
+// medzi „nové“ započítali všetky kluby, ktoré si prvú vynechali.
+const zanikHodn = zanikanie?.hodnotitelne ?? [];
+const zanikToky: [string, number, number][] = zanikHodn
+  .slice(2)
+  .map((sez) => [sez, zanikanie?.zanik[sez]?.spolu ?? 0, zanikanie?.prislo[sez]?.spolu ?? 0]);
+
+const zanikZvazy = Object.entries(zanikanie?.zvazy ?? {})
+  .map(([id, z]) => ({ id, ...z }))
+  .filter((z) => z.klubosezony > 0);
+
+const zanikObdobia = Object.entries(zanikanie?.poObdobiach ?? {}).map(([nazov, o]) => ({ nazov, ...o }));
+
+const zanikOkno: [string, string] = zanikHodn.length
+  ? [zanikHodn[0], zanikHodn[zanikHodn.length - 1]]
+  : ['', ''];
 
 const KICKER = 'text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue';
 const CARD = 'border border-line';
@@ -151,20 +151,23 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       <div class={KICKER}>Zanikanie klubov</div>
       <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 4px;">Kde a kedy kluby končia</h2>
       <p class="text-sm text-muted mb-3" style="line-height:1.6;">
-        Klub považujeme za zaniknutý, až keď <strong class="text-ink">prestane hrať úplne</strong> —
-        koniec v súťažiach dospelých zánik nie je, pokiaľ klub má mládež. Graf ukazuje, koľko
-        klubov každú sezónu odišlo natrvalo a koľko nových pribudlo; tabuľka pod ním, ktorých
-        zväzov sa to týka najviac.
+        Za zaniknutý klub považujeme klub, ktorý <strong class="text-ink">dva roky po sebe
+        neprihlási do súťaže žiadne družstvo</strong>. Koniec v súťažiach dospelých zánik nie je,
+        pokiaľ klub má mládež, a postup ani zostup zánik nie je už vôbec. Graf ukazuje, koľko
+        klubov každú sezónu zaniklo a koľko nových pribudlo; tabuľka pod ním, ktorých zväzov sa
+        to týka najviac.
       </p>
       {
         zanikToky.length ? (
           <ZanikanieKlubov
             client:visible
-            sezony={zanikSezony}
             toky={zanikToky}
             zvazy={zanikZvazy}
             obdobia={zanikObdobia}
-            oknoStavu={zanikOkno}
+            okno={zanikOkno}
+            spolu={zanikanie?.zanikovSpolu ?? 0}
+            obnovenych={zanikanie?.obnovenychSpolu ?? 0}
+            presuny={zanikanie?.presunyMedziZvazmi ?? { zmien: 0, dvojicSezon: 0, podiel: 0, klubovSoZmenou: 0 }}
           />
         ) : (
           <p class="text-sm text-muted">Dáta o zanikaní klubov sa zatiaľ nepodarilo načítať.</p>
