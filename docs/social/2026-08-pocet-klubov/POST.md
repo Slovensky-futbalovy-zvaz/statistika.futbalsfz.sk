@@ -30,6 +30,23 @@
 
 # Sociálne siete — počet klubov a mládež (august 2026), verzia 2
 
+> ## ✅ Odovzdané na publikovanie (15. 8. 2026)
+>
+> Text aj vizuály schválil Ján Letko. Podklady na priame vloženie sú v podpriečinku
+> [`na-publikovanie/`](na-publikovanie/):
+>
+> | Súbor | Kam |
+> |---|---|
+> | `prispevok-linkedin.txt` | LinkedIn SFZ — skrátená verzia, **2 602 znakov** (limit príspevku je 3 000) |
+> | `prispevok-facebook.txt` | Facebook SFZ — plná verzia, 5 308 znakov, s krátkym háčikom do náhľadu |
+> | `alt-texty.txt` | alt texty k 12 snímkam v poradí carouselu |
+>
+> Obrázky sú v tomto priečinku (`01`–`12`), pre LinkedIn je lepšie nahrať
+> `pocet-klubov-linkedin-carousel.pdf` ako dokument než 12 samostatných obrázkov.
+> **Plný text nižšie sa na LinkedIn nezmestí** — preto tá skrátená verzia; vypadli z nej
+> odstavce, ktoré sú aj tak na snímkach (hráči po kategóriách, toky 468 : 180 a 550 : 482,
+> starnutie a Index klubu).
+
 **Kanály:** LinkedIn SFZ, Facebook SFZ
 **Formát:** carousel, 12 snímok, 1080 × 1350 px (LinkedIn: priložiť PDF ako dokument)
 **Odkaz:** https://statistika.futbalsfz.sk

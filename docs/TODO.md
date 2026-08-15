@@ -37,10 +37,10 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
   publikovaných dát nedávame.
 - [ ] **Odoslať podklady Bart.sk** pre produkčný beh — [draft](archiv/podklady-bart-produkcny-beh.md).
 - [ ] **Nahlásiť chybný záznam divákov** — [draft](sportnet-nahlasenie-divaci.md).
-- [ ] **Sociálny post „Počet klubov“ na publikovanie** — text, 12 vizuálov a PDF carousel sú
-  hotové v [docs/social/2026-08-pocet-klubov/](social/2026-08-pocet-klubov/). Pred zverejnením
-  potrebuje schválenie snímky 09 (príčiny úbytku — je to **postoj SFZ**, nie údaj z portálu)
-  a snímky 10 (financovanie delegovaných osôb).
+- [x] ~~**Sociálny post „Počet klubov“ na publikovanie**~~ Schválené a odovzdané 15. 8. 2026.
+  Podklady na priame vloženie sú v [docs/social/2026-08-pocet-klubov/na-publikovanie/](social/2026-08-pocet-klubov/na-publikovanie/)
+  (LinkedIn skrátená verzia do 3 000 znakov, Facebook plná verzia, alt texty). Samotné
+  zverejnenie je ručný krok — portál ani repozitár na sociálne siete nepublikuje.
 
 ## Dáta a ETL
 
