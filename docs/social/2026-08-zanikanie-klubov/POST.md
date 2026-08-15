@@ -26,6 +26,19 @@
 
 # Sociálne siete — kde a kedy kluby končia (august 2026)
 
+> ## 📦 Podklady na publikovanie
+>
+> V podpriečinku [`na-publikovanie/`](na-publikovanie/):
+>
+> | Súbor | Kam |
+> |---|---|
+> | `prispevok-linkedin.txt` | LinkedIn SFZ — **2 391 znakov** (limit príspevku je 3 000) |
+> | `prispevok-facebook.txt` | Facebook SFZ — 2 887 znakov, s krátkym háčikom do náhľadu a dvoma číslami navyše |
+> | `alt-texty.txt` | alt texty k obom snímkam |
+> | `zanikanie-klubov-linkedin-carousel.pdf` | 2 strany — na LinkedIn nahrať ako dokument |
+>
+> Snímky sú v tomto priečinku (`01-kde.png`, `02-kedy.png`).
+
 **Kanály:** LinkedIn SFZ, Facebook SFZ
 **Formát:** 2 snímky, 1080 × 1350 px
 **Odkaz:** https://statistika.futbalsfz.sk/trendy
