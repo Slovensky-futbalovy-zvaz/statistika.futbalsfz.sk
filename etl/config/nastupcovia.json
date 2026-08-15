@@ -1,0 +1,33 @@
+{
+  "poznamka": [
+    "Ručný číselník právnych nástupcov a zlúčení klubov — dopĺňa automatické párovanie",
+    "v etl/zanikanie.py. Automatika pracuje s pravidlom Jána Letka (15. 8. 2026): zaniknutý",
+    "klub, ktorý sa znova prihlási, musí začínať od poslednej ligy vo svojom ObFZ, takže",
+    "subjekt, ktorý sa objaví vyššie, je pokračovaním klubu z tej istej obce. Dva druhy",
+    "prípadov to chytiť nemôže a patria sem:",
+    "1. názov v ISSF neobsahuje obec (napr. FK Dukla Banská Bystrica je vedená ako „STANZA“),",
+    "2. obec je veľkomesto — „bratislava“ či „kosice“ je v desiatkach klubov, takže párovanie",
+    "   podľa názvu by spojilo nesúvisiace kluby a je zámerne vypnuté.",
+    "Pár znamená: nastupca je ten istý reálny klub ako predchodca, ich sezóny sa spoja a zánik",
+    "predchodcu sa nezapočíta. Platí to aj pre zlúčenie do už existujúceho klubu.",
+    "Pole `typ`: „nova-registracia“ = ten istý klub s novým IČO, „zlucenie“ = klub sa zlúčil do iného a jeho identita pokračuje tam. Zlúčenie NIE JE koniec futbalu v obci, preto sa zánik nezapočíta."
+  ],
+  "pary": [
+    {
+      "predchodca": "fk-dukla-banska-bystrica-futbalnet-sk",
+      "predchodcaNazov": "STANZA (v ISSF názov FK Dukla Banská Bystrica), do 2016/2017",
+      "nastupca": "tj-sk-kremnicka-futbalnet-sk",
+      "nastupcaNazov": "*MFK Dukla Banská Bystrica",
+      "dovod": "Dukla Banská Bystrica v roku 2017 nezanikla — identita klubu pokračovala v druhom subjekte, ktorý ďalej hral pod menom MFK Dukla Banská Bystrica. Automatika to nechytí, lebo názov „STANZA“ neobsahuje obec.",
+      "typ": "zlucenie"
+    },
+    {
+      "predchodca": "fk-inter-bratislava-futbalnet-sk",
+      "predchodcaNazov": "FK Inter Bratislava. (s bodkou), do 2021/2022",
+      "nastupca": "klub-11687",
+      "nastupcaNazov": "FK Inter Bratislava (od 2022/2023)",
+      "dovod": "Nová registrácia toho istého klubu. Automatika párovanie odmietla, lebo jediné identifikujúce slovo v názve je „bratislava“, ktoré je v desiatkach klubov.",
+      "typ": "nova-registracia"
+    }
+  ]
+}

@@ -291,16 +291,23 @@ export default function ZanikanieKlubov({
         <b>Za zaniknutý klub sa považuje klub, ktorý dva roky po sebe neprihlási do súťaže žiadne
         družstvo.</b> Jedna vynechaná sezóna teda zánik nie je — po nej sa ešte vracia každý piaty
         klub, po dvoch už len necelá desatina. <b>Koniec v súťažiach dospelých</b> zánik nie je,
-        pokiaľ klub má mládež. A <b>postup do vyššej ani zostup do nižšej súťaže zánik nie je</b> —
-        aktivita klubu sa posudzuje na celom Slovensku, nie vo zväze; klub, ktorý postúpi
+        pokiaľ klub má mládež. <b>Postup do vyššej ani zostup do nižšej súťaže</b> zánik nie je už
+        vôbec — aktivita klubu sa posudzuje na celom Slovensku, nie vo zväze; klub, ktorý postúpi
         z oblastnej súťaže do regionálnej, prestane hrať súťaže svojho ObFZ, ale hrá ďalej.
         Domovský zväz sa takto zmenil pri {fmt1(presuny.podiel ?? 0)} % dvojíc po sebe idúcich
-        sezón a týka sa to {fmt(presuny.klubovSoZmenou)} klubov. Zánik sa pripisuje domovskému
-        zväzu klubu v jeho poslednej odohranej sezóne. Prihlásené družstvo sa v dátach meria
-        reálne odohraným zápasom. Hodnotiteľné je obdobie {okno[0]} – {okno[1]}: sezóny nábehu
-        ISSF (2012/2013 a 2013/2014), prebiehajúca sezóna ani posledné dve sezóny (ešte za nimi
-        nie sú dva roky) doň nevstupujú. Zo {fmt(spolu)} zaniknutých klubov sa {fmt(obnovenych)}
-        {' '}po dvoch tichých sezónach ešte vrátilo — podľa definície zostávajú zaniknuté.
+        sezón a týka sa to {fmt(presuny.klubovSoZmenou)} klubov. A <b>poháre sa nerátajú vôbec</b> —
+        do Slovnaft Cupu sa dostane len klub aktívny v súťažiach, takže pohárový zápas nie je
+        dôkazom, že klub žije. Prihlásené družstvo sa v dátach meria reálne odohraným zápasom.
+        {' '}<b>Medzi zánikmi sú aj zlúčenia:</b> zánik klubu ako subjektu nie je vždy koniec
+        futbalu v obci — časť klubov sa spojila s iným a hráči aj mládež pokračujú tam. Doložené
+        zlúčenia sa nepočítajú, ostatné od skutočného konca odlíšiť nevieme; najčastejšie sú pri
+        ženských kluboch. Ženské kluby a akadémie preto vykazujeme oddelene a v rebríčku sa
+        objavujú na úrovni SFZ správne — ich súťaže riadi SFZ. Zánik sa pripisuje domovskému
+        zväzu klubu v jeho poslednej odohranej sezóne. Hodnotiteľné je obdobie {okno[0]} – {okno[1]}:
+        sezóny nábehu ISSF (2012/2013 a 2013/2014), prebiehajúca sezóna ani posledné dve sezóny
+        (ešte za nimi nie sú dva roky) doň nevstupujú. Zo {fmt(spolu)} zaniknutých klubov sa
+        {' '}{fmt(obnovenych)} po dvoch tichých sezónach ešte vrátilo — podľa definície zostávajú
+        zaniknuté.
       </p>
     </div>
   );

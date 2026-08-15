@@ -1,7 +1,11 @@
 > ## ⚠️ Pred publikovaním
 >
 > - **Definícia (Ján Letko, 15. 8. 2026): zaniknutý klub = klub, ktorý dva roky po sebe
->   neprihlási do súťaže žiadne družstvo.** Postup do vyššej ani zostup do nižšej súťaže zánik
+>   neprihlási do súťaže žiadne družstvo.** Poháre sa nerátajú. Nový subjekt v ISSF nie je nový
+>   klub — zaniknutý klub, ktorý sa vráti, musí začínať od poslednej ligy svojho ObFZ.
+>   **Medzi zánikmi sú aj zlúčenia**, zánik subjektu nie je vždy koniec futbalu v obci.
+>   Ženské kluby (9) a akadémie (3) sa vykazujú oddelene — ich súťaže riadi SFZ, preto vychádzajú
+>   na tú úroveň správne. Na úrovni SFZ zanikol jediný klasický klub: FC VSS Košice. Postup do vyššej ani zostup do nižšej súťaže zánik
 >   nie je — aktivita sa posudzuje celoslovensky. Rebríček je preto podľa **podielu na všetkých
 >   zánikoch v SR**, nie podľa úbytku klubov vo zväze (ten je postupmi a zostupmi skreslený).
 > - **Čísla sú z portálu.** Sekcia **Zanikanie klubov** na `/trendy` ich nesie všetky —
@@ -37,15 +41,15 @@ V predchádzajúcom príspevku sme ukázali, že klubov ubúda a že klub bez ml
 zlomilo. Odpoveď je od dnes na portáli, v novej sekcii **Zanikanie klubov** na stránke Trendy.
 
 **Najprv to, čo nás prekvapilo najviac.** Kluby zanikajú **pomalšie** než pred desiatimi rokmi —
-zo 62 klubov za sezónu pred covidom na 54 dnes. Čo sa zmenilo, je druhá strana rovnice: pred
-covidom vzniklo **28 nových klubov za sezónu**, počas covidu 15 a dnes **13**. Úbytok teda
+zo 60 klubov za sezónu pred covidom na 46 dnes. Čo sa zmenilo, je druhá strana rovnice: pred
+covidom vzniklo **27 nových klubov za sezónu**, počas covidu 14 a dnes **12**. Úbytok teda
 nerobí to, že by klubov zanikalo viac. Robí ho to, že nových pribúda polovica.
 
-**A kde.** V období 2014/15 – 2023/24 zaniklo na Slovensku **595 klubov**. Najväčší podiel
-z nich pripadá na **ObFZ Trebišov (29 klubov, 4,9 %)**, **ObFZ Michalovce (28)** a **ObFZ
+**A kde.** V období 2014/15 – 2023/24 zaniklo na Slovensku **566 klubov**. Najväčší podiel
+z nich pripadá na **ObFZ Trebišov (30 klubov, 5,3 %)**, **ObFZ Michalovce (29)** a **ObFZ
 Prievidza (28)**. Toto je ale len jedna polovica obrazu — veľký zväz má prirodzene viac
 zánikov. Druhá polovica je, ako často sa to stane klubu daného zväzu: priemer Slovenska je
-**3,7 % za sezónu**, ObFZ Trebišov má **11,4 %**, ObFZ Rožňava 8,5 %, ObFZ Michalovce 6,2 % —
+**3,6 % za sezónu**, ObFZ Trebišov má **12,0 %**, ObFZ Rožňava 9,2 %, ObFZ Michalovce 6,4 % —
 a naopak ObFZ Prievidza podpriemerných 3,9 %.
 
 Najnižšiu mieru má **ObFZ Senica — 1,0 %**. Obraz je regionálny: juh a východ strácajú, západ
@@ -83,27 +87,27 @@ Slovak Football Association
 
 | Obdobie | Zaniknutých za sezónu | Nových klubov za sezónu |
 |---|---|---|
-| do 2018/2019 | 62,4 | **28,3** |
-| 2019/2020 – 2021/2022 (covid) | 58,7 | **15,3** |
-| od 2022/2023 | 53,5 | **13,5** |
+| do 2018/2019 | 60,2 | **26,7** |
+| 2019/2020 – 2021/2022 (covid) | 57,7 | **13,7** |
+| od 2022/2023 | 46,0 | **12,0** |
 
-Zaniknutých spolu 595 (z toho 56 sa po dvoch tichých sezónach ešte vrátilo — podľa definície
+Zaniknutých spolu 566 (z toho 56 sa po dvoch tichých sezónach ešte vrátilo — podľa definície
 zostávajú zaniknuté). Čistý úbytok klubov medziročne: posledné sezóny −29, −26, −11.
 
-### Kde (595 zaniknutých klubov, 2014/15 – 2023/24; priemerná miera SR 3,7 %)
+### Kde (566 zaniknutých klubov, 2014/15 – 2023/24; priemerná miera SR 3,6 %)
 
 | Zväz | Zaniknutých | Podiel na SR | Miera vo zväze |
 |---|---|---|---|
-| ObFZ Trebišov | 29 | **4,9 %** | **11,4 %** |
-| ObFZ Michalovce | 28 | 4,7 % | 6,2 % |
-| ObFZ Prievidza | 28 | 4,7 % | 3,9 % |
-| ObFZ Nitra | 26 | 4,4 % | 3,6 % |
-| ObFZ Trnava | 25 | 4,2 % | 3,6 % |
-| ObFZ Humenné | 21 | 3,5 % | 5,7 % |
-| ObFZ Levice | 19 | 3,2 % | 4,8 % |
-| ObFZ Prešov | 18 | 3,0 % | 2,9 % |
-| ObFZ Rožňava | 18 | 3,0 % | **8,5 %** |
-| Slovenský futbalový zväz | 18 | 3,0 % | 4,4 % |
+| ObFZ Trebišov | 30 | **5,3 %** | **12,0 %** |
+| ObFZ Michalovce | 29 | 5,1 % | 6,4 % |
+| ObFZ Prievidza | 28 | 5,0 % | 3,9 % |
+| ObFZ Nitra | 26 | 4,6 % | 3,6 % |
+| ObFZ Trnava | 24 | 4,2 % | 3,5 % |
+| ObFZ Humenné | 21 | 3,7 % | 5,7 % |
+| ObFZ Levice | 19 | 3,4 % | 4,9 % |
+| ObFZ Prešov | 18 | 3,2 % | 2,9 % |
+| ObFZ Rožňava | 19 | 3,4 % | **9,2 %** |
+| ObFZ Košice-okolie | 16 | 2,8 % | 4,7 % |
 | **ObFZ Senica (najnižšia miera)** | 4 | 0,7 % | **1,0 %** |
 
 Podiel a miera hovoria každý niečo iné: veľký zväz má prirodzene väčší podiel, miera je
@@ -113,9 +117,9 @@ porovnateľná medzi veľkým a malým — pri malom zväze ňou ale hýbe aj je
 
 ## Alt texty k snímkam
 
-1. **01** Rebríček zväzov podľa podielu na všetkých 595 kluboch, ktoré na Slovensku zanikli
-   v období 2014/15 – 2023/24: ObFZ Trebišov 29 klubov (4,9 %, miera vo zväze 11,4 %),
-   Michalovce 28 (4,7 %), Prievidza 28 (4,7 %), Nitra 26, Trnava 25, Humenné 21, Levice 19,
-   Prešov 18, Rožňava 18, SFZ 18. Priemerná miera na Slovensku je 3,7 % za sezónu.
-2. **02** Porovnanie troch období: zaniknutých klubov za sezónu ubudlo zo 62 na 54, ale nových
-   klubov ubudlo z 28 pred covidom na 15 počas neho a 13 dnes.
+1. **01** Rebríček zväzov podľa podielu na všetkých 566 kluboch, ktoré na Slovensku zanikli
+   v období 2014/15 – 2023/24: ObFZ Trebišov 30 klubov (5,3 %, miera vo zväze 12,0 %),
+   Michalovce 29 (5,1 %), Prievidza 28 (5,0 %), Nitra 26, Trnava 24, Humenné 21, Levice 19,
+   Rožňava 19, Prešov 18, Košice-okolie 16. Priemerná miera na Slovensku je 3,6 % za sezónu.
+2. **02** Porovnanie troch období: zaniknutých klubov za sezónu ubudlo zo 60 na 46, ale nových
+   klubov ubudlo z 27 pred covidom na 14 počas neho a 12 dnes.

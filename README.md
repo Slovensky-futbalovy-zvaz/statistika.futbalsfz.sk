@@ -108,20 +108,31 @@ Tri veci, ktoré treba pri tomto čísle vedieť:
 > **Za zaniknutý klub sa považuje klub, ktorý dva roky po sebe neprihlási do súťaže žiadne
 > družstvo** (rozhodnutie Ján Letko, 15. 8. 2026).
 
-Táto definícia je záväzná pre ETL, portál aj komunikáciu. Tri veci, ktoré z nej plynú:
+Táto definícia je záväzná pre ETL, portál aj komunikáciu. Päť pravidiel, ktoré z nej plynú:
 
-- **koniec v súťažiach dospelých nie je zánik**, pokiaľ klub má mládež;
+- **koniec v súťažiach dospelých nie je zánik**, pokiaľ klub má mládež (214 takých prípadov);
 - **postup do vyššej ani zostup do nižšej súťaže nie je zánik** — aktivita sa posudzuje na celom
-  Slovensku, nie vo zväze (domovský zväz sa mení pri 8,8 % dvojíc po sebe idúcich sezón; keby sa
-  aktivita merala po zväzoch, vzniklo by 658 falošných zánikov);
+  Slovensku, nie vo zväze (domovský zväz sa mení pri 8,8 % dvojíc po sebe idúcich sezón; po
+  zväzoch by vzniklo 658 falošných zánikov);
 - **jednosezónna pauza nie je zánik** — po nej sa ešte vracia každý piaty klub, po dvoch už len
-  necelá desatina.
+  necelá desatina;
+- **poháre sa nerátajú vôbec** — do Slovnaft Cupu sa dostane len klub aktívny v súťažiach, takže
+  pohárový zápas nie je dôkazom aktivity a vie poriadne pomýliť;
+- **nový subjekt v ISSF nie je nový klub.** Rozlíšiť ich umožňuje súťažný poriadok: *zaniknutý
+  klub, ktorý sa znova prihlási, musí začínať od poslednej ligy vo svojom ObFZ.* Subjekt, ktorý
+  sa objaví vyššie, je pokračovaním klubu z tej istej obce. Automaticky spárovaných 23 dvojíc,
+  výnimky v [`etl/config/nastupcovia.json`](etl/config/nastupcovia.json).
+
+**Medzi zánikmi sú aj zlúčenia** — zánik subjektu nie je vždy koniec futbalu v obci. Doložené
+zlúčenia sa nepočítajú, ostatné od skutočného konca odlíšiť nevieme. Ženské kluby a akadémie sa
+vykazujú oddelene, lebo ich súťaže riadi SFZ.
 
 Počíta to [`etl/zanikanie.py`](etl/zanikanie.py) → `data/zanikanie.json` (offline nad
 `data/klub/`, bez databázy), overuje [`etl/kontrola_zanikania.py`](etl/kontrola_zanikania.py).
-Namerané za obdobie 2014/2015 – 2023/2024: **595 zaniknutých klubov**, miera **8,8 %** za sezónu
-pri klube bez mládeže oproti **2,3 %** pri klube s mládežou. Zobrazené v sekcii Zanikanie klubov
-na `/trendy`, metodika v [docs/metodika.md](docs/metodika.md).
+Namerané za obdobie 2014/2015 – 2023/2024: **566 zaniknutých klubov** (z toho 9 ženských a 3
+akadémie), miera **8,6 %** za sezónu pri klube bez mládeže oproti **2,1 %** pri klube s mládežou.
+Rozdelenie ObFZ 90,3 % / RFZ 8,1 % / SFZ 1,6 % — na úrovni SFZ zanikol jediný klasický klub.
+Zobrazené v sekcii Zanikanie klubov na `/trendy`, metodika v [docs/metodika.md](docs/metodika.md).
 
 ## Kľúčové dokumenty
 

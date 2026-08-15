@@ -345,6 +345,11 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
           debate počítajú ako zaniknuté kluby.
         </li>
         <li>
+          <strong class="text-ink">Pohárový zápas.</strong> Do Slovnaft Cupu sa dostane len klub
+          aktívny v súťažiach, takže pohár nie je dôkazom, že klub žije — sezónu odohranú len
+          v pohári preto za odohranú nepovažujeme.
+        </li>
+        <li>
           <strong class="text-ink">Postup do vyššej alebo zostup do nižšej súťaže.</strong> Klub,
           ktorý postúpi z oblastnej súťaže do regionálnej, prestane hrať súťaže svojho ObFZ, ale
           hrá ďalej. Aktivita klubu sa preto posudzuje na celom Slovensku, nie vo zväze. Domovský
@@ -352,6 +357,16 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
           po zväzoch, vzniklo by tým 658 falošných zánikov.
         </li>
       </ul>
+
+      <p class="mt-3 text-muted" style="line-height:1.6;">
+        <strong class="text-ink">Medzi zánikmi sú aj zlúčenia.</strong> Zánik klubu ako subjektu
+        nie je vždy koniec futbalu v obci — časť klubov sa zlúčila s iným a ich hráči aj mládež
+        pokračujú tam. Zlúčenia, ktoré vieme doložiť, sa ako zánik nepočítajú; tie ostatné od
+        skutočného konca v dátach odlíšiť nevieme. Najčastejšie sú pri ženských kluboch, kde
+        družstvo prejde pod iný klub v meste. Ženské kluby a mládežnícke akadémie preto
+        vykazujeme oddelene — a keďže ženské ligy aj celoštátne mládežnícke súťaže riadi SFZ,
+        objavujú sa v rebríčku na úrovni SFZ celkom správne, nie omylom.
+      </p>
 
       <p class="mt-3 text-muted" style="line-height:1.6;">
         Rebríček zväzov sa vyhodnocuje <strong class="text-ink">v rámci celého Slovenska</strong>.
@@ -365,11 +380,12 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       <p class="mt-3 text-muted" style="line-height:1.6;">
         Rovnakou logikou počítame <strong class="text-ink">nové kluby</strong> — klub, ktorý sa
         v sledovanom období objavil prvýkrát. Nový subjekt v ISSF ale nemusí byť nový klub: pri
-        novej registrácii (napríklad transformácia na s. r. o.) vznikne nové IČO a väzbu na
-        predchodcu systém nenesie, takže ten istý reálny klub sa raz započíta ako zánik a raz ako
-        vznik. Nameraných je aspoň 41 takých dvojíc, preto sú počty zánikov aj vznikov
-        <strong class="text-ink">horná hranica</strong>. Počtu klubov v sezóne sa to netýka — ten
-        sa meria na stave, nie na pohyboch.
+        novej registrácii vznikne nové IČO a väzbu na predchodcu systém nenesie. Rozlíšiť ich
+        umožňuje súťažný poriadok — <strong class="text-ink">zaniknutý klub, ktorý sa znova
+        prihlási, musí začínať od poslednej ligy vo svojom ObFZ</strong>. Subjekt, ktorý sa objaví
+        vyššie, teda nie je nový klub, ale pokračovanie toho, ktorý v tej istej obci práve
+        skončil; takéto dvojice spájame do jedného klubu. Kde názov v ISSF obec neobsahuje alebo
+        ide o veľkomesto, párovanie automaticky nefunguje a dopĺňa sa ručne.
       </p>
 
       <p class="mt-3 text-sm text-muted" style="line-height:1.6;">

@@ -294,6 +294,45 @@ def kluby_po_zvazoch(out_dir: Path, sezony: list[str]) -> dict[str, dict[str, in
     return von
 
 
+def rucne_nastupcovia(repo: Path) -> dict[str, str]:
+    """{nástupca: predchodca} z ručného číselníka etl/config/nastupcovia.json.
+
+    Automatika nechytí dva druhy prípadov: názov bez obce (FK Dukla Banská Bystrica je v ISSF
+    vedená ako „STANZA“) a veľkomestá, kde by párovanie podľa názvu spojilo nesúvisiace kluby.
+    """
+    p = repo / "etl" / "config" / "nastupcovia.json"
+    if not p.exists():
+        return {}
+    with open(p, encoding="utf-8") as f:
+        cfg = json.load(f)
+    return {x["nastupca"]: x["predchodca"] for x in cfg.get("pary", [])}
+
+
+def typ_klubu(out_dir: Path, slug: str, sezona: str, nazov: str) -> str:
+    """„zensky“ / „akademia“ / „klasicky“ — na oddelené vykázanie zánikov.
+
+    Ženské kluby vychádzajú v rebríčku na úroveň SFZ, lebo ženské ligy riadi SFZ, nie preto,
+    že by tam bola chyba. Bez tohto rozlíšenia to čitateľ nemá ako pochopiť. Pohlavie klubu
+    v artefaktoch nie je, odvodzuje sa z podielu hráčok v demografii klubu.
+    """
+    p = out_dir / "demografia-klub" / f"{slug}.json"
+    if p.exists():
+        try:
+            with open(p, encoding="utf-8") as f:
+                roky = (((json.load(f).get("sezony") or {}).get(sezona) or {}).get("hraci") or {}).get("roky") or {}
+            zien = sum(v.get("F", 0) for v in roky.values())
+            muzov = sum(v.get("M", 0) for v in roky.values())
+            if zien + muzov >= 8 and zien / (zien + muzov) >= 0.8:
+                return "zensky"
+        except Exception:
+            pass
+    n = unicodedata.normalize("NFKD", nazov.lower())
+    n = "".join(c for c in n if not unicodedata.combining(c))
+    if "akadem" in n or "academy" in n or "skola futbalu" in n or "futbalova skola" in n:
+        return "akademia"
+    return "klasicky"
+
+
 def register_zvazov(repo: Path) -> dict[str, dict]:
     """id → {nazov, uroven} z overeného registra (etl/config/zvazy.json)."""
     with open(repo / "etl" / "config" / "zvazy.json", encoding="utf-8") as f:
@@ -308,7 +347,7 @@ def register_zvazov(repo: Path) -> dict[str, dict]:
 
 
 def analyza(kluby: dict, register: dict | None = None, pocty: dict | None = None,
-            nastupcov: int = 0) -> dict:
+            nastupcov: int = 0, typy: dict | None = None) -> dict:
     vsetky = sorted({s for v in kluby.values() for s in v})
     # okno: bez nábehu ISSF a bez prebiehajúcej (poslednej) sezóny
     sezony = [s for s in vsetky[:-1] if s not in NABEH_ISSF]
@@ -337,6 +376,9 @@ def analyza(kluby: dict, register: dict | None = None, pocty: dict | None = None
     zmien_zvazu = 0
     dvojic = 0
     klubov_so_zmenou = 0
+    typ_zanikov: collections.Counter = collections.Counter()
+    sfz_klasicke = 0
+    typy = typy or {}
 
     for s in hodnotitelne:
         ob_sezon[obdobie_sezony(s)] += 1
@@ -353,7 +395,7 @@ def analyza(kluby: dict, register: dict | None = None, pocty: dict | None = None
             return "dospeli+mladez"
         return "len mladez" if mlad else "len dospeli"
 
-    for v in kluby.values():
+    for kk, v in kluby.items():
         poradia = sorted(idx[s] for s in v if s in idx)
         if not poradia:
             continue
@@ -384,6 +426,10 @@ def analyza(kluby: dict, register: dict | None = None, pocty: dict | None = None
                     zanik[s]["spolu"] += 1
                     zanik[s][label(v[s])] += 1
                     ob_zanik[obdobie_sezony(s)] += 1
+                    t = typy.get((kk, s), "klasicky")
+                    typ_zanikov[t] += 1
+                    if t == "klasicky" and zvaz == "sfz":
+                        sfz_klasicke += 1
                     # klub, ktorý sa po dvoch tichých sezónach ešte vrátil — podľa definície
                     # zaniknutý ostáva, ale treba o tom vedieť
                     if any(sezony[j] in v for j in range(i + TICHO_SEZON + 1, n)):
@@ -483,6 +529,8 @@ def analyza(kluby: dict, register: dict | None = None, pocty: dict | None = None
         "zvazy": zvazy_out,
         "poObdobiach": po_obdobiach,
         "spojenychNastupcov": nastupcov,
+        "zanikyPodlaTypu": dict(typ_zanikov),
+        "sfzKlasickychZanikov": sfz_klasicke,
         "presunyMedziZvazmi": {
             "zmien": zmien_zvazu,
             "dvojicSezon": dvojic,
@@ -519,6 +567,12 @@ def main() -> int:
 
     # PRAVIDLO O POSLEDNEJ LIGE — spojenie subjektov, ktoré sú v skutočnosti ten istý klub
     nastupca = najdi_nastupcov(kluby, urovne, sezony, TICHO_SEZON)
+    rucne = rucne_nastupcovia(REPO)
+    for nk, pk in rucne.items():
+        if nk in kluby and pk in kluby:
+            nastupca[nk] = pk
+    if rucne:
+        print(f"z ručného číselníka: {len(rucne)} párov")
     if nastupca:
         print("právni nástupcovia (nový subjekt = pokračovanie klubu):")
         for nk, pk in sorted(nastupca.items()):
@@ -528,7 +582,12 @@ def main() -> int:
         print()
     kluby = spoj_nastupcov(kluby, nastupca)
 
-    vys = analyza(kluby, register_zvazov(REPO), kluby_po_zvazoch(out_dir, sezony), len(nastupca))
+    typy = {
+        (k, s): typ_klubu(out_dir, k, s, v[s][3])
+        for k, v in kluby.items() for s in v
+    }
+    vys = analyza(kluby, register_zvazov(REPO), kluby_po_zvazoch(out_dir, sezony),
+                  len(nastupca), typy)
     cesta = out_dir / "zanikanie.json"
     with open(cesta, "w", encoding="utf-8") as f:
         json.dump(
@@ -564,15 +623,25 @@ def main() -> int:
     for zid, z in sorted(vys["zvazy"].items(), key=lambda x: -(x[1]["podielSR"] or 0))[:12]:
         print(f"  {z['nazov'][:34]:34} {z['podielSR']:5} %  ({z['zanikov']} klubov,"
               f" miera vo zväze {z['miera']} %)")
+    print("\nZÁNIKY PODĽA TYPU KLUBU:")
+    for t, n in sorted(vys["zanikyPodlaTypu"].items(), key=lambda x: -x[1]):
+        print(f"  {t}: {n} ({100.0 * n / vys['zanikovSpolu']:.1f} %)")
+
     print("\nLOGICKÁ KONTROLA — kluby majú zanikať takmer výlučne na úrovni ObFZ:")
     podla_urovne = collections.Counter()
     for z in vys["zvazy"].values():
         podla_urovne[(z.get("uroven") or "?")] += z["zanikov"]
     for u, n in sorted(podla_urovne.items(), key=lambda x: -x[1]):
         print(f"  {u}: {n} zaniknutých ({100.0 * n / vys['zanikovSpolu']:.1f} %)")
-    sfz = podla_urovne.get("SFZ", 0)
-    if sfz > 5:
-        print(f"  ⚠️  na úrovni SFZ vyšlo {sfz} zánikov — to je priveľa, výpočet treba preveriť")
+    # Na SFZ vychádzajú ženské kluby a akadémie legitímne — ženské ligy aj celoštátne
+    # mládežnícke súťaže riadi SFZ. Kontrola preto sleduje len klasické kluby.
+    sfz_klasicke = vys["sfzKlasickychZanikov"]
+    if sfz_klasicke > 3:
+        print(f"  ⚠️  na úrovni SFZ zaniklo {sfz_klasicke} KLASICKÝCH klubov — to je priveľa,"
+              " výpočet treba preveriť")
+    else:
+        print(f"  ✓ klasických klubov na úrovni SFZ zaniklo {sfz_klasicke} — v poriadku,"
+              " zvyšok sú ženské kluby a akadémie (ich súťaže riadi SFZ)")
 
     print("\nZANIKNUTÉ KLUBY NA ÚROVNI SFZ A RFZ (na ručnú kontrolu):")
     urovne_zvazu = {zid: (z.get("uroven") or "?") for zid, z in vys["zvazy"].items()}

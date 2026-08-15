@@ -331,73 +331,117 @@ neregulárnych súťaží a už neplatí.
 > družstvo.**
 
 Táto veta je záväzná a platí všade — v ETL, na portáli, v dokumentácii aj v komunikácii.
-Vyplývajú z nej tri veci, ktoré sa nesmú stratiť:
+Vyplýva z nej päť pravidiel, ktoré sa nesmú stratiť:
 
-1. **Koniec klubu v súťažiach dospelých NIE JE zánik**, pokiaľ klub má mládež. Zánik je až to,
-   keď klub nemá v súťaži žiadne družstvo — ani mládežnícke. Práve prípady „áčko skončilo, deti
-   hrajú“ sa vo verejnej debate počítajú ako zaniknuté kluby.
-2. **POSTUP DO VYŠŠEJ ANI ZOSTUP DO NIŽŠEJ SÚŤAŽE NIE JE ZÁNIK.** Aktivita klubu sa posudzuje
-   **na celom Slovensku, nie vo zväze**. Klub, ktorý postúpi z oblastnej súťaže do regionálnej,
-   prestane hrať súťaže svojho ObFZ — ale hrá ďalej. Namerané 15. 8. 2026: domovský zväz sa mení
-   pri **8,8 % dvojíc po sebe idúcich sezón** a aspoň raz sa zmenil **621 klubom z 1 989**;
-   **658-krát** klub definitívne opustil súťaže svojho zväzu a hral ďalej inde. Keby sa aktivita
-   posudzovala po zväzoch, bolo by to 658 falošných zánikov oproti 595 skutočným.
-3. **Jednosezónna pauza nie je zánik.** Až dve sezóny po sebe bez družstva. Meranie to
-   potvrdzuje: po jednej vynechanej sezóne sa ešte vráti **19,7 %** klubov, po dvoch už len
-   **9,4 %**, po troch 6,6 %.
+1. **Koniec klubu v súťažiach dospelých NIE JE zánik**, pokiaľ klub má mládež. Práve prípady
+   „áčko skončilo, deti hrajú“ sa vo verejnej debate počítajú ako zaniknuté kluby; v dátach ich
+   je **214**.
+2. **POSTUP DO VYŠŠEJ ANI ZOSTUP DO NIŽŠEJ SÚŤAŽE NIE JE ZÁNIK.** Aktivita sa posudzuje **na
+   celom Slovensku, nie vo zväze**. Namerané: domovský zväz sa mení pri **8,8 % dvojíc po sebe
+   idúcich sezón** (1 464 zo 16 687), týka sa to **617 klubov**, a **658-krát** klub definitívne
+   opustil súťaže svojho zväzu a hral ďalej inde. Po zväzoch by to bolo 658 falošných zánikov.
+3. **Jednosezónna pauza nie je zánik.** Po jednej vynechanej sezóne sa ešte vráti **19,7 %**
+   klubov, po dvoch **9,4 %**, po troch 6,6 %.
+4. **POHÁRE SA NERÁTAJÚ VÔBEC.** Do Slovnaft Cupu sa dostane len klub aktívny v súťažiach, takže
+   pohárový zápas nie je dôkazom aktivity — a vie poriadne pomýliť: sezóna odohraná len v pohári
+   by klub držala „nažive“ a zároveň by mu ako domovský zväz vyšiel SFZ, hoci patrí do svojho
+   ObFZ. Vyradených **323** takých sezón.
+5. **Nový subjekt v ISSF nie je nový klub** — pozri „Pravidlo o poslednej lige“ nižšie.
 
-**Proxy v dátach.** Prihlásené družstvo v dátach nemáme — meria sa **reálne odohraný zápas**:
-klub má v sezóne artefakt `data/klub/{klub}/{sezona}.json` práve vtedy, keď aspoň jedno jeho
-družstvo v regulárnej súťaži slovenského zväzu odohralo aspoň jeden zápas. Klub, ktorý družstvo
-prihlási a odhlási pred prvým kolom, je tak v dátach neaktívny. Je to prísnejšie než znenie
-definície a je to zámerné — počítame hraný futbal, nie evidenciu.
+**Proxy v dátach.** Prihlásené družstvo v dátach nemáme, meria sa **reálne odohraný zápas**
+(`kpi.zapasy > 0`). Samotná existencia profilu nestačí: FK Senica mal v 2022/2023 **nula
+odohraných a 61 uzatvorených** zápasov — v priebehu sezóny sa odhlásil a všetko sú
+administratívne kontumácie.
 
-**Okno.** Do analýzy nevstupujú sezóny nábehu ISSF (2012/2013, 2013/2014) ani prebiehajúca
-sezóna. Navyše sa **posledné dve sezóny hodnotiť nedajú** — za nimi ešte nie sú dva roky.
-Hodnotiteľné obdobie je preto **2014/2015 – 2023/2024**.
+**Okno.** Bez sezón nábehu ISSF (2012/2013, 2013/2014), bez prebiehajúcej sezóny a bez posledných
+dvoch sezón — za nimi ešte nie sú dva roky. Hodnotiteľné obdobie je **2014/2015 – 2023/2024**.
 
-Výpočet robí **`etl/zanikanie.py`** (offline nad `data/klub/`, MongoDB netreba, výstup
-`data/zanikanie.json`), kontrolu **`etl/kontrola_zanikania.py`**.
+Výpočet robí **`etl/zanikanie.py`** (offline nad `data/klub/`, výstup `data/zanikanie.json`),
+kontrolu **`etl/kontrola_zanikania.py`**.
+
+##### Pravidlo o poslednej lige (Ján Letko, 15. 8. 2026)
+
+> **Ak sa zaniknutý klub znova prihlási do súťaže, musí začínať od poslednej ligy vo svojom
+> ObFZ.**
+
+Toto pravidlo zo súťažného poriadku je jediný spoľahlivý spôsob, ako odlíšiť **nový klub** od
+**novej registrácie toho istého klubu** — ISSF pri preregistrácii založí nové organization ID
+a väzbu na predchodcu nenesie. Test je preto absolútny, nie porovnávací: **subjekt, ktorý sa
+objaví kdekoľvek vyššie než na dne pyramídy svojho zväzu, nemôže byť nový** — je to pokračovanie
+klubu, ktorý v tej istej obci práve „zanikol“.
+
+Automatika takto spojila **23 dvojíc** (Futbalový klub Humenné → … s. r. o., KFC Komárno → KFC
+Komárno futbal, TJ Fatran Varín → FK Fatran Varín, MFK Dubnica → FK Dubnica, FK Púchov → MŠK
+Púchov, OFK Malženice → OFK Dynamo Malženice a ďalšie). Párovanie je zámerne prísne: rovnaká obec
+(zhodná množina slov po odstránení právnej formy a značky klubu) a slovo, ktoré obec skutočne
+identifikuje — teda nie „bratislava“ či „kosice“, ktoré sú v desiatkach klubov.
+
+Dva druhy prípadov automatika chytiť nemôže a rieši ich ručný číselník
+[`etl/config/nastupcovia.json`](../etl/config/nastupcovia.json):
+
+- **názov v ISSF neobsahuje obec** — FK Dukla Banská Bystrica je v dátach vedená ako „STANZA“;
+- **veľkomesto** — FK Inter Bratislava.
+
+##### Medzi zánikmi sú aj zlúčenia
+
+**Zánik subjektu nie je vždy koniec futbalu v obci.** Časť zánikov sú zlúčenia: klub sa spojil
+s iným a jeho identita, hráči aj mládež pokračujú tam. Dukla Banská Bystrica je presne taký
+prípad — v roku 2017 subjekt skončil, ale klub žil ďalej v druhom subjekte. Doložené zlúčenia sú
+v číselníku nástupcov a **nepočítajú sa ako zánik**; tie, ktoré doložiť nevieme, medzi zánikmi
+zostávajú a od „skutočného“ konca sa v dátach odlíšiť nedajú. Najčastejšie sú pri **ženských
+kluboch** — ženské družstvo prejde pod iný klub v meste.
+
+##### Typy klubov — vykazujú sa oddelene
+
+| Typ | Zaniknutých | Ako sa určuje |
+|---|---|---|
+| klasický klub | 554 (97,9 %) | zvyšok |
+| **ženský klub** | 9 (1,6 %) | ≥ 80 % hráčok v poslednej odohranej sezóne (z demografie klubu) |
+| **akadémia** | 3 (0,5 %) | názov obsahuje „akadémia“, „academy“ alebo „škola futbalu“ |
+
+Rozlíšenie je nutné na pochopenie rezu po zväzoch: **ženské ligy aj celoštátne mládežnícke súťaže
+riadi SFZ**, takže ženský klub a akadémia vychádzajú na úroveň SFZ celkom správne. Bez toho to
+vyzerá ako chyba. Z deviatich zaniknutých ženských klubov sa v ôsmich prípadoch ženský futbal
+v obci už neobnovil — nie sú to teda väčšinou zlúčenia, ale skutočné konce.
+
+##### Logická kontrola podľa úrovne (Ján Letko, 15. 8. 2026)
+
+Kluby zanikajú a vznikajú **takmer výlučne na úrovni ObFZ** — vyplýva to z pravidla o poslednej
+lige. Zánik na úrovni SFZ má byť rarita, na RFZ výnimka. `etl/zanikanie.py` to preto po každom
+behu vypisuje a varuje:
+
+| Úroveň | Zaniknutých | Podiel |
+|---|---|---|
+| ObFZ | 511 | 90,3 % |
+| RFZ | 46 | 8,1 % |
+| SFZ | 9 | 1,6 % |
+
+Z tých deviatich na úrovni SFZ je **sedem ženských klubov, jedna akadémia a jediný klasický klub
+— FC VSS Košice** (krach 2017, návrat 2021/2022 odspodu). Kontrola preto sleduje len klasické
+kluby a prahom sú tri.
 
 ##### Namerané (15. 8. 2026)
 
-**Zaniknutých spolu: 595.** Z nich sa **56 po dvoch tichých sezónach ešte vrátilo** — podľa
-definície zostávajú zaniknuté a ich neskorší návrat sa nepočíta ako nový klub. Je to rozdiel
-oproti pomocnému číslu „583 klubov do konca okna už nenastúpilo“, ktoré vychádza z uzávierky
-1 989 klubov v okne − 583 = 1 406 klubov v sezóne 2025/2026.
-
-**Mládež drží klub nad vodou:**
+**Zaniknutých spolu: 566.** Z nich sa **56 po dvoch tichých sezónach ešte vrátilo** — podľa
+definície zostávajú zaniknuté a ich návrat sa nepočíta ako nový klub.
 
 | Stav klubu v poslednej odohranej sezóne | Klubo-sezón | Zaniknutých | Miera za sezónu |
 |---|---|---|---|
-| **bez mládeže** | 3 554 | 314 | **8,8 %** |
-| **s mládežou** | 12 365 | 281 | **2,3 %** |
+| **bez mládeže** | 3 508 | 302 | **8,6 %** |
+| **s mládežou** | 12 324 | 264 | **2,1 %** |
 
-Klub bez mládeže zaniká **takmer štyrikrát častejšie**.
+Klub bez mládeže zaniká **takmer štyrikrát častejšie**. Priemer za celé Slovensko je 3,6 %.
 
 **Prechody stavov (klub prežil, len sa zmenil):**
 
 | Prechod | Počet |
 |---|---|
-| len dospelí → dospelí + mládež (klub pridal mládež) | **550** |
-| dospelí + mládež → len dospelí (klub stratil mládež) | 482 |
-| dospelí + mládež → len mládež (**skončil v dospelých, mládež si udržal**) | **220** |
-| len mládež → dospelí + mládež | 139 |
-| len dospelí → len mládež | 15 |
-| len mládež → len dospelí | 10 |
-
-Tých **220 prípadov** je presne to, čo sa v debate o „zanikajúcich kluboch“ počíta ako zánik,
-hoci klub ďalej hrá s deťmi.
-
-**Nový subjekt v ISSF nie je nový klub.** Pri novej registrácii (transformácia na s. r. o., zmena
-právnej formy) založí ISSF nové organization ID a väzbu na predchodcu nenesie, takže ten istý
-reálny klub sa objaví raz ako zánik a raz ako vznik. Párovaním podľa normalizovaného názvu je
-nameraných **aspoň 41 takých párov** — `MFK Dolný Kubín` → `MFK Dolný Kubín, s. r. o.`,
-`FK Senica` → `Futbalový klub Senica`, `TJ Fatran Varín` → `FK Fatran Varín`, `OTJ - Banka` →
-`FC Banka`. Je to dolná hranica, takže **počty zánikov aj vznikov sú horná hranica**. Miery
-zániku ani počty klubov to neskresľuje. Správne riešenie je príznak právneho nástupcu v ISSF;
-žiadosť je v [TODO](TODO.md). Do `data/zanikanie.json` sa párovanie **nepublikuje** — heuristika
-sa nemieša s meraním.
+| len dospelí → dospelí + mládež (klub pridal mládež) | **549** |
+| dospelí + mládež → len dospelí (klub stratil mládež) | 471 |
+| dospelí + mládež → len mládež (**skončil v dospelých, mládež si udržal**) | **214** |
+| len mládež → dospelí + mládež | 137 |
+| len dospelí → len mládež | 14 |
+| len mládež → len dospelí | 6 |
 
 #### Rez po zväzoch a po obdobiach (zadanie Ján Letko, 15. 8. 2026)
 
@@ -405,52 +449,46 @@ sa nemieša s meraním.
 v `data/zanikanie.json`, zobrazené v sekcii **Zanikanie klubov** na `/trendy`.
 
 **Vyhodnocuje sa v rámci celého Slovenska.** Hlavná metrika je **podiel zväzu na všetkých
-zaniknutých kluboch v SR** — ak zo 595 zaniknutých klubov pripadá 29 na ObFZ Trebišov, je to
-4,9 %. Vedľa nej stojí **miera vo zväze** (podiel z klubo-sezón zväzu), lebo veľký zväz má
-prirodzene väčší podiel a malý zväz zase rozkolísanú mieru. Zánik sa pripisuje **domovskému
-zväzu** klubu v jeho poslednej odohranej sezóne — klub zaniká raz, tak sa musí započítať raz.
+zaniknutých kluboch v SR**. Vedľa nej stojí **miera vo zväze** (podiel z klubo-sezón), lebo veľký
+zväz má prirodzene väčší podiel a malý zväz zase rozkolísanú mieru. Zánik sa pripisuje
+**domovskému zväzu** klubu v jeho poslednej odohranej sezóne — klub zaniká raz, tak sa musí
+započítať raz.
 
 **Čo sa do rebríčka zámerne NEDÁVA:** počet klubov hrajúcich v súťažiach zväzu a jeho zmena
-v čase. Tento rad je totiž ovplyvnený postupmi a zostupmi (klub, ktorý postúpi, z neho vypadne,
-hoci hrá ďalej) a v tabuľke o zanikaní vedie k presne opačnému čítaniu, než aké je správne.
-Rad sa publikuje v `data/zanikanie.json` ako `klubovVSutaziachZvazu`, ale v rebríčku sa
-nepoužíva; počty klubov po zväzoch patria do bloku Počet klubov na profile zväzu.
-
-**Kde (595 zaniknutých klubov, obdobie 2014/2015 – 2023/2024):**
+v čase. Tento rad je ovplyvnený postupmi a zostupmi — klub, ktorý postúpi, z neho vypadne, hoci
+hrá ďalej — a v tabuľke o zanikaní vedie k presne opačnému čítaniu, než aké je správne. Rad sa
+publikuje ako `klubovVSutaziachZvazu`, ale v rebríčku sa nepoužíva.
 
 | Zväz | Zaniknutých | Podiel na SR | Miera vo zväze |
 |---|---|---|---|
-| ObFZ Trebišov | 29 | **4,9 %** | 11,4 % |
-| ObFZ Michalovce | 28 | 4,7 % | 6,2 % |
-| ObFZ Prievidza | 28 | 4,7 % | 3,9 % |
-| ObFZ Nitra | 26 | 4,4 % | 3,6 % |
-| ObFZ Trnava | 25 | 4,2 % | 3,6 % |
-| ObFZ Humenné | 21 | 3,5 % | 5,7 % |
-| ObFZ Levice | 19 | 3,2 % | 4,8 % |
-| ObFZ Rožňava | 18 | 3,0 % | **8,5 %** |
+| ObFZ Trebišov | 30 | **5,3 %** | **12,0 %** |
+| ObFZ Michalovce | 29 | 5,1 % | 6,4 % |
+| ObFZ Prievidza | 28 | 5,0 % | 3,9 % |
+| ObFZ Nitra | 26 | 4,6 % | 3,6 % |
+| ObFZ Trnava | 24 | 4,2 % | 3,5 % |
+| ObFZ Humenné | 21 | 3,7 % | 5,7 % |
+| ObFZ Rožňava | 19 | 3,4 % | **9,2 %** |
+| ObFZ Senica | 4 | 0,7 % | **1,0 %** (najnižšia) |
 
-Priemer za celé Slovensko je **3,1 % za sezónu**. Podiel a miera hovoria každý niečo iné:
-ObFZ Prievidza má vysoký podiel, lebo je veľký, ale podpriemernú mieru; ObFZ Rožňava je opak.
+Podiel a miera hovoria každý niečo iné: ObFZ Prievidza má vysoký podiel, lebo je veľký, ale
+podpriemernú mieru; ObFZ Rožňava presne naopak.
 
 **Kedy — a toto je hlavné zistenie:**
 
 | Obdobie | Zaniknutých za sezónu | Nových klubov za sezónu |
 |---|---|---|
-| do 2018/2019 | 62,4 | **28,3** |
-| 2019/2020 – 2021/2022 (covid) | 58,7 | **15,3** |
-| od 2022/2023 | 53,5 | **13,5** |
+| do 2018/2019 | 60,2 | **26,7** |
+| 2019/2020 – 2021/2022 (covid) | 57,7 | **13,7** |
+| od 2022/2023 | 46,0 | **12,0** |
 
-**Kluby nezanikajú rýchlejšie — prestali vznikať.** Tempo zanikania celé obdobie mierne klesá;
-čo sa zlomilo okolo covidu, je prítok nových klubov, a ten sa nevrátil.
+**Kluby nezanikajú rýchlejšie — prestali vznikať.** Tempo zanikania dokonca klesá; čo sa zlomilo
+okolo covidu, je prítok nových klubov, a ten sa nevrátil.
 
 **Príchody sa počítajú až od tretej sezóny okna.** V prvej sezóne nový klub vzniknúť nemôže
-(nemá sa voči čomu porovnať) a v druhej vyjde nafúknuto — objavia sa v nej všetky kluby, ktoré
-si prvú sezónu vynechali. Sezóna 2015/2016 má 74 „nových“ klubov oproti 10 – 32 v ďalších
-sezónach; to je artefakt okna, nie realita.
+a v druhej vyjde nafúknuto — objavia sa v nej všetky kluby, ktoré si prvú sezónu vynechali.
 
-Analýza v plnom znení: `claude/analyza-zanikanie-klubov.md`. **Príčiny** úbytku (demografia,
-verejné zdroje miest a obcí, podmienky pre trénerov, komerční partneri) v dátach **nie sú** —
-portál meria stavy a pohyby, nie dôvody.
+Analýza v plnom znení: `claude/definicia-zanik-klubu.md` a `claude/pyramida-vs-zanik-kontrola.md`.
+**Príčiny** úbytku v dátach **nie sú** — portál meria stavy a pohyby, nie dôvody.
 
 ### Vek hráčov a Index klubu — stránka Trendy (7. 8. 2026)
 
