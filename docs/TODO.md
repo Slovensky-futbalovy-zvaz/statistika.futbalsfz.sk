@@ -35,6 +35,10 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
   Nameraných je aspoň 41 takých párov — pozri [metodiku](metodika.md), kap. „Zanikanie klubov“.
   Bez príznaku sa toky klubov očistiť nedajú inak než heuristikou podľa názvu, a tú do
   publikovaných dát nedávame.
+- [ ] **Druhý sociálny post „Kde a kedy kluby končia“** — text, dve snímky, alt texty a PDF
+  carousel sú hotové v [docs/social/2026-08-zanikanie-klubov/](social/2026-08-zanikanie-klubov/).
+  Pred zverejnením: rebríček menuje konkrétne ObFZ (Trebišov, Michalovce, Prievidza, Nitra,
+  Trnava, Humenné, Rožňava), patrí dať im to vopred vedieť.
 - [ ] **Odoslať podklady Bart.sk** pre produkčný beh — [draft](archiv/podklady-bart-produkcny-beh.md).
 - [ ] **Nahlásiť chybný záznam divákov** — [draft](sportnet-nahlasenie-divaci.md).
 - [ ] **Sociálny post „Počet klubov“ na publikovanie** — text, 12 vizuálov a PDF carousel sú
@@ -141,7 +145,7 @@ a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
 
 | Kedy | Čo |
 |---|---|
-| 15. 8. 2026 | **Zanikanie klubov** — záväzná definícia (dva roky bez družstva; postup/zostup nie je zánik), rez po zväzoch v rámci SR a po obdobiach, sekcia na `/trendy`, `etl/kontrola_zanikania.py`; prepočet oboch sociálnych postov |
+| 15. 8. 2026 | **Zanikanie klubov** — záväzná definícia (dva roky bez družstva; postup, zostup ani pohár nie sú zánik), pravidlo o poslednej lige na rozlíšenie nástupcov, ručný číselník `etl/config/nastupcovia.json`, typy klubov (ženské, akadémie), logická kontrola úrovní, rez po zväzoch v rámci SR, sekcia na `/trendy`, `etl/kontrola_zanikania.py`; prepočet oboch sociálnych postov |
 | 14. 8. 2026 | **Počet klubov** — nový blok na úvode, na profiloch zväzov, v Porovnaniach a v sunburste; KPI dlaždice Kluby a Kluby — futsal; filter neregulárnych súťaží (`etl/kluby.py`, `etl/kluby_zvazy.py`, číselník); šrafované sezóny nábehu ISSF; **`etl/zanikanie.py`** — zánik klubov s mládežou vs. bez mládeže; sociálny post s 12 vizuálmi a PDF carouselom |
 | 10. 8. 2026 | Jednotné kontextové popisky vo všetkých grafoch + podpora dotyku |
 | 8.–9. 8. 2026 | Súťažné skupiny ako druhá metrika počtu súťaží; `etl/kontrola_skupin.py`; vývoj Indexu klubu po zväzoch; upratanie dokumentácie |
