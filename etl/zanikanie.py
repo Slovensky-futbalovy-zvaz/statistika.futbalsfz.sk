@@ -18,6 +18,10 @@ Z toho plynú tri veci, ktoré sa nesmú stratiť:
    a aspoň raz sa zmenil 621 klubom z 2 034. Keby sa aktivita posudzovala po zväzoch,
    boli by to všetko falošné zániky.
 3. Jednosezónna pauza nie je zánik. Až dve sezóny po sebe bez družstva.
+   POHÁRE SA NERÁTAJÚ VÔBEC (rozhodnutie Ján Letko, 15. 8. 2026). Do pohára (Slovnaft Cup
+   a pod.) sa dostane len klub aktívny v súťažiach, takže pohárový zápas nie je dôkazom
+   aktivity — a naopak dokáže poriadne pomýliť: sezóna odohraná len v pohári by klub držala
+   „nažive“ a zároveň by mu ako domovský zväz vyšiel SFZ, hoci patrí do svojho ObFZ.
 4. NOVÝ SUBJEKT V ISSF NIE JE NOVÝ KLUB. Pri novej registrácii (transformácia na s. r. o.,
    zmena právnej formy) vznikne nové organization ID bez väzby na predchodcu. Rozlíšiť ich
    umožňuje súťažný poriadok (pravidlo Ján Letko, 15. 8. 2026): ak sa zaniknutý klub znova
@@ -502,6 +506,17 @@ def main() -> int:
     sezony = [s for s in sorted({s for v in kluby.values() for s in v})[:-1] if s not in NABEH_ISSF]
     urovne = urovne_klubov(out_dir)
 
+    # POHÁRE PREČ ešte pred párovaním nástupcov — inak by pohárová sezóna posunula
+    # poslednú odohranú sezónu predchodcu a dvojica by sa nenašla.
+    vyhodenych = 0
+    for k, v in list(kluby.items()):
+        for s in [x for x in v if (urovne.get(k, {}).get(x) or (None, False))[1]]:
+            del v[s]
+            vyhodenych += 1
+        if not v:
+            del kluby[k]
+    print(f"sezón odohraných len v pohári (nerátajú sa ako aktívna sezóna): {vyhodenych}\n")
+
     # PRAVIDLO O POSLEDNEJ LIGE — spojenie subjektov, ktoré sú v skutočnosti ten istý klub
     nastupca = najdi_nastupcov(kluby, urovne, sezony, TICHO_SEZON)
     if nastupca:
@@ -512,17 +527,6 @@ def main() -> int:
             print(f"  {kluby[pk][ps][3]} ({ps}) → {kluby[nk][ns][3]} ({ns})")
         print()
     kluby = spoj_nastupcov(kluby, nastupca)
-
-    # DOMOVSKÝ ZVÄZ: sezónu odohranú len v pohári neberieme na určenie zväzu
-    for k, v in kluby.items():
-        predch = None
-        for s in sorted(v):
-            len_pohar = (urovne.get(k, {}).get(s) or (None, False))[1]
-            if len_pohar and predch:
-                mlad, dosp, _, nz = v[s]
-                v[s] = (mlad, dosp, predch, nz)
-            else:
-                predch = v[s][2]
 
     vys = analyza(kluby, register_zvazov(REPO), kluby_po_zvazoch(out_dir, sezony), len(nastupca))
     cesta = out_dir / "zanikanie.json"
@@ -569,6 +573,27 @@ def main() -> int:
     sfz = podla_urovne.get("SFZ", 0)
     if sfz > 5:
         print(f"  ⚠️  na úrovni SFZ vyšlo {sfz} zánikov — to je priveľa, výpočet treba preveriť")
+
+    print("\nZANIKNUTÉ KLUBY NA ÚROVNI SFZ A RFZ (na ručnú kontrolu):")
+    urovne_zvazu = {zid: (z.get("uroven") or "?") for zid, z in vys["zvazy"].items()}
+    zoznam = []
+    idx_s = {s: i for i, s in enumerate(vys["sezony"])}
+    hodn = set(vys["hodnotitelne"])
+    for k, v in kluby.items():
+        p = sorted(idx_s[s] for s in v if s in idx_s)
+        for i in p:
+            s = vys["sezony"][i]
+            if s not in hodn:
+                continue
+            if all(vys["sezony"][i + j] not in v for j in range(1, TICHO_SEZON + 1)):
+                zv = v[s][2]
+                if urovne_zvazu.get(zv) in ("SFZ", "RFZ"):
+                    liga = (urovne.get(k, {}).get(s) or (None, False))[0]
+                    zoznam.append((urovne_zvazu.get(zv), zv, v[s][3], s,
+                                   f"L{liga}" if liga else "—", sorted(v)[-1]))
+    for u, zv, nz, s, liga, posl in sorted(zoznam, key=lambda x: (x[0], x[1], x[3])):
+        vratil = " (neskôr sa vrátil)" if posl > s else ""
+        print(f"  {u:4} {zv:24} {nz[:42]:42} posledná {s}  {liga}{vratil}")
 
     print(f"\nOK {cesta}")
     return 0
