@@ -67,6 +67,33 @@ export function getIndexPrehlad(): IndexPrehlad | undefined {
  * aby sa dalo porovnať napríklad 7. ligu naprieč ObFZ. Úrovne sú naprieč sezónami
  * stabilné, na rozdiel od názvov súťaží.
  */
+/** Zanikanie a vznikanie klubov (data/zanikanie.json, vyrába etl/zanikanie.py). */
+export interface Zanikanie {
+  generatedAt: string;
+  sezony: string[];
+  obdobie: string[];
+  vynechane: { nabehISSF: string[]; prebiehajuca: string };
+  zanik: Record<string, Record<string, number>>;
+  prislo: Record<string, Record<string, number>>;
+  miery: Record<string, { klubosezon: number; odchodov: number; miera: number | null }>;
+  zvazy: Record<string, {
+    nazov: string; uroven?: string | null;
+    odchody: number; klubosezony: number; miera: number | null; prichody: number;
+    poObdobiach: Record<string, number>;
+    klubovPrva: number; klubovPosledna: number; zmena: number; zmenaPct: number | null;
+    poSezonach: Record<string, number>;
+  }>;
+  poObdobiach: Record<string, {
+    sezon: number; sezonPrichodov: number; odchody: number; prichody: number;
+    odchodovNaSezonu: number | null; prichodovNaSezonu: number | null;
+  }>;
+  poznamka: string;
+}
+
+export function getZanikanie(): Zanikanie | undefined {
+  return readJson<Zanikanie>(path.join(DATA, 'zanikanie.json'));
+}
+
 export function getVekZvazovVCase(): VekVCase {
   const zvazy = getZvazy();
   const sezonySet = new Set<string>();

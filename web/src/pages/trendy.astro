@@ -5,13 +5,33 @@ import Base from '../layouts/Base.astro';
 import IndexTabulka from '../components/IndexTabulka.tsx';
 import StarnuceKluby from '../components/StarnuceKluby.tsx';
 import VekTrendZvazov from '../components/VekTrendZvazov.tsx';
-import { getIndexPrehlad, getIndexZvazovVCase, getStarnuceKluby, getVekZvazovVCase } from '../lib/trendy';
+import ZanikanieKlubov from '../components/ZanikanieKlubov.tsx';
+import { getIndexPrehlad, getIndexZvazovVCase, getStarnuceKluby, getVekZvazovVCase, getZanikanie } from '../lib/trendy';
 import { getZvazy, klubyZvazu } from '../lib/data';
 
 const prehlad = getIndexPrehlad();
 const starnuce = getStarnuceKluby(3);
 const vekZvazov = getVekZvazovVCase();
 const indexZvazov = getIndexZvazovVCase();
+const zanikanie = getZanikanie();
+
+// Toky po sezónach. Posledná sezóna okna sa hodnotiť nedá (nemá nasledujúcu), preto
+// v grafe nie je; príchody sa počítajú až od tretej sezóny okna — v druhej sa objavia
+// všetky kluby, ktoré si prvú vynechali, a číslo by bolo nafúknuté.
+const zanikSezony = zanikanie?.sezony ?? [];
+const zanikToky: [string, number, number][] = zanikSezony
+  .slice(2, -1)
+  .map((sez) => [sez, zanikanie?.zanik[sez]?.spolu ?? 0, zanikanie?.prislo[sez]?.spolu ?? 0]);
+
+const zanikZvazy = Object.entries(zanikanie?.zvazy ?? {})
+  .map(([id, z]) => ({ id, ...z }))
+  .filter((z) => z.klubosezony > 0);
+
+const zanikObdobia = Object.entries(zanikanie?.poObdobiach ?? {}).map(([nazov, o]) => ({ nazov, ...o }));
+
+const zanikOkno: [string, string] = zanikSezony.length
+  ? [zanikSezony[0], zanikSezony[zanikSezony.length - 1]]
+  : ['', ''];
 
 const INDEX_POZNAMKA =
   'Medián Indexu klubu medzi klubmi zväzu. Kluby bez mládeže sa započítavajú s nulou — sú ' +
@@ -69,8 +89,8 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     <div class={KICKER}>Vývoj v čase</div>
     <h1 class="mt-1 font-extrabold tracking-tight" style="font-size:clamp(28px,4vw,44px);">Trendy</h1>
     <p class="mt-2 max-w-3xl text-muted">
-      Ako sa mení futbal na Slovensku v čase. Zatiaľ vek hráčov v zápasoch dospelých
-      a mládežnícka základňa klubov — ďalšie trendy budú pribúdať.
+      Ako sa mení futbal na Slovensku v čase. Zatiaľ vek hráčov v zápasoch dospelých,
+      zanikanie klubov a mládežnícka základňa klubov — ďalšie trendy budú pribúdať.
     </p>
   </header>
 
@@ -122,6 +142,34 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         rezSlovo="Najvyššia súťaž klubu"
         poznamka={INDEX_POZNAMKA}
       />
+    </div>
+  </section>
+
+  <!-- zanikanie klubov -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Zanikanie klubov</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 4px;">Kde a kedy kluby končia</h2>
+      <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+        Klub považujeme za zaniknutý, až keď <strong class="text-ink">prestane hrať úplne</strong> —
+        koniec v súťažiach dospelých zánik nie je, pokiaľ klub má mládež. Graf ukazuje, koľko
+        klubov každú sezónu odišlo natrvalo a koľko nových pribudlo; tabuľka pod ním, ktorých
+        zväzov sa to týka najviac.
+      </p>
+      {
+        zanikToky.length ? (
+          <ZanikanieKlubov
+            client:visible
+            sezony={zanikSezony}
+            toky={zanikToky}
+            zvazy={zanikZvazy}
+            obdobia={zanikObdobia}
+            oknoStavu={zanikOkno}
+          />
+        ) : (
+          <p class="text-sm text-muted">Dáta o zanikaní klubov sa zatiaľ nepodarilo načítať.</p>
+        )
+      }
     </div>
   </section>
 

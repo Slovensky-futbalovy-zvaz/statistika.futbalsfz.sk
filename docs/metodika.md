@@ -402,6 +402,59 @@ je horná hranica odchodov** a 275, resp. 180 horná hranica vzniknutých klubov
 Správne riešenie je príznak právneho nástupcu v ISSF; žiadosť je v [TODO](TODO.md). Do
 `data/zanikanie.json` sa žiadne párovanie **nepublikuje** — heuristika sa nemieša s meraním.
 
+#### Rez po zväzoch a po obdobiach (doplnené 15. 8. 2026)
+
+Zadanie Ján Letko: *„v ktorých zväzoch najviac ubudlo klubov a v ktorom období?“* Blok `zvazy`
+a `poObdobiach` v `data/zanikanie.json`, zobrazené v sekcii **Zanikanie klubov** na `/trendy`.
+
+**Dve rôzne priradenia zväzu — obe sú v tabuľke a nesmú sa zamieňať:**
+
+- **odchody a príchody** sa pripisujú **domovskému zväzu** klubu (tomu, v ktorom v danej sezóne
+  odohral najviac zápasov). Klub zaniká raz, takže sa musí započítať raz;
+- **počet klubov** (stĺpec `klubovPrva/Posledna/zmena`) sa berie z artefaktov bloku Počet klubov,
+  kde je klub započítaný **v každom zväze, v ktorého súťaži hral** — je to to isté číslo, aké má
+  zväz na svojom profile.
+
+Prečo nie domovský zväz aj na počty: domovský zväz sa medzi sezónami mení. Klub, ktorý vstúpi do
+celoštátnej mládežníckej súťaže, „prejde“ pod SFZ, hoci v obci hrá ďalej. Meranie 15. 8. 2026:
+podľa domovského zväzu vychádza ZsFZ −43 klubov a SFZ +22, podľa počtu klubov v súťažiach zväzu
+ZsFZ +18 a SFZ +145 — ani jedno nie sú nové či zaniknuté kluby, je to presun medzi úrovňami.
+
+**Kde (miera definitívneho odchodu, priemer SR 3,1 % za sezónu):**
+
+| Zväz | Odchodov | Miera | Klubov 2014/15 → 2025/26 |
+|---|---|---|---|
+| ObFZ Trebišov | 26 | **10,2 %** | 42 → 19 |
+| ObFZ Rimavská Sobota | 11 | 9,7 % | 16 → 15 |
+| Mestský FZ Košice | 6 | 8,2 % | 7 → 15 |
+| ObFZ Rožňava | 17 | 8,1 % | 29 → 15 |
+| ObFZ Zvolen | 15 | 7,5 % | 35 → 28 |
+| ObFZ Michalovce | 27 | 5,9 % | **63 → 33** |
+| … | | | |
+| ObFZ Senica | 3 | **0,6 %** | 47 → 48 |
+
+Absolútne najviac klubov ubudlo v ObFZ Michalovce (−30), Trebišov (−23), Nitra (−18), Trnava
+(−16) a Levice (−15). Obraz je regionálny: juh a východ ubúdajú, Bratislava, Trenčín a Záhorie
+sú stabilné alebo rastú.
+
+**Kedy — a toto je hlavné zistenie:**
+
+| Obdobie | Odchodov za sezónu | Nových klubov za sezónu |
+|---|---|---|
+| do 2018/2019 | 54,4 | **28,3** |
+| 2019/2020 – 2021/2022 (covid) | 54,3 | **15,3** |
+| od 2022/2023 | 52,0 | **13,5** |
+
+**Kluby nezanikajú rýchlejšie — prestali vznikať.** Tempo odchodov je celé obdobie takmer
+rovnaké a v poslednom výseku dokonca mierne klesá; čo sa zlomilo okolo covidu, je prítok nových
+klubov, a ten sa nevrátil. Najhoršia jednotlivá sezóna je 2021/2022 (−57 klubov), medziročne
+posledné sezóny −29, −26, −11.
+
+**Príchody sa počítajú až od tretej sezóny okna.** V prvej sezóne nový klub vzniknúť nemôže
+(nemá sa voči čomu porovnať) a v druhej vyjde nafúknuto — objavia sa v nej všetky kluby, ktoré
+si prvú sezónu vynechali. Sezóna 2015/2016 tak má 74 „nových“ klubov oproti 26 – 32 v ďalších
+sezónach; to je artefakt okna, nie realita.
+
 Analýza v plnom znení vrátane tabuliek po sezónach: `claude/analyza-zanikanie-klubov.md`.
 **Príčiny** úbytku (demografia, verejné zdroje miest a obcí, podmienky pre trénerov, komerční
 partneri) v dátach **nie sú** — portál meria stavy a pohyby, nie dôvody. Kde sa uvádzajú
