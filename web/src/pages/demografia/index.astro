@@ -3,13 +3,17 @@ import Base from '../../layouts/Base.astro';
 import DemografiaSekcia from '../../components/DemografiaSekcia.tsx';
 import AgePyramid from '../../components/AgePyramid.tsx';
 import ZvazPicker from '../../components/ZvazPicker.tsx';
-import { getSumarDemografia, getZvazy } from '../../lib/data';
+import { getSumarDemografia, getZvazy, poslednaKompletnaSlug } from '../../lib/data';
 
 const srDemo = getSumarDemografia();
 const vsetkyZvazy = getZvazy().map((zz) => ({ id: zz.id, nazov: zz.nazov, uroven: zz.uroven, rfz: zz.rfz }));
 // Kozmetický badge 'OBDOBIE' v hlavičke (#4 klubový plán) — táto stránka zámerne zobrazuje trend
 // cez VŠETKY sezóny naraz (nie per-sezónny filter), preto namiesto SEZÓNA pickera len rozsah rokov.
 const sezonyListSr = srDemo ? Object.keys(srDemo.sezony).sort() : [];
+// Prebiehajúca sezóna sa nesmie čítať ako stav — mládež sa prihlasuje neskôr než dospelí.
+// Rovnaká hranica ako pri Indexe klubu a vekových trendoch: posledná KOMPLETNÁ sezóna.
+const kompletnaSr = poslednaKompletnaSlug().replace('-', '/');
+const prebiehaSr = sezonyListSr.length > 0 && sezonyListSr[sezonyListSr.length - 1] !== kompletnaSr;
 const obdobieSr = sezonyListSr.length
   ? sezonyListSr.length > 1
     ? `${sezonyListSr[0]}–${sezonyListSr[sezonyListSr.length - 1]}`
@@ -51,12 +55,12 @@ const obdobieSr = sezonyListSr.length
   {
     srDemo ? (
       <>
-        <DemografiaSekcia client:load demo={srDemo} />
+        <DemografiaSekcia client:load demo={srDemo} poslednaKompletna={kompletnaSr} />
         <section class="mt-4 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
           <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Veková štruktúra</div>
           <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Veková pyramída</h2>
           <p class="text-sm text-muted mb-3">Registrované osoby podľa veku a pohlavia. Prepni rolu.</p>
-          <AgePyramid client:visible demo={srDemo} />
+          <AgePyramid client:visible demo={srDemo} prebieha={prebiehaSr} />
         </section>
       </>
     ) : (

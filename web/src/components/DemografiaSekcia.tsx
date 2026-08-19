@@ -11,6 +11,12 @@ echarts.use([LineChart, GridComponent, TooltipComponent, CanvasRenderer]);
 
 interface Props {
   demo: Demografia;
+  /**
+   * Posledná KOMPLETNÁ sezóna ("RRRR/RRRR"). Sezóny za ňou ešte bežia — čísla sa
+   * v nich dopĺňajú a nižšia hodnota nie je pokles. Označujú sa zosvetleným pásmom
+   * v trende, prerušovanou sparklinou a poznámkou pri rozpade sezóny.
+   */
+  poslednaKompletna?: string;
 }
 
 const U_LEVELS = ['ADULTS', 'U19', 'U18', 'U17', 'U16', 'U15', 'U14', 'U13', 'U12', 'U11', 'U10', 'U09', 'U08', 'U07'];
@@ -25,7 +31,7 @@ function farbaUrovne(lvl: string): string {
 }
 
 /** Kompletná demografická sekcia: trend + legenda + rozpad + small multiples rolí. */
-export default function DemografiaSekcia({ demo }: Props) {
+export default function DemografiaSekcia({ demo, poslednaKompletna }: Props) {
   const lineEl = useRef<HTMLDivElement>(null);
   const lineChart = useRef<echarts.ECharts | null>(null);
   const [rola, setRola] = useState('hraci');
@@ -34,6 +40,15 @@ export default function DemografiaSekcia({ demo }: Props) {
 
   const sezony = useMemo(() => Object.keys(demo.sezony).sort(), [demo]);
   const posledna = sezony[sezony.length - 1];
+
+  /** Index prvej prebiehajúcej sezóny; === sezony.length keď všetky sú kompletné. */
+  const prebiehaOd = useMemo(() => {
+    if (!poslednaKompletna) return sezony.length;
+    const i = sezony.indexOf(poslednaKompletna);
+    return i < 0 ? sezony.length : i + 1;
+  }, [sezony, poslednaKompletna]);
+  const prebieha = prebiehaOd < sezony.length;
+  const prebiehajuce = sezony.slice(prebiehaOd);
   const dostupneRoly = ROLY_PORADIE.filter((r) => sezony.some((s) => (demo.sezony[s]?.[r]?.osoby ?? 0) > 0));
 
   const jeSkupina = (k: string) => GROUPS.some((g) => g.key === k);
@@ -77,6 +92,23 @@ export default function DemografiaSekcia({ demo }: Props) {
       itemStyle: { color: farbaSerie(key, i) },
       data: sezony.map((s) => hodnota(s, key)),
     }));
+    // Prebiehajúca sezóna: zosvetlené pásmo na konci osi. Čísla sa v nej ešte
+    // dopĺňajú, preto sa posledný bod nesmie čítať ako medziročný pokles.
+    if (prebieha && series.length) {
+      (series[0] as Record<string, unknown>).markArea = {
+        silent: true,
+        itemStyle: { color: 'rgba(108,113,120,0.09)' },
+        label: {
+          show: true,
+          position: 'insideTop',
+          color: '#6c7178',
+          fontSize: 10,
+          fontWeight: 700,
+          formatter: 'prebieha',
+        },
+        data: [[{ xAxis: sezony[prebiehaOd - 1] }, { xAxis: sezony[sezony.length - 1] }]],
+      };
+    }
     lineChart.current.setOption(
       {
         tooltip: { trigger: 'axis', confine: true },
@@ -90,7 +122,7 @@ export default function DemografiaSekcia({ demo }: Props) {
     const ro = new ResizeObserver(() => lineChart.current?.resize());
     ro.observe(lineEl.current);
     return () => ro.disconnect();
-  }, [sel, rola, pohlavie, sezony]);
+  }, [sel, rola, pohlavie, sezony, prebieha, prebiehaOd]);
 
   function toggle(key: string) {
     setSel((cur) => (cur.includes(key) ? cur.filter((k) => k !== key) : [...cur, key]));
@@ -107,15 +139,14 @@ export default function DemografiaSekcia({ demo }: Props) {
 
   // small multiples rolí — trend osôb roly cez sezóny (sparkline)
   const rolaTrend = (r: string) => sezony.map((s) => osobyRoly(s, r));
-  function sparkPts(vals: number[]): string {
+  /** Body sparkliny ako pole — aby sa prebiehajúci úsek dal vykresliť prerušovane. */
+  function sparkPts(vals: number[]): string[] {
     const mn = Math.min(...vals), mx = Math.max(...vals);
-    return vals
-      .map((v, i) => {
-        const x = (i / (vals.length - 1 || 1)) * 100;
-        const y = 26 - ((v - mn) / (mx - mn || 1)) * 22 - 2;
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      })
-      .join(' ');
+    return vals.map((v, i) => {
+      const x = (i / (vals.length - 1 || 1)) * 100;
+      const y = 26 - ((v - mn) / (mx - mn || 1)) * 22 - 2;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
   }
 
   const rolaPill = (aktiv: boolean): React.CSSProperties => ({
@@ -221,17 +252,39 @@ export default function DemografiaSekcia({ demo }: Props) {
             </span>
           ))}
         </div>
+
+        {prebieha && (
+          <p style={{ fontSize: 11.5, color: 'var(--color-muted)', marginTop: 8 }}>
+            Zosvetlený úsek vpravo {prebiehajuce.length > 1 ? 'sú sezóny' : 'je sezóna'}{' '}
+            <b style={{ color: 'var(--color-ink)' }}>{prebiehajuce.join(', ')}</b> — {prebiehajuce.length > 1 ? 'ešte bežia' : 'ešte beží'}.
+            Mládežnícke súťaže sa v nej len rozbiehajú, čísla budú rásť a pokles na konci čiary nie je pokles v skutočnosti.
+            Posledná kompletná sezóna je <b style={{ color: 'var(--color-ink)' }}>{poslednaKompletna}</b>.
+          </p>
+        )}
       </section>
 
       {/* karta rozpad aktuálnej sezóny */}
       <section className="border border-line" style={{ background: 'var(--color-card)', borderRadius: 16, padding: 18, boxShadow: 'var(--shadow-card)', marginTop: 16 }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--color-sfz-blue)' }}>
-          Aktuálna sezóna · {posledna}
+          {prebieha ? 'Prebiehajúca sezóna' : 'Aktuálna sezóna'} · {posledna}
         </div>
         <h2 style={{ fontSize: 20, fontWeight: 800, margin: '2px 0 2px' }}>
           {rolaNazov} podľa vybraných úrovní{pohlavie !== 'VSETCI' ? ` — ${POHLAVIE_LABEL[pohlavie].toLowerCase()}` : ''}
         </h2>
-        <p style={{ fontSize: 13.5, color: 'var(--color-muted)', marginBottom: 14 }}>Rozpad poslednej sezóny pre vybrané čiary. Podiel z vybraných.</p>
+        <p style={{ fontSize: 13.5, color: 'var(--color-muted)', marginBottom: prebieha ? 8 : 14 }}>Rozpad poslednej sezóny pre vybrané čiary. Podiel z vybraných.</p>
+        {prebieha && (
+          <p
+            style={{
+              fontSize: 12.5, color: 'var(--color-muted)', marginBottom: 14, padding: '8px 12px',
+              borderRadius: 10, background: 'rgba(108,113,120,0.08)', border: '1px solid var(--color-line)',
+            }}
+          >
+            <b style={{ color: 'var(--color-ink)' }}>Sezóna ešte beží — čísla nie sú úplné.</b>{' '}
+            Mládežnícke súťaže sa rozbiehajú neskôr než dospelé a časť kôl je ešte neodohraná, takže
+            mládežnícke kategórie sú zatiaľ podreprezentované. S poslednou kompletnou sezónou
+            ({poslednaKompletna}) sa tento rozpad porovnávať nedá.
+          </p>
+        )}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {rozpad.map((r) => (
             <div key={r.key} style={{ display: 'grid', gridTemplateColumns: '110px 1fr auto', alignItems: 'center', gap: 12 }}>
@@ -267,8 +320,31 @@ export default function DemografiaSekcia({ demo }: Props) {
             >
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--color-muted)' }}>{ROLA_LABEL[r]}</div>
               <div className="tnum" style={{ fontSize: 24, fontWeight: 800, marginTop: 2 }}>{fmt(trend[trend.length - 1] ?? 0)}</div>
+              <div style={{ fontSize: 10.5, color: 'var(--color-muted)', marginTop: 1 }}>
+                {posledna}
+                {prebieha && ' · prebieha'}
+              </div>
               <svg viewBox="0 0 100 26" preserveAspectRatio="none" style={{ width: '100%', height: 28, marginTop: 6 }}>
-                <polyline points={sparkPts(trend)} fill="none" stroke={aktiv ? 'var(--color-sfz-blue)' : '#9aa0a6'} strokeWidth={1.6} vectorEffect="non-scaling-stroke" />
+                {(() => {
+                  const pts = sparkPts(trend);
+                  const farba = aktiv ? 'var(--color-sfz-blue)' : '#9aa0a6';
+                  if (!prebieha) {
+                    return <polyline points={pts.join(' ')} fill="none" stroke={farba} strokeWidth={1.6} vectorEffect="non-scaling-stroke" />;
+                  }
+                  return (
+                    <>
+                      <polyline points={pts.slice(0, prebiehaOd).join(' ')} fill="none" stroke={farba} strokeWidth={1.6} vectorEffect="non-scaling-stroke" />
+                      <polyline
+                        points={pts.slice(prebiehaOd - 1).join(' ')}
+                        fill="none"
+                        stroke={farba}
+                        strokeWidth={1.6}
+                        strokeDasharray="3 2"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    </>
+                  );
+                })()}
               </svg>
             </button>
           );

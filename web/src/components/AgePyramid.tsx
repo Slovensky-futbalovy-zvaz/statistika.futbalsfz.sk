@@ -9,6 +9,8 @@ interface Props {
   // DemografiaKlub (#37), ktora ma odlisny id field (klub, nie zvaz).
   demo: Pick<Demografia, 'sezony'>;
   sezona?: string; // ak nie je, použije sa posledná
+  /** Zobrazená sezóna ešte beží — čísla sa dopĺňajú, pyramída nie je stav. */
+  prebieha?: boolean;
 }
 
 // vekové pásma (zhora dole ako v prototype)
@@ -27,7 +29,7 @@ const PASMA: { label: string; test: (v: number) => boolean }[] = [
 ];
 
 /** Veková pyramída po pásmach (Muži vľavo modrá, Ženy vpravo červená). */
-export default function AgePyramid({ demo, sezona }: Props) {
+export default function AgePyramid({ demo, sezona, prebieha = false }: Props) {
   const sezony = useMemo(() => Object.keys(demo.sezony).sort(), [demo]);
   const akt = sezona && demo.sezony[sezona] ? sezona : sezony[sezony.length - 1];
   const dostupneRoly = ROLY_PORADIE.filter((r) => sezony.some((s) => (demo.sezony[s]?.[r]?.osoby ?? 0) > 0));
@@ -68,6 +70,19 @@ export default function AgePyramid({ demo, sezona }: Props) {
   return (
     <div onMouseLeave={tip.skry}>
       <tip.Tooltip />
+      {prebieha && (
+        <p
+          style={{
+            fontSize: 12.5, color: 'var(--color-muted)', marginBottom: 12, padding: '8px 12px',
+            borderRadius: 10, background: 'rgba(108,113,120,0.08)', border: '1px solid var(--color-line)',
+          }}
+        >
+          <b style={{ color: 'var(--color-ink)' }}>Sezóna {akt} ešte beží.</b>{' '}
+          Pyramída ukazuje len osoby, ktoré v nej už nastúpili — detské pásma sa dopĺňajú neskôr,
+          lebo mládežnícke súťaže sa rozbiehajú až po dospelých. Tvar zatiaľ nie je vekovou
+          štruktúrou futbalu a s uzavretou sezónou sa porovnávať nedá.
+        </p>
+      )}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
         {dostupneRoly.map((r) => (
           <button key={r} type="button" style={pill(rola === r)} onClick={() => setRola(r)}>

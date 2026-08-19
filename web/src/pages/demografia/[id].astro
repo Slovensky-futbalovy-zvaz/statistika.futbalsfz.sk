@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import DemografiaSekcia from '../../components/DemografiaSekcia.tsx';
 import AgePyramid from '../../components/AgePyramid.tsx';
 import ZvazPicker from '../../components/ZvazPicker.tsx';
-import { getZvazy, getZvaz, getDemografia } from '../../lib/data';
+import { getZvazy, getZvaz, getDemografia, poslednaKompletnaSlug } from '../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -18,6 +18,9 @@ const demo = getDemografia(z.id);
 const vsetkyZvazy = getZvazy().map((zz) => ({ id: zz.id, nazov: zz.nazov, uroven: zz.uroven, rfz: zz.rfz }));
 // Kozmetický badge 'OBDOBIE' v hlavičke (#4 klubový plán) — pozri demografia/index.astro.
 const sezonyListZvaz = demo ? Object.keys(demo.sezony).sort() : [];
+// Pozri demografia/index.astro — prebiehajúca sezóna sa označuje, nie skrýva.
+const kompletnaZvaz = poslednaKompletnaSlug().replace('-', '/');
+const prebiehaZvaz = sezonyListZvaz.length > 0 && sezonyListZvaz[sezonyListZvaz.length - 1] !== kompletnaZvaz;
 const obdobieZvaz = sezonyListZvaz.length
   ? sezonyListZvaz.length > 1
     ? `${sezonyListZvaz[0]}–${sezonyListZvaz[sezonyListZvaz.length - 1]}`
@@ -51,12 +54,12 @@ const obdobieZvaz = sezonyListZvaz.length
   {
     demo ? (
       <>
-        <DemografiaSekcia client:load demo={demo} />
+        <DemografiaSekcia client:load demo={demo} poslednaKompletna={kompletnaZvaz} />
         <section class="mt-4 border border-line" style="background:var(--color-card); border-radius:16px; padding:18px; box-shadow:var(--shadow-card);">
           <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Veková štruktúra</div>
           <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Veková pyramída</h2>
           <p class="text-sm text-muted mb-3">Registrované osoby podľa veku a pohlavia. Prepni rolu.</p>
-          <AgePyramid client:visible demo={demo} />
+          <AgePyramid client:visible demo={demo} prebieha={prebiehaZvaz} />
         </section>
       </>
     ) : (
