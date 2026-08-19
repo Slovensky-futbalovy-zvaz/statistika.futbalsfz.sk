@@ -50,6 +50,8 @@ Raz na konci, offline (bez DB):
  10. zanikanie.py                          cita data/klub → po kroku 4
  11. porovnania.py, porovnania_kluby.py, sumar.py   citaju profily vratane bloku klubov
                                            → MUSIA byt po kroku 8
+11b. odstupene_kluby.py                   odstupene kluby + rozbeh prebiehajucej sezony
+                                           → MUSI byt po kroku 11 (cita data/sumar)
  12. projekty.py                            grassroots projekty (ma DB, ale je nezavisly)
 
 K = posledna KOMPLETNA sezona, nie aktualna. Prebiehajuca sezona sa do celoslovenskeho
@@ -225,6 +227,8 @@ def main() -> int:
     spusti(["etl/porovnania.py", "--out", str(out)], "porovnania", chyby)
     spusti(["etl/porovnania_kluby.py", "--out", str(out)], "porovnania_kluby", chyby)
     spusti(["etl/sumar.py", "--out", str(out)], "sumar", chyby)
+    # 11b) odstupene kluby — cita data/klub a data/sumar (blok rozbeh) → po kroku 11
+    spusti(["etl/odstupene_kluby.py", "--out", str(out)], "odstupene_kluby", chyby)
     # 12) grassroots projekty
     spusti(["etl/projekty.py", "--out", str(out)], "projekty", chyby)
 

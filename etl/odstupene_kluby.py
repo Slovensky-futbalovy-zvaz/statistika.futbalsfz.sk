@@ -116,6 +116,60 @@ def nacitaj_druzstva(out_dir: Path) -> tuple[dict, dict, dict]:
     return druzstva, nazvy, zvazy
 
 
+def rozbeh_sezony(out_dir: Path, druzstva: dict, prebiehajuca: str, predch: str) -> dict:
+    # Stav rozbehu prebiehajucej sezony. Prebiehajuca sezona sa NIKDY nevykazuje ako pocet
+    # odstupenych klubov: kym nebezia vsetky sutaze, klub bez zapasu moze len cakat na start
+    # svojej sutaze (mladeznicke sutaze sa rozbiehaju neskor ako dospeli). Vykazuje sa preto
+    # len to, kolko z minuloroCneho objemu uz realne hra.
+    def sumar(sez):
+        f = out_dir / 'sumar' / (sez.replace('/', '-') + '.json')
+        if not f.exists():
+            return {}
+        with open(f, encoding='utf-8') as fh:
+            return (json.load(fh).get('kpi') or {})
+
+    a, b = sumar(prebiehajuca), sumar(predch)
+    hra = {k: v for k, v in druzstva.items() if prebiehajuca in v}
+    hralo_predch = {k for k, v in druzstva.items() if predch in v}
+    bez = sorted(hralo_predch - set(hra))
+
+    def grupy_poc(sez, kluby):
+        out = {}
+        for g in NAZVY_GRUP:
+            out[g] = sum((druzstva[k].get(sez) or {}).get(g, 0) for k in kluby)
+        return out
+
+    def podiel(x, y):
+        return round(100.0 * x / y, 1) if y else None
+
+    return {
+        'sezona': prebiehajuca,
+        'predchadzajuca': predch,
+        'poznamka': (
+            'Prebiehajuca sezona sa nehodnoti ako pocet odstupenych klubov. Klub, ktory zatial '
+            'nema odohrany zapas, moze len cakat na start svojej sutaze. Cislo bezZapasu preto '
+            'NIE JE pocet odstupenych klubov a nesmie sa tak pouzivat.'
+        ),
+        'sutaze': a.get('sutaze'),
+        'sutazePredch': b.get('sutaze'),
+        'podielSutazi': podiel(a.get('sutaze') or 0, b.get('sutaze') or 0),
+        'zapasy': a.get('zapasy'),
+        'zapasyPredch': b.get('zapasy'),
+        'podielZapasov': podiel(a.get('zapasy') or 0, b.get('zapasy') or 0),
+        'druzstva': a.get('druzstva'),
+        'druzstvaPredch': b.get('druzstva'),
+        'podielDruzstiev': podiel(a.get('druzstva') or 0, b.get('druzstva') or 0),
+        'kluby': len(hra),
+        'klubyPredch': len(hralo_predch),
+        'podielKlubov': podiel(len(hra), len(hralo_predch)),
+        'bezZapasu': len(bez),
+        'poGrupach': {
+            'teraz': grupy_poc(prebiehajuca, hra),
+            'predch': grupy_poc(predch, hralo_predch),
+        },
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(REPO / "data"))
@@ -333,6 +387,16 @@ def main() -> int:
                   f"{r['stratiliKategoriuAHrajuDalej']:10}{r['pridaliKategoriu']:9}")
         print()
 
+    # C) ROZBEH PREBIEHAJUCEJ SEZONY
+    rozbeh = rozbeh_sezony(out_dir, druzstva, prebiehajuca, sezony[-1])
+    print('ROZBEH ' + prebiehajuca + ': sutazi ' + str(rozbeh['sutaze']) + '/'
+          + str(rozbeh['sutazePredch']) + ' (' + str(rozbeh['podielSutazi']) + ' %)'
+          + ' | klubov ' + str(rozbeh['kluby']) + '/' + str(rozbeh['klubyPredch'])
+          + ' (' + str(rozbeh['podielKlubov']) + ' %)'
+          + ' | zapasov ' + str(rozbeh['zapasy']) + ' (' + str(rozbeh['podielZapasov']) + ' %)'
+          + ' | zatial bez zapasu ' + str(rozbeh['bezZapasu']) + ' klubov = NIE odstupene kluby')
+    print()
+
     cesta = out_dir / "odstupene-kluby.json"
     with open(cesta, "w", encoding="utf-8") as f:
         json.dump({
@@ -357,6 +421,7 @@ def main() -> int:
                 "sezonHodnotenych": len(poc),
             },
             "prebiehajuca": prebiehajuca,
+            "rozbeh": rozbeh,
             "grupy": NAZVY_GRUP,
             "odstupeneKluby": tab_a,
             "poKategoriach": tab_b,

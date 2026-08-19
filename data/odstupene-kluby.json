@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-08-19T13:35:57+00:00",
+ "generatedAt": "2026-08-19T17:58:55+02:00",
  "zadanie": "„Odhlásený klub“ je zlá definícia — odhlasujú sa DRUŽSTVÁ. Blok A: ODSTÚPENÉ KLUBY (pojem Ján Letko, 16. 8. 2026) = klub, ktorý prvú sezónu nemá v súťažiach žiadne družstvo a predchádzajúcu mal aspoň jedno; vrátane histórie družstiev kohorty tri sezóny dozadu. Blok B: družstvá po vekových kategóriách. Prebiehajúca sezóna sa nerieši.",
  "vyhrada": "Odstúpený klub NIE JE zaniknutý klub — po jednej vynechanej sezóne sa vracia 19,7 % klubov. Zánik je až dve tiché sezóny po sebe (etl/zanikanie.py).",
  "sezony": [
@@ -24,6 +24,38 @@
   "sezonHodnotenych": 11
  },
  "prebiehajuca": "2026/2027",
+ "rozbeh": {
+  "sezona": "2026/2027",
+  "predchadzajuca": "2025/2026",
+  "poznamka": "Prebiehajuca sezona sa nehodnoti ako pocet odstupenych klubov. Klub, ktory zatial nema odohrany zapas, moze len cakat na start svojej sutaze. Cislo bezZapasu preto NIE JE pocet odstupenych klubov a nesmie sa tak pouzivat.",
+  "sutaze": 145,
+  "sutazePredch": 397,
+  "podielSutazi": 36.5,
+  "zapasy": 1757,
+  "zapasyPredch": 61007,
+  "podielZapasov": 2.9,
+  "druzstva": 2326,
+  "druzstvaPredch": 5686,
+  "podielDruzstiev": 40.9,
+  "kluby": 1024,
+  "klubyPredch": 1401,
+  "podielKlubov": 73.1,
+  "bezZapasu": 382,
+  "poGrupach": {
+   "teraz": {
+    "Prípravka": 32,
+    "Žiaci": 416,
+    "Dorast": 487,
+    "Dospelí": 1007
+   },
+   "predch": {
+    "Prípravka": 1712,
+    "Žiaci": 1611,
+    "Dorast": 803,
+    "Dospelí": 1320
+   }
+  }
+ },
  "grupy": [
   "Prípravka",
   "Žiaci",

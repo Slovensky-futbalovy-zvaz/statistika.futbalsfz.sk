@@ -6,7 +6,7 @@ import IndexTabulka from '../components/IndexTabulka.tsx';
 import StarnuceKluby from '../components/StarnuceKluby.tsx';
 import VekTrendZvazov from '../components/VekTrendZvazov.tsx';
 import ZanikanieKlubov from '../components/ZanikanieKlubov.tsx';
-import { getIndexPrehlad, getIndexZvazovVCase, getStarnuceKluby, getVekZvazovVCase, getZanikanie } from '../lib/trendy';
+import { getIndexPrehlad, getIndexZvazovVCase, getRozbehSezony, getStarnuceKluby, getVekZvazovVCase, getZanikanie } from '../lib/trendy';
 import { getZvazy, klubyZvazu } from '../lib/data';
 
 const prehlad = getIndexPrehlad();
@@ -14,6 +14,19 @@ const starnuce = getStarnuceKluby(3);
 const vekZvazov = getVekZvazovVCase();
 const indexZvazov = getIndexZvazovVCase();
 const zanikanie = getZanikanie();
+const rozbeh = getRozbehSezony();
+const ROZBEH_KAT = ['Dospelí', 'Dorast', 'Žiaci', 'Prípravka'] as const;
+const rozbehKat = rozbeh
+  ? ROZBEH_KAT.map((k) => ({
+      kat: k,
+      podiel: rozbeh.poGrupach.predch[k]
+        ? (100 * (rozbeh.poGrupach.teraz[k] ?? 0)) / rozbeh.poGrupach.predch[k]
+        : 0,
+    }))
+  : [];
+const cisloSk = (n: number) => n.toLocaleString('sk-SK');
+const procSk = (n: number) =>
+  n.toLocaleString('sk-SK', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 const INDEX_POZNAMKA =
   'Medián Indexu klubu medzi klubmi zväzu. Kluby bez mládeže sa započítavajú s nulou — sú ' +
@@ -157,6 +170,23 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
         klubov každú sezónu zaniklo a koľko nových pribudlo; tabuľka pod ním, ktorých zväzov sa
         to týka najviac.
       </p>
+      {
+        rozbeh && (
+          <div
+            class="text-sm mb-3"
+            style="border-left:4px solid #ec1c24; background:#fef2f2; border-radius:0 10px 10px 0; padding:10px 14px; line-height:1.6;"
+          >
+            <strong class="text-ink">Sezóna {rozbeh.sezona} sa iba začína, preto v grafe ani
+            v tabuľke nie je.</strong> Beží {cisloSk(rozbeh.sutaze)} z {cisloSk(rozbeh.sutazePredch)}
+            súťaží ({procSk(rozbeh.podielSutazi ?? 0)} %) a rozbiehajú sa v poradí dospelí → dorast →
+            žiaci → prípravky: {rozbehKat.map((r, i) => `${i ? ', ' : ''}${r.kat.toLowerCase()} ${procSk(r.podiel)} %`).join('')}.
+            Klub, ktorý zatiaľ nemá odohraný zápas, preto najčastejšie len čaká na štart svojej
+            súťaže — a takých klubov je {cisloSk(rozbeh.bezZapasu)}.{' '}
+            <strong class="text-ink">Toto číslo nie je počet klubov, ktoré skončili</strong>, a nedá
+            sa tak použiť.
+          </div>
+        )
+      }
       {
         zanikToky.length ? (
           <ZanikanieKlubov

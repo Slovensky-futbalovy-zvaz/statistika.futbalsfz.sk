@@ -490,6 +490,42 @@ a v druhej vyjde nafúknuto — objavia sa v nej všetky kluby, ktoré si prvú 
 Analýza v plnom znení: `claude/definicia-zanik-klubu.md` a `claude/pyramida-vs-zanik-kontrola.md`.
 **Príčiny** úbytku v dátach **nie sú** — portál meria stavy a pohyby, nie dôvody.
 
+#### PREBIEHAJÚCA SEZÓNA — vykazuje sa len ako rozbeh (rozhodnutie Ján Letko, 19. 8. 2026)
+
+> **Prebiehajúca sezóna sa NIKDY nevykazuje ako počet odstúpených ani zaniknutých klubov.**
+> Uvádza sa iba stav rozbehu: koľko z minuloročného objemu už reálne hrá.
+
+Dôvod je meraný, nie odhadovaný: **súťaže sa rozbiehajú v poradí dospelí → dorast → žiaci →
+prípravky.** Klub, ktorý ešte nemá odohraný zápas, preto najčastejšie len čaká na štart svojej
+súťaže. Keby sa počet klubov bez zápasu vykázal ako počet odstúpených klubov, vznikol by presne
+ten falošný obraz hromadného odhlasovania, ktorý dáta vyvracajú.
+
+Stav sezóny 2026/2027 k dátumu prepočtu (predchádzajúca sezóna 2025/2026 = 100 %):
+
+| Ukazovateľ | 2026/2027 | 2025/2026 (celá) | Rozbeh |
+|---|---|---|---|
+| Súťaže s uzavretým zápasom | 145 | 397 | 36,5 % |
+| Odohrané zápasy | 1 757 | 61 007 | 2,9 % |
+| Družstvá | 2 326 | 5 686 | 40,9 % |
+| Kluby s aspoň jedným zápasom | 1 024 | 1 401 | 73,1 % |
+
+Rozbeh po vekových kategóriách — tu je vidieť, prečo sa prebiehajúca sezóna nedá hodnotiť:
+
+| Kategória | 2026/2027 | 2025/2026 (celá) | Rozbeh |
+|---|---|---|---|
+| Dospelí | 1 007 | 1 320 | 76,3 % |
+| Dorast | 487 | 803 | 60,6 % |
+| Žiaci | 416 | 1 611 | 25,8 % |
+| Prípravka | 32 | 1 712 | 1,9 % |
+
+**382 klubov ešte nemá v sezóne 2026/2027 odohraný zápas. Toto číslo NIE JE počet odstúpených
+klubov a nesmie sa tak použiť** — prípraviek hrá zatiaľ 1,9 % a žiakov 25,8 %, takže väčšina
+tých klubov len čaká na štart svojej súťaže.
+
+Číslo počíta `etl/odstupene_kluby.py` (funkcia `rozbeh_sezony`) do bloku `rozbeh`
+v `data/odstupene-kluby.json`. Zdroj počtov súťaží a zápasov je `data/sumar/<sezóna>.json`.
+
+
 ### Vek hráčov a Index klubu — stránka Trendy (7. 8. 2026)
 
 Metodika v plných podrobnostiach: `claude/plan-trendy-vek.md` a `claude/metodika-index-klubu.md`

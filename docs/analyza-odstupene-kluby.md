@@ -1,6 +1,6 @@
 # Odstúpené kluby — čo hovoria dáta
 
-**Podklad na argumentáciu, 19. 8. 2026.** Zadanie prišlo ako „štatistika odhlásených klubov za
+**Podklad na argumentáciu, 19. 8. 2026.** *(Dáta z prepočtu 19. 8. 2026, vrátane rozbehu sezóny 2026/2027.)* Zadanie prišlo ako „štatistika odhlásených klubov za
 posledných 5 rokov“ s cieľom vyvrátiť rétoriku, že sa kluby hromadne odhlásili tento rok — či už
 pre zmeny v RaPP, alebo pre nevyplatené finančné záväzky zo strany SFZ.
 
@@ -25,7 +25,7 @@ Odstúpený klub **nie je zaniknutý klub**. Po jednej vynechanej sezóne sa vra
 
 Prihlásené družstvo sa v dátach meria **reálne odohraným zápasom** — družstvo, ktoré sa prihlási
 a odhlási pred prvým kolom, hraný futbal nie je. Poháre sa nerátajú: do Slovnaft Cupu sa dostane
-len klub aktívny v súťažiach. **Prebiehajúca sezóna 2026/2027 sa nehodnotí** — mládežnícke súťaže
+len klub aktívny v súťažiach. **Prebiehajúca sezóna 2026/2027 sa nehodnotí ako počet odstúpených klubov** (uvádza sa len rozbeh, viď nižšie) — mládežnícke súťaže
 sa rozbiehajú neskôr, takže klub, ktorý ešte len čaká na štart svojej súťaže, by vyšiel ako
 odstúpený. Preregistrácie klubu (nové IČO) sa spájajú s predchodcom, inak by preregistrácia vyšla
 ako strata všetkých družstiev.
@@ -47,6 +47,7 @@ ako strata všetkých družstiev.
 | 2023/2024 | 53 | 8 | 45 |
 | 2024/2025 | 51 | 7 | 44 |
 | **2025/2026** | **42** | zatiaľ 0 | zatiaľ nevieme |
+| 2026/2027 *(sezóna sa iba začína)* | — | — | — |
 
 **Priemer jedenástich sezón je 63,8 klubu.** V sezóne 2025/2026 odstúpilo **42 klubov — najmenej
 za celé sledované obdobie.** Tri najnižšie hodnoty v celom rade sú tri posledné sezóny: 53, 51, 42.
@@ -56,6 +57,28 @@ za celé sledované obdobie.** Tri najnižšie hodnoty v celom rade sú tri posl
 
 Ak by za odstupovaním stáli zmeny v RaPP alebo nevyplatené záväzky, čakali by sme v poslednej
 sezóne **skok nahor**. Namerané je presne opačné číslo.
+
+### Sezóna 2026/2027 — prvé kolá sa odohrali, hodnotiť sa ešte nedá
+
+Prvé kolá sezóny 2026/2027 sú za nami, preto ju uvádzame — ale **len ako rozbeh, nie ako počet
+odstúpených klubov.** Stav k dátumu prepočtu:
+
+| Ukazovateľ | 2026/2027 | 2025/2026 (celá) | Rozbeh |
+|---|---|---|---|
+| Súťaže s uzavretým zápasom | 145 | 397 | 36,5 % |
+| Odohrané zápasy | 1 757 | 61 007 | 2,9 % |
+| Družstvá | 2 326 | 5 686 | 40,9 % |
+| Kluby s aspoň jedným zápasom | 1 024 | 1 401 | 73,1 % |
+
+**Prečo sa to hodnotiť nedá — rozbeh po kategóriách:** dospelí 76,3 %, dorast 60,6 %, žiaci 25,8 %,
+prípravky **1,9 %** (32 družstiev z 1 712). Súťaže sa rozbiehajú v poradí dospelí → dorast → žiaci →
+prípravky, mládež má štart o týždne neskôr.
+
+> **Pozor na jedno číslo.** Bez odohraného zápasu je zatiaľ **382 klubov**. **Toto NIE JE počet
+> odstúpených klubov** a nesmie sa tak použiť ani interne — je to presne to číslo, ktoré by
+> rétoriku o hromadnom odhlasovaní zdanlivo potvrdilo, hoci prípraviek hrá zatiaľ 1,9 %.
+> Počet odstúpených klubov za sezónu 2026/2027 budeme vedieť po jesennej časti, definitívne po
+> jej uzavretí.
 
 ---
 
@@ -143,10 +166,12 @@ vzťahy so SFZ toto vysvetliť nedokážu, pretože:
   kvantitatívne — bez toho zostáva pri profile.
 - **Sezóna 2025/2026 ešte nie je uzavretá z hľadiska návratov.** Zo 42 klubov sa časť vráti; podľa
   histórie približne pätina. Definitívne číslo zánikov za túto sezónu budeme vedieť po 2027/2028.
-- **Prebiehajúca sezóna 2026/2027 v analýze nie je.** V nej má nula odohraných zápasov 40 klubov,
-  ale väčšina z nich len čaká na štart svojej súťaže. Toto číslo sa **nedá** použiť ako počet
-  odstúpených klubov a treba naň dávať pozor — je to presne to číslo, ktoré by rétoriku o hromadnom
-  odhlasovaní zdanlivo potvrdilo.
+- **Prebiehajúca sezóna 2026/2027 sa vykazuje len ako rozbeh.** V tabuľke po sezónach
+  má prázdny riadok, pretože počet odstúpených klubov sa v rozbehnutej sezóne merať nedá.
+  Bez zápasu je zatiaľ 382 klubov, ale prípraviek hrá 1,9 % a žiakov 25,8 % — väčšina tých klubov len čaká na štart svojej
+  súťaže. Toto číslo sa **nedá** použiť ako počet odstúpených klubov a treba naň dávať
+  pozor — je to presne to číslo, ktoré by rétoriku o hromadnom odhlasovaní zdanlivo
+  potvrdilo. Pravidlo je zapísané v `docs/metodika.md`.
 - **Kluby vo viacerých kategóriách sa v tabuľke kategórií počítajú viackrát** — klub s prípravkou
   aj dospelými je v oboch stĺpcoch. Súčet stĺpcov preto nie je počet klubov.
 - **135 klubo-sezón má vekovú kategóriu „NEZNÁMA“** a do rozpadu po kategóriách nevstupuje

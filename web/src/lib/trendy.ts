@@ -102,6 +102,22 @@ export interface Zanikanie {
   };
 }
 
+export type RozbehSezony = {
+  sezona: string;
+  predchadzajuca: string;
+  sutaze: number; sutazePredch: number; podielSutazi: number | null;
+  zapasy: number; zapasyPredch: number; podielZapasov: number | null;
+  druzstva: number; druzstvaPredch: number; podielDruzstiev: number | null;
+  kluby: number; klubyPredch: number; podielKlubov: number | null;
+  bezZapasu: number;
+  poGrupach: { teraz: Record<string, number>; predch: Record<string, number> };
+};
+
+export function getRozbehSezony(): RozbehSezony | undefined {
+  const j = readJson<{ rozbeh?: RozbehSezony }>(path.join(DATA, 'odstupene-kluby.json'));
+  return j?.rozbeh;
+}
+
 export function getZanikanie(): Zanikanie | undefined {
   return readJson<Zanikanie>(path.join(DATA, 'zanikanie.json'));
 }

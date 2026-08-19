@@ -3,7 +3,7 @@ const {
   Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell,
   WidthType, ShadingType, BorderStyle, ImageRun, PageOrientation, Footer, PageNumber,
   LevelFormat, convertInchesToTwip, ExternalHyperlink, PositionalTab, PositionalTabAlignment,
-  PositionalTabLeader, SectionType, TabStopType,
+  PositionalTabLeader, SectionType, TabStopType, PageBreak,
 } = require('docx');
 
 const MODRA = '1450DF', INK = '0F172A', MUT = '64748B', CERV = 'EC1C24', ZEL = '12A06B';
@@ -87,7 +87,7 @@ function tabulka(hlavicka, riadky, sirky, zvyraznPosledny = false) {
 
 /** Obrázok na šírku sadzby + popis. */
 function obrazok(cesta, popis, sirkaPt = 460) {
-  const [w, h] = cesta.includes('infografika') ? [2200, 1210] : [1600, 900];
+  const [w, h] = cesta.includes('infografika') ? [2200, 1500] : [1600, 900];
   const vyska = Math.round(sirkaPt * h / w);
   return [
     p(new ImageRun({ type: 'png', data: fs.readFileSync(cesta), transformation: { width: sirkaPt, height: vyska } }),
@@ -108,7 +108,7 @@ const telo = [
     { spacing: { after: 200 } }),
   p(t('Odstúpené kluby — čo hovoria dáta', { bold: true, size: 44, color: INK }),
     { heading: HeadingLevel.TITLE, spacing: { after: 120 } }),
-  odsek('**Podklad na argumentáciu, 19. 8. 2026.** Zadanie prišlo ako „štatistika odhlásených klubov '
+  odsek('**Podklad na argumentáciu, 19. 8. 2026.** Dáta z prepočtu 19. 8. 2026 vrátane rozbehu sezóny 2026/2027. Zadanie prišlo ako „štatistika odhlásených klubov '
     + 'za posledných 5 rokov“ s cieľom vyvrátiť rétoriku, že sa kluby hromadne odhlásili tento rok — '
     + 'či už pre zmeny v RaPP, alebo pre nevyplatené finančné záväzky zo strany SFZ.'),
   p([t('Zdroj: ISSF, prepočet ', { size: 19, color: MUT }),
@@ -139,6 +139,7 @@ const telo = [
     + 'by vyšiel ako odstúpený. Preregistrácie klubu (nové IČO) sa spájajú s predchodcom, inak by '
     + 'preregistrácia vyšla ako strata všetkých družstiev.'),
 
+  new Paragraph({ children: [new PageBreak()] }),
   H1('1. Koľko klubov odstúpilo — a kedy'),
   tabulka(['Sezóna', 'Odstúpených klubov', 'Z nich sa vrátilo', 'Z nich zaniklo'], [
     ['2015/2016', '72', '16', '56'], ['2016/2017', '78', '24', '54'],
@@ -147,7 +148,8 @@ const telo = [
     ['2021/2022', '80', '18', '62'], ['2022/2023', '59', '15', '44'],
     ['2023/2024', '53', '8', '45'], ['2024/2025', '51', '7', '44'],
     ['**2025/2026**', '**42**', 'zatiaľ 0', 'zatiaľ nevieme'],
-  ], [2270, 2600, 2100, 2100], true),
+    ['2026/2027 (sezóna sa iba začína)', '—', '—', '—'],
+  ], [2270, 2600, 2100, 2100], false),
   medzera(160),
   odsek('**Priemer jedenástich sezón je 63,8 klubu.** V sezóne 2025/2026 odstúpilo **42 klubov — '
     + 'najmenej za celé sledované obdobie.** Tri najnižšie hodnoty v celom rade sú tri posledné '
@@ -158,6 +160,31 @@ const telo = [
     + 'sezóne **skok nahor**. Namerané je presne opačné číslo.'),
   ...obrazok('/tmp/viz3/01-odstupene.png',
     'Graf 1 — Odstúpené kluby po sezónach. Zelený stĺpec je posledná sezóna, prerušovaná čiara priemer.'),
+
+  H2('Sezóna 2026/2027 — prvé kolá sa odohrali, hodnotiť sa ešte nedá'),
+  odsek('Prvé kolá sezóny 2026/2027 sú za nami, preto ju v tabuľke uvádzame — ale **len ako rozbeh, '
+    + 'nie ako počet odstúpených klubov.** Stav k prepočtu z 19. 8. 2026:'),
+  tabulka(['Ukazovateľ', '2026/2027', '2025/2026 (celá)', 'Rozbeh'], [
+    ['Súťaže s uzavretým zápasom', '145', '397', '36,5 %'],
+    ['Odohrané zápasy', '1 757', '61 007', '2,9 %'],
+    ['Družstvá', '2 326', '5 686', '40,9 %'],
+    ['Kluby s aspoň jedným zápasom', '1 024', '1 401', '73,1 %'],
+  ], [3470, 1900, 1900, 1800]),
+  medzera(160),
+  veta('Prečo sa to hodnotiť nedá — rozbeh po vekových kategóriách:'),
+  tabulka(['Kategória', '2026/2027', '2025/2026 (celá)', 'Rozbeh'], [
+    ['Dospelí', '1 007', '1 320', '76,3 %'],
+    ['Dorast', '487', '803', '60,6 %'],
+    ['Žiaci', '416', '1 611', '25,8 %'],
+    ['**Prípravka**', '**32**', '**1 712**', '**1,9 %**'],
+  ], [3470, 1900, 1900, 1800]),
+  medzera(160),
+  odsek('Súťaže sa rozbiehajú v poradí dospelí → dorast → žiaci → prípravky, mládež má štart '
+    + 'o týždne neskôr. **Bez odohraného zápasu je zatiaľ 382 klubov — a toto číslo NIE JE počet '
+    + 'odstúpených klubov.** Prípraviek hrá 1,9 % a žiakov 25,8 %, takže väčšina tých klubov len '
+    + 'čaká na štart svojej súťaže. Je to presne to číslo, ktoré by rétoriku o hromadnom '
+    + 'odhlasovaní zdanlivo potvrdilo, preto sa tak nesmie použiť ani interne. Počet odstúpených '
+    + 'klubov za sezónu 2026/2027 budeme vedieť po jesennej časti.'),
 
   H1('2. Aké to boli kluby'),
   veta('Profil 42 klubov, ktoré odstúpili v sezóne 2025/2026:'),
@@ -243,7 +270,7 @@ const telo = [
   ...[
     ['Dôvod odstúpenia v dátach nie je.', 'Profil klubov je fakt, výklad príčin je náš úsudok. Ak máme rozhodnutia ŠTK alebo evidenciu záväzkov, dá sa to k tomu priložiť a vyhodnotiť kvantitatívne — bez toho zostáva pri profile.'],
     ['Sezóna 2025/2026 ešte nie je uzavretá z hľadiska návratov.', 'Zo 42 klubov sa časť vráti; podľa histórie približne pätina. Definitívne číslo zánikov za túto sezónu budeme vedieť po 2027/2028.'],
-    ['Prebiehajúca sezóna 2026/2027 v analýze nie je.', 'V nej má nula odohraných zápasov 40 klubov, ale väčšina z nich len čaká na štart svojej súťaže. Toto číslo sa nedá použiť ako počet odstúpených klubov a treba naň dávať pozor — je to presne to číslo, ktoré by rétoriku o hromadnom odhlasovaní zdanlivo potvrdilo.'],
+    ['Prebiehajúca sezóna 2026/2027 sa vykazuje len ako rozbeh.', 'Počet odstúpených klubov sa v rozbehnutej sezóne merať nedá. Bez odohraného zápasu je zatiaľ 382 klubov, ale prípraviek hrá 1,9 % a žiakov 25,8 % — väčšina tých klubov len čaká na štart svojej súťaže. Toto číslo sa nedá použiť ako počet odstúpených klubov a treba naň dávať pozor — je to presne to číslo, ktoré by rétoriku o hromadnom odhlasovaní zdanlivo potvrdilo. Pravidlo je zapísané v docs/metodika.md.'],
     ['Kluby vo viacerých kategóriách sa počítajú viackrát.', 'Klub s prípravkou aj dospelými je v oboch stĺpcoch. Súčet stĺpcov preto nie je počet klubov.'],
     ['135 klubo-sezón má vekovú kategóriu „NEZNÁMA“', 'a do rozpadu po kategóriách nevstupuje (rovnako U20 a U21, ktoré do štyroch skúmaných kategórií nepatria).'],
   ].map(([nadpis, text]) => p([
@@ -256,11 +283,11 @@ const priloha = [
   p(t('Príloha A — Odstúpené kluby po sezónach a zväzoch', { bold: true, size: 30, color: INK }),
     { heading: HeadingLevel.HEADING_1, spacing: { after: 160 } }),
   p(new ImageRun({ type: 'png', data: fs.readFileSync('/tmp/art/odstupene-kluby-zvazy-infografika.png'),
-    transformation: { width: 940, height: Math.round(940 * 1210 / 2200) } }),
+    transformation: { width: 745, height: Math.round(745 * 1500 / 2200) } }),
     { spacing: { after: 100 }, alignment: AlignmentType.CENTER }),
   p(t('Číslo v políčku je počet klubov, ktoré v danej sezóne odstúpili a naposledy hrali v súťažiach '
     + 'daného zväzu. Zväz = ten, v ktorého súťažiach klub odohral najviac zápasov v poslednej sezóne. '
-    + 'Prebiehajúca sezóna sa nehodnotí. Zdroj: ISSF.', { size: 17, color: MUT, italics: true }),
+    + 'Sezóna 2026/2027 je uvedená len ako rozbeh, nie ako počet odstúpených klubov. Zdroj: ISSF.', { size: 17, color: MUT, italics: true }),
     { alignment: AlignmentType.CENTER }),
 ];
 
@@ -279,7 +306,7 @@ const patka = (text, tabPos) => new Footer({
 const doc = new Document({
   creator: 'Slovenský futbalový zväz',
   title: 'Odstúpené kluby — čo hovoria dáta',
-  description: 'Podklad na argumentáciu, 19. 8. 2026. Zdroj ISSF, statistika.futbalsfz.sk',
+  description: 'Podklad na argumentáciu, 19. 8. 2026. Dáta z prepočtu 19. 8. 2026 vrátane rozbehu sezóny 2026/2027. Zdroj ISSF, statistika.futbalsfz.sk',
   styles: { default: { document: { run: { font: 'Calibri', size: 21, color: INK } } } },
   sections: [
     {
