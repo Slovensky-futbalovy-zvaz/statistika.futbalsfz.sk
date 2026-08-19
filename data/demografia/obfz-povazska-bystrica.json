@@ -1,7 +1,7 @@
 {
   "zvaz": "obfz-povazska-bystrica",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-17T21:09:12+02:00",
+  "generatedAt": "2026-08-19T16:55:09+02:00",
   "methodologyFlags": {
     "zdroj": "sportnet.users (birthdate, sex); osoby zo sutaze.matches (nominations + managers, len closed:true), roly z etl/config/roly.json",
     "poznamka": "Výhradne agregované počty (GDPR); bez prahu minimálnej veľkosti (O5). Osoba sa počíta raz na rolu a sezónu; tá istá osoba sa môže vyskytovať vo viacerých rolách aj sezónach. Kľúč N = pohlavie nevyplnené."
@@ -6368,14 +6368,17 @@
         }
       },
       "treneri": {
-        "osoby": 11,
-        "sUdajmi": 11,
+        "osoby": 12,
+        "sUdajmi": 12,
         "bezUdajov": 0,
         "roky": {
           "1966": {
             "M": 2
           },
           "1973": {
+            "M": 1
+          },
+          "1974": {
             "M": 1
           },
           "1978": {
