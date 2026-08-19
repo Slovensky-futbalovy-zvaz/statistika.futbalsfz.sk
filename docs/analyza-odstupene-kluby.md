@@ -190,3 +190,6 @@ nemal.
 | `02-kategorie.png` | Aké družstvá mali odstúpené kluby, keď naposledy hrali |
 | `03-druzstva.png` | Družstvá v súťažiach po vekových kategóriách, 2014/2015 – 2025/2026 |
 | `odstupene-kluby.html` | **Interaktívny menoslov** — heatmapa zväz × sezóna a filtrovateľná tabuľka klubov |
+| `odstupene-kluby-zvazy-infografika.png` | **Infografika na ležato** — heatmapa 43 zväzov x 11 sezón, KPI a definícia (do prezentácií) |
+| `Odstupene-kluby-analyza.docx` | **Formátovaný dokument** tejto analýzy vrátane grafov a Prílohy A na ležato |
+| `generator/dokument.js`, `generator/infografika.html` | Zdroje, ktorými sa docx a infografika generujú |
