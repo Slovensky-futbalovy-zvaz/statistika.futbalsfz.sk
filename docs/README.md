@@ -46,6 +46,13 @@ zmenilo, starší ADR sa nemaže; dostane do hlavičky poznámku, ktorý ADR ho 
 | [synology-tyzdenna.md](synology-tyzdenna.md) | Beh ETL v Dockeri na Synology NAS ([deploy/synology/](../deploy/synology/)) |
 | [seo-search-console.md](seo-search-console.md) | Sitemap, indexovanie, Search Console |
 
+### Lokálny build
+
+`cd web && npm run build` — 24 982 strán, trvá okolo 15 minút. **Nikdy nespúšťaj dva buildy
+naraz.** Zdieľajú `web/dist/`, druhý beh zmaže prvému serverové moduly a build spadne na
+`Cannot find module .../dist/pages/klub/_id_.astro.mjs`. Nie je to chyba kódu — pred spustením
+skontroluj `pgrep -f "astro.js build"`.
+
 ## Ostatné priečinky
 
 - **[brand/](brand/)** — dizajn manuál SFZ (PDF), zdroj brand tokenov

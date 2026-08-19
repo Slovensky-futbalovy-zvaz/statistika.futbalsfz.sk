@@ -5,8 +5,9 @@ import Base from '../layouts/Base.astro';
 import IndexTabulka from '../components/IndexTabulka.tsx';
 import StarnuceKluby from '../components/StarnuceKluby.tsx';
 import VekTrendZvazov from '../components/VekTrendZvazov.tsx';
+import OdstupeneKluby from '../components/OdstupeneKluby.tsx';
 import ZanikanieKlubov from '../components/ZanikanieKlubov.tsx';
-import { getIndexPrehlad, getIndexZvazovVCase, getRozbehSezony, getStarnuceKluby, getVekZvazovVCase, getZanikanie } from '../lib/trendy';
+import { getIndexPrehlad, getIndexZvazovVCase, getOdstupeneKluby, getRozbehSezony, getStarnuceKluby, getVekZvazovVCase, getZanikanie } from '../lib/trendy';
 import { getZvazy, klubyZvazu } from '../lib/data';
 
 const prehlad = getIndexPrehlad();
@@ -15,6 +16,7 @@ const vekZvazov = getVekZvazovVCase();
 const indexZvazov = getIndexZvazovVCase();
 const zanikanie = getZanikanie();
 const rozbeh = getRozbehSezony();
+const odstupene = getOdstupeneKluby();
 const ROZBEH_KAT = ['Dospelí', 'Dorast', 'Žiaci', 'Prípravka'] as const;
 const rozbehKat = rozbeh
   ? ROZBEH_KAT.map((k) => ({
@@ -201,6 +203,30 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
           />
         ) : (
           <p class="text-sm text-muted">Dáta o zanikaní klubov sa zatiaľ nepodarilo načítať.</p>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- odstúpenia klubov -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Odstúpenia klubov</div>
+      <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 4px;">Kto v ktorej sezóne nemal ani jedno družstvo</h2>
+      <p class="text-sm text-muted mb-3" style="line-height:1.6;">
+        <strong class="text-ink">Odstúpený klub</strong> je klub, ktorý v sezóne nemal v súťažiach ani jedno
+        družstvo, pričom v predchádzajúcej sezóne mal aspoň jedno. <strong class="text-ink">Nie je to zaniknutý
+        klub</strong> — zánik je až po dvoch tichých sezónach a po jednej vynechanej sa vracia každý piaty klub.
+        Zväz je ten, v ktorého súťažiach klub odohral najviac zápasov v poslednej sezóne; pri klube s mládežou
+        v celoštátnej alebo regionálnej súťaži to preto môže byť zväz tejto mládežníckej súťaže. Prihlásené
+        družstvo sa meria reálne odohraným zápasom, pohárové sezóny sa nerátajú a prebiehajúca sezóna sa
+        nehodnotí.
+      </p>
+      {
+        odstupene ? (
+          <OdstupeneKluby client:visible {...odstupene} />
+        ) : (
+          <p class="text-sm text-muted">Dáta o odstúpených kluboch sa zatiaľ nepodarilo načítať.</p>
         )
       }
     </div>

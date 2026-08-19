@@ -113,6 +113,88 @@ export type RozbehSezony = {
   poGrupach: { teraz: Record<string, number>; predch: Record<string, number> };
 };
 
+export type OdstupenyZvazProp = {
+  id: string; nazov: string; uroven?: string | null; spolu: number; poSezonach: number[];
+};
+export type OdstupenyKlubProp = {
+  n: string; s: string; sez: string; z: string; l: number | null;
+  p: number; zi: number; d: number; a: number; h: number; v: boolean;
+};
+export type OdstupeneProps = {
+  sezony: string[];
+  poSezonach: [string, number, number, number][];
+  priemer: number;
+  spolu: number;
+  zvazy: OdstupenyZvazProp[];
+  kluby: OdstupenyKlubProp[];
+};
+
+type OdstupeneSubor = {
+  sezony: string[];
+  suhrn?: { priemerOdstupenych?: number };
+  odstupeneKluby?: Record<string, { klubovBezDruzstva: number; vratiliSa: number; zaniklo: number }>;
+  maticaSezonaZvaz?: Record<string, Record<string, number>>;
+  zvazy?: Record<string, { nazov: string; uroven?: string | null }>;
+  detail?: Record<string, {
+    klub: string; nazov: string; poslednaSezona: string; zvaz: string;
+    ligaDospelych: number | null; druzstva: Record<string, number>;
+    sezonHral: number; vratilSa: boolean;
+  }[]>;
+};
+
+/**
+ * Props pre sekciu Odstúpenia klubov. Kľúče klubov sú krátke zámerne — props islandu sa
+ * serializujú do HTML stránky a 702 klubov s dlhými názvami polí by ju zbytočne nafúklo.
+ */
+export function getOdstupeneKluby(): OdstupeneProps | undefined {
+  const j = readJson<OdstupeneSubor>(path.join(DATA, 'odstupene-kluby.json'));
+  if (!j?.sezony?.length || !j.odstupeneKluby) return undefined;
+
+  const sezony = j.sezony;
+  const hodnotene = sezony.slice(1);
+  const poSezonach = hodnotene
+    .filter((sez) => j.odstupeneKluby![sez])
+    .map((sez) => {
+      const r = j.odstupeneKluby![sez];
+      return [sez, r.klubovBezDruzstva, r.vratiliSa, r.zaniklo] as [string, number, number, number];
+    });
+
+  const matica = j.maticaSezonaZvaz || {};
+  const register = j.zvazy || {};
+  const zvazy: OdstupenyZvazProp[] = Object.keys(register).map((id) => {
+    const rada = hodnotene.map((sez) => matica[sez]?.[id] ?? 0);
+    return {
+      id,
+      nazov: register[id]?.nazov ?? id,
+      uroven: register[id]?.uroven ?? null,
+      spolu: rada.reduce((a, b) => a + b, 0),
+      poSezonach: rada,
+    };
+  }).filter((z) => z.spolu > 0).sort((a, b) => b.spolu - a.spolu || a.nazov.localeCompare(b.nazov, 'sk'));
+
+  const kluby: OdstupenyKlubProp[] = [];
+  for (const sez of hodnotene) {
+    for (const d of j.detail?.[sez] ?? []) {
+      kluby.push({
+        n: d.nazov, s: d.klub, sez: d.poslednaSezona, z: d.zvaz, l: d.ligaDospelych ?? null,
+        p: d.druzstva?.['Prípravka'] ?? 0, zi: d.druzstva?.['Žiaci'] ?? 0,
+        d: d.druzstva?.['Dorast'] ?? 0, a: d.druzstva?.['Dospelí'] ?? 0,
+        h: d.sezonHral, v: !!d.vratilSa,
+      });
+    }
+  }
+  kluby.sort((a, b) => b.sez.localeCompare(a.sez) || a.n.localeCompare(b.n, 'sk'));
+
+  return {
+    sezony,
+    poSezonach,
+    priemer: j.suhrn?.priemerOdstupenych ?? 0,
+    spolu: poSezonach.reduce((a, r) => a + r[1], 0),
+    zvazy,
+    kluby,
+  };
+}
+
 export function getRozbehSezony(): RozbehSezony | undefined {
   const j = readJson<{ rozbeh?: RozbehSezony }>(path.join(DATA, 'odstupene-kluby.json'));
   return j?.rozbeh;
