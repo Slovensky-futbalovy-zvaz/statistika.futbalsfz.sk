@@ -13,9 +13,23 @@
 # nemaju potvrdeny odtlacok, takze sa prepocitaju pri najblizsom behu.
 set -u
 
+# DIAGNOSTIKA DO LOGU. Terminal kontajnera nie je v Container Manageri pri projektovych
+# kontajneroch dostupny, takze vsetko potrebne sa vypisuje do logu (zalozka Log).
+echo ">>> Prostredie: HOME=${HOME:-<nenastavene>} UID/GID: $(id -u):$(id -g)"
+stat -c '>>> /work/repo vlastnik %u:%g' /work/repo 2>/dev/null \
+  || echo ">>> /work/repo zatiaľ neexistuje (prvy beh alebo prazdny mount)"
+
 REPO_SLUG="${REPO_SLUG:-Slovensky-futbalovy-zvaz/statistika.futbalsfz.sk}"
 DIR=/work/repo
 LOG=/tmp/tyzdenna.log
+
+# Bind-mount na Synology ma inu vlastnicku UID nez proces v kontajneri (bezny jav pri
+# adresaroch vytvorenych vo File Station) -> git odmieta "detected dubious ownership" a
+# kazdy 'git fetch' na existujucom klone padne. Poistka je dvojita: v Dockerfile je
+# safe.directory '*' v systemovej konfiguracii (/etc/gitconfig, nezavisle od $HOME) a tu
+# navyse konkretna cesta v globalnej konfiguracii.
+git config --global --add safe.directory "$DIR" 2>/dev/null || true
+echo ">>> safe.directory (system+global): $(git config --get-all safe.directory | tr '\n' ' ')"
 
 # AUTENTIFIKACIA VOCI GITHUBU — dve podporovane cesty:
 #
@@ -89,15 +103,52 @@ else
   echo ">>> POZOR: ETL skoncilo s chybami (kod $ETL_RC). Zmeny sa aj tak publikuju."
 fi
 
-git add data
-if git diff --cached --quiet; then
-  echo ">>> Ziadne zmeny dat — nic sa necommituje."
-else
+# PUBLIKOVANIE. Medzi fetchom na zaciatku behu a pushom na konci prejde 40+ minut, takze
+# na main sa medzitym moze objavit cudzi commit. Potom `git push` spravne odmietne
+# ("! [rejected] ... fetch first") a hodinova praca by sa zahodila. Nie je to teoreticke:
+# 19. 8. 2026 prisiel cudzi commit 15:17:54, push bezal 15:18 — minutu vedla.
+#
+# Riesenie: pred kazdym pokusom sa repozitar preskladá na AKTUALNY main a vygenerovane data
+# sa nan nalozia znova. `data/` je plne derivovany vystup ETL, takze pri kolizii ma vyhrat
+# najnovsi prepocet; zmeny z main mimo `data/` zostavaju zachovane. Kopiruje sa (nie
+# zrkadli), takze subor, ktory je na main a tento beh ho nevygeneroval, sa nezmaze.
+VYSTUP=/tmp/data-out
+mkdir -p "$VYSTUP"
+cp -a data/. "$VYSTUP"/
+
+PUBLIKOVANE=0
+POKUS=1
+while [ "$POKUS" -le 3 ]; do
+  [ "$POKUS" -eq 1 ] || echo ">>> Na main pribudol cudzi commit — pokus $POKUS/3 na aktualnom main."
+
+  git fetch --quiet "$REPO_URL" main || exit 1
+  git reset --hard --quiet FETCH_HEAD || exit 1
+  cp -a "$VYSTUP"/. data/
+
+  git add data
+  if git diff --cached --quiet; then
+    echo ">>> Ziadne zmeny dat — nic sa necommituje."
+    PUBLIKOVANE=1
+    break
+  fi
+
   git commit -q -m "Tyzdenna aktualizacia statistik ($(date +%F)): ${SEZONY}${STAV}
 
 Automaticky beh na Synology NAS (deploy/synology). Prepocitane sezony: ${SEZONY}."
-  git push --quiet "$REPO_URL" HEAD:main || exit 1
-  echo ">>> Pushnute do main -> Vercel build."
+
+  if git push --quiet "$REPO_URL" HEAD:main; then
+    echo ">>> Pushnute do main -> Vercel build."
+    PUBLIKOVANE=1
+    break
+  fi
+  POKUS=$((POKUS + 1))
+done
+
+if [ "$PUBLIKOVANE" -ne 1 ]; then
+  echo "CHYBA: push do main sa nepodaril ani po 3 pokusoch (na main stale pribudaju commity)."
+  echo "       Vygenerovane data zostavaju v $VYSTUP a v /work/repo — nic sa nestratilo."
+  echo "       Odtlacky sa NEpotvrdili do gitu, takze najblizsi beh sezony prepocita znova."
+  exit 1
 fi
 
 exit "$ETL_RC"
