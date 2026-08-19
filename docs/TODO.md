@@ -1,6 +1,6 @@
 # TODO — otvorené úlohy a známe obmedzenia
 
-**Stav k 14. 8. 2026.** Tento dokument hovorí, **čo je otvorené** — nie čo sa už spravilo.
+**Stav k 19. 8. 2026.** Tento dokument hovorí, **čo je otvorené** — nie čo sa už spravilo.
 História dokončených etáp je na konci a v histórii gitu; rozhodnutia produktového vlastníka
 sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
 
@@ -145,6 +145,7 @@ a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
 
 | Kedy | Čo |
 |---|---|
+| 19. 8. 2026 | **Automatická týždenná aktualizácia je v prevádzke** na Synology NAS (`cloud.futbalsfz.sk`, Container Manager, projekt `sfz-etl`, Task Scheduler streda 03:00). `etl/kontrola_sezon.py` — strážca odtlačkov sezón namiesto neexistujúceho „času poslednej zmeny" v `matches`; `etl/tyzdenna.py` doplnený o šesť chýbajúcich skriptov, futsalovú vetvu, prekryv júl–september a Index klubu z poslednej **kompletnej** sezóny; cron v GitHub Actions vypnutý (dynamické IP runnerov vs. Atlas allowlist). Podrobne v [docs/synology-tyzdenna.md](synology-tyzdenna.md) a [metodike](metodika.md) |
 | 15. 8. 2026 | **Zanikanie klubov** — záväzná definícia (dva roky bez družstva; postup, zostup ani pohár nie sú zánik), pravidlo o poslednej lige na rozlíšenie nástupcov, ručný číselník `etl/config/nastupcovia.json`, typy klubov (ženské, akadémie), logická kontrola úrovní, rez po zväzoch v rámci SR, sekcia na `/trendy`, `etl/kontrola_zanikania.py`; prepočet oboch sociálnych postov |
 | 14. 8. 2026 | **Počet klubov** — nový blok na úvode, na profiloch zväzov, v Porovnaniach a v sunburste; KPI dlaždice Kluby a Kluby — futsal; filter neregulárnych súťaží (`etl/kluby.py`, `etl/kluby_zvazy.py`, číselník); šrafované sezóny nábehu ISSF; **`etl/zanikanie.py`** — zánik klubov s mládežou vs. bez mládeže; sociálny post s 12 vizuálmi a PDF carouselom |
 | 10. 8. 2026 | Jednotné kontextové popisky vo všetkých grafoch + podpora dotyku |
