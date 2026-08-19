@@ -152,6 +152,36 @@ vzťahy so SFZ toto vysvetliť nedokážu, pretože:
 - **135 klubo-sezón má vekovú kategóriu „NEZNÁMA“** a do rozpadu po kategóriách nevstupuje
   (rovnako U20 a U21, ktoré do štyroch skúmaných kategórií nepatria).
 
+## 4. Ktoré kluby konkrétne a v ktorom zväze
+
+Menoslov všetkých **702 odstúpených klubov** za jedenásť sezón je v interaktívnom prehľade
+[`odstupene-kluby.html`](obrazky/odstupene-kluby/odstupene-kluby.html) — heatmapa 43 zväzov × 11
+sezón, klik na políčko vyfiltruje konkrétne kluby. Pri každom klube je posledná odohraná sezóna,
+zväz, najvyššia liga dospelých, počty družstiev po kategóriách (prípravka / žiaci / dorast /
+dospelí), počet odohraných sezón a či sa klub neskôr vrátil. Názov klubu vedie na jeho profil na
+portáli.
+
+Zväzy s najväčším počtom odstúpených klubov za celé obdobie:
+
+| Zväz | Spolu | Z toho 2025/2026 |
+|---|---|---|
+| ObFZ Prievidza | 37 | 2 |
+| ObFZ Michalovce | 34 | 3 |
+| ObFZ Trebišov | 34 | 3 |
+| ObFZ Trnava | 32 | 1 |
+| ObFZ Nitra | 28 | 0 |
+| ObFZ Humenné | 25 | 0 |
+| ObFZ Levice | 24 | 1 |
+| ObFZ Rožňava | 23 | 0 |
+
+**Ako čítať zväz.** Je to zväz, v ktorého súťažiach klub odohral najviac zápasov v poslednej
+sezóne. Pri malom klube s jediným družstvom dospelých je to priamo zväz, kde hrali dospelí; pri
+klube s mládežou v celoštátnej alebo regionálnej súťaži to môže byť zväz tejto mládežníckej
+súťaže. **Presné priradenie súťaže dospelých ku zväzu si vyžaduje prístup do ISSF databázy** —
+publikované dáta ho nenesú a databáza bola pri spracovaní nedostupná. Preto je vedľa zväzu
+uvedená aj najvyššia liga dospelých (L1 je najvyššia); ak chýba, klub v tej sezóne dospelých
+nemal.
+
 ## Vizuály
 
 | Súbor | Čo je na ňom |
@@ -159,3 +189,4 @@ vzťahy so SFZ toto vysvetliť nedokážu, pretože:
 | `01-odstupene.png` | Odstúpené kluby po sezónach s priemerom — hlavný graf |
 | `02-kategorie.png` | Aké družstvá mali odstúpené kluby, keď naposledy hrali |
 | `03-druzstva.png` | Družstvá v súťažiach po vekových kategóriách, 2014/2015 – 2025/2026 |
+| `odstupene-kluby.html` | **Interaktívny menoslov** — heatmapa zväz × sezóna a filtrovateľná tabuľka klubov |

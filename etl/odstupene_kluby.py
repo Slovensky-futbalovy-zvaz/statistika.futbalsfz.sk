@@ -71,20 +71,22 @@ KAT_GRUPA = {k: g for g, kk in GRUPY for k in kk}
 NAZVY_GRUP = [g for g, _ in GRUPY]
 
 
-def nacitaj_druzstva(out_dir: Path) -> tuple[dict, dict]:
-    """({klub: {sezona: {grupa: počet družstiev}}}, {klub: {sezona: nazov}}).
+def nacitaj_druzstva(out_dir: Path) -> tuple[dict, dict, dict]:
+    """({klub: {sezona: {grupa: družstiev}}}, {klub: {sezona: nazov}}, {klub: {sezona: zvaz}}).
 
     Kategória sa počíta len ak v nej klub REÁLNE ODOHRAL zápas — prihlásené a odhlásené
     družstvo bez jediného odohraného zápasu nie je hraný futbal.
     """
     druzstva: dict[str, dict[str, dict[str, int]]] = {}
     nazvy: dict[str, dict[str, str]] = {}
+    zvazy: dict[str, dict[str, str]] = {}
     nezname: collections.Counter = collections.Counter()
     for d in sorted((out_dir / "klub").iterdir()):
         if not d.is_dir():
             continue
         pre: dict[str, dict[str, int]] = {}
         pre_n: dict[str, str] = {}
+        pre_z: dict[str, str] = {}
         for f in sorted(d.iterdir()):
             m = SEZ_RE.match(f.name)
             if not m:
@@ -104,12 +106,14 @@ def nacitaj_druzstva(out_dir: Path) -> tuple[dict, dict]:
                 s = f"{m.group(1)}/{m.group(2)}"
                 pre[s] = dict(po_grupe)
                 pre_n[s] = j.get("nazov") or ""
+                pre_z[s] = j.get("zvaz") or ""
         if pre:
             druzstva[d.name] = pre
             nazvy[d.name] = pre_n
+            zvazy[d.name] = pre_z
     if nezname:
         print(f"pozn.: kategórie mimo zadaných skupín (nezapočítané): {dict(nezname)}")
-    return druzstva, nazvy
+    return druzstva, nazvy, zvazy
 
 
 def main() -> int:
@@ -118,7 +122,8 @@ def main() -> int:
     args = ap.parse_args()
     out_dir = Path(args.out)
 
-    druzstva, nazvy = nacitaj_druzstva(out_dir)
+    druzstva, nazvy, zvazy_klubov = nacitaj_druzstva(out_dir)
+    register = zn.register_zvazov(REPO)
     urovne = zn.urovne_klubov(out_dir)
 
     # 1) POHÁRE PREČ — sezóna odohraná len v pohári nie je aktívna sezóna klubu
@@ -153,10 +158,12 @@ def main() -> int:
 
     spojene: dict[str, dict[str, dict[str, int]]] = {}
     spojene_nazvy: dict[str, dict[str, str]] = {}
+    spojene_zvazy: dict[str, dict[str, str]] = {}
     for k, v in druzstva.items():
         c = koren(k)
         cieľ = spojene.setdefault(c, {})
         cieľ_n = spojene_nazvy.setdefault(c, {})
+        cieľ_z = spojene_zvazy.setdefault(c, {})
         for s, po_grupe in v.items():
             if s in cieľ:
                 for g, n in po_grupe.items():
@@ -164,7 +171,8 @@ def main() -> int:
             else:
                 cieľ[s] = dict(po_grupe)
                 cieľ_n[s] = nazvy[k].get(s, "")
-    druzstva, nazvy = spojene, spojene_nazvy
+                cieľ_z[s] = zvazy_klubov[k].get(s, "")
+    druzstva, nazvy, zvazy_klubov = spojene, spojene_nazvy, spojene_zvazy
 
     print(f"klubov: {len(druzstva)} | okno {sezony[0]} – {sezony[-1]}"
           f" | prebiehajúca {prebiehajuca} sa nerieši")
@@ -208,12 +216,21 @@ def main() -> int:
             for g, n in druzstva[k][pred].items():
                 po_grupe[g] += 1
                 druzstiev_stratenych[g] += n
+            zv = zvazy_klubov[k].get(pred, "")
+            liga = (urovne.get(k, {}).get(pred) or (None, False))[0]
             detail[s].append({
                 "klub": k,
                 "nazov": nazvy[k].get(pred, ""),
                 "poslednaSezona": pred,
+                "zvaz": zv,
+                "zvazNazov": register.get(zv, {}).get("nazov", zv),
+                "urovenZvazu": register.get(zv, {}).get("uroven"),
+                "ligaDospelych": liga,
                 "druzstva": druzstva[k][pred],
+                "druzstievSpolu": sum(druzstva[k][pred].values()),
+                "druzstievMladeze": sum(n for g, n in druzstva[k][pred].items() if g != "Dospelí"),
                 "sezonHral": len(aktivne[k]),
+                "sezony": sorted(aktivne[k]),
                 "vratilSa": bool([x for x in aktivne[k] if idx[x] > i]),
             })
         tab_a[s] = {
@@ -285,6 +302,26 @@ def main() -> int:
             }
         tab_b[s] = r
 
+    # ── rez sezóna × zväz ────────────────────────────────────────────────────────────
+    matica: dict[str, dict[str, int]] = {}
+    for s in sezony[1:]:
+        m = collections.Counter()
+        for x in detail[s]:
+            if x["zvaz"]:
+                m[x["zvaz"]] += 1
+        matica[s] = dict(m)
+    poradie_zvazov = sorted(
+        {z for m in matica.values() for z in m},
+        key=lambda z: (-sum(matica[s].get(z, 0) for s in matica),
+                       register.get(z, {}).get("nazov", z)),
+    )
+    print("\n   ODSTÚPENÉ KLUBY PODĽA ZVÄZU (zväz, v ktorom klub naposledy hral)\n")
+    print(f"     {'zväz':34}" + "".join(f"{x[2:7]:>8}" for x in sezony[1:]) + f"{'spolu':>8}")
+    for z in poradie_zvazov:
+        spolu = sum(matica[s].get(z, 0) for s in sezony[1:])
+        rad = "".join(f"{matica[s].get(z, 0) or '·':>8}" for s in sezony[1:])
+        print(f"     {register.get(z, {}).get('nazov', z)[:34]:34}{rad}{spolu:>8}")
+
     print("\nB) DRUŽSTVÁ PO VEKOVÝCH KATEGÓRIÁCH — koľko ich je a kto o kategóriu prišiel")
     print("   („stratili“ = klub kategóriu už nemá, ale ĎALEJ HRÁ v inej)\n")
     for g in NAZVY_GRUP:
@@ -324,6 +361,10 @@ def main() -> int:
             "odstupeneKluby": tab_a,
             "poKategoriach": tab_b,
             "detail": {s: detail[s] for s in sezony[1:]},
+            "maticaSezonaZvaz": matica,
+            "zvazy": {z: {"nazov": register.get(z, {}).get("nazov", z),
+                          "uroven": register.get(z, {}).get("uroven")}
+                      for z in poradie_zvazov},
         }, f, ensure_ascii=False, indent=1)
     print(f"OK {cesta}")
     return 0
