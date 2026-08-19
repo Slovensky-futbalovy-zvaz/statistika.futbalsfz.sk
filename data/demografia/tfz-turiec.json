@@ -1,7 +1,7 @@
 {
   "zvaz": "tfz-turiec",
   "sportSector": "futbal",
-  "generatedAt": "2026-07-13T19:36:53+02:00",
+  "generatedAt": "2026-08-17T21:11:29+02:00",
   "methodologyFlags": {
     "zdroj": "sportnet.users (birthdate, sex); osoby zo sutaze.matches (nominations + managers, len closed:true), roly z etl/config/roly.json",
     "poznamka": "Výhradne agregované počty (GDPR); bez prahu minimálnej veľkosti (O5). Osoba sa počíta raz na rolu a sezónu; tá istá osoba sa môže vyskytovať vo viacerých rolách aj sezónach. Kľúč N = pohlavie nevyplnené."
@@ -6309,6 +6309,106 @@
           },
           "2010": {
             "M": 1
+          }
+        }
+      }
+    },
+    "2026/2027": {
+      "hraci": {
+        "osoby": 145,
+        "sUdajmi": 145,
+        "bezUdajov": 0,
+        "roky": {
+          "2012": {
+            "M": 53
+          },
+          "2013": {
+            "M": 42
+          },
+          "2014": {
+            "F": 1,
+            "M": 18
+          },
+          "2015": {
+            "M": 23
+          },
+          "2016": {
+            "M": 6
+          },
+          "2017": {
+            "M": 2
+          }
+        }
+      },
+      "treneri": {
+        "osoby": 7,
+        "sUdajmi": 7,
+        "bezUdajov": 0,
+        "roky": {
+          "1971": {
+            "M": 1
+          },
+          "1976": {
+            "M": 2
+          },
+          "1982": {
+            "M": 1
+          },
+          "1983": {
+            "M": 1
+          },
+          "1985": {
+            "M": 1
+          },
+          "1988": {
+            "M": 1
+          }
+        }
+      },
+      "rozhodcovia": {
+        "osoby": 4,
+        "sUdajmi": 4,
+        "bezUdajov": 0,
+        "roky": {
+          "1958": {
+            "M": 1
+          },
+          "1979": {
+            "M": 2
+          },
+          "1988": {
+            "M": 1
+          }
+        }
+      },
+      "personal": {
+        "osoby": 8,
+        "sUdajmi": 8,
+        "bezUdajov": 0,
+        "roky": {
+          "1966": {
+            "M": 1
+          },
+          "1971": {
+            "M": 1
+          },
+          "1973": {
+            "M": 1
+          },
+          "1975": {
+            "M": 1
+          },
+          "1983": {
+            "M": 1
+          },
+          "1984": {
+            "M": 1
+          },
+          "1988": {
+            "M": 1
+          },
+          "2002": {
+            "F": 1
           }
         }
       }

@@ -2,7 +2,7 @@
   "zvaz": "obfz-trnava",
   "sezona": "2026/2027",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-08T20:50:40+02:00",
+  "generatedAt": "2026-08-17T20:35:19+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -13,108 +13,150 @@
     "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
   },
   "kpi": {
-    "sutaze": 1,
-    "skupiny": 1,
-    "zapasy": 1,
-    "uzatvorene": 2,
-    "administrativne": 1,
-    "druzstva": 4,
-    "goly": 11,
-    "divaci": 80,
-    "zlteKarty": 2,
-    "cerveneKarty": 0,
-    "kontumovane": 1,
-    "kontumovaneAdmin": 1,
+    "sutaze": 5,
+    "skupiny": 5,
+    "zapasy": 41,
+    "uzatvorene": 43,
+    "administrativne": 2,
+    "druzstva": 55,
+    "goly": 212,
+    "divaci": 3059,
+    "zlteKarty": 97,
+    "cerveneKarty": 5,
+    "kontumovane": 2,
+    "kontumovaneAdmin": 2,
     "kontumovaneOdohrane": 0,
     "odstupene": 0,
     "odstupeneAdmin": 0,
     "odstupeneOdohrane": 0,
-    "kluby": 32
+    "kluby": 55
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 1,
-      "uzatvorene": 2,
-      "administrativne": 1,
-      "druzstva": 4,
-      "goly": 11,
-      "zlte": 2,
-      "cervene": 0,
-      "divaci": 80,
-      "divaciPokrytych": 1,
-      "sutaze": 1,
-      "skupiny": 1,
-      "kontumovane": 1,
-      "kontumovaneAdmin": 1,
+      "zapasy": 41,
+      "uzatvorene": 43,
+      "administrativne": 2,
+      "druzstva": 55,
+      "goly": 212,
+      "zlte": 97,
+      "cervene": 5,
+      "divaci": 3059,
+      "divaciPokrytych": 41,
+      "sutaze": 5,
+      "skupiny": 5,
+      "kontumovane": 2,
+      "kontumovaneAdmin": 2,
       "odstupene": 0,
       "odstupeneAdmin": 0
     }
   },
   "urovne": {
+    "L7": {
+      "nazov": "7. liga",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 7
+    },
+    "L8": {
+      "nazov": "8. liga",
+      "sutaze": 2,
+      "skupiny": 2,
+      "zapasy": 12
+    },
+    "L9": {
+      "nazov": "9. liga",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 7
+    },
     "POHARE": {
       "nazov": "Poháre a turnaje",
       "sutaze": 1,
       "skupiny": 1,
-      "zapasy": 1
+      "zapasy": 15
     }
   },
   "sutazeUroven": [
+    {
+      "uroven": "L7",
+      "kat": "ADULTS",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 7
+    },
+    {
+      "uroven": "L8",
+      "kat": "ADULTS",
+      "pohlavie": "M",
+      "sutaze": 2,
+      "skupiny": 2,
+      "zapasy": 12
+    },
+    {
+      "uroven": "L9",
+      "kat": "ADULTS",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 7
+    },
     {
       "uroven": "POHARE",
       "kat": "ADULTS",
       "pohlavie": "M",
       "sutaze": 1,
       "skupiny": 1,
-      "zapasy": 1
+      "zapasy": 15
     }
   ],
   "pohlavie": {
     "M": {
-      "sutaze": 1,
-      "zapasy": 1,
-      "druzstva": 4,
-      "goly": 11,
-      "divaci": 80,
-      "zlteKarty": 2,
-      "cerveneKarty": 0,
+      "sutaze": 5,
+      "zapasy": 41,
+      "druzstva": 55,
+      "goly": 212,
+      "divaci": 3059,
+      "zlteKarty": 97,
+      "cerveneKarty": 5,
       "kategorie": {
         "ADULTS": {
-          "sutaze": 1,
-          "skupiny": 1,
-          "zapasy": 1,
-          "druzstva": 4,
-          "goly": 11,
-          "zlte": 2,
-          "cervene": 0,
-          "divaci": 80,
-          "divaciPokrytych": 1
+          "sutaze": 5,
+          "skupiny": 5,
+          "zapasy": 41,
+          "druzstva": 55,
+          "goly": 212,
+          "zlte": 97,
+          "cervene": 5,
+          "divaci": 3059,
+          "divaciPokrytych": 41
         }
       }
     }
   },
   "osoby": {
     "hraci": {
-      "unikatni": 30,
+      "unikatni": 1006,
       "poKategorii": {
-        "ADULTS": 30
+        "ADULTS": 1006
       }
     },
     "treneri": {
-      "unikatni": 1,
+      "unikatni": 28,
       "poKategorii": {
-        "ADULTS": 1
+        "ADULTS": 28
       }
     },
     "realizacnyTim": {
-      "unikatni": 4,
+      "unikatni": 128,
       "poKategorii": {
-        "ADULTS": 4
+        "ADULTS": 128
       }
     },
     "rozhodcovia": {
-      "unikatni": 3,
+      "unikatni": 42,
       "poKategorii": {
-        "ADULTS": 3
+        "ADULTS": 42
       }
     },
     "delegati": {
@@ -122,29 +164,32 @@
       "poKategorii": {}
     },
     "personal": {
-      "unikatni": 1,
+      "unikatni": 65,
       "poKategorii": {
-        "ADULTS": 1
+        "ADULTS": 65
       }
     }
   },
   "kluby": {
-    "kluby": 32,
+    "kluby": 55,
     "sMladezou": 0,
-    "lenDospeli": 32,
+    "lenDospeli": 55,
     "dospeliAMladez": 0,
     "lenMladez": 0,
     "neurcene": 0,
     "kategorie": {
-      "ADULTS": 32
+      "ADULTS": 55
     },
     "pohlavie": {
-      "M": 32
+      "M": 55
     },
     "urovne": {
-      "POHARE": 32
+      "POHARE": 32,
+      "L9": 14,
+      "L7": 14,
+      "L8": 26
     },
-    "domaci": 29,
+    "domaci": 50,
     "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
   }
 }

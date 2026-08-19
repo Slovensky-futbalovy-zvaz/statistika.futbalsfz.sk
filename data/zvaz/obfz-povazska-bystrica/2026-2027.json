@@ -1,0 +1,165 @@
+{
+  "zvaz": "obfz-povazska-bystrica",
+  "sezona": "2026/2027",
+  "sportSector": "futbal",
+  "generatedAt": "2026-08-17T20:36:45+02:00",
+  "methodologyFlags": {
+    "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
+    "divaciPokrytie": 1.0,
+    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
+    "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
+    "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
+    "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
+  },
+  "kpi": {
+    "sutaze": 2,
+    "skupiny": 2,
+    "zapasy": 15,
+    "uzatvorene": 15,
+    "administrativne": 0,
+    "druzstva": 18,
+    "goly": 73,
+    "divaci": 1781,
+    "zlteKarty": 37,
+    "cerveneKarty": 3,
+    "kontumovane": 0,
+    "kontumovaneAdmin": 0,
+    "kontumovaneOdohrane": 0,
+    "odstupene": 0,
+    "odstupeneAdmin": 0,
+    "odstupeneOdohrane": 0,
+    "kluby": 18
+  },
+  "kategorie": {
+    "ADULTS": {
+      "zapasy": 15,
+      "uzatvorene": 15,
+      "administrativne": 0,
+      "druzstva": 18,
+      "goly": 73,
+      "zlte": 37,
+      "cervene": 3,
+      "divaci": 1781,
+      "divaciPokrytych": 15,
+      "sutaze": 2,
+      "skupiny": 2,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 0,
+      "odstupeneAdmin": 0
+    }
+  },
+  "urovne": {
+    "L7": {
+      "nazov": "7. liga",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 13
+    },
+    "L8": {
+      "nazov": "8. liga",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 2
+    }
+  },
+  "sutazeUroven": [
+    {
+      "uroven": "L7",
+      "kat": "ADULTS",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 13
+    },
+    {
+      "uroven": "L8",
+      "kat": "ADULTS",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 2
+    }
+  ],
+  "pohlavie": {
+    "M": {
+      "sutaze": 2,
+      "zapasy": 15,
+      "druzstva": 18,
+      "goly": 73,
+      "divaci": 1781,
+      "zlteKarty": 37,
+      "cerveneKarty": 3,
+      "kategorie": {
+        "ADULTS": {
+          "sutaze": 2,
+          "skupiny": 2,
+          "zapasy": 15,
+          "druzstva": 18,
+          "goly": 73,
+          "zlte": 37,
+          "cervene": 3,
+          "divaci": 1781,
+          "divaciPokrytych": 15
+        }
+      }
+    }
+  },
+  "osoby": {
+    "hraci": {
+      "unikatni": 333,
+      "poKategorii": {
+        "ADULTS": 333
+      }
+    },
+    "treneri": {
+      "unikatni": 11,
+      "poKategorii": {
+        "ADULTS": 11
+      }
+    },
+    "realizacnyTim": {
+      "unikatni": 36,
+      "poKategorii": {
+        "ADULTS": 36
+      }
+    },
+    "rozhodcovia": {
+      "unikatni": 16,
+      "poKategorii": {
+        "ADULTS": 16
+      }
+    },
+    "delegati": {
+      "unikatni": 0,
+      "poKategorii": {}
+    },
+    "personal": {
+      "unikatni": 28,
+      "poKategorii": {
+        "ADULTS": 28
+      }
+    }
+  },
+  "kluby": {
+    "kluby": 18,
+    "sMladezou": 0,
+    "lenDospeli": 18,
+    "dospeliAMladez": 0,
+    "lenMladez": 0,
+    "neurcene": 0,
+    "kategorie": {
+      "ADULTS": 18
+    },
+    "pohlavie": {
+      "M": 18
+    },
+    "urovne": {
+      "L7": 14,
+      "L8": 4
+    },
+    "domaci": 17,
+    "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
+  }
+}

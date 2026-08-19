@@ -2,7 +2,7 @@
   "zvaz": "obfz-zvolen",
   "sezona": "2026/2027",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-08T21:02:44+02:00",
+  "generatedAt": "2026-08-17T20:38:16+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -14,15 +14,15 @@
   },
   "kpi": {
     "sutaze": 1,
-    "skupiny": 1,
-    "zapasy": 1,
-    "uzatvorene": 1,
+    "skupiny": 2,
+    "zapasy": 16,
+    "uzatvorene": 16,
     "administrativne": 0,
-    "druzstva": 2,
-    "goly": 4,
-    "divaci": 60,
-    "zlteKarty": 3,
-    "cerveneKarty": 0,
+    "druzstva": 16,
+    "goly": 73,
+    "divaci": 1660,
+    "zlteKarty": 47,
+    "cerveneKarty": 2,
     "kontumovane": 0,
     "kontumovaneAdmin": 0,
     "kontumovaneOdohrane": 0,
@@ -33,17 +33,17 @@
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 1,
-      "uzatvorene": 1,
+      "zapasy": 16,
+      "uzatvorene": 16,
       "administrativne": 0,
-      "druzstva": 2,
-      "goly": 4,
-      "zlte": 3,
-      "cervene": 0,
-      "divaci": 60,
-      "divaciPokrytych": 1,
+      "druzstva": 16,
+      "goly": 73,
+      "zlte": 47,
+      "cervene": 2,
+      "divaci": 1660,
+      "divaciPokrytych": 16,
       "sutaze": 1,
-      "skupiny": 1,
+      "skupiny": 2,
       "kontumovane": 0,
       "kontumovaneAdmin": 0,
       "odstupene": 0,
@@ -54,8 +54,8 @@
     "L7": {
       "nazov": "7. liga",
       "sutaze": 1,
-      "skupiny": 1,
-      "zapasy": 1
+      "skupiny": 2,
+      "zapasy": 16
     }
   },
   "sutazeUroven": [
@@ -64,67 +64,69 @@
       "kat": "ADULTS",
       "pohlavie": "M",
       "sutaze": 1,
-      "skupiny": 1,
-      "zapasy": 1
+      "skupiny": 2,
+      "zapasy": 16
     }
   ],
   "pohlavie": {
     "M": {
       "sutaze": 1,
-      "zapasy": 1,
-      "druzstva": 2,
-      "goly": 4,
-      "divaci": 60,
-      "zlteKarty": 3,
-      "cerveneKarty": 0,
+      "zapasy": 16,
+      "druzstva": 16,
+      "goly": 73,
+      "divaci": 1660,
+      "zlteKarty": 47,
+      "cerveneKarty": 2,
       "kategorie": {
         "ADULTS": {
           "sutaze": 1,
-          "skupiny": 1,
-          "zapasy": 1,
-          "druzstva": 2,
-          "goly": 4,
-          "zlte": 3,
-          "cervene": 0,
-          "divaci": 60,
-          "divaciPokrytych": 1
+          "skupiny": 2,
+          "zapasy": 16,
+          "druzstva": 16,
+          "goly": 73,
+          "zlte": 47,
+          "cervene": 2,
+          "divaci": 1660,
+          "divaciPokrytych": 16
         }
       }
     }
   },
   "osoby": {
     "hraci": {
-      "unikatni": 31,
+      "unikatni": 318,
       "poKategorii": {
-        "ADULTS": 31
+        "ADULTS": 318
       }
     },
     "treneri": {
-      "unikatni": 2,
+      "unikatni": 17,
       "poKategorii": {
-        "ADULTS": 2
+        "ADULTS": 17
       }
     },
     "realizacnyTim": {
-      "unikatni": 5,
+      "unikatni": 36,
       "poKategorii": {
-        "ADULTS": 5
+        "ADULTS": 36
       }
     },
     "rozhodcovia": {
-      "unikatni": 3,
+      "unikatni": 23,
       "poKategorii": {
-        "ADULTS": 3
+        "ADULTS": 23
       }
     },
     "delegati": {
-      "unikatni": 0,
-      "poKategorii": {}
+      "unikatni": 1,
+      "poKategorii": {
+        "ADULTS": 1
+      }
     },
     "personal": {
-      "unikatni": 2,
+      "unikatni": 34,
       "poKategorii": {
-        "ADULTS": 2
+        "ADULTS": 34
       }
     }
   },
