@@ -17,7 +17,7 @@ interface Riadok {
   medPrva: number; medPosl: number; zmenaHracov: number; zapisov: number; u21: number;
 }
 
-const STRANA = 25;
+const STRANA = 15;
 
 /**
  * Rebríček klubov, ktorým vek dospelého družstva RASTIE (rozhodnutie Ján Letko,

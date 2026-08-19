@@ -36,7 +36,7 @@ interface Riadok {
   u21: number | null;
 }
 
-const STRANA = 50;
+const STRANA = 15;
 
 /**
  * Celoslovenská tabuľka Indexu klubu (rozhodnutie Ján Letko: bez rozdelenia na

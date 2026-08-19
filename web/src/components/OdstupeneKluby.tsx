@@ -40,7 +40,7 @@ interface Props {
 const CERVENA = '#ec1c24';
 const ZELENA = '#12a06b';
 const ZVAZOV_NAJPRV = 20;
-const KLUBOV_NA_STRANU = 25;
+const KLUBOV_NA_STRANU = 15;
 
 /** „2016/2017“ → „16/17“ — celé sezóny sa do hlavičky heatmapy nezmestia. */
 const kratka = (s: string): string => `${s.slice(2, 4)}/${s.slice(7, 9)}`;
