@@ -65,12 +65,42 @@ def klub_id_slug(org_id: str) -> str:
     return f"klub-{m.group(1)}" if m else re.sub(r"[^a-z0-9]+", "-", (org_id or "").lower()).strip("-")
 
 
-def zbieraj_pidy(db, varianty: list[str], sport_sector: str, coach_positions: list[str]) -> dict[str, dict[str, set]]:
-    """Jeden prechod cez matches danej sezony -> {org_id: {"hraci": set, "treneri": set, "realizacnyTim": set}}."""
+def nacitaj_vylucene() -> set:
+    """competitionGroupId sutazi, ktore NIE su regularnymi sutazami (skolske a vyberove
+    turnaje, testovacie zaznamy) - ciselnik etl/config/vylucene_sutaze.json.
+
+    Rovnaky filter ako v etl/kluby.py (rozhodnutie Jan Letko, 14. 8. 2026). Bez neho by
+    tento skript vyrabal artefakty aj pre skoly, vybery zvazov a zahranicne kluby, ktore
+    sa do publikovanych dat nedavaju.
+    """
+    cfg = load_json(CONFIG / "vylucene_sutaze.json")
+    return {z["competitionGroupId"] for z in cfg.get("sutaze", [])}
+
+
+def appspace_zvazy(zvazy: dict) -> set:
+    """Mnozina riadiacich appSpace slovenskych zvazov (zvazy.json)."""
+    out: set = set()
+    for uroven in ("sfz", "rfz", "obfz"):
+        for z in zvazy.get(uroven, []):
+            for a in (z.get("appSpaces") or ([z["appSpace"]] if z.get("appSpace") else [])):
+                out.add(a)
+    return out
+
+
+def zbieraj_pidy(db, varianty: list[str], sport_sector: str, coach_positions: list[str],
+                 vylucene_ids: set, spaces: set) -> dict[str, dict[str, set]]:
+    """Jeden prechod cez matches danej sezony -> {org_id: {"hraci": set, "treneri": set, "realizacnyTim": set}}.
+
+    FILTER (rozhodnutie Jan Letko, 14. 8. 2026, doplnene 17. 8. 2026): len REGULARNE sutaze
+    riadene slovenskym zvazom - zhodne s etl/kluby.py. Bez neho by sa do
+    data/demografia-klub/ vratili skoly, vybery zvazov a zahranicne kluby.
+    """
     coach_set = set(coach_positions)
     cur = db.matches.find(
         {"closed": True, "season.name": {"$in": varianty}, "rules.sport_sector": sport_sector},
         {
+            "appSpace": 1,
+            "competition.competitionGroupId": 1,
             "teams._id": 1, "teams.organization._id": 1,
             "nominations.teamId": 1, "nominations.athletes.sportnetUser._id": 1,
             "nominations.crew.sportnetUser._id": 1, "nominations.crew.position": 1,
@@ -78,7 +108,13 @@ def zbieraj_pidy(db, varianty: list[str], sport_sector: str, coach_positions: li
         no_cursor_timeout=True,
     )
     kluby: dict[str, dict[str, set]] = {}
+    vylucenych = {"neregularneSutaze": 0, "mimoSlovenskychZvazov": 0}
     for m in cur:
+        _mimo = (sport_sector == "futbal" and m.get("appSpace") not in spaces)
+        _neregularna = str((m.get("competition") or {}).get("competitionGroupId")) in vylucene_ids
+        if _mimo or _neregularna:
+            vylucenych["mimoSlovenskychZvazov" if _mimo else "neregularneSutaze"] += 1
+            continue
         tmap: dict[str, str] = {}
         for t in m.get("teams", []):
             org = (t.get("organization") or {})
@@ -102,6 +138,8 @@ def zbieraj_pidy(db, varianty: list[str], sport_sector: str, coach_positions: li
                     continue
                 grp = "treneri" if c.get("position") in coach_set else "realizacnyTim"
                 k[grp].add(pid)
+    log.info("   vylucene zapasy: mimo slovenskych zvazov %d, neregularne sutaze %d",
+             vylucenych["mimoSlovenskychZvazov"], vylucenych["neregularneSutaze"])
     return kluby
 
 
@@ -206,6 +244,8 @@ def main() -> int:
     sezony_cfg = load_json(CONFIG / "sezony.json")
     roly = load_json(CONFIG / "roly.json")
     coach_positions = roly["treneriCrewPositions"]
+    vylucene_ids = nacitaj_vylucene()
+    spaces = appspace_zvazy(load_json(CONFIG / "zvazy.json"))
 
     if args.vsetky:
         zoznam = list(sezony_cfg["kanonicke"])
@@ -219,7 +259,8 @@ def main() -> int:
     for sez in zoznam:
         varianty = sezona_varianty(sezony_cfg, sez)
         log.info("=== demografia klubov %s [%s] ===", sez, args.sport_sector)
-        kluby_pidy = zbieraj_pidy(db, varianty, args.sport_sector, coach_positions)
+        kluby_pidy = zbieraj_pidy(db, varianty, args.sport_sector, coach_positions,
+                                  vylucene_ids, spaces)
         if not kluby_pidy:
             log.info("   %s: ziadne data", sez)
             continue

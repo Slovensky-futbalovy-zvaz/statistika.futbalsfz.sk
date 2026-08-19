@@ -1,8 +1,13 @@
 name: Týždenná aktualizácia štatistík
 
+# CRON JE ZAMERNE VYPNUTY (rozhodnutie Ján Letko, 17. 8. 2026).
+# Plánovaný beh prebieha na Synology NAS (deploy/synology, docs/synology-tyzdenna.md), kde
+# ide von jedna statická verejná IP a stačí ju povoliť v MongoDB Atlas. GitHub-hostované
+# runnery majú dynamické IP, takže by si vyžadovali 0.0.0.0/0 v allowliste; secret
+# MONGODB_URI preto nikdy nebol nastavený a naplánovaný beh padal každý pondelok od
+# 27. 7. 2026. Tento workflow zostáva ako ZÁLOŽNÉ RUČNÉ spustenie — funguje len vtedy, ak
+# sa secret MONGODB_URI doplní a IP runnera je v Atlas allowliste.
 on:
-  schedule:
-    - cron: "0 3 * * 1" # pondelok 03:00 UTC (~04:00/05:00 CET)
   workflow_dispatch:
     inputs:
       sezona:

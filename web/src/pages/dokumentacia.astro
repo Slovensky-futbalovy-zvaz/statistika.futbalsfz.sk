@@ -515,6 +515,53 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     </div>
   </section>
 
+  <!-- Ako casto sa data aktualizuju -->
+  <section class="mb-8">
+    <div class={CARD} style={CARD_STYLE}>
+      <div class={KICKER}>Aktualizácia</div>
+      <h2 class={H2} style="font-size:20px; margin:4px 0 8px;">Ako často sa dáta aktualizujú</h2>
+      <p class="text-muted" style="line-height:1.6;">
+        Čísla sa prepočítavajú <strong class="text-ink">automaticky raz týždenne, v stredu nad ránom</strong>.
+        Streda preto, že väčšina zápisov z víkendových zápasov sa uzatvára až v pondelok a v utorok —
+        v stredu je teda portál najbližšie k realite.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Neprepočítava sa „posledný týždeň", ale celá sezóna</h3>
+      <p class="mt-2 text-muted" style="line-height:1.6;">
+        V športe je bežné, že sa zápis o stretnutí uzatvorí s odstupom týždňa aj dvoch, a že komisia
+        spätne zmení výsledok už odohraného zápasu. Preto sa nepozeráme na „zmeny za posledných
+        X dní" — pri každej aktualizácii sa <strong class="text-ink">celá prebiehajúca sezóna počíta
+        odznova</strong>, od 1. júla. Neskoro uzatvorený zápas aj spätná oprava sa tak dostanú do
+        čísel pri najbližšej aktualizácii, bez ohľadu na to, ako sú staré.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Prelom sezón: júl až september</h3>
+      <p class="mt-2 text-muted" style="line-height:1.6;">
+        Sezóna končí 30. júna, ale dohrávky, baráže a rozhodnutia komisií sa dokončujú aj po tomto
+        dátume. Od júla do septembra sa preto spolu s novou sezónou prepočítava
+        <strong class="text-ink">aj tá, ktorá práve skončila</strong>.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Staršie sezóny a spätné opravy</h3>
+      <p class="mt-2 text-muted" style="line-height:1.6;">
+        Rozhodnutie komisie sa môže dotknúť aj zápasu spred niekoľkých rokov. Prepočítavať pritom
+        každý týždeň celú históriu nie je možné — trvalo by to hodiny. Pred každou aktualizáciou sa
+        preto pre <strong class="text-ink">každú sezónu</strong> spočíta jej „odtlačok": počet
+        uzatvorených zápasov, súčet skóre, súčet divákov a počet kontumácií. Ak sa odtlačok líši od
+        posledného behu, tá sezóna sa prepočíta celá. Vďaka tomu sa spätná oprava neprehliadne ani
+        v starých sezónach.
+      </p>
+
+      <h3 class="mt-4 font-bold text-ink" style="font-size:15px;">Čo to znamená pri čítaní čísel</h3>
+      <p class="mt-2 text-muted" style="line-height:1.6;">
+        Dáta na portáli <strong class="text-ink">nie sú živé</strong>. Medzi dvomi aktualizáciami sa
+        čísla nemenia, aj keď je zmena v ISSF už zapísaná. Prebiehajúca sezóna je z tohto dôvodu
+        vždy neúplná — vo všetkých časových grafoch je preto vizuálne odlíšená (prerušovaná čiara,
+        šrafovaná plocha) a jej prepad nie je trend, len chýbajúce zápasy.
+      </p>
+    </div>
+  </section>
+
   <!-- Cookies a meranie navstevnosti -->
   <section class="mb-8">
     <div class={CARD} style={CARD_STYLE}>

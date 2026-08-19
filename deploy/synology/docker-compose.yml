@@ -6,4 +6,6 @@ services:
     volumes:
       - ./repo:/work/repo # perzistentný klon repa (rýchly pull namiesto re-clonu)
       - ./keys:/keys:ro # SSH deploy key: ./keys/deploy_key (read-write kľúč pre push)
-    # Spúšťa sa jednorazovo: docker compose run --rm etl
+    # Spúšťa sa jednorazovo:
+    #   docker compose run --rm etl                          # plánovaný týždenný beh
+    #   docker compose run --rm -e SEZONA=2024/2025 etl      # ručný prepočet jednej sezóny

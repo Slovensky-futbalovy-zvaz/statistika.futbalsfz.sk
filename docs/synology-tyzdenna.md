@@ -1,58 +1,176 @@
-# Týždenná aktualizácia na Synology (Docker + Task Scheduler)
+# Týždenná aktualizácia na Synology (DSM 7.3, Container Manager)
 
-Beh prebieha lokálne na Synology NAS → von ide cez **jednu statickú verejnú IP**,
+Beh prebieha lokálne na NAS `cloud.futbalsfz.sk` → von ide cez **jednu statickú verejnú IP**,
 ktorú stačí povoliť v MongoDB Atlas. Databáza sa neotvára do sveta.
 
-Súbory: `deploy/synology/` (Dockerfile, entrypoint.sh, docker-compose.yml, .env.example).
+**Čo sa pri behu deje:** kontajner stiahne repozitár, spustí `etl/tyzdenna.py` (prepočet
+aktuálnej sezóny, v júli–septembri aj predchádzajúcej, plus sezóny so zmeneným odtlačkom —
+viď [metodika](metodika.md), kapitola „Automatická aktualizácia dát a spätné opravy zápasov"),
+zmeny v `data/` commitne a pushne do `main` → Vercel nasadí produkciu.
 
-## 1. Príprava na NAS
+Zdrojové súbory: `deploy/synology/` (Dockerfile, entrypoint.sh, docker-compose.yml, .env.example).
 
-1. **Container Manager** (Package Center → nainštaluj, ak chýba).
-2. Vytvor priečinok, napr. `/volume1/docker/sfz-etl/`, a skopíruj doň obsah
-   `deploy/synology/` (Dockerfile, entrypoint.sh, docker-compose.yml).
-3. Podpriečinky:
-   - `keys/` → sem daj **SSH deploy key** s právom zápisu do repa (súbor `keys/deploy_key`, práva 600).
-   - `.env` → skopíruj z `.env.example` a doplň `MONGODB_URI` (read-only účet).
-   - `repo/` sa vytvorí sám pri prvom behu (perzistentný klon).
+---
 
-## 2. GitHub deploy key (push z NAS)
+## 0. Čo si priprav vopred
 
-1. Na NAS vygeneruj kľúč: `ssh-keygen -t ed25519 -f keys/deploy_key -N ""`.
-2. V GitHube: repo → *Settings → Deploy keys → Add deploy key* → vlož obsah
-   `keys/deploy_key.pub`, **zaškrtni „Allow write access"**.
+| Vec | Odkiaľ |
+|---|---|
+| Read-only pripojovací reťazec do MongoDB | Atlas — účet s právom čítať `sutaze` a `sportnet.users` (polia `birthdate`, `sex`) |
+| Statická verejná IP siete SFZ | Atlas → *Network Access → Add IP Address* |
+| Prihlásenie do GitHubu pre push | deploy key **alebo** fine-grained token — viď krok 3 |
 
-## 3. MongoDB Atlas allowlist
+---
 
-- *Network Access → Add IP Address* → pridaj **statickú verejnú IP** vašej siete.
-- Účet nech je **read-only** na `sutaze` a `sportnet.users` (polia `birthdate`, `sex`).
+## 1. Priečinok na NAS (File Station)
 
-## 4. Build image + test
+1. **Package Center** → nainštaluj **Container Manager**, ak chýba. Vytvorí zdieľaný
+   priečinok `docker`.
+2. **File Station** → v `docker` vytvor priečinok **`sfz-etl`**.
+3. Nahraj doň obsah `deploy/synology/`:
+   - `Dockerfile`
+   - `entrypoint.sh`
+   - `docker-compose.yml`
+4. Vytvor podpriečinok **`keys`** (len pri variante s deploy key).
+5. Priečinok `repo/` **nevytváraj** — vznikne sám pri prvom behu a slúži ako perzistentný
+   klon repozitára (ďalšie behy už len `fetch`, nie celý `clone`).
 
-V SSH na NAS (alebo cez Container Manager → Project):
-```bash
-cd /volume1/docker/sfz-etl
-sudo docker compose build
-sudo docker compose run --rm etl        # testovací beh (prepočíta aktuálnu sezónu, commit+push)
+Výsledok: `/volume1/docker/sfz-etl/`
+
+---
+
+## 2. Súbor `.env`
+
+V File Station vytvor v `sfz-etl` súbor **`.env`** (Vytvoriť → Súbor, alebo nahraj hotový
+z `.env.example`). Obsah:
+
 ```
-Prvý beh naklonuje repo a prebehne ETL; skontroluj, že vznikol commit „Týždenná
-aktualizácia štatistík …" a Vercel spustil build.
+MONGODB_URI=mongodb+srv://readonly-user:HESLO@cluster.mongodb.net/?retryWrites=true&w=majority
+```
 
-## 5. Naplánovanie (Task Scheduler)
+Voliteľne:
 
-*Control Panel → Task Scheduler → Create → Scheduled Task → User-defined script*:
-- **User:** `root` (alebo účet s právom na docker), **Schedule:** týždenne, napr. pondelok 03:00.
+```
+# GITHUB_TOKEN=...      # len pri variante B (token namiesto deploy key)
+# SEZONA=2024/2025      # jednorazový ručný prepočet konkrétnej sezóny
+# MAX_SEZON=4           # strop počtu sezón v jednom behu
+```
+
+`.env` sa **nikdy necommituje** — `deploy/synology/.gitignore` ho vylučuje.
+
+---
+
+## 3. Prihlásenie do GitHubu — dve varianty
+
+`entrypoint.sh` podporuje obe a sám si vyberie podľa toho, čo nájde.
+
+### A) Deploy key (bezpečnejšie, preferované)
+
+Kľúč je viazaný na jediný repozitár, nemá identitu používateľa a nevyprší.
+
+**Pozor:** organizácia `Slovensky-futbalovy-zvaz` mala 17. 8. 2026 deploy keys **zakázané**
+(`Deploy keys are disabled for this repository`). Admin organizácie ich musí najprv povoliť —
+GitHub to popisuje v [Restricting deploy keys in your organization](https://docs.github.com/en/enterprise-cloud@latest/organizations/managing-organization-settings/restricting-deploy-keys-in-your-organization).
+Ak je politika vynútená na úrovni enterprise, toggle v organizácii je zamknutý a mení sa
+v enterprise policies.
+
+1. Vygeneruj pár kľúčov (na Macu):
+   `ssh-keygen -t ed25519 -f deploy_key -N "" -C "sfz-etl-nas"`
+2. **Verejnú** časť (`deploy_key.pub`) pridaj v GitHube: repo → *Settings → Deploy keys →
+   Add deploy key* → **zaškrtni „Allow write access"**.
+   Cez CLI: `gh api -X POST repos/<org>/<repo>/keys -f title="SFZ ETL — Synology NAS" -f key="$(cat deploy_key.pub)" -F read_only=false`
+3. **Privátnu** časť (`deploy_key`, bez prípony) nahraj cez File Station do
+   `sfz-etl/keys/deploy_key`.
+
+> Práva súboru riešiť netreba. SSH síce odmieta privátny kľúč s voľnými právami
+> („UNPROTECTED PRIVATE KEY FILE") a File Station práva 600 nenastaví, ale `entrypoint.sh`
+> si kľúč skopíruje do kontajnera a práva nastaví sám. `/keys` je pripojený read-only.
+
+### B) Fine-grained token (keď deploy keys nie sú povolené)
+
+1. GitHub → *Settings → Developer settings → Personal access tokens → Fine-grained tokens*.
+2. Repository access: **len tento repozitár**. Permissions: **Contents → Read and write**.
+3. Token vlož do `.env` ako `GITHUB_TOKEN=...`.
+
+> Token je viazaný na účet a **vyprší** — po expirácii beh prestane pushovať. Dátum expirácie
+> si poznač. Token sa neukladá do `.git/config`: `entrypoint.sh` nastaví `origin` na čistú URL
+> a prihlasovacie údaje používa len v samotných príkazoch `fetch`/`push`.
+
+---
+
+## 4. MongoDB Atlas — allowlist
+
+*Network Access → Add IP Address* → pridaj **statickú verejnú IP** siete SFZ.
+Ak sa IP zmení, treba ju v Atlase aktualizovať — inak beh spadne na nedostupnej databáze.
+
+---
+
+## 5. Build a testovací beh (Container Manager)
+
+1. **Container Manager → Project → Create.**
+2. *Project name:* `sfz-etl`, *Path:* `/docker/sfz-etl`, zdroj **existujúci
+   `docker-compose.yml`**.
+3. Spusti build. Prvý beh naklonuje repozitár a prebehne celé ETL — **trvá 1–2 hodiny**,
+   takže sa neľakaj, že „to visí".
+4. Skontroluj log kontajnera: má skončiť riadkom `>>> Pushnute do main -> Vercel build.`
+   a v GitHube má pribudnúť commit „Tyzdenna aktualizacia statistik (dátum): …".
+
+> Projekt v Container Manageri je určený na dlho bežiace služby, náš kontajner je
+> jednorazový — po dobehnutí zostane v stave *Exited*. Je to v poriadku; plánovaný beh
+> nerieši Projekt, ale Task Scheduler (krok 6).
+
+---
+
+## 6. Naplánovanie behu (Task Scheduler)
+
+*Control Panel → Task Scheduler → Create → Scheduled Task → User-defined script*
+
+- **Task:** `SFZ ETL — týždenná aktualizácia`
+- **User:** `root`
+- **Schedule:** *Run on the following days* → **Wednesday**, *First run time* **03:00**
 - **Run command:**
   ```bash
   cd /volume1/docker/sfz-etl && /usr/local/bin/docker compose run --rm etl
   ```
-  (cesta k `docker` môže byť `/usr/bin/docker` — over `which docker`.)
-- Voliteľne: *Settings → Send run details by email* pri chybe → notifikácia na `jan.letko@futbalsfz.sk`.
+  (cestu k `docker` over cez `which docker`; býva `/usr/local/bin/docker` alebo `/usr/bin/docker`)
+- **Settings → Send run details by email** → `jan.letko@futbalsfz.sk`, zaškrtni
+  **„Send run details only when the script terminates abnormally"**.
+
+**Prečo streda a nie pondelok:** väčšina zápisov z víkendových zápasov sa uzatvára až
+v pondelok a v utorok. Pôvodný cron bol na pondelok — v stredu je portál bližšie k realite.
+
+### Druhá, ručne spúšťaná úloha — prepočet konkrétnej sezóny
+
+Rovnaký postup, ale **bez rozvrhu** (spúšťa sa tlačidlom *Run*):
+
+```bash
+cd /volume1/docker/sfz-etl && /usr/local/bin/docker compose run --rm -e SEZONA=2024/2025 etl
+```
+
+Použije sa, keď treba prepočítať staršiu sezónu mimo automatického plánu.
+
+---
+
+## 7. Čo robiť, keď beh zlyhá
+
+| Príznak | Príčina a riešenie |
+|---|---|
+| E-mail „terminated abnormally", v logu `Chyba MONGODB_URI` | `.env` chýba alebo je zle pripojený — over `env_file` v `docker-compose.yml` |
+| `ServerSelectionTimeout` na Atlase | zmenila sa verejná IP → doplniť do Atlas allowlistu |
+| `Deploy keys are disabled for this repository` | politika organizácie (krok 3A) alebo prejdi na token (3B) |
+| Push prejde, ale Vercel nenasadí | autor commitu — musí byť `jan.letko@icloud.com`, commity z `@futbalsfz.sk` Vercel blokuje |
+| Commit označený `CIASTOCNY BEH` | niektorý ETL krok zlyhal; dáta sa aj tak publikovali, chybu nájdeš v logu. Sezóny bez potvrdeného odtlačku sa prepočítajú pri najbližšom behu |
+
+---
 
 ## Poznámky
 
-- Prepočítava sa len **aktuálna sezóna** (historické sú nemenné) → beh je krátky,
-  diff v `data/` malý, push rýchly.
-- Frekvencia sa mení v Task Scheduleri; ručný beh = *Run* na úlohe alebo príkaz z bodu 4.
-- Ak sa zmení verejná IP, treba ju aktualizovať v Atlas allowliste.
+- Prepočítava sa **aktuálna sezóna**, v júli–septembri **aj predchádzajúca** a **sezóny so
+  zmeneným odtlačkom** — nie celá história. Beh je preto v hodinách, nie v dňoch.
+- Frekvencia sa mení v Task Scheduleri; ručný beh = tlačidlo *Run* na úlohe.
+- Cron v `.github/workflows/tyzdenna.yml` je zámerne vypnutý — GitHub-hostované runnery majú
+  dynamické IP a vyžadovali by `0.0.0.0/0` v Atlas allowliste. Workflow zostáva ako záložné
+  ručné spustenie.
 - Alternatíva bez Dockera: Python 3 z Package Center + Task Scheduler priamo na
-  `python3 etl/tyzdenna.py` v naklonovanom repe — Docker je však čistejší a reprodukovateľný.
+  `python3 etl/tyzdenna.py` v naklonovanom repozitári. Docker je však čistejší
+  a reprodukovateľný.

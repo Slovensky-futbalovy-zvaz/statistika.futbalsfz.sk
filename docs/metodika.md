@@ -643,3 +643,110 @@ tu sa meria klub a súťažou sa len označuje. Text je uvedený priamo pod graf
 
 - Publikujú sa výhradne agregované počty, žiadne menné zoznamy ani identifikátory osôb.
 - Prah minimálnej veľkosti agregátu sa **nepoužije** — SFZ disponuje publicistickou licenciou, agregované počty sa zobrazujú všetky (rozhodnutie Ján Letko, 12. 7. 2026; uzatvára O5).
+
+## Automatická aktualizácia dát a spätné opravy zápasov
+
+**Rozhodnutia Ján Letko, 17. 8. 2026.** Zadanie vzniklo z jeho otázky: *výsledky sa často
+uzatvárajú aj o dva týždne neskôr, ako je dátum zápasu, a rozhodnutím komisií sa môžu
+spätne opravovať aj staršie zápasy — koľko dní dozadu sa kontroluje?*
+
+### Žiadne „okno posledných X dní" neexistuje a netreba ho
+
+ETL **nie je inkrementálne**. Pri každej aktualizácii sa celá prepočítavaná sezóna počíta
+odznova zo všetkých jej zápasov, takže neskoro uzavretý zápas ani spätná oprava komisie
+v tej sezóne nemôžu uniknúť. Otázka „koľko dní dozadu" má odpoveď „po začiatok sezóny".
+
+### Prekryv júl–september
+
+Sezóna sa určuje z dátumu (1. 7. – 30. 6.), takže po 1. 7. by sa predchádzajúca sezóna už
+nikdy neprepočítala — hoci sa do nej stále dopĺňajú dohrávky, baráže a rozhodnutia komisií.
+V mesiacoch **7, 8 a 9** sa preto prepočítava aj predchádzajúca sezóna
+(`PREKRYV_MESIACE` v `etl/tyzdenna.py`).
+
+**Namerané 17. 8. 2026:** sezóna 2025/2026 (futbal, slovenské zväzy) mala 22. 7. 2026
+podľa [ADR-0008](adr/0008-odohrane-zapasy-bez-administrativnych.md) **63 943** uzavretých
+zápasov, 17. 8. 2026 ich má **63 945** — po skončení sezóny teda pribudli **dva zápasy**.
+
+Prekryv preto **nestojí na veľkom nameranom rozdiele**, ale na tom, že v tomto období sa
+sezóna reálne dokončuje (dohrávky, baráže, odvolania), a najmä na tom, že **počet zápasov
+je slabý ukazovateľ: spätná oprava výsledku komisiou počet zápasov nemení vôbec.** Prekryv
+je lacná poistka — dve sezóny namiesto jednej tri mesiace v roku.
+
+> Pozor na porovnávanie čísel: `63 943` z ADR-0008 je futbal v slovenských zväzoch. Celkový
+> počet uzavretých zápasov s názvom sezóny `2025/2026` cez všetky `appSpace` a odvetvia je
+> **64 191** (futbal 63 945 + futsal 246 + zvyšok mimo slovenských zväzov). Prvá verzia tejto
+> kapitoly tie dve čísla omylom porovnala a tvrdila „+248 zápasov"; opravené 17. 8. 2026.
+
+### Odtlačky sezón — ako sa zachytí spätná oprava v starej sezóne
+
+**`matches` nemá pole s časom poslednej zmeny.** Overené 17. 8. 2026 nad vzorkou dokumentov:
+top-level kľúče sú `_id`, `competitionId`, `partId`, `sportGround`, `roundId`, `closed`,
+`startDate`, `appSpace`, `competition`, `competitionPart`, `season`, `rules`, `settings`,
+`round`, `createdDate`, `nominations`, `teams`, `protocol`, `timer`, `liveState`,
+`resultsTable`, `score`, … `protocol.lastUpdate` je voliteľné a na vzorke chýbalo. Dotaz
+„čo sa zmenilo od minulého týždňa" sa preto **spraviť nedá**.
+
+Namiesto toho `etl/kontrola_sezon.py` spočíta pre každú sezónu **odtlačok** — počet
+uzavretých zápasov, súčet skóre, súčet divákov a počet kontumácií, len za `appSpace`
+slovenských zväzov — a porovná ho s odtlačkom z posledného úspešného behu. Sezóna, ktorá sa
+pohla, sa prepočíta celá, aj keby išlo o zápas spred piatich rokov.
+
+- **Prečo nie len počet zápasov:** spätná oprava výsledku komisiou počet zápasov nemení.
+  Preto sú v odtlačku aj súčty skóre, divákov a kontumácií.
+- **Stav zápasu je v `__issfMatchStatus`, nie v `state`.** Prvé meranie 17. 8. 2026 počítalo
+  kontumácie podmienkou na `state` a vrátilo vo všetkých pätnástich sezónach nulu — to chybu
+  odhalilo. Odtlačok počíta `KONTUMOVANY` aj `ODSTUPENE_DRUZSTVO`, lebo rozhodnutie komisie
+  sa často prejaví práve zmenou stavu.
+- **Futsal má vlastný `appSpace`** (`futsalslovakia.sk`, `zvazy.json` → `futsal.appSpace`),
+  nie je v `sfz`/`rfz`/`obfz`. Prvá verzia `appspace_zvazy()` ho vynechala, takže odtlačok
+  futsal ignoroval; opravené 17. 8. 2026.
+- **Prečo `appSpace` v `$match` a nie až vo Pythone:** je to prvé pole indexov na `matches`.
+  Bez neho išlo o plný sken celej kolekcie a beh nedobehol ani za päť minút (namerané
+  17. 8. 2026). Súčty skóre a divákov si vyžadujú prečítanie dokumentov — v indexe tie polia
+  nie sú (plán je `IXSCAN` + `FETCH`) —, takže úplne zadarmo to nebude nikdy.
+  **Namerané trvanie celého skenu histórie: 9 min 53 s** (17. 8. 2026, 15 sezón, 627 skupín
+  `appSpace` × sezóna). V rámci 1–2 hodinového behu ETL je to zanedbateľné.
+- **Dvojfázovosť `--plan` / `--potvrd`:** odtlačok sa uloží ako platný až po úspešnom behu
+  ETL, a to len pre sezóny, ktoré naozaj prebehli. Sezóna, ktorá spadla alebo sa preskočila,
+  zostane na starom odtlačku a objaví sa v pláne aj pri najbližšom behu.
+- **Obmedzenie:** zmena, ktorá odtlačok nezmení (zápas znova otvorený a uzavretý s rovnakým
+  skóre aj divákmi), sa nezachytí. Pre publikované čísla je to bez dopadu.
+- **Zmena metriky odtlačku znehodnotí uložené odtlačky** — po nej prebehne jednorazový
+  prepočet všetkých sezón (4 h 53 min). Preto je zoznam `METRIKY` označený ako citlivý.
+
+### Strop počtu sezón na jeden beh
+
+`--max-sezon` (default 4) chráni pred utrhnutím behu, keby sa odtlačok zmenil vo veľa
+sezónach naraz. Preskočené sezóny sa **vypisujú do logu** — nikdy sa nezahodia potichu — a
+keďže im nebol potvrdený odtlačok, prepočítajú sa pri najbližšom behu.
+
+### Kde beh prebieha
+
+Plánovaný beh je na **Synology NAS** (Docker + Task Scheduler, `deploy/synology/`,
+[návod](synology-tyzdenna.md)), **v stredu o 03:00**. Streda preto, že väčšina zápisov
+z víkendových zápasov sa uzatvára až v pondelok a v utorok.
+
+Cron v `.github/workflows/tyzdenna.yml` je **zámerne vypnutý** — GitHub-hostované runnery
+majú dynamické IP, takže by si vyžadovali `0.0.0.0/0` v Atlas allowliste; secret
+`MONGODB_URI` preto nikdy nebol nastavený a naplánovaný beh padal každý pondelok od
+27. 7. 2026 (štyri behy, všetky `failure` na „Chýba MONGODB_URI"). Workflow zostáva ako
+záložné ručné spustenie.
+
+### Autor commitu z automatu
+
+Commit z NAS musí mať autora **`jan.letko@icloud.com`**. Commity z domény `@futbalsfz.sk`
+Vercel blokuje — push by prešiel, build by sa nespustil a skript by skončil „úspešne".
+Pôvodná verzia `entrypoint.sh` commitovala ako `etl-bot@futbalsfz.sk`; opravené 17. 8. 2026.
+
+### Čiastočný beh
+
+Ak niektorý ETL krok zlyhá, zmeny sa aj tak publikujú (čerstvé dáta z 42 zväzov sú lepšie
+než zamrznutý portál), ale správa commitu je označená ako **ČIASTOČNÁ** a `entrypoint.sh`
+skončí nenulovým kódom → Task Scheduler pošle e-mail na `jan.letko@futbalsfz.sk`.
+
+### Ručný prepočet jednej sezóny
+
+```
+python etl/tyzdenna.py --sezona 2024/2025                  # lokálne
+docker compose run --rm -e SEZONA=2024/2025 etl            # na NAS
+```

@@ -126,6 +126,18 @@ def normalizuj_kat(cat: str | None) -> str | None:
     return cat or None
 
 
+def nacitaj_vylucene() -> set:
+    """competitionGroupId sutazi, ktore NIE su regularnymi sutazami (skolske a vyberove
+    turnaje, testovacie zaznamy) - ciselnik etl/config/vylucene_sutaze.json.
+
+    Rovnaky filter ako v etl/kluby.py (rozhodnutie Jan Letko, 14. 8. 2026). Bez neho by
+    tento skript vyrabal artefakty aj pre skoly, vybery zvazov a zahranicne kluby, ktore
+    sa do publikovanych dat nedavaju.
+    """
+    cfg = load_json(CONFIG / "vylucene_sutaze.json")
+    return {z["competitionGroupId"] for z in cfg.get("sutaze", [])}
+
+
 def nacitaj_part_kategorie(db, varianty: list[str]) -> dict:
     """Mapa partId(str) -> vekova uroven SUTAZE z competitions.parts[].rules.category.
 
@@ -162,19 +174,28 @@ def nacitaj_sutaze(db, varianty: list[str]) -> dict:
     }
 
 
-def zbieraj(db, varianty: list[str], sport_sector: str, part_kat: dict) -> dict:
+def zbieraj(db, varianty: list[str], sport_sector: str, part_kat: dict,
+            vylucene_ids: set, space_zvaz: dict) -> dict:
     """Jeden prechod cez matches sezony.
 
     zapisy[(klub, competitionId, pohlavie)][pid] = pocet zapisov
     druzstvo[(castId, teamId)] = {"klub": org_id, "kat": vekova uroven sutaze}
     zapasy[(castId, teamId)] = pocet odohranych zapasov
+
+    FILTER (rozhodnutie Jan Letko, 14. 8. 2026, doplnene 17. 8. 2026): zapocitavaju sa len
+    REGULARNE sutaze riadene slovenskym zvazom. Zahranicne kluby a reprezentacie maju
+    appSpace mimo zvazy.json, skolske a vyberove turnaje su v ciselniku
+    etl/config/vylucene_sutaze.json. Filter je zhodny s etl/kluby.py - bez neho by sa do
+    data/vek-klub/ vratili subjekty, ktore nie su klubmi.
     """
     cur = db.matches.find(
         {"closed": True, "season.name": {"$in": varianty}, "rules.sport_sector": sport_sector},
         {
+            "appSpace": 1,
             "teams._id": 1, "teams.organization._id": 1, "teams.ageCategory": 1,
             "teams.gender": 1, "teams.category": 1,
-            "competition._id": 1, "competitionPart._id": 1,
+            "competition._id": 1, "competition.competitionGroupId": 1,
+            "competitionPart._id": 1,
             "nominations.teamId": 1, "nominations.athletes.sportnetUser._id": 1,
         },
         no_cursor_timeout=True,
@@ -185,9 +206,17 @@ def zbieraj(db, varianty: list[str], sport_sector: str, part_kat: dict) -> dict:
     zapasy: dict[tuple, int] = defaultdict(int)
     spracovanych = 0
 
+    vylucenych = {"neregularneSutaze": 0, "mimoSlovenskychZvazov": 0}
+
     for m in cur:
+        _comp = m.get("competition") or {}
+        _mimo = (sport_sector == "futbal" and m.get("appSpace") not in space_zvaz)
+        _neregularna = str(_comp.get("competitionGroupId")) in vylucene_ids
+        if _mimo or _neregularna:
+            vylucenych["mimoSlovenskychZvazov" if _mimo else "neregularneSutaze"] += 1
+            continue
         spracovanych += 1
-        comp_id = str((m.get("competition") or {}).get("_id") or "")
+        comp_id = str(_comp.get("_id") or "")
         cast_id = str((m.get("competitionPart") or {}).get("_id") or "")
         kat_casti = part_kat.get(cast_id)
 
@@ -220,7 +249,8 @@ def zbieraj(db, varianty: list[str], sport_sector: str, part_kat: dict) -> dict:
                 if pid:
                     zapisy[kluc][pid] += 1
 
-    log.info("   prejdenych zapasov: %d", spracovanych)
+    log.info("   prejdenych zapasov: %d (vylucene: mimo slovenskych zvazov %d, neregularne sutaze %d)",
+             spracovanych, vylucenych["mimoSlovenskychZvazov"], vylucenych["neregularneSutaze"])
     return {"zapisy": zapisy, "druzstvo": druzstvo, "zapasy": dict(zapasy)}
 
 
@@ -325,6 +355,7 @@ def main() -> int:
 
     sezony_cfg = load_json(CONFIG / "sezony.json")
     zvazy_cfg = load_json(CONFIG / "zvazy.json")
+    vylucene_ids = nacitaj_vylucene()
 
     # appSpace -> id zvazu (na priradenie sutaze k riadiacemu zvazu)
     space_zvaz: dict[str, str] = {}
@@ -352,7 +383,7 @@ def main() -> int:
         sutaze = nacitaj_sutaze(db, varianty)
         log.info("   casti sutazi s kategoriou: %d, sutazi: %d", len(part_kat), len(sutaze))
 
-        z = zbieraj(db, varianty, args.sport_sector, part_kat)
+        z = zbieraj(db, varianty, args.sport_sector, part_kat, vylucene_ids, space_zvaz)
         druzstva = zapocitane_druzstva(z["druzstvo"], z["zapasy"])
         if not z["zapisy"]:
             log.info("   %s: ziadne zapisy v sutaziach dospelych", sez)
