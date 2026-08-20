@@ -167,7 +167,7 @@ const telo = [
   tabulka(['Ukazovateľ', '2026/2027', '2025/2026 (celá)', 'Rozbeh'], [
     ['Súťaže s uzavretým zápasom', '145', '397', '36,5 %'],
     ['Odohrané zápasy', '1 757', '61 007', '2,9 %'],
-    ['Družstvá', '2 326', '5 686', '40,9 %'],
+    ['Družstvá', '2 056', '5 076', '40,5 %'],
     ['Kluby s aspoň jedným zápasom', '1 024', '1 401', '73,1 %'],
   ], [3470, 1900, 1900, 1800]),
   medzera(160),

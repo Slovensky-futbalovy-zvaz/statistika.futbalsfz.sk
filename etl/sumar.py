@@ -446,6 +446,23 @@ def main() -> None:
 
         # Počet klubov: celoslovenské číslo sa NESMIE skladať sčítaním po zväzoch
         # (klub hrá vo viacerých zväzoch) — berie sa z artefaktu data/kluby/{sezona}.json.
+        # UNIKATNE druzstva za SR (etl/druzstva_sr.py): sucet zvazovych kpi.druzstva
+        # duplikuje druzstvo, ktore hralo sutaze dvoch zvazov. Povodny sucet zostava
+        # v kpi.druzstvaSucetZvazov, aby bol rozdiel dohladatelny.
+        p_dr = sumar_dir / "druzstva.json"
+        if p_dr.exists():
+            dr_doc = load_json(p_dr)
+            dr = (dr_doc.get("sezony") or {}).get(sezona, {}).get("futbal")
+            if dr_doc.get("unikatne") and dr:
+                kpi["druzstvaSucetZvazov"] = kpi.get("druzstva")
+                kpi["druzstva"] = dr["druzstva"]
+                for c, cd in kat.items():
+                    n = (dr.get("poKategoriach") or {}).get(c)
+                    if n is not None and "druzstva" in cd:
+                        cd["druzstvaSucetZvazov"] = cd["druzstva"]
+                        cd["druzstva"] = n
+                print(f"  druzstva SR: {kpi['druzstvaSucetZvazov']} (sucet) -> {kpi['druzstva']} (unikatne)")
+
         kluby_sr = kluby_zvazy.blok_sr(kluby_zvazy.nacitaj(out_dir, sezona))
         if kluby_sr:
             kpi["kluby"] = kluby_sr["kluby"]
@@ -475,6 +492,12 @@ def main() -> None:
                     "kpi.sutaze; sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde "
                     "sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej "
                     "z nich."
+                ),
+                "druzstvaPoznamka": (
+                    "kpi.druzstva a rozpad po kategoriach su UNIKATNE druzstva za SR "
+                    "(etl/druzstva_sr.py) — druzstvo hrajuce sutaze dvoch zvazov je raz. "
+                    "Povodny sucet zvazovych hodnot je v kpi.druzstvaSucetZvazov. Ak "
+                    "druzstvaSucetZvazov chyba, unikatny beh este neprebehol a cislo je sucet."
                 ),
             },
             "kpi": kpi,

@@ -1,12 +1,13 @@
 {
  "sezona": "2018/2019",
- "generatedAt": "2026-08-19T17:03:39+02:00",
+ "generatedAt": "2026-08-20T08:59:19+02:00",
  "pocetZvazov": 43,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
   "kpiPoznamka": "Futbal, súčet všetkých zväzov; ďalšie odvetvia v bloku odvetvia.",
   "sutazePoznamka": "Súťaž = distinct súťaž s aspoň jedným uzavretým zápasom. V bloku kategorie sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich, preto súčet po kategóriách môže prevýšiť kpi.sutaze.",
-  "urovenPoznamka": "Úroveň súťaže pochádza z poľa competitions.level (nenastaviteľné, kopírované z ISSF; nižší level = vyššia súťaž). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni (ADULTS, U19, U13…), nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú do jedného stĺpca. Vekové kategórie (Dospelí, Dorast, Žiaci, Prípravky) sú len medzisúčty pre vizualizáciu. Blok urovne je disjunktný a sedí na kpi.sutaze; sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich."
+  "urovenPoznamka": "Úroveň súťaže pochádza z poľa competitions.level (nenastaviteľné, kopírované z ISSF; nižší level = vyššia súťaž). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni (ADULTS, U19, U13…), nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú do jedného stĺpca. Vekové kategórie (Dospelí, Dorast, Žiaci, Prípravky) sú len medzisúčty pre vizualizáciu. Blok urovne je disjunktný a sedí na kpi.sutaze; sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde sa súťaž so zápasmi vo viacerých vekových úrovniach započíta v každej z nich.",
+  "druzstvaPoznamka": "kpi.druzstva a rozpad po kategoriach su UNIKATNE druzstva za SR (etl/druzstva_sr.py) — druzstvo hrajuce sutaze dvoch zvazov je raz. Povodny sucet zvazovych hodnot je v kpi.druzstvaSucetZvazov. Ak druzstvaSucetZvazov chyba, unikatny beh este neprebehol a cislo je sucet."
  },
  "kpi": {
   "sutaze": 419,
@@ -14,7 +15,7 @@
   "zapasy": 56106,
   "uzatvorene": 59308,
   "administrativne": 3202,
-  "druzstva": 5281,
+  "druzstva": 4756,
   "goly": 316216,
   "divaci": 4173496,
   "zlteKarty": 78547,
@@ -25,6 +26,7 @@
   "odstupene": 3902,
   "odstupeneAdmin": 2823,
   "odstupeneOdohrane": 1079,
+  "druzstvaSucetZvazov": 5281,
   "kluby": 1624
  },
  "kluby": {
@@ -83,11 +85,12 @@
    "zapasy": 20697,
    "uzatvorene": 21624,
    "administrativne": 927,
-   "druzstva": 1897,
+   "druzstva": 1535,
    "goly": 88314,
    "zlte": 55115,
    "cervene": 1687,
-   "divaci": 2751176
+   "divaci": 2751176,
+   "druzstvaSucetZvazov": 1897
   },
   "U19": {
    "sutaze": 69,
@@ -95,11 +98,12 @@
    "zapasy": 7666,
    "uzatvorene": 8474,
    "administrativne": 808,
-   "druzstva": 719,
+   "druzstva": 695,
    "goly": 42100,
    "zlte": 14026,
    "cervene": 479,
-   "divaci": 294122
+   "divaci": 294122,
+   "druzstvaSucetZvazov": 719
   },
   "U17": {
    "sutaze": 6,
@@ -107,11 +111,12 @@
    "zapasy": 1370,
    "uzatvorene": 1408,
    "administrativne": 38,
-   "druzstva": 102,
+   "druzstva": 100,
    "goly": 5527,
    "zlte": 2146,
    "cervene": 74,
-   "divaci": 57440
+   "divaci": 57440,
+   "druzstvaSucetZvazov": 102
   },
   "U16": {
    "sutaze": 1,
@@ -123,7 +128,8 @@
    "goly": 674,
    "zlte": 281,
    "cervene": 4,
-   "divaci": 10200
+   "divaci": 10200,
+   "druzstvaSucetZvazov": 12
   },
   "U15": {
    "sutaze": 81,
@@ -131,11 +137,12 @@
    "zapasy": 9465,
    "uzatvorene": 10007,
    "administrativne": 542,
-   "druzstva": 913,
+   "druzstva": 861,
    "goly": 61748,
    "zlte": 5567,
    "cervene": 192,
-   "divaci": 385394
+   "divaci": 385394,
+   "druzstvaSucetZvazov": 913
   },
   "U14": {
    "sutaze": 2,
@@ -147,7 +154,8 @@
    "goly": 2908,
    "zlte": 296,
    "cervene": 10,
-   "divaci": 21309
+   "divaci": 21309,
+   "druzstvaSucetZvazov": 48
   },
   "U13": {
    "sutaze": 38,
@@ -155,11 +163,12 @@
    "zapasy": 5475,
    "uzatvorene": 5780,
    "administrativne": 305,
-   "druzstva": 507,
+   "druzstva": 469,
    "goly": 37161,
    "zlte": 465,
    "cervene": 15,
-   "divaci": 177693
+   "divaci": 177693,
+   "druzstvaSucetZvazov": 507
   },
   "U12": {
    "sutaze": 5,
@@ -167,11 +176,12 @@
    "zapasy": 849,
    "uzatvorene": 889,
    "administrativne": 40,
-   "druzstva": 86,
+   "druzstva": 85,
    "goly": 13037,
    "zlte": 32,
    "cervene": 2,
-   "divaci": 35148
+   "divaci": 35148,
+   "druzstvaSucetZvazov": 86
   },
   "U11": {
    "sutaze": 42,
@@ -179,11 +189,12 @@
    "zapasy": 6529,
    "uzatvorene": 6796,
    "administrativne": 267,
-   "druzstva": 600,
+   "druzstva": 569,
    "goly": 42897,
    "zlte": 44,
    "cervene": 0,
-   "divaci": 267158
+   "divaci": 267158,
+   "druzstvaSucetZvazov": 600
   },
   "U10": {
    "sutaze": 13,
@@ -191,11 +202,12 @@
    "zapasy": 1201,
    "uzatvorene": 1253,
    "administrativne": 52,
-   "druzstva": 153,
+   "druzstva": 147,
    "goly": 7129,
    "zlte": 1,
    "cervene": 0,
-   "divaci": 55219
+   "divaci": 55219,
+   "druzstvaSucetZvazov": 153
   },
   "U09": {
    "sutaze": 13,
@@ -203,11 +215,12 @@
    "zapasy": 1473,
    "uzatvorene": 1681,
    "administrativne": 208,
-   "druzstva": 186,
+   "druzstva": 177,
    "goly": 9563,
    "zlte": 0,
    "cervene": 0,
-   "divaci": 68855
+   "divaci": 68855,
+   "druzstvaSucetZvazov": 186
   },
   "U08": {
    "sutaze": 1,
@@ -219,7 +232,8 @@
    "goly": 4396,
    "zlte": 0,
    "cervene": 0,
-   "divaci": 26398
+   "divaci": 26398,
+   "druzstvaSucetZvazov": 34
   },
   "NEZNAMA": {
    "sutaze": 3,
@@ -231,7 +245,8 @@
    "goly": 759,
    "zlte": 571,
    "cervene": 10,
-   "divaci": 23204
+   "divaci": 23204,
+   "druzstvaSucetZvazov": 22
   },
   "U20": {
    "sutaze": 1,
@@ -243,7 +258,8 @@
    "goly": 3,
    "zlte": 3,
    "cervene": 0,
-   "divaci": 180
+   "divaci": 180,
+   "druzstvaSucetZvazov": 2
   }
  },
  "urovne": {

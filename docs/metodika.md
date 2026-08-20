@@ -506,7 +506,7 @@ Stav sezóny 2026/2027 k dátumu prepočtu (predchádzajúca sezóna 2025/2026 =
 |---|---|---|---|
 | Súťaže s uzavretým zápasom | 145 | 397 | 36,5 % |
 | Odohrané zápasy | 1 757 | 61 007 | 2,9 % |
-| Družstvá | 2 326 | 5 686 | 40,9 % |
+| Družstvá | 2 056 | 5 076 | 40,5 % |
 | Kluby s aspoň jedným zápasom | 1 024 | 1 401 | 73,1 % |
 
 Rozbeh po vekových kategóriách — tu je vidieť, prečo sa prebiehajúca sezóna nedá hodnotiť:
@@ -571,10 +571,13 @@ dvojica `(osoba, kategória)`, takže hráč hrajúci U19 aj dospelých je v obo
 kategórií je vyšší než počet unikátov. To isté platí pre **sunburst osôb**, ktorý je stavaný po
 zväzoch. Tieto multiplicity musia byť pri každom takom grafe napísané.
 
-**Družstvá majú rovnaké obmedzenie ako mali osoby.** `kpi.druzstva` je súčet zväzových počtov
-unikátnych dvojíc (veková kategória, klub), takže družstvo klubu hrajúce súťaže dvoch zväzov je
-v súčte dvakrát. Zatiaľ neopravené — pri prípadnej oprave ide o ten istý postup ako pri osobách
-(jedna agregácia nad všetkými appSpace).
+**Družstvá sú opravené tým istým postupom.** Družstvo = unikátna dvojica (veková kategória,
+klub) s aspoň jedným uzavretým zápasom. Súčet zväzových počtov duplikoval družstvo, ktoré hralo
+súťaže dvoch zväzov (typicky mládež v oblastnej aj regionálnej súťaži), preto celoslovenské číslo
+počíta `etl/druzstva_sr.py` jednou agregáciou nad všetkými appSpace → `data/sumar/druzstva.json`.
+`etl/sumar.py` ním prepíše `kpi.druzstva` aj rozpad po vekových kategóriách; pôvodný súčet
+zostáva v `kpi.druzstvaSucetZvazov`, aby bol rozdiel dohľadateľný. Futbal a futsal sa počítajú
+oddelene a sčítavajú sa — futsalové družstvo klubu je iné družstvo než jeho futbalové.
 
 ### Vek hráčov a Index klubu — stránka Trendy (7. 8. 2026)
 

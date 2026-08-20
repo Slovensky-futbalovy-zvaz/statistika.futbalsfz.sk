@@ -67,7 +67,7 @@ odstúpených klubov.** Stav k dátumu prepočtu:
 |---|---|---|---|
 | Súťaže s uzavretým zápasom | 145 | 397 | 36,5 % |
 | Odohrané zápasy | 1 757 | 61 007 | 2,9 % |
-| Družstvá | 2 326 | 5 686 | 40,9 % |
+| Družstvá | 2 056 | 5 076 | 40,5 % |
 | Kluby s aspoň jedným zápasom | 1 024 | 1 401 | 73,1 % |
 
 **Prečo sa to hodnotiť nedá — rozbeh po kategóriách:** dospelí 76,3 %, dorast 60,6 %, žiaci 25,8 %,

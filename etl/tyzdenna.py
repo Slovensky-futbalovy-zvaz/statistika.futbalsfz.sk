@@ -226,6 +226,10 @@ def main() -> int:
     # 11) porovnania a celoslovensky sumar — po kroku 8
     spusti(["etl/porovnania.py", "--out", str(out)], "porovnania", chyby)
     spusti(["etl/porovnania_kluby.py", "--out", str(out)], "porovnania_kluby", chyby)
+    # 11a0) UNIKATNE druzstva za SR — musi byt pred sumar.py, ktory nim prepise kpi.druzstva
+    for sez in (hotove or sezony):
+        spusti(["etl/druzstva_sr.py", "--sezona", sez, "--out", str(out)],
+               f"druzstva SR {sez}", chyby)
     # 11a) SR demografia — UNIKATNE osoby cez vsetky zvazy aj odvetvia; musi byt PRED
     #      sumar.py, ktory by inak zapisal zalohu zo suctu zvazovych suborov
     for sez in (hotove or sezony):
