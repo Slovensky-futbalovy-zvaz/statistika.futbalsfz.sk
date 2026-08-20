@@ -30,7 +30,8 @@ for (const s of sezony) {
     (trendOdvetvia[sektor] ??= {})[s] = blok.kategorie;
   }
 }
-const trendOsoby = demoTrend(getSumarDemografia());
+const srDemo = getSumarDemografia();
+const trendOsoby = demoTrend(srDemo);
 
 
 interface Props {
@@ -109,10 +110,24 @@ const roly = [
   { key: 'delegati', label: 'Delegáti' },
   { key: 'personal', label: 'Personál' },
 ];
+/**
+ * Počet osôb v role za sezónu. PRIMÁRNY zdroj je data/sumar/demografia.json z behu
+ * `etl/demografia.py --zvaz sr` — UNIKÁTNE osoby za celé Slovensko, teda osoba pôsobiaca
+ * vo viacerých zväzoch, kluboch, súťažiach či odvetviach je započítaná RAZ. Záloha (kým
+ * unikátny beh neprebehol) je súčet zväzových hodnôt zo sumáru, ktorý takú osobu duplikuje.
+ */
+const osobyUnikatne = Boolean((srDemo as unknown as { unikatne?: boolean })?.unikatne);
+const osobyHodnota = (sez: string, rola: string): number => {
+  const d = srDemo?.sezony?.[sez]?.[rola];
+  if (osobyUnikatne && d) return d.osoby;
+  const sm = sumreMap.get(sez);
+  return sm ? osobySpolu(sm, rola) : 0;
+};
+
 const osobyKarty = roly.map((r) => {
-  const trend = sezony.map((s) => osobySpolu(sumreMap.get(s)!, r.key));
-  const hodnota = osobySpolu(sumar, r.key);
-  const prev = sumarPrev ? osobySpolu(sumarPrev, r.key) : undefined;
+  const trend = sezony.map((s) => osobyHodnota(s, r.key));
+  const hodnota = osobyHodnota(aktualna, r.key);
+  const prev = predosla ? osobyHodnota(predosla, r.key) : undefined;
   const mn = Math.min(...trend), mx = Math.max(...trend);
   const pts = trend
     .map((v, i) => {
@@ -125,7 +140,6 @@ const osobyKarty = roly.map((r) => {
 });
 
 const mapData = getMapData(aktualna);
-const srDemo = getSumarDemografia();
 
 // SEO: popis + FAQ (viditeľné aj ako FAQPage structured data)
 // pozor na indexy: karta „Súťaže“ je samostatný island, v `kpiKarty` už nie je
@@ -271,7 +285,10 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
     <div class={KICKER}>Osoby vo futbale</div>
     <h2 class={H2} style="font-size:clamp(21px,2.4vw,28px); margin:2px 0 4px;">Ľudia okolo lopty</h2>
     <p class="text-sm text-muted mb-4">
-      Unikátne registrované osoby v jednotlivých úlohách za sezónu {aktualna} a ich vývoj za {sezony.length} sezón.
+      Unikátne osoby zo zápisov o stretnutí za sezónu {aktualna} a ich vývoj za {sezony.length} sezón.
+      Každá osoba je započítaná <strong class="text-ink">raz</strong> — aj keď v sezóne pôsobila
+      vo viacerých kluboch, súťažiach, zväzoch či odvetviach. V rolách sa počíta zvlášť: hrajúci
+      tréner je v Hráčoch aj v Trénerov.
     </p>
     <div class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
       {
@@ -309,7 +326,11 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       </div>
       <div class={CARD} style={CARD_STYLE}>
         <div class={KICKER}>Osoby — úroveň, rola a vek</div>
-        <p class="text-sm text-muted mt-1 mb-2">Osoby podľa odvetvia → úrovne (SFZ/RFZ/ObFZ) → roly → vekovej úrovne.</p>
+        <p class="text-sm text-muted mt-1 mb-2">
+          Osoby podľa odvetvia → úrovne (SFZ/RFZ/ObFZ) → roly → vekovej úrovne. Rozpad je po
+          zväzoch, takže osoba pôsobiaca vo viacerých zväzoch je v každej vetve — súčet vetiev je
+          preto vyšší než počet unikátnych osôb v kartách vyššie.
+        </p>
         <SunburstOsoby client:visible strom={sumar.sunburstOsoby} />
       </div>
     </div>
@@ -348,7 +369,9 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
           <div class={KICKER}>Veková štruktúra SR</div>
           <h2 class={H2} style="font-size:20px; margin:2px 0 2px;">Veková pyramída — celé Slovensko</h2>
           <p class="text-sm text-muted mb-3">
-            Všetky registrované osoby podľa veku a pohlavia, súčet všetkých zväzov, sezóna {aktualna}. Prepni rolu.
+            Unikátne osoby zo zápisov o stretnutí podľa veku a pohlavia za celé Slovensko, sezóna
+            {aktualna}. Osoba, ktorá pôsobila vo viacerých zväzoch, kluboch alebo súťažiach, je
+            v grafe <strong class="text-ink">raz</strong>. Prepni rolu.
           </p>
           <AgePyramid client:visible demo={srDemo} sezona={aktualna} />
         </div>

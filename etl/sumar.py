@@ -497,6 +497,13 @@ def main() -> None:
             json.dump(vystup, f, ensure_ascii=False, indent=1)
         print(f"OK {cesta} — {pocet_zvazov} zväzov, {kpi.get('zapasy', 0)} zápasov")
 
+    # SR demografia: prednost ma UNIKATNY beh etl/demografia.py --zvaz sr. Sucet zvazovych
+    # suborov (ktory tu istu osobu duplikuje v kazdom zvaze) sa pouzije len ako zaloha,
+    # kym unikatny beh neprebehol.
+    cesta_demo = sumar_dir / "demografia.json"
+    if cesta_demo.exists() and load_json(cesta_demo).get("unikatne"):
+        print(f"SKIP {cesta_demo} — uz je z unikatneho SR behu (demografia.py --zvaz sr)")
+        return 0
     demo = demografia_sr(zvazy_cfg, out_dir)
     with open(sumar_dir / "demografia.json", "w", encoding="utf-8") as f:
         json.dump(demo, f, ensure_ascii=False, indent=1)

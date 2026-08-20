@@ -17,6 +17,7 @@ Použitie:
     export MONGODB_URI="mongodb://..."
     python etl/demografia.py --zvaz obfz-nitra --all-sezony
     python etl/demografia.py --zvaz sfz --sezona 2025/2026
+    python etl/demografia.py --zvaz sr --sezona 2025/2026   # cele SR, unikatne osoby
 """
 
 from __future__ import annotations
@@ -51,6 +52,7 @@ log = logging.getLogger("demografia")
 
 USERS_CHUNK = 5_000  # veľkosť $in dávky pri čítaní sportnet.users
 ROLY_PORADIE = ["hraci", "treneri", "rozhodcovia", "delegati", "personal"]
+SR_ID = "sr"  # --zvaz sr: celoslovensky beh, UNIKATNE osoby cez vsetky zvazy aj odvetvia
 
 _MAXT = MAX_TIME_MS  # limit agregácie (prepísateľný cez --max-time-ms)
 _HINT = None  # voliteľný index hint (--hint) — do vzniku cieleného indexu (ADR-0004)
@@ -175,31 +177,43 @@ def agregat_role(pids: set[str], udaje: dict) -> dict:
     }
 
 
-def vygeneruj_sezonu(db_sutaze, users_col, zvaz, sezona, varianty, roly, sport_sector) -> dict | None:
-    """Agregáty všetkých rolí za jednu sezónu. None, ak sezóna nemá osoby."""
-    spaces = [FUTSAL_APP_SPACE] if sport_sector == "futsal" else app_spaces(zvaz)
+def vygeneruj_sezonu(
+    db_sutaze, users_col, zvaz, sezona, varianty, roly, sport_sector, spaces_map=None
+) -> dict | None:
+    """Agregáty všetkých rolí za jednu sezónu. None, ak sezóna nemá osoby.
+
+    spaces_map = {sektor: [appSpace, ...]} — celoslovenský beh (--zvaz sr) posiela všetky
+    appSpace naraz, takže osoba pôsobiaca vo viacerých zväzoch (typicky rozhodca alebo
+    mládežnícky hráč v dvoch súťažiach) sa v set() zjednotí a je započítaná RAZ. Bez tohto
+    parametra sa berie appSpace jedného zväzu, ako doteraz.
+    """
+    if spaces_map is None:
+        spaces_map = {
+            sport_sector: [FUTSAL_APP_SPACE] if sport_sector == "futsal" else app_spaces(zvaz)
+        }
 
     pids_podla_roly: dict[str, set[str]] = {r: set() for r in ROLY_PORADIE}
-    for r in agreguj(db_sutaze, pids_hraci(spaces, varianty, sport_sector), "pids-hraci"):
-        if r["_id"]:
-            pids_podla_roly["hraci"].add(r["_id"])
-    for r in agreguj(
-        db_sutaze,
-        pids_treneri(spaces, varianty, roly["treneriCrewPositions"], sport_sector),
-        "pids-treneri",
-    ):
-        if r["_id"]:
-            pids_podla_roly["treneri"].add(r["_id"])
-    for r in agreguj(
-        db_sutaze,
-        pids_managers(
-            spaces, varianty, roly["rozhodcovia"], roly["delegati"], roly["personal"], sport_sector
-        ),
-        "pids-managers",
-    ):
-        pid, rola = r["_id"].get("pid"), r["_id"].get("rola")
-        if pid and rola:
-            pids_podla_roly[rola].add(pid)
+    for sektor, spaces in spaces_map.items():
+        for r in agreguj(db_sutaze, pids_hraci(spaces, varianty, sektor), f"pids-hraci [{sektor}]"):
+            if r["_id"]:
+                pids_podla_roly["hraci"].add(r["_id"])
+        for r in agreguj(
+            db_sutaze,
+            pids_treneri(spaces, varianty, roly["treneriCrewPositions"], sektor),
+            f"pids-treneri [{sektor}]",
+        ):
+            if r["_id"]:
+                pids_podla_roly["treneri"].add(r["_id"])
+        for r in agreguj(
+            db_sutaze,
+            pids_managers(
+                spaces, varianty, roly["rozhodcovia"], roly["delegati"], roly["personal"], sektor
+            ),
+            f"pids-managers [{sektor}]",
+        ):
+            pid, rola = r["_id"].get("pid"), r["_id"].get("rola")
+            if pid and rola:
+                pids_podla_roly[rola].add(pid)
 
     vsetky = set().union(*pids_podla_roly.values())
     if not vsetky:
@@ -209,8 +223,8 @@ def vygeneruj_sezonu(db_sutaze, users_col, zvaz, sezona, varianty, roly, sport_s
     return {rola: agregat_role(pids, udaje) for rola, pids in pids_podla_roly.items() if pids}
 
 
-def zapis(doc: dict, out_dir: Path) -> Path:
-    cesta = out_dir / "demografia" / (doc["zvaz"] + ".json")
+def zapis(doc: dict, out_dir: Path, cesta: Path | None = None) -> Path:
+    cesta = cesta or out_dir / "demografia" / (doc["zvaz"] + ".json")
     cesta.parent.mkdir(parents=True, exist_ok=True)
     with open(cesta, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=2)
@@ -244,7 +258,21 @@ def main() -> int:
     zvazy = load_json(CONFIG / "zvazy.json")
     sezony_cfg = load_json(CONFIG / "sezony.json")
     roly = load_json(CONFIG / "roly.json")
-    zvaz = najdi_zvaz(zvazy, args.zvaz)
+    je_sr = args.zvaz == SR_ID
+    if je_sr:
+        # Cele Slovensko naraz: futbalove appSpace vsetkych 43 zvazov + futsal.
+        vsetky_zvazy = zvazy["sfz"] + zvazy["rfz"] + zvazy["obfz"]
+        futbal_spaces: list[str] = []
+        for z in vsetky_zvazy:
+            for sp in app_spaces(z):
+                if sp not in futbal_spaces:
+                    futbal_spaces.append(sp)
+        spaces_map = {"futbal": futbal_spaces, "futsal": [FUTSAL_APP_SPACE]}
+        zvaz = {"id": SR_ID, "nazov": "Slovensko (vsetky zvazy)"}
+        log.info("SR rezim: %d appSpace (futbal) + futsal", len(futbal_spaces))
+    else:
+        spaces_map = None
+        zvaz = najdi_zvaz(zvazy, args.zvaz)
 
     klient = pripoj_klienta(args.mongodb_uri)
     db_sutaze = klient[args.db]
@@ -255,7 +283,9 @@ def main() -> int:
     for sezona in sezony:
         varianty = sezona_varianty(sezony_cfg, sezona)
         log.info("=== demografia %s %s [%s] ===", zvaz["nazov"], sezona, args.sport_sector)
-        sez = vygeneruj_sezonu(db_sutaze, users_col, zvaz, sezona, varianty, roly, args.sport_sector)
+        sez = vygeneruj_sezonu(
+            db_sutaze, users_col, zvaz, sezona, varianty, roly, args.sport_sector, spaces_map
+        )
         if sez is None:
             log.info("%s: žiadne osoby — preskakujem.", sezona)
             continue
@@ -276,10 +306,15 @@ def main() -> int:
     # Merge s existujúcim súborom: pri behu jednej sezóny (napr. denný cron
     # aktuálnej sezóny) sa ostatné sezóny zachovajú; --all-sezony regeneruje celý
     # súbor. Nová generácia sezóny má prednosť pred uloženou.
-    cesta_stara = Path(args.out) / "demografia" / (zvaz["id"] + ".json")
+    cesta_vystup = (
+        Path(args.out) / "sumar" / "demografia.json"
+        if je_sr
+        else Path(args.out) / "demografia" / (zvaz["id"] + ".json")
+    )
+    cesta_stara = cesta_vystup
     if not args.all_sezony and cesta_stara.exists():
         stare = load_json(cesta_stara)
-        if stare.get("sportSector") == args.sport_sector:
+        if je_sr or stare.get("sportSector") == args.sport_sector:
             zlucene = dict(stare.get("sezony", {}))
             zlucene.update(vysledky)
             vysledky = {s: zlucene[s] for s in sorted(zlucene)}
@@ -287,7 +322,8 @@ def main() -> int:
 
     doc = {
         "zvaz": zvaz["id"],
-        "sportSector": args.sport_sector,
+        "sportSector": "futbal+futsal" if je_sr else args.sport_sector,
+        "unikatne": bool(je_sr),
         "generatedAt": datetime.now(timezone(timedelta(hours=2))).isoformat(timespec="seconds"),
         "methodologyFlags": {
             "zdroj": (
@@ -302,7 +338,15 @@ def main() -> int:
         },
         "sezony": vysledky,
     }
-    cesta = zapis(doc, Path(args.out))
+    if je_sr:
+        doc["methodologyFlags"]["unikatne"] = (
+            "UNIKATNE osoby za cele Slovensko. Osoba sa pocita RAZ bez ohladu na to, v kolkych "
+            "zvazoch, kluboch, sutaziach a odvetviach (futbal aj futsal) v sezone posobila. "
+            "NIE JE to sucet zvazovych suborov data/demografia/{id}.json — ten istu osobu "
+            "duplikuje v kazdom zvaze. V roliach sa osoba pocita zvlast (hrajuci trener je "
+            "v Hracoch aj v Treneroch)."
+        )
+    cesta = zapis(doc, Path(args.out), cesta_vystup)
     log.info(
         "OK %s — sezón %d",
         cesta.relative_to(REPO) if cesta.is_relative_to(REPO) else cesta,

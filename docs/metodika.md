@@ -526,6 +526,56 @@ tých klubov len čaká na štart svojej súťaže.
 v `data/odstupene-kluby.json`. Zdroj počtov súťaží a zápasov je `data/sumar/<sezóna>.json`.
 
 
+### OSOBY — distinct na každej úrovni (rozhodnutie Ján Letko, 19. 8. 2026)
+
+Otázka Jána Letka: „na úvodnej stránke vo vekovej pyramíde sú naozaj iba tí, ktorí boli
+v zápisoch o stretnutí, a iba raz sú započítaní, aj keď hráči hrali za viac klubov vo viacerých
+súťažiach?“ Odpoveď mala dve časti — zdroj áno, celoslovenský súčet nie.
+
+**Zdroj osôb sú výhradne zápisy o stretnutí.** `sutaze.matches`, len `closed: true`, filtrované
+na appSpace zväzu, varianty sezóny a odvetvie. Hráči z `nominations.athletes`, tréneri
+z `nominations.crew` (pozície z `etl/config/roly.json`), rozhodcovia, delegáti a personál
+z `managers[]`. Rok narodenia a pohlavie sa dojoinuje z `sportnet.users`. Registrácia bez
+odohraného zápasu sa do čísel nedostane.
+
+**Vo zväze je osoba raz.** Agregácia končí `$group` podľa `sportnetUser._id`, resp. `set()`
+v Pythone. Hráč, ktorý odohral 30 zápasov za dva kluby v troch súťažiach toho istého zväzu, je
+jeden. Platí to pre `data/demografia/{id}.json` (etl/demografia.py) aj pre `osoby.<rola>.unikatni`
+v profile zväzu (`_PERSON_FACET` v etl/pipelines).
+
+**Celé Slovensko sa NESMIE počítať súčtom zväzov.** Hráč, ktorý prestúpi z klubu v ObFZ do klubu
+v RFZ, je v oboch zväzoch správne raz — ale v súčte je dvakrát. Rovnako rozhodca, ktorý rozhoduje
+v oblastnej aj regionálnej súťaži. Preto existuje samostatný celoslovenský beh:
+
+    python etl/demografia.py --zvaz sr --sezona 2025/2026
+
+Ten posiela do jednej agregácie **všetky appSpace (44 futbalových + futsal) naraz**, takže osoba
+sa zjednotí cez celé Slovensko a je započítaná **raz** bez ohľadu na počet zväzov, klubov, súťaží
+aj odvetví. Výstup je `data/sumar/demografia.json` s príznakom `unikatne: true`; `etl/sumar.py`
+tento súbor **neprepisuje** (súčet zväzov zapíše len ako zálohu, kým unikátny beh neprebehol).
+V týždennej automatike je to krok 11a, pred `sumar.py`.
+
+Namerané za sezónu 2025/2026 — o koľko bol súčet nafúknutý:
+
+| Rola | Súčet po zväzoch | Unikátne za SR | Rozdiel |
+|---|---|---|---|
+| Hráči | 116 859 | **101 473** | −13,2 % |
+| Tréneri | 5 575 | **4 074** | −26,9 % |
+| Rozhodcovia | 3 589 | **2 006** | **−44,1 %** |
+| Delegáti | 675 | **397** | −41,2 % |
+| Personál | 10 412 | **8 118** | −22,0 % |
+
+**Čo zostáva multiplicitné zámerne.** V rozpade po **rolách** sa osoba počíta v každej role
+(hrajúci tréner je v Hráčoch aj v Trénerov) a v rozpade po **vekových kategóriách** sa počíta
+dvojica `(osoba, kategória)`, takže hráč hrajúci U19 aj dospelých je v oboch stĺpcoch a súčet
+kategórií je vyšší než počet unikátov. To isté platí pre **sunburst osôb**, ktorý je stavaný po
+zväzoch. Tieto multiplicity musia byť pri každom takom grafe napísané.
+
+**Družstvá majú rovnaké obmedzenie ako mali osoby.** `kpi.druzstva` je súčet zväzových počtov
+unikátnych dvojíc (veková kategória, klub), takže družstvo klubu hrajúce súťaže dvoch zväzov je
+v súčte dvakrát. Zatiaľ neopravené — pri prípadnej oprave ide o ten istý postup ako pri osobách
+(jedna agregácia nad všetkými appSpace).
+
 ### Vek hráčov a Index klubu — stránka Trendy (7. 8. 2026)
 
 Metodika v plných podrobnostiach: `claude/plan-trendy-vek.md` a `claude/metodika-index-klubu.md`

@@ -226,6 +226,11 @@ def main() -> int:
     # 11) porovnania a celoslovensky sumar — po kroku 8
     spusti(["etl/porovnania.py", "--out", str(out)], "porovnania", chyby)
     spusti(["etl/porovnania_kluby.py", "--out", str(out)], "porovnania_kluby", chyby)
+    # 11a) SR demografia — UNIKATNE osoby cez vsetky zvazy aj odvetvia; musi byt PRED
+    #      sumar.py, ktory by inak zapisal zalohu zo suctu zvazovych suborov
+    for sez in (hotove or sezony):
+        spusti(["etl/demografia.py", "--zvaz", "sr", "--sezona", sez, "--out", str(out)],
+               f"demografia SR {sez}", chyby)
     spusti(["etl/sumar.py", "--out", str(out)], "sumar", chyby)
     # 11b) odstupene kluby — cita data/klub a data/sumar (blok rozbeh) → po kroku 11
     spusti(["etl/odstupene_kluby.py", "--out", str(out)], "odstupene_kluby", chyby)
