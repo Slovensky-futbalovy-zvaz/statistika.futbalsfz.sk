@@ -50,6 +50,15 @@ Raz na konci, offline (bez DB):
  10. zanikanie.py                          cita data/klub → po kroku 4
  11. porovnania.py, porovnania_kluby.py, sumar.py   citaju profily vratane bloku klubov
                                            → MUSIA byt po kroku 8
+11a0. druzstva_sr.py --sezona S           UNIKATNE druzstva za SR (jedna agregacia nad
+                                           vsetkymi appSpace) → data/sumar/druzstva.json;
+                                           MUSI byt pred krokom 11, ktory nim prepise
+                                           kpi.druzstva (sucet zvazov druzstvo hrajuce
+                                           sutaze dvoch zvazov duplikuje)
+11a. demografia.py --zvaz sr --sezona S   UNIKATNE osoby za SR (vsetky appSpace + futsal
+                                           naraz) → data/sumar/demografia.json; MUSI byt
+                                           pred krokom 11, ktory by inak zapisal zalohu
+                                           zo suctu zvazovych suborov
 11b. odstupene_kluby.py                   odstupene kluby + rozbeh prebiehajucej sezony
                                            → MUSI byt po kroku 11 (cita data/sumar)
  12. projekty.py                            grassroots projekty (ma DB, ale je nezavisly)
@@ -228,13 +237,13 @@ def main() -> int:
     spusti(["etl/porovnania_kluby.py", "--out", str(out)], "porovnania_kluby", chyby)
     # 11a0) UNIKATNE druzstva za SR — musi byt pred sumar.py, ktory nim prepise kpi.druzstva
     for sez in (hotove or sezony):
-        spusti(["etl/druzstva_sr.py", "--sezona", sez, "--out", str(out)],
-               f"druzstva SR {sez}", chyby)
+        spusti(["etl/druzstva_sr.py", "--sezona", sez, "--out", str(out),
+                "--max-time-ms", "600000"], f"druzstva SR {sez}", chyby)
     # 11a) SR demografia — UNIKATNE osoby cez vsetky zvazy aj odvetvia; musi byt PRED
     #      sumar.py, ktory by inak zapisal zalohu zo suctu zvazovych suborov
     for sez in (hotove or sezony):
-        spusti(["etl/demografia.py", "--zvaz", "sr", "--sezona", sez, "--out", str(out)],
-               f"demografia SR {sez}", chyby)
+        spusti(["etl/demografia.py", "--zvaz", "sr", "--sezona", sez, "--out", str(out),
+                "--max-time-ms", "600000"], f"demografia SR {sez}", chyby)
     spusti(["etl/sumar.py", "--out", str(out)], "sumar", chyby)
     # 11b) odstupene kluby — cita data/klub a data/sumar (blok rozbeh) → po kroku 11
     spusti(["etl/odstupene_kluby.py", "--out", str(out)], "odstupene_kluby", chyby)
