@@ -1,7 +1,8 @@
 {
   "zvaz": "obfz-kosice-okolie",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-19T16:58:36+02:00",
+  "unikatne": false,
+  "generatedAt": "2026-08-26T03:40:23+02:00",
   "methodologyFlags": {
     "zdroj": "sportnet.users (birthdate, sex); osoby zo sutaze.matches (nominations + managers, len closed:true), roly z etl/config/roly.json",
     "poznamka": "Výhradne agregované počty (GDPR); bez prahu minimálnej veľkosti (O5). Osoba sa počíta raz na rolu a sezónu; tá istá osoba sa môže vyskytovať vo viacerých rolách aj sezónach. Kľúč N = pohlavie nevyplnené."
@@ -6934,6 +6935,159 @@
           },
           "2006": {
             "M": 2
+          }
+        }
+      }
+    },
+    "2026/2027": {
+      "hraci": {
+        "osoby": 64,
+        "sUdajmi": 64,
+        "bezUdajov": 0,
+        "roky": {
+          "1975": {
+            "M": 1
+          },
+          "1976": {
+            "M": 1
+          },
+          "1978": {
+            "M": 1
+          },
+          "1980": {
+            "M": 1
+          },
+          "1982": {
+            "M": 1
+          },
+          "1984": {
+            "M": 1
+          },
+          "1986": {
+            "M": 2
+          },
+          "1988": {
+            "M": 2
+          },
+          "1989": {
+            "M": 1
+          },
+          "1991": {
+            "M": 3
+          },
+          "1992": {
+            "M": 3
+          },
+          "1993": {
+            "M": 1
+          },
+          "1994": {
+            "M": 2
+          },
+          "1995": {
+            "M": 1
+          },
+          "1996": {
+            "M": 4
+          },
+          "1997": {
+            "M": 2
+          },
+          "1998": {
+            "M": 4
+          },
+          "1999": {
+            "M": 7
+          },
+          "2000": {
+            "M": 5
+          },
+          "2001": {
+            "M": 3
+          },
+          "2003": {
+            "M": 2
+          },
+          "2004": {
+            "M": 2
+          },
+          "2005": {
+            "M": 2
+          },
+          "2006": {
+            "M": 4
+          },
+          "2007": {
+            "M": 3
+          },
+          "2008": {
+            "M": 3
+          },
+          "2009": {
+            "M": 1
+          },
+          "2010": {
+            "M": 1
+          }
+        }
+      },
+      "treneri": {
+        "osoby": 3,
+        "sUdajmi": 3,
+        "bezUdajov": 0,
+        "roky": {
+          "1980": {
+            "M": 1
+          },
+          "1981": {
+            "M": 1
+          },
+          "1986": {
+            "M": 1
+          }
+        }
+      },
+      "rozhodcovia": {
+        "osoby": 6,
+        "sUdajmi": 6,
+        "bezUdajov": 0,
+        "roky": {
+          "1957": {
+            "M": 1
+          },
+          "1984": {
+            "M": 1
+          },
+          "1992": {
+            "M": 1
+          },
+          "2001": {
+            "M": 1
+          },
+          "2004": {
+            "F": 1
+          },
+          "2008": {
+            "M": 1
+          }
+        }
+      },
+      "personal": {
+        "osoby": 4,
+        "sUdajmi": 4,
+        "bezUdajov": 0,
+        "roky": {
+          "1978": {
+            "F": 1
+          },
+          "1982": {
+            "M": 1
+          },
+          "1991": {
+            "M": 1
+          },
+          "2005": {
+            "F": 1
           }
         }
       }
