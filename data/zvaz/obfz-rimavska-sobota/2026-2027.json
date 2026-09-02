@@ -2,7 +2,7 @@
   "zvaz": "obfz-rimavska-sobota",
   "sezona": "2026/2027",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-26T03:14:30+02:00",
+  "generatedAt": "2026-09-02T03:22:23+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -15,13 +15,13 @@
   "kpi": {
     "sutaze": 1,
     "skupiny": 1,
-    "zapasy": 2,
-    "uzatvorene": 2,
+    "zapasy": 5,
+    "uzatvorene": 5,
     "administrativne": 0,
-    "druzstva": 4,
-    "goly": 10,
-    "divaci": 270,
-    "zlteKarty": 8,
+    "druzstva": 5,
+    "goly": 28,
+    "divaci": 533,
+    "zlteKarty": 18,
     "cerveneKarty": 0,
     "kontumovane": 1,
     "kontumovaneAdmin": 0,
@@ -29,19 +29,19 @@
     "odstupene": 0,
     "odstupeneAdmin": 0,
     "odstupeneOdohrane": 0,
-    "kluby": 4
+    "kluby": 5
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 2,
-      "uzatvorene": 2,
+      "zapasy": 5,
+      "uzatvorene": 5,
       "administrativne": 0,
-      "druzstva": 4,
-      "goly": 10,
-      "zlte": 8,
+      "druzstva": 5,
+      "goly": 28,
+      "zlte": 18,
       "cervene": 0,
-      "divaci": 270,
-      "divaciPokrytych": 2,
+      "divaci": 533,
+      "divaciPokrytych": 5,
       "sutaze": 1,
       "skupiny": 1,
       "kontumovane": 1,
@@ -55,7 +55,7 @@
       "nazov": "7. liga",
       "sutaze": 1,
       "skupiny": 1,
-      "zapasy": 2
+      "zapasy": 5
     }
   },
   "sutazeUroven": [
@@ -65,88 +65,88 @@
       "pohlavie": "M",
       "sutaze": 1,
       "skupiny": 1,
-      "zapasy": 2
+      "zapasy": 5
     }
   ],
   "pohlavie": {
     "M": {
       "sutaze": 1,
-      "zapasy": 2,
-      "druzstva": 4,
-      "goly": 10,
-      "divaci": 270,
-      "zlteKarty": 8,
+      "zapasy": 5,
+      "druzstva": 5,
+      "goly": 28,
+      "divaci": 533,
+      "zlteKarty": 18,
       "cerveneKarty": 0,
       "kategorie": {
         "ADULTS": {
           "sutaze": 1,
           "skupiny": 1,
-          "zapasy": 2,
-          "druzstva": 4,
-          "goly": 10,
-          "zlte": 8,
+          "zapasy": 5,
+          "druzstva": 5,
+          "goly": 28,
+          "zlte": 18,
           "cervene": 0,
-          "divaci": 270,
-          "divaciPokrytych": 2
+          "divaci": 533,
+          "divaciPokrytych": 5
         }
       }
     }
   },
   "osoby": {
     "hraci": {
-      "unikatni": 61,
+      "unikatni": 94,
       "poKategorii": {
-        "ADULTS": 61
+        "ADULTS": 94
       }
     },
     "treneri": {
-      "unikatni": 4,
+      "unikatni": 6,
       "poKategorii": {
-        "ADULTS": 4
+        "ADULTS": 6
       }
     },
     "realizacnyTim": {
-      "unikatni": 11,
+      "unikatni": 16,
       "poKategorii": {
-        "ADULTS": 11
+        "ADULTS": 16
       }
     },
     "rozhodcovia": {
-      "unikatni": 4,
+      "unikatni": 9,
       "poKategorii": {
-        "ADULTS": 4
+        "ADULTS": 9
       }
     },
     "delegati": {
-      "unikatni": 1,
+      "unikatni": 2,
       "poKategorii": {
-        "ADULTS": 1
+        "ADULTS": 2
       }
     },
     "personal": {
-      "unikatni": 4,
+      "unikatni": 10,
       "poKategorii": {
-        "ADULTS": 4
+        "ADULTS": 10
       }
     }
   },
   "kluby": {
-    "kluby": 4,
+    "kluby": 5,
     "sMladezou": 0,
-    "lenDospeli": 4,
+    "lenDospeli": 5,
     "dospeliAMladez": 0,
     "lenMladez": 0,
     "neurcene": 0,
     "kategorie": {
-      "ADULTS": 4
+      "ADULTS": 5
     },
     "pohlavie": {
-      "M": 4
+      "M": 5
     },
     "urovne": {
-      "L7": 4
+      "L7": 5
     },
-    "domaci": 3,
+    "domaci": 4,
     "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
   }
 }

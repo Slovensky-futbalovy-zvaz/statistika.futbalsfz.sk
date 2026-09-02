@@ -2,7 +2,7 @@
   "zvaz": "oofz-svidnik",
   "sezona": "2026/2027",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-26T03:14:33+02:00",
+  "generatedAt": "2026-09-02T03:23:28+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -15,13 +15,13 @@
   "kpi": {
     "sutaze": 1,
     "skupiny": 1,
-    "zapasy": 5,
-    "uzatvorene": 5,
+    "zapasy": 10,
+    "uzatvorene": 10,
     "administrativne": 0,
     "druzstva": 10,
-    "goly": 30,
-    "divaci": 340,
-    "zlteKarty": 10,
+    "goly": 60,
+    "divaci": 740,
+    "zlteKarty": 23,
     "cerveneKarty": 0,
     "kontumovane": 0,
     "kontumovaneAdmin": 0,
@@ -33,15 +33,15 @@
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 5,
-      "uzatvorene": 5,
+      "zapasy": 10,
+      "uzatvorene": 10,
       "administrativne": 0,
       "druzstva": 10,
-      "goly": 30,
-      "zlte": 10,
+      "goly": 60,
+      "zlte": 23,
       "cervene": 0,
-      "divaci": 340,
-      "divaciPokrytych": 5,
+      "divaci": 740,
+      "divaciPokrytych": 10,
       "sutaze": 1,
       "skupiny": 1,
       "kontumovane": 0,
@@ -55,7 +55,7 @@
       "nazov": "7. liga",
       "sutaze": 1,
       "skupiny": 1,
-      "zapasy": 5
+      "zapasy": 10
     }
   },
   "sutazeUroven": [
@@ -65,68 +65,68 @@
       "pohlavie": "M",
       "sutaze": 1,
       "skupiny": 1,
-      "zapasy": 5
+      "zapasy": 10
     }
   ],
   "pohlavie": {
     "M": {
       "sutaze": 1,
-      "zapasy": 5,
+      "zapasy": 10,
       "druzstva": 10,
-      "goly": 30,
-      "divaci": 340,
-      "zlteKarty": 10,
+      "goly": 60,
+      "divaci": 740,
+      "zlteKarty": 23,
       "cerveneKarty": 0,
       "kategorie": {
         "ADULTS": {
           "sutaze": 1,
           "skupiny": 1,
-          "zapasy": 5,
+          "zapasy": 10,
           "druzstva": 10,
-          "goly": 30,
-          "zlte": 10,
+          "goly": 60,
+          "zlte": 23,
           "cervene": 0,
-          "divaci": 340,
-          "divaciPokrytych": 5
+          "divaci": 740,
+          "divaciPokrytych": 10
         }
       }
     }
   },
   "osoby": {
     "hraci": {
-      "unikatni": 169,
+      "unikatni": 202,
       "poKategorii": {
-        "ADULTS": 169
+        "ADULTS": 202
       }
     },
     "treneri": {
-      "unikatni": 1,
+      "unikatni": 2,
       "poKategorii": {
-        "ADULTS": 1
+        "ADULTS": 2
       }
     },
     "realizacnyTim": {
-      "unikatni": 16,
+      "unikatni": 20,
       "poKategorii": {
-        "ADULTS": 16
+        "ADULTS": 20
       }
     },
     "rozhodcovia": {
+      "unikatni": 9,
+      "poKategorii": {
+        "ADULTS": 9
+      }
+    },
+    "delegati": {
       "unikatni": 6,
       "poKategorii": {
         "ADULTS": 6
       }
     },
-    "delegati": {
-      "unikatni": 4,
-      "poKategorii": {
-        "ADULTS": 4
-      }
-    },
     "personal": {
-      "unikatni": 9,
+      "unikatni": 17,
       "poKategorii": {
-        "ADULTS": 9
+        "ADULTS": 17
       }
     }
   },

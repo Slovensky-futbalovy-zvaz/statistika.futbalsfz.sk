@@ -2,7 +2,7 @@
   "zvaz": "obfz-rimavska-sobota",
   "sportSector": "futbal",
   "unikatne": false,
-  "generatedAt": "2026-08-26T03:40:14+02:00",
+  "generatedAt": "2026-09-02T04:02:43+02:00",
   "methodologyFlags": {
     "zdroj": "sportnet.users (birthdate, sex); osoby zo sutaze.matches (nominations + managers, len closed:true), roly z etl/config/roly.json",
     "poznamka": "Výhradne agregované počty (GDPR); bez prahu minimálnej veľkosti (O5). Osoba sa počíta raz na rolu a sezónu; tá istá osoba sa môže vyskytovať vo viacerých rolách aj sezónach. Kľúč N = pohlavie nevyplnené."
@@ -4636,8 +4636,8 @@
     },
     "2026/2027": {
       "hraci": {
-        "osoby": 61,
-        "sUdajmi": 61,
+        "osoby": 94,
+        "sUdajmi": 94,
         "bezUdajov": 0,
         "roky": {
           "1968": {
@@ -4647,25 +4647,28 @@
             "M": 1
           },
           "1972": {
-            "M": 1
+            "M": 2
           },
           "1973": {
-            "M": 1
+            "M": 2
           },
           "1982": {
             "M": 2
           },
           "1983": {
-            "M": 3
+            "M": 4
           },
           "1984": {
             "M": 1
           },
+          "1985": {
+            "M": 2
+          },
           "1986": {
-            "M": 1
+            "M": 2
           },
           "1987": {
-            "M": 1
+            "M": 2
           },
           "1988": {
             "M": 3
@@ -4677,55 +4680,58 @@
             "M": 2
           },
           "1991": {
-            "M": 2
-          },
-          "1992": {
             "M": 4
           },
+          "1992": {
+            "M": 6
+          },
           "1993": {
-            "M": 3
+            "M": 4
           },
           "1994": {
-            "M": 1
+            "M": 3
           },
           "1995": {
-            "M": 2
+            "M": 3
           },
           "1996": {
-            "M": 2
+            "M": 4
           },
           "1997": {
             "M": 3
           },
+          "1998": {
+            "M": 3
+          },
           "1999": {
-            "M": 2
+            "M": 3
           },
           "2000": {
-            "M": 1
+            "M": 2
           },
           "2001": {
-            "M": 2
+            "M": 4
           },
           "2002": {
-            "M": 5
+            "M": 6
           },
           "2003": {
-            "M": 1
+            "M": 3
           },
           "2004": {
-            "M": 5
+            "M": 6
           },
           "2005": {
-            "M": 2
+            "M": 4
           },
           "2006": {
             "M": 3
           },
           "2007": {
-            "M": 2
+            "M": 4
           },
           "2008": {
-            "M": 2
+            "M": 3
           },
           "2009": {
             "M": 1
@@ -4733,12 +4739,18 @@
         }
       },
       "treneri": {
-        "osoby": 4,
-        "sUdajmi": 4,
+        "osoby": 6,
+        "sUdajmi": 6,
         "bezUdajov": 0,
         "roky": {
+          "1964": {
+            "M": 1
+          },
           "1970": {
             "M": 2
+          },
+          "1973": {
+            "M": 1
           },
           "1991": {
             "M": 1
@@ -4749,37 +4761,58 @@
         }
       },
       "rozhodcovia": {
-        "osoby": 4,
-        "sUdajmi": 4,
+        "osoby": 9,
+        "sUdajmi": 9,
         "bezUdajov": 0,
         "roky": {
+          "1968": {
+            "M": 1
+          },
           "1973": {
+            "M": 2
+          },
+          "1975": {
             "M": 1
           },
           "1996": {
             "M": 1
           },
+          "2003": {
+            "M": 1
+          },
           "2009": {
             "M": 2
+          },
+          "2010": {
+            "M": 1
           }
         }
       },
       "delegati": {
-        "osoby": 1,
-        "sUdajmi": 1,
+        "osoby": 2,
+        "sUdajmi": 2,
         "bezUdajov": 0,
         "roky": {
           "1972": {
+            "M": 1
+          },
+          "1995": {
             "M": 1
           }
         }
       },
       "personal": {
-        "osoby": 4,
-        "sUdajmi": 4,
+        "osoby": 10,
+        "sUdajmi": 10,
         "bezUdajov": 0,
         "roky": {
           "1953": {
+            "M": 1
+          },
+          "1966": {
+            "M": 1
+          },
+          "1968": {
             "M": 1
           },
           "1969": {
@@ -4788,7 +4821,19 @@
           "1975": {
             "M": 1
           },
+          "1980": {
+            "M": 1
+          },
+          "1994": {
+            "F": 1
+          },
+          "1995": {
+            "M": 1
+          },
           "1997": {
+            "M": 1
+          },
+          "2006": {
             "M": 1
           }
         }
