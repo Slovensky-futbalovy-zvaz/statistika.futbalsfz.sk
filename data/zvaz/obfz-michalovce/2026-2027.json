@@ -2,7 +2,7 @@
   "zvaz": "obfz-michalovce",
   "sezona": "2026/2027",
   "sportSector": "futbal",
-  "generatedAt": "2026-09-02T03:23:51+02:00",
+  "generatedAt": "2026-09-09T03:24:00+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -13,35 +13,35 @@
     "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
   },
   "kpi": {
-    "sutaze": 5,
-    "skupiny": 5,
-    "zapasy": 43,
-    "uzatvorene": 47,
+    "sutaze": 6,
+    "skupiny": 6,
+    "zapasy": 64,
+    "uzatvorene": 68,
     "administrativne": 4,
-    "druzstva": 35,
-    "goly": 226,
-    "divaci": 1655,
-    "zlteKarty": 73,
-    "cerveneKarty": 1,
+    "druzstva": 46,
+    "goly": 320,
+    "divaci": 2585,
+    "zlteKarty": 105,
+    "cerveneKarty": 4,
     "kontumovane": 4,
     "kontumovaneAdmin": 4,
     "kontumovaneOdohrane": 0,
     "odstupene": 0,
     "odstupeneAdmin": 0,
     "odstupeneOdohrane": 0,
-    "kluby": 28
+    "kluby": 32
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 24,
-      "uzatvorene": 24,
+      "zapasy": 31,
+      "uzatvorene": 31,
       "administrativne": 0,
       "druzstva": 16,
-      "goly": 107,
-      "zlte": 65,
-      "cervene": 1,
-      "divaci": 1120,
-      "divaciPokrytych": 24,
+      "goly": 133,
+      "zlte": 85,
+      "cervene": 2,
+      "divaci": 1530,
+      "divaciPokrytych": 31,
       "sutaze": 2,
       "skupiny": 2,
       "kontumovane": 0,
@@ -50,15 +50,15 @@
       "odstupeneAdmin": 0
     },
     "U15": {
-      "zapasy": 12,
-      "uzatvorene": 12,
+      "zapasy": 18,
+      "uzatvorene": 18,
       "administrativne": 0,
       "druzstva": 12,
-      "goly": 79,
-      "zlte": 7,
-      "cervene": 0,
-      "divaci": 325,
-      "divaciPokrytych": 12,
+      "goly": 126,
+      "zlte": 16,
+      "cervene": 2,
+      "divaci": 535,
+      "divaciPokrytych": 18,
       "sutaze": 1,
       "skupiny": 1,
       "kontumovane": 0,
@@ -67,15 +67,15 @@
       "odstupeneAdmin": 0
     },
     "U13": {
-      "zapasy": 1,
-      "uzatvorene": 1,
+      "zapasy": 6,
+      "uzatvorene": 6,
       "administrativne": 0,
-      "druzstva": 2,
-      "goly": 2,
-      "zlte": 1,
+      "druzstva": 10,
+      "goly": 23,
+      "zlte": 4,
       "cervene": 0,
-      "divaci": 30,
-      "divaciPokrytych": 1,
+      "divaci": 190,
+      "divaciPokrytych": 6,
       "sutaze": 1,
       "skupiny": 1,
       "kontumovane": 0,
@@ -99,6 +99,23 @@
       "kontumovaneAdmin": 4,
       "odstupene": 0,
       "odstupeneAdmin": 0
+    },
+    "U09": {
+      "zapasy": 3,
+      "uzatvorene": 3,
+      "administrativne": 0,
+      "druzstva": 3,
+      "goly": 0,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 150,
+      "divaciPokrytych": 3,
+      "sutaze": 1,
+      "skupiny": 1,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 0,
+      "odstupeneAdmin": 0
     }
   },
   "urovne": {
@@ -112,13 +129,19 @@
       "nazov": "4. liga",
       "sutaze": 2,
       "skupiny": 2,
-      "zapasy": 13
+      "zapasy": 24
     },
     "L7": {
       "nazov": "7. liga",
       "sutaze": 2,
       "skupiny": 2,
-      "zapasy": 24
+      "zapasy": 31
+    },
+    "L9": {
+      "nazov": "9. liga",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 3
     }
   },
   "sutazeUroven": [
@@ -136,7 +159,7 @@
       "pohlavie": "M",
       "sutaze": 1,
       "skupiny": 1,
-      "zapasy": 12
+      "zapasy": 18
     },
     {
       "uroven": "L4",
@@ -144,7 +167,7 @@
       "pohlavie": "M",
       "sutaze": 1,
       "skupiny": 1,
-      "zapasy": 1
+      "zapasy": 6
     },
     {
       "uroven": "L7",
@@ -152,51 +175,59 @@
       "pohlavie": "M",
       "sutaze": 2,
       "skupiny": 2,
-      "zapasy": 24
+      "zapasy": 31
+    },
+    {
+      "uroven": "L9",
+      "kat": "U09",
+      "pohlavie": "M",
+      "sutaze": 1,
+      "skupiny": 1,
+      "zapasy": 3
     }
   ],
   "pohlavie": {
     "M": {
-      "sutaze": 5,
-      "zapasy": 43,
-      "druzstva": 35,
-      "goly": 226,
-      "divaci": 1655,
-      "zlteKarty": 73,
-      "cerveneKarty": 1,
+      "sutaze": 6,
+      "zapasy": 64,
+      "druzstva": 46,
+      "goly": 320,
+      "divaci": 2585,
+      "zlteKarty": 105,
+      "cerveneKarty": 4,
       "kategorie": {
         "ADULTS": {
           "sutaze": 2,
           "skupiny": 2,
-          "zapasy": 24,
+          "zapasy": 31,
           "druzstva": 16,
-          "goly": 107,
-          "zlte": 65,
-          "cervene": 1,
-          "divaci": 1120,
-          "divaciPokrytych": 24
+          "goly": 133,
+          "zlte": 85,
+          "cervene": 2,
+          "divaci": 1530,
+          "divaciPokrytych": 31
         },
         "U15": {
           "sutaze": 1,
           "skupiny": 1,
-          "zapasy": 12,
+          "zapasy": 18,
           "druzstva": 12,
-          "goly": 79,
-          "zlte": 7,
-          "cervene": 0,
-          "divaci": 325,
-          "divaciPokrytych": 12
+          "goly": 126,
+          "zlte": 16,
+          "cervene": 2,
+          "divaci": 535,
+          "divaciPokrytych": 18
         },
         "U13": {
           "sutaze": 1,
           "skupiny": 1,
-          "zapasy": 1,
-          "druzstva": 2,
-          "goly": 2,
-          "zlte": 1,
+          "zapasy": 6,
+          "druzstva": 10,
+          "goly": 23,
+          "zlte": 4,
           "cervene": 0,
-          "divaci": 30,
-          "divaciPokrytych": 1
+          "divaci": 190,
+          "divaciPokrytych": 6
         },
         "U11": {
           "sutaze": 1,
@@ -208,45 +239,60 @@
           "cervene": 0,
           "divaci": 180,
           "divaciPokrytych": 6
+        },
+        "U09": {
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 3,
+          "druzstva": 3,
+          "goly": 0,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 150,
+          "divaciPokrytych": 3
         }
       }
     }
   },
   "osoby": {
     "hraci": {
-      "unikatni": 607,
+      "unikatni": 745,
       "poKategorii": {
-        "ADULTS": 334,
-        "U15": 203,
-        "U13": 33,
-        "U11": 45
+        "ADULTS": 350,
+        "U15": 210,
+        "U13": 141,
+        "U11": 45,
+        "U09": 31
       }
     },
     "treneri": {
-      "unikatni": 9,
+      "unikatni": 16,
       "poKategorii": {
         "ADULTS": 6,
-        "U15": 5,
-        "U13": 1,
-        "U11": 1
+        "U15": 6,
+        "U13": 7,
+        "U11": 1,
+        "U09": 2
       }
     },
     "realizacnyTim": {
-      "unikatni": 70,
+      "unikatni": 86,
       "poKategorii": {
-        "ADULTS": 51,
-        "U15": 18,
-        "U13": 4,
-        "U11": 4
+        "ADULTS": 52,
+        "U15": 22,
+        "U13": 17,
+        "U11": 4,
+        "U09": 5
       }
     },
     "rozhodcovia": {
       "unikatni": 14,
       "poKategorii": {
         "ADULTS": 13,
-        "U15": 8,
-        "U13": 1,
-        "U11": 1
+        "U15": 9,
+        "U13": 4,
+        "U11": 1,
+        "U09": 1
       }
     },
     "delegati": {
@@ -256,36 +302,39 @@
       }
     },
     "personal": {
-      "unikatni": 61,
+      "unikatni": 76,
       "poKategorii": {
-        "ADULTS": 49,
-        "U15": 11,
-        "U13": 1
+        "ADULTS": 54,
+        "U15": 15,
+        "U13": 8,
+        "U09": 1
       }
     }
   },
   "kluby": {
-    "kluby": 28,
-    "sMladezou": 16,
-    "lenDospeli": 12,
-    "dospeliAMladez": 4,
-    "lenMladez": 12,
+    "kluby": 32,
+    "sMladezou": 21,
+    "lenDospeli": 11,
+    "dospeliAMladez": 5,
+    "lenMladez": 16,
     "neurcene": 0,
     "kategorie": {
+      "U09": 3,
+      "U13": 10,
       "U11": 5,
       "U15": 12,
-      "U13": 2,
       "ADULTS": 16
     },
     "pohlavie": {
-      "M": 28
+      "M": 32
     },
     "urovne": {
+      "L9": 3,
       "L3": 5,
-      "L4": 13,
+      "L4": 21,
       "L7": 16
     },
-    "domaci": 19,
+    "domaci": 20,
     "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
   }
 }
