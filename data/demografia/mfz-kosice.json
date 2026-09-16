@@ -2,7 +2,7 @@
   "zvaz": "mfz-kosice",
   "sportSector": "futbal",
   "unikatne": false,
-  "generatedAt": "2026-09-09T04:00:06+02:00",
+  "generatedAt": "2026-09-16T04:03:23+02:00",
   "methodologyFlags": {
     "zdroj": "sportnet.users (birthdate, sex); osoby zo sutaze.matches (nominations + managers, len closed:true), roly z etl/config/roly.json",
     "poznamka": "Výhradne agregované počty (GDPR); bez prahu minimálnej veľkosti (O5). Osoba sa počíta raz na rolu a sezónu; tá istá osoba sa môže vyskytovať vo viacerých rolách aj sezónach. Kľúč N = pohlavie nevyplnené."
@@ -3526,8 +3526,8 @@
     },
     "2026/2027": {
       "hraci": {
-        "osoby": 281,
-        "sUdajmi": 281,
+        "osoby": 455,
+        "sUdajmi": 455,
         "bezUdajov": 0,
         "roky": {
           "2012": {
@@ -3535,31 +3535,35 @@
           },
           "2014": {
             "F": 3,
-            "M": 40
+            "M": 43
           },
           "2015": {
             "F": 1,
-            "M": 50
+            "M": 52
           },
           "2016": {
             "F": 3,
-            "M": 61
+            "M": 114
           },
           "2017": {
             "F": 2,
-            "M": 65
+            "M": 102
           },
           "2018": {
-            "M": 51
+            "F": 1,
+            "M": 72
           },
           "2019": {
-            "M": 4
+            "M": 51
+          },
+          "2020": {
+            "M": 10
           }
         }
       },
       "treneri": {
-        "osoby": 19,
-        "sUdajmi": 19,
+        "osoby": 28,
+        "sUdajmi": 28,
         "bezUdajov": 0,
         "roky": {
           "1946": {
@@ -3584,12 +3588,15 @@
             "M": 1
           },
           "1983": {
-            "M": 2
+            "M": 4
           },
           "1984": {
             "M": 1
           },
           "1985": {
+            "M": 2
+          },
+          "1987": {
             "M": 1
           },
           "1988": {
@@ -3598,14 +3605,23 @@
           "1990": {
             "M": 1
           },
+          "1991": {
+            "M": 1
+          },
+          "1998": {
+            "M": 1
+          },
           "2002": {
-            "M": 2
+            "M": 3
+          },
+          "2003": {
+            "M": 1
           },
           "2004": {
             "M": 1
           },
           "2005": {
-            "M": 1
+            "M": 2
           },
           "2006": {
             "M": 1
@@ -3613,30 +3629,45 @@
         }
       },
       "rozhodcovia": {
-        "osoby": 5,
-        "sUdajmi": 5,
+        "osoby": 7,
+        "sUdajmi": 7,
         "bezUdajov": 0,
         "roky": {
           "2007": {
             "M": 1
           },
           "2009": {
-            "M": 1
+            "M": 2
           },
           "2010": {
-            "M": 3
+            "M": 4
           }
         }
       },
       "personal": {
-        "osoby": 3,
-        "sUdajmi": 3,
+        "osoby": 8,
+        "sUdajmi": 8,
         "bezUdajov": 0,
         "roky": {
+          "1958": {
+            "M": 1
+          },
           "1962": {
             "M": 1
           },
+          "1967": {
+            "M": 1
+          },
           "1974": {
+            "M": 1
+          },
+          "1978": {
+            "M": 1
+          },
+          "1988": {
+            "M": 1
+          },
+          "1999": {
             "M": 1
           },
           "2000": {

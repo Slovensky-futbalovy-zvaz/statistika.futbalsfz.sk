@@ -2,7 +2,7 @@
   "zvaz": "obfz-roznava",
   "sportSector": "futbal",
   "unikatne": false,
-  "generatedAt": "2026-09-09T04:01:34+02:00",
+  "generatedAt": "2026-09-16T04:04:56+02:00",
   "methodologyFlags": {
     "zdroj": "sportnet.users (birthdate, sex); osoby zo sutaze.matches (nominations + managers, len closed:true), roly z etl/config/roly.json",
     "poznamka": "Výhradne agregované počty (GDPR); bez prahu minimálnej veľkosti (O5). Osoba sa počíta raz na rolu a sezónu; tá istá osoba sa môže vyskytovať vo viacerých rolách aj sezónach. Kľúč N = pohlavie nevyplnené."
@@ -4663,8 +4663,8 @@
     },
     "2026/2027": {
       "hraci": {
-        "osoby": 289,
-        "sUdajmi": 289,
+        "osoby": 336,
+        "sUdajmi": 336,
         "bezUdajov": 0,
         "roky": {
           "1969": {
@@ -4676,6 +4676,9 @@
           "1972": {
             "M": 2
           },
+          "1973": {
+            "M": 1
+          },
           "1974": {
             "M": 2
           },
@@ -4683,19 +4686,19 @@
             "M": 1
           },
           "1977": {
-            "M": 1
+            "M": 2
           },
           "1978": {
             "M": 4
           },
           "1979": {
-            "M": 3
+            "M": 4
           },
           "1980": {
             "M": 7
           },
           "1981": {
-            "M": 2
+            "M": 3
           },
           "1982": {
             "M": 4
@@ -4737,22 +4740,22 @@
             "M": 11
           },
           "1995": {
-            "M": 9
+            "M": 12
           },
           "1996": {
-            "M": 15
+            "M": 17
           },
           "1997": {
             "M": 5
           },
           "1998": {
-            "M": 8
+            "M": 9
           },
           "1999": {
             "M": 11
           },
           "2000": {
-            "M": 11
+            "M": 12
           },
           "2001": {
             "M": 12
@@ -4770,28 +4773,31 @@
             "M": 8
           },
           "2006": {
-            "M": 15
+            "M": 17
           },
           "2007": {
             "M": 18
           },
           "2008": {
-            "M": 8
+            "M": 15
           },
           "2009": {
-            "M": 4
+            "M": 14
           },
           "2010": {
-            "M": 4
+            "M": 11
           },
           "2011": {
+            "M": 10
+          },
+          "2012": {
             "M": 2
           }
         }
       },
       "treneri": {
-        "osoby": 11,
-        "sUdajmi": 11,
+        "osoby": 15,
+        "sUdajmi": 15,
         "bezUdajov": 0,
         "roky": {
           "1966": {
@@ -4815,10 +4821,22 @@
           "1980": {
             "M": 1
           },
+          "1981": {
+            "M": 1
+          },
           "1986": {
             "M": 2
           },
           "1988": {
+            "M": 1
+          },
+          "1989": {
+            "M": 1
+          },
+          "1993": {
+            "M": 1
+          },
+          "1998": {
             "M": 1
           },
           "2003": {
@@ -4827,8 +4845,8 @@
         }
       },
       "rozhodcovia": {
-        "osoby": 16,
-        "sUdajmi": 16,
+        "osoby": 17,
+        "sUdajmi": 17,
         "bezUdajov": 0,
         "roky": {
           "1965": {
@@ -4861,6 +4879,9 @@
           "1991": {
             "M": 1
           },
+          "2000": {
+            "M": 1
+          },
           "2005": {
             "F": 1
           },
@@ -4889,8 +4910,8 @@
         }
       },
       "personal": {
-        "osoby": 30,
-        "sUdajmi": 30,
+        "osoby": 31,
+        "sUdajmi": 31,
         "bezUdajov": 0,
         "roky": {
           "1955": {
@@ -4924,7 +4945,7 @@
             "M": 1
           },
           "1975": {
-            "M": 1
+            "M": 2
           },
           "1976": {
             "F": 1,
