@@ -2,7 +2,7 @@
  "projekt": "disney",
  "nazov": "Disney Playmakers",
  "popis": "Program zameraný na zapájanie detí do futbalu; plná evidencia účastníkov od sezóny 2026/2027.",
- "generatedAt": "2026-09-23T04:50:35+02:00",
+ "generatedAt": "2026-09-30T04:21:48+02:00",
  "methodologyFlags": {
   "zdroj": "sutaze.competitions.parts[].teams[].squad.athletes[] (nie matches)",
   "poznamka": "Deti = počet athletes v súpiskách; školy = unikátne školy (orgProfileName), fallback organizácie tímov; tímy = počet družstiev/skupín. Bez zápasov."
@@ -56,6 +56,17 @@
    "deti": 0,
    "skoly": 19,
    "timy": 21,
+   "pohlavie": {
+    "M": 0,
+    "F": 0,
+    "N": 0
+   },
+   "vek": {}
+  },
+  "2026/2027": {
+   "deti": 0,
+   "skoly": 1,
+   "timy": 1,
    "pohlavie": {
     "M": 0,
     "F": 0,

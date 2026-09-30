@@ -2,7 +2,7 @@
   "zvaz": "obfz-michalovce",
   "sezona": "2025/2026",
   "sportSector": "futbal",
-  "generatedAt": "2026-09-23T03:51:59+02:00",
+  "generatedAt": "2026-09-30T03:40:02+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -13,15 +13,15 @@
     "administrativnePoznamka": "administratívne ukončené = kontumácia/odstúpené družstvo bez reálneho odohratia (žiadne udalosti v protokole a žiadna návštevnosť). kpi.zapasy = kpi.uzatvorene − kpi.administrativne. Viď docs/metodika.md."
   },
   "kpi": {
-    "sutaze": 12,
-    "skupiny": 12,
-    "zapasy": 714,
-    "uzatvorene": 810,
+    "sutaze": 13,
+    "skupiny": 13,
+    "zapasy": 715,
+    "uzatvorene": 811,
     "administrativne": 96,
     "druzstva": 69,
-    "goly": 4210,
-    "divaci": 30000,
-    "zlteKarty": 778,
+    "goly": 4218,
+    "divaci": 30250,
+    "zlteKarty": 779,
     "cerveneKarty": 26,
     "kontumovane": 37,
     "kontumovaneAdmin": 22,
@@ -33,17 +33,17 @@
   },
   "kategorie": {
     "ADULTS": {
-      "zapasy": 202,
-      "uzatvorene": 202,
+      "zapasy": 203,
+      "uzatvorene": 203,
       "administrativne": 0,
       "druzstva": 17,
-      "goly": 958,
-      "zlte": 490,
+      "goly": 966,
+      "zlte": 491,
       "cervene": 13,
-      "divaci": 12384,
-      "divaciPokrytych": 202,
-      "sutaze": 3,
-      "skupiny": 3,
+      "divaci": 12634,
+      "divaciPokrytych": 203,
+      "sutaze": 4,
+      "skupiny": 4,
       "kontumovane": 5,
       "kontumovaneAdmin": 0,
       "odstupene": 0,
@@ -145,9 +145,9 @@
     },
     "POHARE": {
       "nazov": "Poháre a turnaje",
-      "sutaze": 1,
-      "skupiny": 1,
-      "zapasy": 9
+      "sutaze": 2,
+      "skupiny": 2,
+      "zapasy": 10
     }
   },
   "sutazeUroven": [
@@ -203,31 +203,31 @@
       "uroven": "POHARE",
       "kat": "ADULTS",
       "pohlavie": "M",
-      "sutaze": 1,
-      "skupiny": 1,
-      "zapasy": 9
+      "sutaze": 2,
+      "skupiny": 2,
+      "zapasy": 10
     }
   ],
   "pohlavie": {
     "M": {
-      "sutaze": 12,
-      "zapasy": 714,
+      "sutaze": 13,
+      "zapasy": 715,
       "druzstva": 69,
-      "goly": 4210,
-      "divaci": 30000,
-      "zlteKarty": 778,
+      "goly": 4218,
+      "divaci": 30250,
+      "zlteKarty": 779,
       "cerveneKarty": 26,
       "kategorie": {
         "ADULTS": {
-          "sutaze": 3,
-          "skupiny": 3,
-          "zapasy": 202,
+          "sutaze": 4,
+          "skupiny": 4,
+          "zapasy": 203,
           "druzstva": 17,
-          "goly": 958,
-          "zlte": 490,
+          "goly": 966,
+          "zlte": 491,
           "cervene": 13,
-          "divaci": 12384,
-          "divaciPokrytych": 202
+          "divaci": 12634,
+          "divaciPokrytych": 203
         },
         "U19": {
           "sutaze": 1,
@@ -278,9 +278,9 @@
   },
   "osoby": {
     "hraci": {
-      "unikatni": 1260,
+      "unikatni": 1267,
       "poKategorii": {
-        "ADULTS": 503,
+        "ADULTS": 510,
         "U19": 185,
         "U15": 273,
         "U13": 141,
@@ -288,9 +288,9 @@
       }
     },
     "treneri": {
-      "unikatni": 19,
+      "unikatni": 20,
       "poKategorii": {
-        "ADULTS": 8,
+        "ADULTS": 9,
         "U19": 2,
         "U15": 6,
         "U13": 4,
@@ -298,9 +298,9 @@
       }
     },
     "realizacnyTim": {
-      "unikatni": 120,
+      "unikatni": 121,
       "poKategorii": {
-        "ADULTS": 66,
+        "ADULTS": 67,
         "U19": 23,
         "U15": 31,
         "U13": 19,
@@ -353,11 +353,11 @@
       "M": 33
     },
     "urovne": {
-      "L4": 11,
       "L3": 22,
+      "L4": 11,
       "L5": 13,
       "L7": 17,
-      "POHARE": 8
+      "POHARE": 9
     },
     "domaci": 30,
     "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
