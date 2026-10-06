@@ -158,10 +158,13 @@ def main() -> int:
                         zaznam["preskocene"].append(sezona)
                         log.info("    %s: žiadne uzavreté zápasy — preskakujem.", sezona)
                         continue
-                    anomalie = validate.validuj(doc)
+                    neurcene = run.nacitaj_neurcene_casti(db, zvaz, varianty)
+                    anomalie = validate.validuj(doc, neurcene_casti=neurcene)
                     for a in anomalie:
                         log.warning("    ANOMÁLIA %s/%s: %s", zvaz["id"], sezona, a)
                         zaznam["anomalie"].append({"sezona": sezona, "anomalia": a})
+                    for pozn in validate.poznamky(doc, neurcene_casti=neurcene):
+                        log.info("    POZNÁMKA %s/%s: %s", zvaz["id"], sezona, pozn)
                     cesta = run.zapis(doc, out_dir)
                     zaznam["sezony"].append({
                         "sezona": sezona,

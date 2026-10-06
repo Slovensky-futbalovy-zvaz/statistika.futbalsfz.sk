@@ -135,6 +135,37 @@ def nacitaj_part_mapu(db, spaces: list[str], varianty: list[str]) -> dict:
     return mapa
 
 
+
+def nacitaj_neurcene_casti(db, zvaz: dict, varianty: list[str], sport_sector: str = "futbal") -> list[dict]:
+    """Časti súťaží bez rules.gender „M“/„F“ (vo výstupe skupina NEURCENE) s príznakom,
+    či súťaž patrí do číselníka etl/config/vylucene_sutaze.json.
+
+    V číselníku sú školské a výberové turnaje (napr. „Futbalový turnaj základných škôl
+    mesta Košice“, kategória „U15 mix“) — zmiešané pohlavie je tam vecne správne, preto
+    ich NEURCENE validátor nehlási ako anomáliu, len ako poznámku (oprava 6. 10. 2026).
+    Profily zväzov tieto súťaže naďalej počítajú — číselník slúži len validátoru.
+    """
+    spaces = [FUTSAL_APP_SPACE] if sport_sector == "futsal" else app_spaces(zvaz)
+    app = spaces[0] if len(spaces) == 1 else {"$in": spaces}
+    vylucene = {
+        z["competitionGroupId"]
+        for z in load_json(CONFIG / "vylucene_sutaze.json").get("sutaze", [])
+    }
+    out = []
+    for c in db.competitions.find(
+        {"appSpace": app, "season.name": {"$in": varianty}},
+        {"name": 1, "competitionGroupId": 1, "parts._id": 1, "parts.rules.gender": 1},
+    ):
+        for p in c.get("parts", []):
+            if ((p.get("rules") or {}).get("gender")) in ("M", "F"):
+                continue
+            out.append({
+                "partId": str(p["_id"]),
+                "sutaz": c.get("name") or "",
+                "vCiselniku": str(c.get("competitionGroupId")) in vylucene,
+            })
+    return out
+
 # Vzory názvov NADSTAVBOVÝCH častí súťaže (bez diakritiky, malými písmenami).
 # Doplnok k štruktúrnemu signálu v `nacitaj_skupina_mapu` — pozri jeho docstring.
 NADSTAVBA_VZORY = [
@@ -795,9 +826,12 @@ def main() -> int:
         # blok „Počet klubov“ z data/kluby/{sezona}.json (vyrába etl/kluby.py) —
         # bez dotazu do databázy, aby prežil aj samostatný beh jedného zväzu
         kluby_zvazy.doplnit_do_profilu(doc, out_dir, zvaz["id"], sezona, args.sport_sector)
-        anomalie = validate.validuj(doc)
+        neurcene = nacitaj_neurcene_casti(db, zvaz, varianty, args.sport_sector)
+        anomalie = validate.validuj(doc, neurcene_casti=neurcene)
         for a in anomalie:
             log.warning("ANOMÁLIA %s/%s: %s", zvaz["id"], sezona, a)
+        for pozn in validate.poznamky(doc, neurcene_casti=neurcene):
+            log.info("POZNÁMKA %s/%s: %s", zvaz["id"], sezona, pozn)
         chyby += sum(1 for a in anomalie if "≠" in a or "neznáma" in a)
 
         cesta = zapis(doc, out_dir)

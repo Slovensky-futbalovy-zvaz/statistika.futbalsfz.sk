@@ -27,8 +27,20 @@ def zorad_kategorie(kategorie: dict) -> dict:
     return {k: kategorie[k] for k in zname + sorted(nezname)}
 
 
-def validuj(doc: dict) -> list[str]:
-    """Validácia hotového výstupného dokumentu zväz+sezóna. Vracia zoznam anomálií."""
+def _neurcene_mimo(neurcene_casti: list[dict] | None) -> list[dict] | None:
+    """Časti NEURCENE mimo číselníka vylucene_sutaze.json; None = kontext chýba."""
+    if neurcene_casti is None:
+        return None
+    return [c for c in neurcene_casti if not c.get("vCiselniku")]
+
+
+def validuj(doc: dict, neurcene_casti: list[dict] | None = None) -> list[str]:
+    """Validácia hotového výstupného dokumentu zväz+sezóna. Vracia zoznam anomálií.
+
+    `neurcene_casti` (run.nacitaj_neurcene_casti) — ak sú všetky časti bez pohlavia
+    v číselníku vylucene_sutaze.json, NEURCENE nie je anomália (pozri poznamky()).
+    Bez kontextu (None) sa NEURCENE hlási vždy, ako doteraz.
+    """
     anomalie: list[str] = []
     kpi = doc.get("kpi", {})
     kategorie = doc.get("kategorie", {})
@@ -84,10 +96,18 @@ def validuj(doc: dict) -> list[str]:
             if g not in POHLAVIE_PORADIE:
                 anomalie.append(f"pohlavie: neznáma skupina {g!r}")
         if "NEURCENE" in pohlavie:
-            anomalie.append(
-                f"pohlavie: {pohlavie['NEURCENE']['zapasy']} zápasov bez vyplneného "
-                "rules.gender (NEURCENE) — overiť súťaže"
-            )
+            mimo = _neurcene_mimo(neurcene_casti)
+            # Očakávané = kontext je k dispozícii, existuje aspoň jedna časť bez pohlavia
+            # a všetky sú v číselníku. Prázdny zoznam pri NEURCENE > 0 = zápasy na časti,
+            # ktorá v competitions chýba → anomália (bezpečnejší smer).
+            ocakavane = bool(neurcene_casti) and mimo == []
+            if not ocakavane:
+                sutaze = sorted({c["sutaz"] for c in (mimo or [])})
+                anomalie.append(
+                    f"pohlavie: {pohlavie['NEURCENE']['zapasy']} zápasov bez vyplneného "
+                    "rules.gender (NEURCENE) — overiť súťaže"
+                    + (f": {', '.join(sutaze)}" if sutaze else "")
+                )
         for kluc in ("zapasy", "goly", "divaci", "zlteKarty", "cerveneKarty"):
             sucet = sum(b[kluc] for b in pohlavie.values())
             if kpi.get(kluc) != sucet:
@@ -125,3 +145,16 @@ def validuj(doc: dict) -> list[str]:
                 anomalie.append(f"osoby.{rola}: kategória {k} nemá žiadny uzavretý zápas")
 
     return anomalie
+
+
+def poznamky(doc: dict, neurcene_casti: list[dict] | None = None) -> list[str]:
+    """Informatívne poznámky (nie anomálie) k výstupnému dokumentu — logujú sa ako INFO."""
+    out: list[str] = []
+    pohlavie = doc.get("pohlavie", {})
+    if "NEURCENE" in pohlavie and neurcene_casti and _neurcene_mimo(neurcene_casti) == []:
+        sutaze = sorted({c["sutaz"] for c in neurcene_casti})
+        out.append(
+            f"pohlavie: {pohlavie['NEURCENE']['zapasy']} zápasov NEURCENE zo súťaží "
+            f"v číselníku vylucene_sutaze.json (očakávané): {', '.join(sutaze)}"
+        )
+    return out
