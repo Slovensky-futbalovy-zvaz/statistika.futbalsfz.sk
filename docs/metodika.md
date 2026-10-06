@@ -724,6 +724,25 @@ Príklady (sezóna 2025/2026):
 Preto **súčet po úrovniach ≥ počet unikátnych osôb** (validátor hlási opak ako anomáliu) a profil
 **nie je počet štartov** — štarty (presnejšie zápisy) meria len pohľad Trendy.
 
+#### Unikáty po vekových kategóriách — `poSkupinach` a `mladez` (rozhodnutie Ján Letko, 6. 10. 2026)
+
+Vekové kategórie (Dospelí, Dorast, Žiaci, Prípravky) sú skupiny vekových úrovní súťaží
+(`etl/config/vekove_skupiny.json`, rovnaké mapovanie ako `web/src/lib/palette.ts → GROUPS`).
+Do 6. 10. 2026 web pruh kategórie **sčítaval** úrovne, takže ostaršený dorastenec (U17 aj U19)
+bol v „Doraste“ dvakrát. Odvtedy ETL počíta:
+
+- `osoby.<rola>.poSkupinach` — **unikátne** osoby v kategórii (osoba v kategórii raz). Platí
+  `max(úrovne kategórie) ≤ poSkupinach ≤ súčet(úrovne kategórie)` — kontroluje validátor.
+- `osoby.<rola>.mladez` — unikátne osoby naprieč celou mládežou (Dorast ∪ Žiaci ∪ Prípravky).
+
+Medzi kategóriami sa dvojité pôsobenie zachováva (dorastenec aj za dospelých je v oboch), súčet
+kategórií teda stále môže prevýšiť `unikatni`. Úrovne mimo kategórií (U21, U20, U06) sa do
+skupín nezapočítavajú, rovnako ako doteraz na webe.
+
+**Index klubu, zložka B „deti v mládeži“** berie od 6. 10. 2026 `osoby.hraci.mladez` namiesto
+súčtu mládežníckych úrovní — dieťa hrajúce v dvoch úrovniach sa počíta raz. Pri kluboch
+s ostaršenými deťmi preto zložka B (a celý index) klesne.
+
 ### Ostatné metriky
 
 - Góly a karty: `protocol.events` (eventType: `goal`, `yellow_card`, `red_card`).

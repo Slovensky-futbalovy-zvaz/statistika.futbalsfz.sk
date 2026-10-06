@@ -138,6 +138,23 @@ def validuj(doc: dict, neurcene_casti: list[dict] | None = None) -> list[str]:
                 f"osoby.{rola}: súčet po kategóriách {sucet} < unikátni {data.get('unikatni')}"
             )
 
+    # 5b) Osoby po skupinách (poSkupinach): unikáty v skupine musia byť medzi
+    #     maximom a súčtom jej úrovní; mladez ≤ unikátni (6. 10. 2026)
+    import pipelines  # lokálne — validate sa importuje aj samostatne
+    for rola, data in doc.get("osoby", {}).items():
+        if "poSkupinach" not in data:
+            continue
+        pk = data.get("poKategorii", {})
+        for g in pipelines.SKUPINY_PORADIE:
+            urovne = [pk.get(u, 0) for u, sk in pipelines.UROVEN_SKUPINA.items() if sk == g]
+            n = data["poSkupinach"].get(g, 0)
+            if not (max(urovne, default=0) <= n <= sum(urovne)):
+                anomalie.append(
+                    f"osoby.{rola}.poSkupinach.{g}={n} mimo <max {max(urovne, default=0)}, súčet {sum(urovne)}>"
+                )
+        if data.get("mladez", 0) > data.get("unikatni", 0):
+            anomalie.append(f"osoby.{rola}.mladez={data['mladez']} > unikátni {data.get('unikatni')}")
+
     # 6) Osoby v kategóriách, ktoré nemajú zápasy
     for rola, data in doc.get("osoby", {}).items():
         for k in data.get("poKategorii", {}):

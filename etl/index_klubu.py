@@ -68,7 +68,7 @@ HRANICA_MLADY = 21
 METODIKA = (
     "Index klubu meria mladeznicku zakladnu klubu a jej udrzatelnost, nie kvalitu "
     "trenerskej prace, zazemie, pristup k detom ani sportovu uspesnost. Systematicky "
-    "zvyhodnuje velke kluby. Zlozky: sirka mladeze 30 b., deti v mladezi 25 b., pocet "
+    "zvyhodnuje velke kluby. Zlozky: sirka mladeze 30 b., deti v mladezi (unikatne) 25 b., pocet "
     "druzstiev mladeze 15 b., kontinuita 15 b., prechod do dospelych 15 b. Treneri do "
     "indexu nevstupuju — udaj o nich je v datach slabo vyplneny a index by trestal "
     "administrativnu nedoslednost. Druzstvo sa zapocita, len ak odohralo viac nez "
@@ -230,15 +230,21 @@ def main() -> int:
             druzstva = s.get("druzstva") or {}
             obsadene, druzstiev_ml = skupiny_mladeze(druzstva)
 
-            # deti v mladezi z kluboveho profilu (osoby.hraci.poKategorii)
+            # deti v mladezi z kluboveho profilu (osoby.hraci.mladez, fallback poKategorii)
             deti = 0
             profil = klub_dir / slug / (sez.replace("/", "-") + ".json")
             if profil.exists():
                 try:
                     p = load_json(profil)
                     nazov = p.get("nazov") or nazov
-                    poKat = ((p.get("osoby") or {}).get("hraci") or {}).get("poKategorii") or {}
-                    deti = sum(n for k, n in poKat.items() if k in KAT_MLADEZ)
+                    hraci = (p.get("osoby") or {}).get("hraci") or {}
+                    if "mladez" in hraci:
+                        # unikátne deti naprieč mládežou (od 6. 10. 2026) — ostaršené
+                        # dieťa (napr. U13 aj U15) sa počíta raz
+                        deti = hraci["mladez"] or 0
+                    else:  # staršie profily bez poľa mladez — pôvodný súčet úrovní
+                        poKat = hraci.get("poKategorii") or {}
+                        deti = sum(n for k, n in poKat.items() if k in KAT_MLADEZ)
                 except Exception:
                     pass
 

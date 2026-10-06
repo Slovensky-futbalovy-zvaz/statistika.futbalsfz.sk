@@ -78,13 +78,14 @@ const kpiKarty = [
 ];
 
 const osobaLabel: Record<string, string> = { hraci: 'Hráči', treneri: 'Tréneri', realizacnyTim: 'Realizačný tím' };
-function rozpadSkupin(poKat: Record<string, number>) {
-  return GROUPS.map((g) => ({ key: g.key, color: g.color, hodnota: g.cats.reduce((s, c) => s + (poKat[c] ?? 0), 0) })).filter((r) => r.hodnota > 0);
+// poSkupinach = unikátne osoby v skupine (od 6. 10. 2026); súčet úrovní len ako fallback
+function rozpadSkupin(poKat: Record<string, number>, poSk?: Record<string, number>) {
+  return GROUPS.map((g) => ({ key: g.key, color: g.color, hodnota: poSk ? (poSk[g.key] ?? 0) : g.cats.reduce((s, c) => s + (poKat[c] ?? 0), 0) })).filter((r) => r.hodnota > 0);
 }
 const osobyKarty = Object.entries(klub.osoby)
   .filter(([, o]) => (o.unikatni ?? 0) > 0)
   .map(([rola, o]) => {
-    const skupiny = rozpadSkupin(o.poKategorii ?? {});
+    const skupiny = rozpadSkupin(o.poKategorii ?? {}, o.poSkupinach);
     return { rola, label: osobaLabel[rola] ?? rola, unikatni: o.unikatni, skupiny, max: Math.max(1, ...skupiny.map((s) => s.hodnota)) };
   });
 

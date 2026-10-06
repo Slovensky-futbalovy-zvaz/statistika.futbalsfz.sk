@@ -30,6 +30,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 CONFIG = REPO / "etl" / "config"
 sys.path.insert(0, str(REPO / "etl"))
+import pipelines  # noqa: E402
 import validate  # noqa: E402
 
 log = logging.getLogger("kluby")
@@ -334,7 +335,22 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
         }
 
         def osoba(o):
-            return {"unikatni": len(o["unik"]), "poKategorii": validate.zorad_kategorie({c: len(s) for c, s in o["kat"].items()})}
+            # poSkupinach/mladez = UNIKÁTNE osoby v skupine úrovní (zjednotenie množín),
+            # nie súčet úrovní — ostaršený hráč v U17 aj U19 je v „Dorast“ raz (6. 10. 2026)
+            sk: dict[str, set] = {}
+            ml: set = set()
+            for c, pids in o["kat"].items():
+                g = pipelines.UROVEN_SKUPINA.get(c)
+                if g:
+                    sk.setdefault(g, set()).update(pids)
+                if c in pipelines.MLADEZ_UROVNE:
+                    ml.update(pids)
+            return {
+                "unikatni": len(o["unik"]),
+                "poKategorii": validate.zorad_kategorie({c: len(s) for c, s in o["kat"].items()}),
+                "poSkupinach": {g: len(sk[g]) for g in pipelines.SKUPINY_PORADIE if sk.get(g)},
+                "mladez": len(ml),
+            }
 
         pokrytych = sum(c["divaciPokrytych"] for c in kategorie.values())
         profily[slug] = {

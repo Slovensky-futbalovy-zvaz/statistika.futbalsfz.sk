@@ -88,7 +88,14 @@ export default function KlubyPorovnanieView({ sezonaSlug }: Props) {
       case 'goly': return g;
       case 'divaci': return dv;
       case 'druzstva': return dr;
-      case 'hraci': return h;
+      case 'hraci': {
+        // filter = celá skupina → unikátni hráči skupiny (ostaršený hráč raz), nie súčet úrovní
+        const g = GROUPS.find((gr) => {
+          const cats = gr.cats.filter((c) => pritomne.includes(c));
+          return cats.length > 0 && subset.length === cats.length && cats.every((c) => subset.includes(c));
+        });
+        return g && r.hraciSkupiny ? (r.hraciSkupiny[g.key] ?? 0) : h;
+      }
       case 'golyNaZapas': return z ? g / z : 0;
       case 'divaciNaZapas': return z ? dv / z : 0;
       default: return 0;

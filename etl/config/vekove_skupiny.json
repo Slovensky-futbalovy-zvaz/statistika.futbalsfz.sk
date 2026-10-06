@@ -1,0 +1,10 @@
+{
+  "poznamka": "Vekové kategórie (skupiny) = medzisúčty vekových úrovní súťaží pre vizualizáciu. Jediný zdroj pre ETL (osoby.<rola>.poSkupinach a mladez). Rovnaké mapovanie používa web (web/src/lib/palette.ts → GROUPS) — pri zmene upraviť oboje. Úrovne mimo skupín (U21, U20, U06) sa do skupín nezapočítavajú, rovnako ako doteraz na webe. Rozhodnutie Ján Letko, 6. 10. 2026.",
+  "skupiny": [
+    {"kluc": "Dospelí", "urovne": ["ADULTS"]},
+    {"kluc": "Dorast", "urovne": ["U19", "U18", "U17", "U16"]},
+    {"kluc": "Žiaci", "urovne": ["U15", "U14", "U13", "U12"]},
+    {"kluc": "Prípravky", "urovne": ["U11", "U10", "U09", "U08", "U07"]}
+  ],
+  "mladez": ["Dorast", "Žiaci", "Prípravky"]
+}

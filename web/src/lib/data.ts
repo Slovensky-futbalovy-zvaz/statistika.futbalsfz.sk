@@ -55,6 +55,11 @@ export interface Kategoria {
 export interface OsobaSkupina {
   unikatni: number;
   poKategorii: Record<string, number>;
+  /** Unikátne osoby po vekových kategóriách (Dospelí/Dorast/Žiaci/Prípravky) — od 6. 10. 2026.
+   *  Na rozdiel od súčtu poKategorii počíta osobu v skupine raz (ostaršený hráč U17+U19). */
+  poSkupinach?: Record<string, number>;
+  /** Unikátne osoby naprieč celou mládežou (Dorast ∪ Žiaci ∪ Prípravky). */
+  mladez?: number;
 }
 
 /** Súhrn za jednu úroveň súťaže (blok `urovne`; disjunktný — sedí na kpi.sutaze). */
@@ -691,6 +696,8 @@ export interface PorovnanieKlubRiadok {
   golyNaZapas: number;
   divaciNaZapas: number;
   kat: Record<string, { zapasy: number; druzstva: number; goly: number; divaci: number; hraci: number }>;
+  /** Unikátni hráči po vekových kategóriách (skupinách) — pre filter skupiny v porovnaní. */
+  hraciSkupiny?: Record<string, number>;
 }
 
 export interface PorovnanieKluby {

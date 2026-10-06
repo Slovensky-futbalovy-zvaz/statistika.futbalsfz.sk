@@ -78,6 +78,8 @@ def riadok(klub: dict, nazvy: dict[str, str]) -> dict:
         "golyNaZapas": round(kpi.get("goly", 0) / zapasy, 2) if zapasy else 0.0,
         "divaciNaZapas": round(kpi.get("divaci", 0) / zapasy, 1) if zapasy else 0.0,
         "kat": kat,
+        # unikátni hráči po vekových kategóriách (skupinách) — pre filter skupiny na webe
+        "hraciSkupiny": osoby.get("hraci", {}).get("poSkupinach", {}) or {},
     }
 
 

@@ -314,10 +314,16 @@ def agreguj(db, pipeline: list[dict], popis: str) -> list[dict]:
 def _facet_osoby(vysledok: list[dict], rola_kluc: str | None = None) -> dict:
     """Prevod $facet výsledku (poKategorii + unikatni) na {unikatni, poKategorii}."""
     facet = vysledok[0] if vysledok else {"poKategorii": [], "unikatni": []}
+    def _skupiny(d: dict) -> dict:
+        return {k: d[k] for k in pipelines.SKUPINY_PORADIE if d.get(k)}
+
     if rola_kluc is None:
         po_kat = {r["_id"]: r["n"] for r in facet["poKategorii"] if r["_id"]}
         unik = facet["unikatni"][0]["n"] if facet["unikatni"] else 0
-        return {"unikatni": unik, "poKategorii": validate.zorad_kategorie(po_kat)}
+        po_sk = {r["_id"]: r["n"] for r in facet.get("poSkupinach", []) if r["_id"]}
+        mladez = facet["mladez"][0]["n"] if facet.get("mladez") else 0
+        return {"unikatni": unik, "poKategorii": validate.zorad_kategorie(po_kat),
+                "poSkupinach": _skupiny(po_sk), "mladez": mladez}
     # rozhodcovia/delegáti/personál: facet obsahuje všetky roly naraz;
     # záznamy bez kategórie (null) sa do poKategorii nepočítajú, unikáty áno
     po_kat = {
@@ -326,7 +332,14 @@ def _facet_osoby(vysledok: list[dict], rola_kluc: str | None = None) -> dict:
         if r["_id"]["rola"] == rola_kluc and r["_id"].get("cat")
     }
     unik = next((r["n"] for r in facet["unikatni"] if r["_id"] == rola_kluc), 0)
-    return {"unikatni": unik, "poKategorii": validate.zorad_kategorie(po_kat)}
+    po_sk = {
+        r["_id"]["sk"]: r["n"]
+        for r in facet.get("poSkupinach", [])
+        if r["_id"]["rola"] == rola_kluc and r["_id"].get("sk")
+    }
+    mladez = next((r["n"] for r in facet.get("mladez", []) if r["_id"] == rola_kluc), 0)
+    return {"unikatni": unik, "poKategorii": validate.zorad_kategorie(po_kat),
+            "poSkupinach": _skupiny(po_sk), "mladez": mladez}
 
 
 def _gender_kluc(g) -> str:
@@ -638,7 +651,9 @@ def vygeneruj(
                 "inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet "
                 "štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený "
                 "hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať "
-                "počet unikátnych osôb."
+                "počet unikátnych osôb. poSkupinach = unikátne osoby vo vekovej kategórii "
+                "(Dospelí/Dorast/Žiaci/Prípravky; v rámci kategórie raz), mladez = unikátne "
+                "osoby naprieč celou mládežou (etl/config/vekove_skupiny.json)."
             ),
             "pohlaviePoznamka": (
                 "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; "

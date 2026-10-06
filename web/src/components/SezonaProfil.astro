@@ -74,17 +74,19 @@ const osobaLabel: Record<string, string> = {
   hraci: 'Hráči', treneri: 'Tréneri', realizacnyTim: 'Realizačný tím',
   rozhodcovia: 'Rozhodcovia', delegati: 'Delegáti', personal: 'Personál',
 };
-function rozpadSkupin(poKat: Record<string, number>) {
+// poSkupinach = UNIKÁTNE osoby v skupine (od 6. 10. 2026); súčet úrovní len ako fallback
+// pre staršie dáta — ostaršeného hráča (U17 aj U19) by v pruhu „Dorast“ počítal dvakrát.
+function rozpadSkupin(poKat: Record<string, number>, poSk?: Record<string, number>) {
   return GROUPS.map((g) => ({
     key: g.key,
     color: g.color,
-    hodnota: g.cats.reduce((s, c) => s + (poKat[c] ?? 0), 0),
+    hodnota: poSk ? (poSk[g.key] ?? 0) : g.cats.reduce((s, c) => s + (poKat[c] ?? 0), 0),
   })).filter((r) => r.hodnota > 0);
 }
 const osobyKarty = Object.entries(profil.osoby)
   .filter(([, o]) => (o.unikatni ?? 0) > 0)
   .map(([rola, o]) => {
-    const skupiny = rozpadSkupin(o.poKategorii ?? {});
+    const skupiny = rozpadSkupin(o.poKategorii ?? {}, o.poSkupinach);
     const max = Math.max(1, ...skupiny.map((s) => s.hodnota));
     return { rola, label: osobaLabel[rola] ?? rola, unikatni: o.unikatni, skupiny, max };
   });
@@ -285,10 +287,11 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
   <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Osoby v súťažiach</div>
   <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 6px;">Ľudia v zväze</h2>
   <p class="text-sm text-muted mb-4">
-    Unikátne osoby podľa úlohy a vekovej kategórie súťaží, v ktorých pôsobili. Kto pôsobil
-    v súťažiach viacerých vekových úrovní (napr. ostaršený hráč), započíta sa v každej z nich,
-    preto súčet po kategóriách môže prevyšovať počet unikátnych osôb. Nejde o počet štartov
-    ani o vek osoby — ten podľa ročníka narodenia ukazuje demografia.
+    Unikátne osoby podľa úlohy a vekovej kategórie súťaží, v ktorých pôsobili. V rámci jednej
+    kategórie sa každá osoba počíta raz (ostaršený dorastenec v U17 aj U19 je v Doraste raz);
+    kto pôsobil v súťažiach viacerých kategórií (napr. dorastenec aj za dospelých), započíta sa
+    v každej z nich, preto súčet kategórií môže prevyšovať počet unikátnych osôb. Nejde o počet
+    štartov ani o vek osoby — ten podľa ročníka narodenia ukazuje demografia.
   </p>
   <div class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
     {

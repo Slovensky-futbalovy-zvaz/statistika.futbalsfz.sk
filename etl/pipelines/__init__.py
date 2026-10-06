@@ -12,6 +12,35 @@ Pipelines boli odladené a verifikované proti vzorkám ObFZ Nitra
 (2024/2025, 2025/2026) dňa 12. 7. 2026 — 100 % zhoda.
 """
 
+import json
+from pathlib import Path
+
+#: Vekové kategórie (skupiny úrovní) — jediný zdroj etl/config/vekove_skupiny.json.
+_SKUPINY_CFG = json.loads(
+    (Path(__file__).resolve().parent.parent / "config" / "vekove_skupiny.json").read_text(encoding="utf-8")
+)
+#: Poradie skupín vo výstupe (Dospelí, Dorast, Žiaci, Prípravky).
+SKUPINY_PORADIE = [s["kluc"] for s in _SKUPINY_CFG["skupiny"]]
+#: veková úroveň súťaže → skupina
+UROVEN_SKUPINA = {u: s["kluc"] for s in _SKUPINY_CFG["skupiny"] for u in s["urovne"]}
+#: všetky mládežnícke úrovne (pre `mladez` = unikátne osoby naprieč mládežou)
+MLADEZ_UROVNE = sorted(
+    u for s in _SKUPINY_CFG["skupiny"] if s["kluc"] in _SKUPINY_CFG["mladez"] for u in s["urovne"]
+)
+
+
+def _skupina_expr(cat_expr) -> dict:
+    """$switch: veková úroveň súťaže → vekovú kategóriu (skupinu); mimo skupín → null."""
+    return {
+        "$switch": {
+            "branches": [
+                {"case": {"$in": [cat_expr, s["urovne"]]}, "then": s["kluc"]}
+                for s in _SKUPINY_CFG["skupiny"]
+            ],
+            "default": None,
+        }
+    }
+
 
 def _match_stage(
     app_spaces: list[str], season_variants: list[str], sport_sector: str = "futbal"
@@ -165,6 +194,20 @@ _PERSON_FACET = [
                 {"$sort": {"_id": 1}},
             ],
             "unikatni": [{"$group": {"_id": "$_id.pid"}}, {"$count": "n"}],
+            # Unikátne osoby v SKUPINE (Dorast = U16–U19…): ostaršený hráč v U17 aj U19
+            # sa v skupine počíta raz (pridané 6. 10. 2026; poKategorii ho počíta 2×).
+            "poSkupinach": [
+                {"$project": {"pid": "$_id.pid", "sk": _skupina_expr("$_id.cat")}},
+                {"$match": {"sk": {"$ne": None}}},
+                {"$group": {"_id": {"pid": "$pid", "sk": "$sk"}}},
+                {"$group": {"_id": "$_id.sk", "n": {"$sum": 1}}},
+            ],
+            # Unikátne osoby naprieč celou mládežou (Dorast ∪ Žiaci ∪ Prípravky).
+            "mladez": [
+                {"$match": {"_id.cat": {"$in": MLADEZ_UROVNE}}},
+                {"$group": {"_id": "$_id.pid"}},
+                {"$count": "n"},
+            ],
         }
     },
 ]
@@ -665,6 +708,17 @@ def osoby_managers(app_spaces, season_variants, rozhodca_labels, delegat_labels,
                     {"$sort": {"_id.rola": 1, "_id.cat": 1}},
                 ],
                 "unikatni": [
+                    {"$group": {"_id": {"rola": "$_id.rola", "pid": "$_id.pid"}}},
+                    {"$group": {"_id": "$_id.rola", "n": {"$sum": 1}}},
+                ],
+                "poSkupinach": [
+                    {"$project": {"rola": "$_id.rola", "pid": "$_id.pid", "sk": _skupina_expr("$_id.cat")}},
+                    {"$match": {"sk": {"$ne": None}}},
+                    {"$group": {"_id": {"rola": "$rola", "pid": "$pid", "sk": "$sk"}}},
+                    {"$group": {"_id": {"rola": "$_id.rola", "sk": "$_id.sk"}, "n": {"$sum": 1}}},
+                ],
+                "mladez": [
+                    {"$match": {"_id.cat": {"$in": MLADEZ_UROVNE}}},
                     {"$group": {"_id": {"rola": "$_id.rola", "pid": "$_id.pid"}}},
                     {"$group": {"_id": "$_id.rola", "n": {"$sum": 1}}},
                 ],
