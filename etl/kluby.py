@@ -250,7 +250,10 @@ def vygeneruj(db, sezona: str, varianty: list[str], sport_sector: str, zvazy: di
             kc["druzstva"].add(tid)
             if isinstance(audience, int) and 0 <= audience < 200000:
                 kc["divaci"] += audience
-                kc["divaciPokrytych"] += 1
+                # pokrytie na rovnakej báze ako `zapasy` — administratívny zápas
+                # s explicitnou nulou divákov sa nepočíta (oprava 6. 10. 2026)
+                if not _admin:
+                    kc["divaciPokrytych"] += 1
             klubTeamsInMatch.setdefault(oid, set()).add(cat)
 
         # góly/karty z eventov priradené teamu

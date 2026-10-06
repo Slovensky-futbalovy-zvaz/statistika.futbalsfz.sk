@@ -178,7 +178,9 @@ def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None,
     uzatvorene = všetky closed:true (pôvodná báza, pre transparentnosť).
     administrativne = kontumácie/odstúpenia bez reálneho odohratia (odpočítané zo `zapasy`).
     kontumovane/odstupene = doplnkové kategórie (__issfMatchStatus) so split *Admin.
-    divaciPokrytych = počet zápasov s vyplneným protocol.audience (vrátane 0).
+    divaciPokrytych = počet REÁLNE ODOHRANÝCH zápasov s vyplneným protocol.audience
+    (vrátane 0). Administratívne zápasy sa nerátajú — rovnaká báza ako `zapasy`,
+    inak by pokrytie mohlo prekročiť 1 (oprava 6. 10. 2026, ObFZ Veľký Krtíš).
     Diváci prechádzajú korekčnou vrstvou (audience_expr).
     """
     return [
@@ -208,7 +210,8 @@ def kategorie(app_spaces, season_variants, sport_sector="futbal", part_map=None,
                 "zlte": {"$sum": "$zlte"},
                 "cervene": {"$sum": "$cervene"},
                 "divaci": {"$sum": {"$ifNull": ["$audience", 0]}},
-                "divaciPokrytych": {"$sum": {"$cond": [{"$gt": ["$audience", None]}, 1, 0]}},
+                "divaciPokrytych": {"$sum": {"$cond": [
+                    {"$and": [{"$not": ["$admin"]}, {"$gt": ["$audience", None]}]}, 1, 0]}},
             }
         },
         {"$sort": {"_id": 1}},
@@ -244,7 +247,8 @@ def kategorie_pohlavie(app_spaces, season_variants, sport_sector="futbal", part_
                 "zlte": {"$sum": "$zlte"},
                 "cervene": {"$sum": "$cervene"},
                 "divaci": {"$sum": {"$ifNull": ["$audience", 0]}},
-                "divaciPokrytych": {"$sum": {"$cond": [{"$gt": ["$audience", None]}, 1, 0]}},
+                "divaciPokrytych": {"$sum": {"$cond": [
+                    {"$and": [{"$not": ["$admin"]}, {"$gt": ["$audience", None]}]}, 1, 0]}},
             }
         },
         {"$sort": {"_id.gender": 1, "_id.cat": 1}},
@@ -569,10 +573,12 @@ def hraci(app_spaces, season_variants, sport_sector="futbal", part_map=None):
     """Hráči: unikáty celkom + unikáty po kategóriách (kategória cez teamId nominácie)."""
     return [
         _match_stage(app_spaces, season_variants, sport_sector),
-        {"$project": {"teams": 1, "nominations": 1}},
+        # catFb (kategória z časti súťaže) sa MUSÍ spočítať tu — ďalší $project už
+        # competitionPart nemá; inak fallback ticho vráti null (oprava 6. 10. 2026).
+        {"$project": {"teams": 1, "nominations": 1, "catFb": cat_fallback_expr(part_map) or {"$literal": None}}},
         {"$unwind": "$nominations"},
         {"$unwind": "$nominations.athletes"},
-        {"$project": {"pid": "$nominations.athletes.sportnetUser._id", "cat": {"$ifNull": [_NOMINATION_CAT, cat_fallback_expr(part_map) or None]}}},
+        {"$project": {"pid": "$nominations.athletes.sportnetUser._id", "cat": {"$ifNull": [_NOMINATION_CAT, "$catFb"]}}},
         *_PERSON_FACET,
     ]
 
@@ -581,11 +587,13 @@ def treneri(app_spaces, season_variants, coach_positions, sport_sector="futbal",
     """Tréneri z nominations.crew (pozície z roly.json; `manager` = vedúci družstva, NIE tréner)."""
     return [
         _match_stage(app_spaces, season_variants, sport_sector),
-        {"$project": {"teams": 1, "nominations": 1}},
+        # catFb (kategória z časti súťaže) sa MUSÍ spočítať tu — ďalší $project už
+        # competitionPart nemá; inak fallback ticho vráti null (oprava 6. 10. 2026).
+        {"$project": {"teams": 1, "nominations": 1, "catFb": cat_fallback_expr(part_map) or {"$literal": None}}},
         {"$unwind": "$nominations"},
         {"$unwind": "$nominations.crew"},
         {"$match": {"nominations.crew.position": {"$in": coach_positions}}},
-        {"$project": {"pid": "$nominations.crew.sportnetUser._id", "cat": {"$ifNull": [_NOMINATION_CAT, cat_fallback_expr(part_map) or None]}}},
+        {"$project": {"pid": "$nominations.crew.sportnetUser._id", "cat": {"$ifNull": [_NOMINATION_CAT, "$catFb"]}}},
         *_PERSON_FACET,
     ]
 
@@ -597,11 +605,13 @@ def realizacny_tim(app_spaces, season_variants, coach_positions, sport_sector="f
     `security_manager` a pod.). Tréneri sa počítajú samostatne (funkcia `treneri`)."""
     return [
         _match_stage(app_spaces, season_variants, sport_sector),
-        {"$project": {"teams": 1, "nominations": 1}},
+        # catFb (kategória z časti súťaže) sa MUSÍ spočítať tu — ďalší $project už
+        # competitionPart nemá; inak fallback ticho vráti null (oprava 6. 10. 2026).
+        {"$project": {"teams": 1, "nominations": 1, "catFb": cat_fallback_expr(part_map) or {"$literal": None}}},
         {"$unwind": "$nominations"},
         {"$unwind": "$nominations.crew"},
         {"$match": {"nominations.crew.position": {"$nin": coach_positions, "$exists": True, "$ne": None}}},
-        {"$project": {"pid": "$nominations.crew.sportnetUser._id", "cat": {"$ifNull": [_NOMINATION_CAT, cat_fallback_expr(part_map) or None]}}},
+        {"$project": {"pid": "$nominations.crew.sportnetUser._id", "cat": {"$ifNull": [_NOMINATION_CAT, "$catFb"]}}},
         *_PERSON_FACET,
     ]
 
