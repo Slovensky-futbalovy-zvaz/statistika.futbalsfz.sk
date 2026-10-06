@@ -634,8 +634,11 @@ def vygeneruj(
             "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
             "divaciPokrytie": round(pokrytych / zapasy, 3) if zapasy else 0.0,
             "osobyPoznamka": (
-                "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb "
-                "(viacnásobné pôsobenie)."
+                "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, "
+                "inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet "
+                "štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený "
+                "hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať "
+                "počet unikátnych osôb."
             ),
             "pohlaviePoznamka": (
                 "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; "

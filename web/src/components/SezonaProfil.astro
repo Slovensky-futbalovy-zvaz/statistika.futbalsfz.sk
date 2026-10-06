@@ -285,8 +285,10 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
   <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Osoby v súťažiach</div>
   <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 6px;">Ľudia v zväze</h2>
   <p class="text-sm text-muted mb-4">
-    Unikátne osoby podľa úlohy a vekovej kategórie. Súčet po kategóriách môže prevyšovať počet
-    unikátnych osôb (viacnásobné pôsobenie).
+    Unikátne osoby podľa úlohy a vekovej kategórie súťaží, v ktorých pôsobili. Kto pôsobil
+    v súťažiach viacerých vekových úrovní (napr. ostaršený hráč), započíta sa v každej z nich,
+    preto súčet po kategóriách môže prevyšovať počet unikátnych osôb. Nejde o počet štartov
+    ani o vek osoby — ten podľa ročníka narodenia ukazuje demografia.
   </p>
   <div class="grid gap-3.5" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
     {
@@ -345,5 +347,5 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
   {profil.kpi.kontumovane !== undefined && (
     <span> Kontumované a Odstúpené sa vykazujú samostatne; ich administratívna časť (bez zápisu) nie je zarátaná do počtu Zápasy.</span>
   )}
-  Súčet osôb po kategóriách môže prevyšovať počet unikátnych osôb. Dáta generované {profil.generatedAt}.
+  Osoby sú zaradené podľa vekovej úrovne súťaže, nie podľa veku; súčet po kategóriách môže prevyšovať počet unikátnych osôb. Dáta generované {profil.generatedAt}.
 </p>

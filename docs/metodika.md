@@ -73,7 +73,7 @@ Zhrnutie overených poznatkov z realizácie infografík ObFZ Nitra a ZsFZ a z ov
 - Zápas pohlavie priamo nenesie — **jediný zdroj je `competitions.parts[].rules.gender`** („M“/„F“), mapovanie cez `match.competitionPart._id` rovnakým mechanizmom ako fallback kategórií (mapa partId→{cat, gender} v ETL).
 - Vyplnenosť overená 13. 7. 2026: v riadnych súťažiach ~100 % (2013/2014: 339 M + 13 F; 2025/2026: 964 M + 29 F častí). Prázdny gender **neznamená mužské** — sú to testy, grassroots projekty a malý futbal (mimo ETL); jediná reálna výnimka je školský turnaj VsFZ s kategóriou „U15 mix“.
 - Zmiešané časti (M aj F v jednej súťaži) v riadnych súťažiach neexistujú.
-- **Výstupná schéma:** blok `pohlavie` vedľa `kategorie` — `{M: {súhrn + kategorie}, F: {…}, NEURCENE: {…}}`; skupina NEURCENE (časť bez gender) sa vykazuje samostatne a vždy loguje ako anomália.
+- **Výstupná schéma:** blok `pohlavie` vedľa `kategorie` — `{M: {súhrn + kategorie}, F: {…}, NEURCENE: {…}}`; skupina NEURCENE (časť bez gender) sa vykazuje samostatne. Validátor ju hlási ako anomáliu, **okrem súťaží z číselníka `etl/config/vylucene_sutaze.json`** (školské a výberové turnaje, napr. „U15 mix“ VsFZ) — tie sa logujú len ako POZNÁMKA (6. 10. 2026). Profil zväzu ich naďalej počíta.
 - **KPI a `kategorie` zväzu zostávajú súčtom všetkých pohlaví** — dimenzia pohlavie je doplnkový drill-down; existujúce čísla sa nemenia.
 - Súčty M+F+NEURCENE presne sedia na KPI (zápas patrí práve jednej časti); výnimka `druzstva` — organizácia s mužským aj ženským družstvom sa počíta v oboch pohlaviach (analógia dvojitého pôsobenia osôb, publikovať s poznámkou).
 - Ženský futbal 2025/2026: SFZ 6 súťaží (ADULTS 222, U19 351, U15 351, WU14 12 zápasov), SsFZ 5, BFZ 3, VsFZ 1, futsal 1; **ZsFZ a všetky ObFZ bez ženských súťaží** (reálny stav).
@@ -698,11 +698,41 @@ tu sa meria klub a súťažou sa len označuje. Text je uvedený priamo pod graf
 - Kategória zápasu pre rozhodcov/delegátov: `$arrayElemAt: ["$teams.ageCategory", 0]`.
 - **Dvojité počítanie:** tá istá osoba pôsobí vo viacerých kategóriách/roliach; súčet po kategóriách je vyšší než počet unikátnych osôb. Publikujú sa **oba pohľady s explicitnou poznámkou** — inak to vyzerá ako chyba.
 - Nižšie kategórie (prípravky, mladší žiaci) často nemajú rozhodcov/delegátov v systéme — reálny stav, nie chyba dát.
+- **Veková úroveň osôb v profile = veková úroveň SÚŤAŽE** (oprava a spresnenie 6. 10. 2026). Hráč, tréner
+  a realizačný tím dostanú úroveň podľa družstva v nominácii (`nominations.teamId` → `teams.ageCategory`);
+  ak ju družstvo nemá (historické sezóny pred 2024/2025, časť súťaží aj dnes), podľa časti súťaže
+  (`competitions.parts[].rules.category`). **Do 6. 10. 2026 tento fallback v `etl/pipelines` nefungoval**
+  — prvý `$project` zahodil `competitionPart`, a tak boli `osoby.{hraci,treneri,realizacnyTim}.poKategorii`
+  pred 2024/2025 prázdne a v novších sezónach neúplné (VsFZ 2025/2026: súčet 8 790 < 9 283 unikátnych).
+  Rozhodcovia, delegáti a personál chybou zasiahnutí neboli.
+
+#### Tri pohľady na osoby — nezamieňať (rozhodnutie Ján Letko, 6. 10. 2026)
+
+| Pohľad | Jednotka | Veková úroveň podľa |
+|---|---|---|
+| Profil zväzu/klubu — `osoby.<rola>.poKategorii` | unikátna osoba **v každej vekovej úrovni súťaže**, v ktorej je v zápise; počet zápisov sa nepočíta | **súťaže** |
+| Demografia — `etl/demografia.py` | unikátna osoba **raz** za sezónu a rolu | **osoby** (ročník narodenia) |
+| Trendy — `etl/trendy.py` | **zápis** hráča v zápase (25 zápisov = 25×), len súťaže dospelých | rez podľa **súťaže**, vek podľa **osoby** |
+
+Príklady (sezóna 2025/2026):
+
+- Hráč ročník 2010 (veková úroveň osoby U17), 10 zápisov v súťaži U17 a 3 v súťaži U19 →
+  profil: `unikatni` +1, `U17` +1, `U19` +1; demografia: +1 v ročníku 2010; trendy: nič.
+- Hráč ročník 2007 (U19), 12 zápisov v U19 a 8 za dospelých →
+  profil: `unikatni` +1, `U19` +1, `ADULTS` +1; demografia: +1 v ročníku 2007; trendy: 8 zápisov vo veku 19.
+
+Preto **súčet po úrovniach ≥ počet unikátnych osôb** (validátor hlási opak ako anomáliu) a profil
+**nie je počet štartov** — štarty (presnejšie zápisy) meria len pohľad Trendy.
 
 ### Ostatné metriky
 
 - Góly a karty: `protocol.events` (eventType: `goal`, `yellow_card`, `red_card`).
 - Diváci: `protocol.audience` — pole nie je vyplnené pri všetkých zápasoch; publikovať vždy spolu s percentom pokrytia.
+- **Pokrytie divákov** (`methodologyFlags.divaciPokrytie`) = podiel **reálne odohraných** zápasov (`kpi.zapasy`)
+  s vyplneným `protocol.audience` (aj 0). Čitateľ aj menovateľ majú rovnakú bázu — administratívne
+  kontumácie/odstúpenia sa nepočítajú ani v jednom. Do 6. 10. 2026 sa administratívny zápas s explicitnou
+  nulou divákov počítal v čitateli, nie v menovateli, a pokrytie mohlo prekročiť 1 (ObFZ Veľký Krtíš
+  2025/2026: 214/213; v histórii 16 súborov).
 - Družstvo = unikátne `teams[].organization.name` s aspoň jedným uzavretým zápasom (nie registrácie na začiatku sezóny — uviesť v poznámke).
 
 ## Overené fakty o rozsahu dát (12. 7. 2026)

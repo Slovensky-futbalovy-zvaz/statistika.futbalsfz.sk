@@ -409,7 +409,9 @@ export function getDemografiaKlub(id: string): DemografiaKlub | undefined {
 
 /** Osoby po sezónach a rolách z DEMOGRAFIE (rok narodenia → veková úroveň) pre KpiTrend.
  *  { sezona -> rola -> úroveň(ADULTS/U..) -> počet }. Dostupné za všetky sezóny
- *  (na rozdiel od osoby.poKategorii, ktoré vychádza z teams.ageCategory až od ~2024). */
+ *  Iný pohľad než osoby.poKategorii: tu je VEKOVÁ ÚROVEŇ OSOBY (ročník narodenia),
+ *  v poKategorii veková úroveň SÚŤAŽE. (Do 6. 10. 2026 bolo poKategorii pred 2024/2025
+ *  prázdne pre chybu fallbacku v etl/pipelines — nie pre chýbajúce dáta.) */
 export function demoTrend(demo: Demografia | DemografiaKlub | undefined): Record<string, Record<string, Record<string, number>>> {
   const out: Record<string, Record<string, Record<string, number>>> = {};
   if (!demo) return out;

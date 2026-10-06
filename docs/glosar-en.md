@@ -118,6 +118,9 @@ legitímnych možností a voľba ovplyvní celý portál.
 | medián veku | **median age** | |
 | veková pyramída | **age pyramid** | |
 | dvojité pôsobenie | **dual involvement** | Náš pojem pre osobu pôsobiacu vo viacerých zväzoch |
+| veková úroveň súťaže / osoby | **competition age level** / **individual's age level** | Dve odlišné dimenzie (metodika, „Tri pohľady na osoby“) — v EN musia zostať rozlíšené |
+| ostaršený hráč | **player playing up an age level** | |
+| zápis hráča (v zápise o stretnutí) | **match-sheet entry** | nie „appearance“ — nastúpenie sa z dát zistiť nedá |
 
 ## 5. Kluby a družstvá
 
