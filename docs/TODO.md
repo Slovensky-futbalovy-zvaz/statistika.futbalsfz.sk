@@ -69,12 +69,6 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
 
 ## Frontend
 
-- [ ] **41 typových chýb v dynamických route súboroch** (`astro check`, 8. 8. 2026). Všetky sú
-  ten istý vzor: `Astro.params` je typovaný ako `string | number`, takže `id!`, `sezonaUrl!`
-  a `odvetvie!` nesadá do funkcií čakajúcich `string`. Build ani beh portálu to neovplyvňuje,
-  ale kontrola preto nekončí čisto. Týka sa `klub/[id]/[sezona]`, `klub/[id]/[odvetvie]/[sezona]`,
-  `zvaz/[id]*`, `porovnania/*`, `demografia/[id]`. Riešenie: obaliť parametre `String(…)`
-  alebo dotypovať `getStaticPaths`.
 - [ ] **Payload stránok.** Úvodná stránka 628 kB HTML, `/trendy` 600 kB, profil klubu 1,17 MB
   (gzip to zráža na desatinu, ale je čo orezávať). Dominuje `KpiTrend` a sunburst dáta starých
   sezón. Pri `porovnania/obfz/*` (1 470 kB) dominuje `bump` payload — pomohol by rovnaký trik

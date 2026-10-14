@@ -11,9 +11,12 @@ zmeny čísel v [CHANGELOG.md](CHANGELOG.md), priebeh práce v [docs/devlog.md](
   „ČIASTOČNÉ“; overiť, že beh 21. 10. prebehne celý, potom bod zmazať.
 - **Historické zápasy bez kategórie súťaže** — 40 častí súťaží, 518 uzavretých zápasov
   (2016/2017 – 2023/2024), zoznam na nahlásenie odovzdaný 14. 10. (XLSX). 25 častí nemá
-  `rules.category`, 15 častí v `competitions` už neexistuje. Najväčšie: Krajská futbalová liga
-  VsFZ (266 zápasov) — zvážiť zaradenie do `vylucene_sutaze.json`. Pohlavie mimo číselníka
-  nechýba nikde.
+  `rules.category`, 15 častí v `competitions` už neexistuje. Pohlavie mimo číselníka nechýba nikde.
+- **Krajská futbalová liga VsFZ** (zimná liga dospelých mužov, ~100 družstiev) — 262 z nich:
+  2019/2020 všetkých 164 zápasov (10 častí bez kategórie), 2022/2023 92 zápasov (8 zmazaných
+  skupín), 2023/2024 6 zápasov (1 časť bez kategórie). Rieši kolega v Sportnete (15. 10.):
+  kategória Dospelí do 11 častí; 2022/2023 presun zápasov alebo obnovenie skupín. Potom ručne
+  prepočítať 2019/2020, 2022/2023 a 2023/2024 (`--hint`) + kluby a agregáty.
 
 ## Poznámky k ručným prepočtom
 - Historické sezóny 2021/2022+ púšťať s `--hint appSpace_1_closed_1_competition._id_1_competitionPart._id_1_round.dateFrom_-1_startDate_-1`
