@@ -2,11 +2,11 @@
   "zvaz": "bfz",
   "sezona": "2022/2023",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-08T20:08:33+02:00",
+  "generatedAt": "2026-10-06T15:22:31+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 0.999,
-    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb.",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
     "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
@@ -28,8 +28,7 @@
     "kontumovaneOdohrane": 9,
     "odstupene": 173,
     "odstupeneAdmin": 133,
-    "odstupeneOdohrane": 40,
-    "kluby": 81
+    "odstupeneOdohrane": 40
   },
   "kategorie": {
     "ADULTS": {
@@ -503,19 +502,43 @@
     "hraci": {
       "unikatni": 5436,
       "poKategorii": {
-        "U09": 76
+        "ADULTS": 1050,
+        "U19": 314,
+        "U17": 560,
+        "U15": 498,
+        "U13": 363,
+        "U11": 1182,
+        "U10": 534,
+        "U09": 774,
+        "U08": 697
       }
     },
     "treneri": {
       "unikatni": 291,
       "poKategorii": {
-        "U09": 7
+        "ADULTS": 72,
+        "U19": 29,
+        "U17": 45,
+        "U15": 33,
+        "U13": 21,
+        "U11": 74,
+        "U10": 27,
+        "U09": 37,
+        "U08": 44
       }
     },
     "realizacnyTim": {
       "unikatni": 368,
       "poKategorii": {
-        "U09": 2
+        "ADULTS": 170,
+        "U19": 29,
+        "U17": 58,
+        "U15": 36,
+        "U13": 30,
+        "U11": 83,
+        "U10": 27,
+        "U09": 44,
+        "U08": 36
       }
     },
     "rozhodcovia": {
@@ -548,38 +571,5 @@
         "U08": 33
       }
     }
-  },
-  "kluby": {
-    "kluby": 81,
-    "sMladezou": 81,
-    "lenDospeli": 0,
-    "dospeliAMladez": 35,
-    "lenMladez": 46,
-    "neurcene": 0,
-    "kategorie": {
-      "U08": 48,
-      "U15": 17,
-      "U13": 14,
-      "U11": 66,
-      "U10": 32,
-      "U17": 23,
-      "U09": 51,
-      "ADULTS": 35,
-      "U19": 12
-    },
-    "pohlavie": {
-      "M": 77,
-      "F": 11
-    },
-    "urovne": {
-      "L3": 56,
-      "L2": 72,
-      "L1": 29,
-      "L4": 16,
-      "L5": 16,
-      "POHARE": 16
-    },
-    "domaci": 64,
-    "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
   }
 }

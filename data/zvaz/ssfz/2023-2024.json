@@ -2,11 +2,11 @@
   "zvaz": "ssfz",
   "sezona": "2023/2024",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-08T20:38:21+02:00",
+  "generatedAt": "2026-10-06T15:38:26+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 0.999,
-    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb.",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
     "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
@@ -28,8 +28,7 @@
     "kontumovaneOdohrane": 26,
     "odstupene": 78,
     "odstupeneAdmin": 52,
-    "odstupeneOdohrane": 26,
-    "kluby": 151
+    "odstupeneOdohrane": 26
   },
   "kategorie": {
     "ADULTS": {
@@ -374,15 +373,33 @@
   "osoby": {
     "hraci": {
       "unikatni": 7655,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 2727,
+        "U19": 2072,
+        "U17": 426,
+        "U15": 1831,
+        "U13": 1526
+      }
     },
     "treneri": {
       "unikatni": 408,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 194,
+        "U19": 137,
+        "U17": 28,
+        "U15": 127,
+        "U13": 95
+      }
     },
     "realizacnyTim": {
       "unikatni": 721,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 437,
+        "U19": 236,
+        "U17": 39,
+        "U15": 173,
+        "U13": 148
+      }
     },
     "rozhodcovia": {
       "unikatni": 300,
@@ -411,34 +428,5 @@
         "U13": 244
       }
     }
-  },
-  "kluby": {
-    "kluby": 151,
-    "sMladezou": 99,
-    "lenDospeli": 52,
-    "dospeliAMladez": 46,
-    "lenMladez": 53,
-    "neurcene": 0,
-    "kategorie": {
-      "U17": 14,
-      "U19": 82,
-      "U15": 72,
-      "ADULTS": 98,
-      "U13": 60
-    },
-    "pohlavie": {
-      "M": 142,
-      "F": 13
-    },
-    "urovne": {
-      "L2": 61,
-      "L3": 27,
-      "L1": 4,
-      "L5": 51,
-      "L6": 56,
-      "L4": 47
-    },
-    "domaci": 72,
-    "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
   }
 }

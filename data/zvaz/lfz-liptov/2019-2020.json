@@ -2,11 +2,11 @@
   "zvaz": "lfz-liptov",
   "sezona": "2019/2020",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-08T21:01:27+02:00",
+  "generatedAt": "2026-10-06T12:32:29+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
-    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb.",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
     "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
@@ -28,8 +28,7 @@
     "kontumovaneOdohrane": 3,
     "odstupene": 18,
     "odstupeneAdmin": 17,
-    "odstupeneOdohrane": 1,
-    "kluby": 50
+    "odstupeneOdohrane": 1
   },
   "kategorie": {
     "ADULTS": {
@@ -341,15 +340,36 @@
   "osoby": {
     "hraci": {
       "unikatni": 2026,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 1036,
+        "U19": 224,
+        "U15": 424,
+        "U13": 266,
+        "U11": 194,
+        "U09": 96
+      }
     },
     "treneri": {
       "unikatni": 80,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 52,
+        "U19": 13,
+        "U15": 16,
+        "U13": 15,
+        "U11": 12,
+        "U09": 6
+      }
     },
     "realizacnyTim": {
       "unikatni": 240,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 175,
+        "U19": 38,
+        "U15": 54,
+        "U13": 32,
+        "U11": 25,
+        "U09": 19
+      }
     },
     "rozhodcovia": {
       "unikatni": 74,
@@ -379,36 +399,5 @@
         "U09": 12
       }
     }
-  },
-  "kluby": {
-    "kluby": 50,
-    "sMladezou": 39,
-    "lenDospeli": 11,
-    "dospeliAMladez": 29,
-    "lenMladez": 10,
-    "neurcene": 0,
-    "kategorie": {
-      "U09": 7,
-      "U13": 15,
-      "U11": 12,
-      "U15": 23,
-      "U19": 13,
-      "ADULTS": 40
-    },
-    "pohlavie": {
-      "M": 50
-    },
-    "urovne": {
-      "L3": 15,
-      "L2": 15,
-      "L4": 23,
-      "L5": 13,
-      "L6": 14,
-      "POHARE": 21,
-      "L7": 14,
-      "L8": 14
-    },
-    "domaci": 42,
-    "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
   }
 }

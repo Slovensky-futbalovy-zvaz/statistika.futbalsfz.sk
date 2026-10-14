@@ -2,11 +2,11 @@
   "zvaz": "tfz-turiec",
   "sezona": "2019/2020",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-08T21:01:54+02:00",
+  "generatedAt": "2026-10-06T12:32:36+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
-    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb.",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
     "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
@@ -28,8 +28,7 @@
     "kontumovaneOdohrane": 2,
     "odstupene": 18,
     "odstupeneAdmin": 10,
-    "odstupeneOdohrane": 8,
-    "kluby": 32
+    "odstupeneOdohrane": 8
   },
   "kategorie": {
     "ADULTS": {
@@ -307,15 +306,36 @@
   "osoby": {
     "hraci": {
       "unikatni": 1232,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 549,
+        "U19": 164,
+        "U15": 242,
+        "U13": 134,
+        "U11": 221,
+        "U09": 71
+      }
     },
     "treneri": {
       "unikatni": 29,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 9,
+        "U19": 4,
+        "U15": 4,
+        "U13": 8,
+        "U11": 9,
+        "U09": 2
+      }
     },
     "realizacnyTim": {
       "unikatni": 137,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 83,
+        "U19": 26,
+        "U15": 35,
+        "U13": 23,
+        "U11": 36,
+        "U09": 10
+      }
     },
     "rozhodcovia": {
       "unikatni": 42,
@@ -342,33 +362,5 @@
         "U09": 3
       }
     }
-  },
-  "kluby": {
-    "kluby": 32,
-    "sMladezou": 23,
-    "lenDospeli": 9,
-    "dospeliAMladez": 15,
-    "lenMladez": 8,
-    "neurcene": 0,
-    "kategorie": {
-      "U13": 9,
-      "U11": 15,
-      "U19": 9,
-      "U15": 12,
-      "U09": 5,
-      "ADULTS": 24
-    },
-    "pohlavie": {
-      "M": 32
-    },
-    "urovne": {
-      "L3": 19,
-      "L2": 15,
-      "L5": 5,
-      "L7": 14,
-      "L8": 10
-    },
-    "domaci": 28,
-    "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
   }
 }
