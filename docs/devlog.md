@@ -4,6 +4,17 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-10-14 — porovnanie zväzov: graf vývoja mimo HTML
+
+- Graf „Vývoj v čase“ v porovnaní zväzov niesol dáta všetkých sezón (0,98 MB) v každej stránke
+  `/porovnania/{uroven}/{sezona}`. Hodnoty sú teraz v `/data/porovnania-vyvoj/{obfz,rfz}.json`
+  (ObFZ ~100 kB po kompresii) a komponent si ich stiahne cez IntersectionObserver až pri
+  priblížení k sekcii. Porovnanie ObFZ 1,71 MB → 0,45 MB.
+- Overené na Vercel preview na 375 px (radar, oneskorené stiahnutie, čiarový graf, prepnutie
+  metriky, RFZ aj /porovnania). Lokálny `astro dev` sa na overenie nedal použiť: radar padá aj na
+  pôvodnom kóde (zmiešané verzie predoptimalizovaných balíkov Vite) — treba preskúmať lokálne
+  `node_modules` (pravdepodobne poškodené iCloudom pred presunom repa).
+
 ## 2026-10-14 — výber klubu bez zoznamu v HTML, revízia TODO
 
 - Každá stránka klubu (2 200+ klubov × sezóny) niesla v HTML celý zoznam klubov pre výber

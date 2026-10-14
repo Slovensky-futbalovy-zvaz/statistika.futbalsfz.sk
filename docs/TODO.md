@@ -64,8 +64,8 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
 
 - [ ] **Payload stránok** (merané 14. 10. 2026, nekomprimované HTML / gzip). Profil klubu je
   vyriešený (zoznam klubov pre výber sa sťahuje z `/data/kluby-zoznam.json`, ~1,18 MB → ~0,1 MB).
-  Ostáva: `porovnania/obfz/*` 1,71 MB / 175 kB (ostrov `PorovnanieZvazov` 1,45 MB — pomohol by
-  trik z `lib/urovne.ts`: matice ako reťazec s indexmi namiesto objektov s názvami metrík),
+  Porovnanie ObFZ/RFZ je vyriešené (graf vývoja si dáta stiahne z `/data/porovnania-vyvoj/*.json`
+  až pri priblížení, ObFZ 1,71 MB → 0,45 MB). Ostáva:
   `/trendy` 0,99 MB / 165 kB (`IndexTabulka` 277 kB, `OdstupeneKluby` 258 kB), úvod 0,69 MB /
   131 kB (`AgePyramid` 242 kB, mapa 175 kB). ECharts je už rozdelený cez `echarts/core`.
 - [ ] **SeasonPicker na Prehľade** nemení sezónu reaktívne (Prehľad je server-rendered pre
