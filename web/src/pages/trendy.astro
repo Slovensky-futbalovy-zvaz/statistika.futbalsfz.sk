@@ -58,7 +58,7 @@ const indexRows = (prehlad?.kluby ?? [])
     r.klub, r.nazov, r.index, r.stav,
     r.zlozky.A, r.zlozky.B, r.zlozky.C, r.zlozky.D, r.zlozky.E ?? '',
     r.detaily.skupiny, r.detaily.deti, r.detaily.druzstvaMladez, r.detaily.sezonPoSebe,
-    r.detaily.podielMladych ?? '',
+    r.detaily.podielMladych ?? '', klubZvaz[r.klub] ?? '',
   ].join('|'))
   .join('\n');
 
@@ -224,7 +224,13 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
       </p>
       {
         odstupene ? (
-          <OdstupeneKluby client:visible {...odstupene} />
+          <OdstupeneKluby
+            client:visible
+            {...odstupene}
+            kluby={odstupene.kluby
+              .map((k) => [k.n, k.s, k.sez, k.z, k.l ?? '', k.p, k.zi, k.d, k.a, k.h, k.v ? 1 : 0].join('|'))
+              .join('\n')}
+          />
         ) : (
           <p class="text-sm text-muted">Dáta o odstúpených kluboch sa zatiaľ nepodarilo načítať.</p>
         )
@@ -249,7 +255,6 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
             rows={indexRows}
             sezona={prehlad.sezona}
             zvazy={zvazy.map((z) => ({ id: z.id, nazov: z.nazov }))}
-            klubZvaz={klubZvaz}
           />
         ) : (
           <p class="text-sm text-muted">Index sa zatiaľ nepodarilo načítať.</p>

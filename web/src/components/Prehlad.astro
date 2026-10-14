@@ -9,7 +9,7 @@ import SunburstOsoby from './SunburstOsoby.tsx';
 import PyramidaSutazi from './PyramidaSutazi.tsx';
 import AgePyramid from './AgePyramid.tsx';
 import VekKlubu from './VekKlubu.tsx';
-import { getSumarSezony, getSumar, getMapData, getSumarDemografia, demoTrend, fmt, ODVETVIE_LABEL, poslednaKompletnaSlug } from '../lib/data';
+import { getSumarSezony, getSumar, getMapData, getSumarDemografia, demoPreSezonu, demoTrend, fmt, ODVETVIE_LABEL, poslednaKompletnaSlug } from '../lib/data';
 import { getVekSlovenskoRows } from '../lib/trendy';
 import { delta } from '../lib/format';
 
@@ -373,7 +373,7 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
             {aktualna}. Osoba, ktorá pôsobila vo viacerých zväzoch, kluboch alebo súťažiach, je
             v grafe <strong class="text-ink">raz</strong>. Prepni rolu.
           </p>
-          <AgePyramid client:visible demo={srDemo} sezona={aktualna} />
+          <AgePyramid client:visible demo={demoPreSezonu(srDemo, aktualna)} sezona={aktualna} />
         </div>
       </section>
     )

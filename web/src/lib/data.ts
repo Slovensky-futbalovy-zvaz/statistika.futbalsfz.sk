@@ -505,6 +505,15 @@ export function getSumar(sezona: string): Sumar {
 }
 
 /** Celoslovenská demografia (súčet zväzov; dvojité pôsobenie — viď methodologyFlags). */
+/** Demografia zúžená na jednu sezónu pre vekovú pyramídu (AgePyramid zobrazuje jedinú sezónu;
+ *  ostatné sezóny by v props islandu len nafukovali stránku — úvod o ~160 kB, profil zväzu tiež).
+ *  Sezóna sa vyberá rovnako ako v AgePyramid: zadaná, ak existuje, inak posledná. */
+export function demoPreSezonu<T extends { sezony: Record<string, unknown> }>(demo: T, sezona?: string): Pick<T, 'sezony'> {
+  const kluce = Object.keys(demo.sezony).sort();
+  const s = sezona && demo.sezony[sezona] ? sezona : kluce[kluce.length - 1];
+  return { sezony: (s ? { [s]: demo.sezony[s] } : {}) as T['sezony'] };
+}
+
 export function getSumarDemografia(): Demografia | undefined {
   const p = path.join(SUMAR, 'demografia.json');
   return fs.existsSync(p) ? readJson<Demografia>(p) : undefined;
