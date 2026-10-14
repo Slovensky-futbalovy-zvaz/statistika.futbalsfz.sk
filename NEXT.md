@@ -16,9 +16,6 @@ zmeny čísel v [CHANGELOG.md](CHANGELOG.md), priebeh práce v [docs/devlog.md](
   nechýba nikde.
 
 ## Otvorené
-- `astro check` hlási 41 typových chýb (stav 14. 10.) — všetky v typovaní parametrov routy
-  (`Astro.params` je `string | number`, napr. `sezonaUrl!.replace`, `getZvaz(id!)`), kód z 13. 7. –
-  7. 8. 2026; build na Verceli prechádza. Opraviť samostatne (typovať `getStaticPaths`).
 - Vetvy `fix/osoby-kategorie-pokrytie` a `feat/osoby-skupiny` sú zlúčené v `main` — zmazať na pokyn.
 - Súbory `_tmp_*` v koreni repa (17. – 19. 8., v `.gitignore`) — pomocné skripty staršej
   session k NAS/deploy kľúču; zmazať po kontrole.

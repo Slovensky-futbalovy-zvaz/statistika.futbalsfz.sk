@@ -11,7 +11,7 @@ export const getStaticPaths: GetStaticPaths = () =>
     .filter((z) => getDemografia(z.id))
     .map((z) => ({ params: { id: z.id } }));
 
-const { id } = Astro.params;
+const { id } = Astro.params as Record<string, string>; // parametre z getStaticPaths sú vždy reťazce
 const z = getZvaz(id!);
 if (!z) throw new Error(`Zväz ${id} nie je v index.json`);
 const demo = getDemografia(z.id);

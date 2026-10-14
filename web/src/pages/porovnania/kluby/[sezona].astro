@@ -7,7 +7,7 @@ import type { GetStaticPaths } from 'astro';
 export const getStaticPaths: GetStaticPaths = () =>
   getPorovnanieKlubySezony().map((sezona) => ({ params: { sezona } }));
 
-const { sezona: sezonaSlug } = Astro.params;
+const { sezona: sezonaSlug } = Astro.params as Record<string, string>; // parametre z getStaticPaths sú vždy reťazce
 const sezony = getPorovnanieKlubySezony(); // vzostupne, RRRR-RRRR
 const meta = getPorovnanieKluby(sezonaSlug!);
 const zvazSlug = poslednaKompletnaSlug();

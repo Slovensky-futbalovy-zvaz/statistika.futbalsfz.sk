@@ -8,7 +8,7 @@ import type { GetStaticPaths } from 'astro';
 export const getStaticPaths: GetStaticPaths = () =>
   getPorovnaniaZoznam().map((p) => ({ params: { uroven: p.urovenSlug, sezona: p.sezonaSlug } }));
 
-const { uroven, sezona: sezonaSlug } = Astro.params;
+const { uroven, sezona: sezonaSlug } = Astro.params as Record<string, string>; // parametre z getStaticPaths sú vždy reťazce
 const porovnanie = getPorovnanie(uroven!, sezonaSlug!);
 const sezony = sezonyUrovne(uroven!);
 const bump = uroven === 'obfz' ? getBumpDataObfz() : getBumpDataRfz();

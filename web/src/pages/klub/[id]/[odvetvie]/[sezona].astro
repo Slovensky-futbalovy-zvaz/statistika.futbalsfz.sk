@@ -28,7 +28,7 @@ export const getStaticPaths: GetStaticPaths = () =>
     ),
   );
 
-const { id, odvetvie, sezona: sezonaUrl } = Astro.params;
+const { id, odvetvie, sezona: sezonaUrl } = Astro.params as Record<string, string>; // parametre z getStaticPaths sú vždy reťazce
 const sezona = sezonaUrl!.replace('-', '/');
 const klub = getKlubProfilOdvetvie(id!, sezona, odvetvie!);
 if (!klub) throw new Error(`Klub ${id} ${odvetvie} ${sezona} neexistuje`);

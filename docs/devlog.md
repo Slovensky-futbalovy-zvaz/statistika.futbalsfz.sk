@@ -4,6 +4,14 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-10-14 — typové chyby webu a dokumentácia týždenného behu
+
+- `astro check`: 41 chýb → 0. Príčina: `getStaticPaths` typovaný ako `GetStaticPaths`, takže
+  `Astro.params` mal typ `string | number`; v 9 stránkach `Astro.params as Record<string, string>`.
+  Bez vplyvu na výstup (stránky overené cez `astro dev`).
+- `docs/tyzdenna-aktualizacia.md`: produkčný beh je na Synology v stredu o 03:00, cron GitHub
+  Actions je vypnutý (dokument predtým uvádzal pondelok 03:00 UTC).
+
 ## 2026-10-14 — päta: dátum poslednej aktualizácie
 
 V päte každej stránky (`web/src/layouts/Base.astro`) pribudlo „Dátum poslednej aktualizácie“

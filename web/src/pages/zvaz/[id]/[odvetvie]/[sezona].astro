@@ -15,7 +15,7 @@ export const getStaticPaths: GetStaticPaths = () =>
     ),
   );
 
-const { id, odvetvie, sezona: sezonaUrl } = Astro.params;
+const { id, odvetvie, sezona: sezonaUrl } = Astro.params as Record<string, string>; // parametre z getStaticPaths sú vždy reťazce
 const sezona = sezonaUrl!.replace('-', '/');
 const z = getZvaz(id!);
 if (!z) throw new Error(`Zväz ${id} nie je v index.json`);

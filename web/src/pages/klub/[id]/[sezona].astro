@@ -17,7 +17,7 @@ import type { GetStaticPaths } from 'astro';
 export const getStaticPaths: GetStaticPaths = () =>
   getKlubyPaths().map((p) => ({ params: { id: p.id, sezona: p.sezonaSlug } }));
 
-const { id, sezona: sezonaUrl } = Astro.params;
+const { id, sezona: sezonaUrl } = Astro.params as Record<string, string>; // parametre z getStaticPaths sú vždy reťazce
 const sezona = sezonaUrl!.replace('-', '/');
 const klub = getKlub(id!, sezona);
 if (!klub) throw new Error(`Klub ${id} ${sezona} neexistuje`);
