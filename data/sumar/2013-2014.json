@@ -1,6 +1,6 @@
 {
  "sezona": "2013/2014",
- "generatedAt": "2026-10-14T04:15:18+02:00",
+ "generatedAt": "2026-10-14T09:06:48+02:00",
  "pocetZvazov": 42,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
@@ -37,28 +37,28 @@
   "lenMladez": 43,
   "neurcene": 0,
   "kategorie": {
-   "U10": 11,
-   "U11": 78,
-   "U17": 88,
-   "U16": 34,
-   "U14": 39,
-   "U15": 597,
-   "U12": 34,
-   "U09": 11,
-   "ADULTS": 1467,
    "U19": 628,
-   "U13": 205
+   "U09": 11,
+   "U13": 205,
+   "U11": 78,
+   "U15": 597,
+   "ADULTS": 1467,
+   "U14": 39,
+   "U10": 11,
+   "U12": 34,
+   "U17": 88,
+   "U16": 34
   },
   "pohlavie": {
-   "M": 1501,
-   "F": 40
+   "F": 40,
+   "M": 1501
   },
   "urovne": {
-   "L3": 292,
    "L1": 147,
+   "L3": 292,
+   "L4": 425,
    "L6": 259,
    "L2": 150,
-   "L4": 425,
    "L7": 571,
    "L8": 381,
    "L5": 289,
@@ -775,9 +775,45 @@
   }
  },
  "osobyKat": {
-  "hraci": {},
-  "treneri": {},
-  "realizacnyTim": {},
+  "hraci": {
+   "ADULTS": 43011,
+   "U19": 14232,
+   "U17": 2526,
+   "U16": 976,
+   "U15": 13447,
+   "U14": 972,
+   "U13": 4972,
+   "U12": 1028,
+   "U11": 1656,
+   "U10": 260,
+   "U09": 254
+  },
+  "treneri": {
+   "ADULTS": 1255,
+   "U19": 515,
+   "U17": 125,
+   "U16": 49,
+   "U15": 437,
+   "U14": 50,
+   "U13": 257,
+   "U12": 50,
+   "U11": 65,
+   "U10": 15,
+   "U09": 13
+  },
+  "realizacnyTim": {
+   "ADULTS": 42,
+   "U19": 27,
+   "U17": 5,
+   "U16": 1,
+   "U15": 26,
+   "U14": 2,
+   "U13": 11,
+   "U12": 1,
+   "U11": 2,
+   "U10": 1,
+   "U09": 1
+  },
   "rozhodcovia": {
    "ADULTS": 3232,
    "U19": 1957,
@@ -1494,8 +1530,36 @@
         "name": "Hráči",
         "children": [
          {
-          "name": "Bez kategórie",
-          "value": 7175
+          "name": "ADULTS",
+          "value": 2654
+         },
+         {
+          "name": "U12",
+          "value": 1028
+         },
+         {
+          "name": "U13",
+          "value": 1017
+         },
+         {
+          "name": "U16",
+          "value": 976
+         },
+         {
+          "name": "U14",
+          "value": 906
+         },
+         {
+          "name": "U15",
+          "value": 903
+         },
+         {
+          "name": "U19",
+          "value": 495
+         },
+         {
+          "name": "U17",
+          "value": 424
          }
         ]
        },
@@ -1503,8 +1567,36 @@
         "name": "Tréneri",
         "children": [
          {
-          "name": "Bez kategórie",
-          "value": 352
+          "name": "ADULTS",
+          "value": 126
+         },
+         {
+          "name": "U12",
+          "value": 50
+         },
+         {
+          "name": "U16",
+          "value": 49
+         },
+         {
+          "name": "U13",
+          "value": 49
+         },
+         {
+          "name": "U14",
+          "value": 46
+         },
+         {
+          "name": "U15",
+          "value": 41
+         },
+         {
+          "name": "U19",
+          "value": 22
+         },
+         {
+          "name": "U17",
+          "value": 19
          }
         ]
        },
@@ -1568,8 +1660,36 @@
         "name": "Hráči",
         "children": [
          {
-          "name": "Bez kategórie",
-          "value": 23718
+          "name": "ADULTS",
+          "value": 10548
+         },
+         {
+          "name": "U19",
+          "value": 5979
+         },
+         {
+          "name": "U15",
+          "value": 3011
+         },
+         {
+          "name": "U13",
+          "value": 2705
+         },
+         {
+          "name": "U17",
+          "value": 2102
+         },
+         {
+          "name": "U11",
+          "value": 1377
+         },
+         {
+          "name": "U10",
+          "value": 260
+         },
+         {
+          "name": "U09",
+          "value": 254
          }
         ]
        },
@@ -1577,8 +1697,36 @@
         "name": "Tréneri",
         "children": [
          {
-          "name": "Bez kategórie",
-          "value": 900
+          "name": "ADULTS",
+          "value": 442
+         },
+         {
+          "name": "U19",
+          "value": 264
+         },
+         {
+          "name": "U15",
+          "value": 160
+         },
+         {
+          "name": "U13",
+          "value": 153
+         },
+         {
+          "name": "U17",
+          "value": 106
+         },
+         {
+          "name": "U11",
+          "value": 53
+         },
+         {
+          "name": "U10",
+          "value": 15
+         },
+         {
+          "name": "U09",
+          "value": 13
          }
         ]
        },
@@ -1646,8 +1794,28 @@
         "name": "Hráči",
         "children": [
          {
-          "name": "Bez kategórie",
-          "value": 46775
+          "name": "ADULTS",
+          "value": 29809
+         },
+         {
+          "name": "U15",
+          "value": 9533
+         },
+         {
+          "name": "U19",
+          "value": 7758
+         },
+         {
+          "name": "U13",
+          "value": 1250
+         },
+         {
+          "name": "U11",
+          "value": 279
+         },
+         {
+          "name": "U14",
+          "value": 66
          }
         ]
        },
@@ -1655,8 +1823,28 @@
         "name": "Tréneri",
         "children": [
          {
-          "name": "Bez kategórie",
-          "value": 945
+          "name": "ADULTS",
+          "value": 687
+         },
+         {
+          "name": "U15",
+          "value": 236
+         },
+         {
+          "name": "U19",
+          "value": 229
+         },
+         {
+          "name": "U13",
+          "value": 55
+         },
+         {
+          "name": "U11",
+          "value": 12
+         },
+         {
+          "name": "U14",
+          "value": 4
          }
         ]
        },

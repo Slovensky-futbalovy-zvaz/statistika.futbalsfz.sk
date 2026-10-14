@@ -1,6 +1,6 @@
 {
  "sezona": "2024/2025",
- "generatedAt": "2026-10-14T04:15:19+02:00",
+ "generatedAt": "2026-10-14T09:06:49+02:00",
  "pocetZvazov": 43,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
@@ -37,29 +37,29 @@
   "lenMladez": 143,
   "neurcene": 0,
   "kategorie": {
-   "U10": 147,
+   "U19": 577,
+   "U09": 476,
+   "U13": 617,
    "U11": 817,
+   "U15": 706,
+   "ADULTS": 1274,
+   "U14": 44,
+   "U10": 147,
+   "U12": 53,
    "U17": 135,
    "U16": 16,
-   "U14": 44,
-   "U15": 706,
-   "U12": 53,
-   "U09": 476,
-   "ADULTS": 1274,
-   "U19": 577,
-   "U13": 617,
    "U08": 72,
    "U07": 17,
    "U20": 2
   },
   "pohlavie": {
-   "M": 1415,
-   "F": 56
+   "F": 56,
+   "M": 1415
   },
   "urovne": {
    "POHARE": 561,
-   "L3": 647,
    "L1": 160,
+   "L3": 647,
    "L2": 479,
    "L4": 752,
    "L9": 252,
@@ -1146,12 +1146,12 @@
  },
  "osobyKat": {
   "hraci": {
-   "ADULTS": 42324,
-   "U19": 14758,
+   "ADULTS": 43135,
+   "U19": 14826,
    "U17": 4045,
    "U16": 445,
-   "U15": 18708,
-   "U14": 1240,
+   "U15": 18717,
+   "U14": 1338,
    "U13": 15277,
    "U12": 1566,
    "U11": 14679,
@@ -1162,12 +1162,12 @@
    "U20": 37
   },
   "treneri": {
-   "ADULTS": 2287,
-   "U19": 973,
+   "ADULTS": 2337,
+   "U19": 978,
    "U17": 402,
    "U16": 57,
-   "U15": 1031,
-   "U14": 157,
+   "U15": 1033,
+   "U14": 184,
    "U13": 832,
    "U12": 135,
    "U11": 840,
@@ -1178,12 +1178,12 @@
    "U20": 1
   },
   "realizacnyTim": {
-   "ADULTS": 5434,
-   "U19": 1672,
+   "ADULTS": 5536,
+   "U19": 1677,
    "U17": 429,
    "U16": 51,
-   "U15": 1826,
-   "U14": 122,
+   "U15": 1835,
+   "U14": 139,
    "U13": 1389,
    "U12": 80,
    "U11": 1287,
@@ -1395,9 +1395,9 @@
     "lenMladez": 5,
     "neurcene": 0,
     "kategorie": {
+     "U17": 7,
      "U15": 10,
      "ADULTS": 24,
-     "U17": 7,
      "U20": 6
     },
     "pohlavie": {
@@ -2149,15 +2149,15 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 6320
+          "value": 6331
          },
          {
           "name": "U19",
-          "value": 2036
+          "value": 2104
          },
          {
           "name": "U15",
-          "value": 1870
+          "value": 1879
          },
          {
           "name": "U11",
@@ -2181,7 +2181,7 @@
          },
          {
           "name": "U14",
-          "value": 1240
+          "value": 1338
          },
          {
           "name": "U13",
@@ -2198,19 +2198,23 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 618
+          "value": 622
          },
          {
           "name": "U19",
-          "value": 256
+          "value": 261
          },
          {
           "name": "U15",
-          "value": 229
+          "value": 230
          },
          {
           "name": "U09",
           "value": 186
+         },
+         {
+          "name": "U14",
+          "value": 184
          },
          {
           "name": "U10",
@@ -2223,10 +2227,6 @@
          {
           "name": "U11",
           "value": 170
-         },
-         {
-          "name": "U14",
-          "value": 157
          },
          {
           "name": "U13",
@@ -2344,7 +2344,7 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 10362
+          "value": 11162
          },
          {
           "name": "U19",
@@ -2385,7 +2385,7 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 752
+          "value": 798
          },
          {
           "name": "U19",
@@ -2393,7 +2393,7 @@
          },
          {
           "name": "U15",
-          "value": 344
+          "value": 345
          },
          {
           "name": "U13",
@@ -2755,7 +2755,7 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 250
+          "value": 407
          },
          {
           "name": "U15",
@@ -2768,10 +2768,6 @@
          {
           "name": "U20",
           "value": 93
-         },
-         {
-          "name": "Bez kategórie",
-          "value": 81
          }
         ]
        },
@@ -2780,7 +2776,7 @@
         "children": [
          {
           "name": "ADULTS",
-          "value": 11
+          "value": 17
          },
          {
           "name": "U17",
