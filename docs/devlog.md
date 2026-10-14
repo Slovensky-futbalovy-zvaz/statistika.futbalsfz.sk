@@ -4,6 +4,20 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-10-14 — menšie úvodná stránka, /trendy a profily zväzov
+
+- Veková pyramída (`AgePyramid`) dostáva v Prehľade, profile sezóny a na stránkach klubu len
+  zobrazenú sezónu (`demoPreSezonu` v `lib/data.ts`), nie celú históriu. Stránka demografie ostáva
+  bez zmeny (prepína sezóny v ostrove).
+- `/trendy`: tabuľka indexu klubov nesie zväz priamo v riadku (odpadla mapa `klubZvaz`), odstúpené
+  kluby idú ako kompaktný reťazec namiesto poľa objektov.
+- Overené na Vercel preview na 375 px: text pyramídy na `/`, `/zvaz/bfz`, `/zvaz/bfz/2022-2023`,
+  `/zvaz/obfz-nitra/2019-2020` a `/demografia/bfz` je zhodný s produkciou (porovnanie hashom),
+  prepínanie rolí, index klubov (hľadanie, filter zväzu, stránkovanie) a filtre odstúpených klubov
+  dávajú rovnaké výsledky ako produkcia, bez horizontálneho scrollu.
+- Veľkosti HTML (bez kompresie): úvod 676 → 459 kB, `/trendy` 985 → 660 kB, `/zvaz/bfz` 402 → 268 kB,
+  `/zvaz/bfz/2022-2023` 326 → 192 kB.
+
 ## 2026-10-14 — porovnanie zväzov: graf vývoja mimo HTML
 
 - Graf „Vývoj v čase“ v porovnaní zväzov niesol dáta všetkých sezón (0,98 MB) v každej stránke
