@@ -15,7 +15,11 @@ type Row = PorovnanieRiadok & { kat?: Record<string, Record<string, number>> };
 
 interface Props {
   rows: Row[];
-  bump: BumpData;
+  /** Sezóny a zväzy grafu „Vývoj v čase“ (malé — idú priamo v HTML). */
+  bumpSezony: string[];
+  bumpZvazy: { id: string; nazov: string }[];
+  /** Statický JSON s hodnotami grafu (src/pages/data/porovnania-vyvoj/[uroven].json.ts). */
+  bumpUrl: string;
   /** Predvolene vybrané id zväzov. */
   defaultVyber?: string[];
   /** Max. počet naraz vybraných zväzov. */
@@ -64,11 +68,34 @@ const KICK: React.CSSProperties = {
 const H2: React.CSSProperties = { fontSize: 20, fontWeight: 800, margin: '2px 0 2px' };
 const P: React.CSSProperties = { fontSize: 14, color: 'var(--color-muted)', margin: '0 0 12px' };
 
-export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyber = 13 }: Props) {
+// Hodnoty grafu „Vývoj v čase“ sa sťahujú až pri priblížení k sekcii; cache na úrovni modulu.
+type BumpHodnoty = Pick<BumpData, 'hodnoty' | 'kat'>;
+const bumpCache = new Map<string, Promise<BumpHodnoty>>();
+function nacitajBump(url: string): Promise<BumpHodnoty> {
+  let p = bumpCache.get(url);
+  if (!p) {
+    p = fetch(url)
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json() as Promise<BumpHodnoty>;
+      })
+      .catch((e) => {
+        bumpCache.delete(url);
+        throw e;
+      });
+    bumpCache.set(url, p);
+  }
+  return p;
+}
+
+export default function PorovnanieZvazov({ rows, bumpSezony, bumpZvazy, bumpUrl, defaultVyber = [], maxVyber = 13 }: Props) {
   const radarEl = useRef<HTMLDivElement>(null);
   const lineEl = useRef<HTMLDivElement>(null);
   const radarCh = useRef<echarts.ECharts | null>(null);
   const lineCh = useRef<echarts.ECharts | null>(null);
+  const vyvojEl = useRef<HTMLElement>(null);
+  const [bump, setBump] = useState<BumpHodnoty | null>(null);
+  const [bumpChyba, setBumpChyba] = useState(false);
 
   const initVyber = (defaultVyber.length ? defaultVyber : rows.slice(0, 4).map((r) => r.id)).slice(0, maxVyber);
   const [vyber, setVyber] = useState<string[]>(initVyber);
@@ -83,7 +110,23 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
   const popisMetriky = (k: string, label: string) =>
     k === 'sutaze' ? METRIKA_POPIS[metrikaSutazi].label : label;
 
-  const maSezony = bump.sezony.length > 1;
+  const maSezony = bumpSezony.length > 1;
+
+  // stiahni hodnoty grafu, keď sa sekcia „Vývoj v čase“ priblíži k obrazovke
+  useEffect(() => {
+    if (!maSezony || bump || !vyvojEl.current) return;
+    const el = vyvojEl.current;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        nacitajBump(bumpUrl).then(setBump, () => setBumpChyba(true));
+      },
+      { rootMargin: '600px 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [maSezony, bump, bumpUrl]);
 
   // prítomné vekové úrovne (naprieč zväzmi)
   const pritomne = useMemo(() => {
@@ -179,7 +222,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
 
   // ---- LINE (vývoj v čase, reálne hodnoty) ----
   useEffect(() => {
-    if (!lineEl.current || !maSezony || !vybrane.length) {
+    if (!lineEl.current || !maSezony || !vybrane.length || !bump) {
       if (!vybrane.length || !maSezony) {
         lineCh.current?.dispose();
         lineCh.current = null;
@@ -207,7 +250,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
       return suma(m);
     };
     const series = vyber.map((id, i) => {
-      const z = bump.zvazy.find((x) => x.id === id);
+      const z = bumpZvazy.find((x) => x.id === id);
       return {
         name: z?.nazov ?? id,
         type: 'line' as const,
@@ -215,7 +258,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
         lineStyle: { width: 2.5 },
         itemStyle: { color: PALETTE[i % PALETTE.length] },
         connectNulls: false,
-        data: bump.sezony.map((s) => catHodnota(s, id, metric)),
+        data: bumpSezony.map((s) => catHodnota(s, id, metric)),
       };
     });
     lineCh.current.setOption(
@@ -227,7 +270,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
           valueFormatter: (v: number | null) => (v == null ? '—' : fixed ? fmt1(v) : fmt(v)),
         },
         grid: { left: 52, right: 16, top: 92, bottom: 46 },
-        xAxis: { type: 'category', data: bump.sezony, axisLabel: { fontSize: 10, rotate: 45 } },
+        xAxis: { type: 'category', data: bumpSezony, axisLabel: { fontSize: 10, rotate: 45 } },
         yAxis: { type: 'value', axisLabel: { formatter: (v: number) => (fixed ? fmt1(v) : fmt(v)) } },
         series,
       },
@@ -237,7 +280,7 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
     const ro = new ResizeObserver(() => lineCh.current?.resize());
     ro.observe(lineEl.current);
     return () => ro.disconnect();
-  }, [vyber, vybrane.length, metric, subset, bump, maSezony, metrikaSutazi]);
+  }, [vyber, vybrane.length, metric, subset, bump, bumpSezony, bumpZvazy, maSezony, metrikaSutazi]);
 
   // ak je zvolená kategória a metrika nemá vekový rozpad, prepni na Zápasy
   useEffect(() => {
@@ -383,11 +426,11 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
 
       {/* Vývoj v čase (reálne hodnoty) */}
       {maSezony && (
-        <section style={CARD}>
+        <section ref={vyvojEl} style={CARD}>
           <div style={KICK}>Vývoj v čase</div>
           <h2 style={H2}>Vývoj v čase</h2>
           <p style={P}>
-            Reálne hodnoty vybraných zväzov naprieč {bump.sezony.length} sezónami. Vyber metriku{subset ? ' (filter vekovej kategórie z priameho porovnania sa uplatní)' : ''}:
+            Reálne hodnoty vybraných zväzov naprieč {bumpSezony.length} sezónami. Vyber metriku{subset ? ' (filter vekovej kategórie z priameho porovnania sa uplatní)' : ''}:
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
             {CAS_METRIKY.map((m) => {
@@ -421,8 +464,15 @@ export default function PorovnanieZvazov({ rows, bump, defaultVyber = [], maxVyb
               );
             })}
           </div>
-          {vybrane.length ? (
-            <div ref={lineEl} style={{ width: '100%', height: 400 }} role="img" aria-label="Vývoj vybraných zväzov v čase" />
+          {vybrane.length && bumpChyba ? (
+            <p style={{ fontSize: 14, color: 'var(--color-muted)' }}>Dáta grafu sa nepodarilo načítať. Obnov stránku.</p>
+          ) : vybrane.length ? (
+            <div style={{ position: 'relative' }}>
+              {!bump && (
+                <p style={{ position: 'absolute', top: 8, left: 0, fontSize: 14, color: 'var(--color-muted)', margin: 0 }}>Načítavam vývoj v čase…</p>
+              )}
+              <div ref={lineEl} style={{ width: '100%', height: 400 }} role="img" aria-label="Vývoj vybraných zväzov v čase" />
+            </div>
           ) : (
             <p style={{ fontSize: 14, color: 'var(--color-muted)' }}>Vyber aspoň jeden zväz.</p>
           )}

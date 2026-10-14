@@ -9,9 +9,11 @@ interface Props {
   bump?: BumpData;
   bumpLabel?: string; // ponechané pre kompatibilitu (nevyužité)
   bumpVyberDefault?: string[];
+  /** Úroveň dát grafu vývoja ('obfz' | 'rfz') — hodnoty sa sťahujú z /data/porovnania-vyvoj/{uroven}.json. */
+  bumpUroven?: string;
   urovne?: UrovneVCase;
 }
-const { porovnanie, bump, bumpVyberDefault, urovne } = Astro.props;
+const { porovnanie, bump, bumpVyberDefault, bumpUroven, urovne } = Astro.props;
 // `sutazeUroven` slúži len sekcii úrovní (dostáva ho v kompaktnom tvare cez `urovne`).
 // V riadkoch tabuľky a radaru by sa serializoval dvakrát a zbytočne nafukoval stránku.
 const rows = porovnanie.zvazy.map(({ sutazeUroven: _s, ...r }) => r);
@@ -49,8 +51,15 @@ const CARD_STYLE = 'background:var(--color-card); border-radius:16px; padding:18
 
 <div data-porovnanie data-rows={JSON.stringify(rows)} data-stlpce={JSON.stringify(stlpce)}>
   {
-    bump && bump.zvazy.length ? (
-      <PorovnanieZvazov client:visible rows={rows} bump={bump} defaultVyber={defaultVyber} />
+    bump && bump.zvazy.length && bumpUroven ? (
+      <PorovnanieZvazov
+        client:visible
+        rows={rows}
+        bumpSezony={bump.sezony}
+        bumpZvazy={bump.zvazy}
+        bumpUrl={`/data/porovnania-vyvoj/${bumpUroven}.json`}
+        defaultVyber={defaultVyber}
+      />
     ) : null
   }
 
