@@ -2,11 +2,11 @@
   "zvaz": "pfz-poprad",
   "sezona": "2021/2022",
   "sportSector": "futbal",
-  "generatedAt": "2026-08-08T21:06:08+02:00",
+  "generatedAt": "2026-10-06T15:20:12+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 0.994,
-    "osobyPoznamka": "Súčet osôb po kategóriách prevyšuje počet unikátnych osôb (viacnásobné pôsobenie).",
+    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb.",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
     "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
@@ -307,15 +307,36 @@
   "osoby": {
     "hraci": {
       "unikatni": 1798,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 891,
+        "U19": 208,
+        "U15": 315,
+        "U13": 42,
+        "U11": 367,
+        "U10": 84
+      }
     },
     "treneri": {
       "unikatni": 45,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 30,
+        "U19": 5,
+        "U15": 9,
+        "U13": 2,
+        "U11": 17,
+        "U10": 6
+      }
     },
     "realizacnyTim": {
       "unikatni": 126,
-      "poKategorii": {}
+      "poKategorii": {
+        "ADULTS": 85,
+        "U19": 22,
+        "U15": 32,
+        "U13": 3,
+        "U11": 28,
+        "U10": 3
+      }
     },
     "rozhodcovia": {
       "unikatni": 38,
@@ -354,8 +375,8 @@
       "U10": 7,
       "U11": 31,
       "U15": 13,
-      "ADULTS": 31,
       "U19": 11,
+      "ADULTS": 31,
       "U13": 3
     },
     "pohlavie": {
@@ -364,8 +385,8 @@
     "urovne": {
       "L2": 31,
       "L3": 16,
-      "L6": 14,
       "L4": 11,
+      "L6": 14,
       "L7": 17
     },
     "domaci": 33,
