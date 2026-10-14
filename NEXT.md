@@ -15,11 +15,6 @@ zmeny čísel v [CHANGELOG.md](CHANGELOG.md), priebeh práce v [docs/devlog.md](
   VsFZ (266 zápasov) — zvážiť zaradenie do `vylucene_sutaze.json`. Pohlavie mimo číselníka
   nechýba nikde.
 
-## Otvorené
-- Vetvy `fix/osoby-kategorie-pokrytie` a `feat/osoby-skupiny` sú zlúčené v `main` — zmazať na pokyn.
-- Súbory `_tmp_*` v koreni repa (17. – 19. 8., v `.gitignore`) — pomocné skripty staršej
-  session k NAS/deploy kľúču; zmazať po kontrole.
-
 ## Poznámky k ručným prepočtom
 - Historické sezóny 2021/2022+ púšťať s `--hint appSpace_1_closed_1_competition._id_1_competitionPart._id_1_round.dateFrom_-1_startDate_-1`
   (bez neho Atlas volí zlý plán a beh visí). Offline agregáty potrebujú **absolútne** `--out`.

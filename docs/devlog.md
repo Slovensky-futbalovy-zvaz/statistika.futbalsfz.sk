@@ -4,6 +4,12 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-10-14 — upratovanie vetiev
+
+Zmazané zlúčené vetvy `fix/osoby-kategorie-pokrytie` a `feat/osoby-skupiny` (lokálne aj na
+GitHube) a súbory `_tmp_*` z 17. – 19. 8. (pomocné skripty k NAS a deploy kľúču, bez tajomstiev,
+s cestami na starú polohu repa).
+
 ## 2026-10-14 — typové chyby webu a dokumentácia týždenného behu
 
 - `astro check`: 41 chýb → 0. Príčina: `getStaticPaths` typovaný ako `GetStaticPaths`, takže
