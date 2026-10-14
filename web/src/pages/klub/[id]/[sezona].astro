@@ -11,7 +11,7 @@ import { getIndexKlubu, getVekKlubuRows } from '../../../lib/trendy';
 import { poslednaKompletnaSlug } from '../../../lib/data';
 import { fmt, delta } from '../../../lib/format';
 import { GROUPS } from '../../../lib/palette';
-import { getKlubyPaths, getKlub, getKlubSezony, getKlubSezonyPaged, getKluby, getZvaz, odvetviaKlubu, ODVETVIE_LABEL, getDemografiaKlub, demoTrend } from '../../../lib/data';
+import { getKlubyPaths, getKlub, getKlubSezony, getKlubSezonyPaged, getKluby, getZvaz, odvetviaKlubu, ODVETVIE_LABEL, getDemografiaKlub, demoTrend, demoPreSezonu } from '../../../lib/data';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () =>
@@ -231,7 +231,7 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
         <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Veková štruktúra</div>
         <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Veková pyramída klubu</h2>
         <p class="text-sm text-muted mb-3">Registrované osoby klubu podľa veku a pohlavia v sezóne {sezona}. Prepni rolu.</p>
-        <AgePyramid client:visible demo={demoKlub} sezona={sezona} />
+        <AgePyramid client:visible demo={demoPreSezonu(demoKlub, sezona)} sezona={sezona} />
       </section>
     )
   }

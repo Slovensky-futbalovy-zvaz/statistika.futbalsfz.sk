@@ -15,7 +15,7 @@ import ZvazPicker from './ZvazPicker.tsx';
 import AgePyramid from './AgePyramid.tsx';
 import RfzObfzMapa from './RfzObfzMapa.tsx';
 import { fmt, delta } from '../lib/format';
-import { sezonyOdvetvia, odvetviaZvazu, ODVETVIE_LABEL, getZvazy, getDemografia, klubyZvazu, getObfzMapaPreRfz, getRfzMapa } from '../lib/data';
+import { sezonyOdvetvia, odvetviaZvazu, ODVETVIE_LABEL, getZvazy, getDemografia, demoPreSezonu, klubyZvazu, getObfzMapaPreRfz, getRfzMapa } from '../lib/data';
 import { GROUPS, REGION, RFZ_LABEL, RFZ_OF_GEONAME } from '../lib/palette';
 import type { Profil, ZvazIndex } from '../lib/data';
 
@@ -323,7 +323,7 @@ const sezonyOdv = sezonyOdvetvia(z, odvetvie);
       <div class="text-xs font-bold uppercase tracking-[0.14em] text-sfz-blue">Veková štruktúra</div>
       <h2 class="font-extrabold" style="font-size:20px; margin:2px 0 2px;">Veková pyramída</h2>
       <p class="text-sm text-muted mb-3">Registrované osoby podľa veku a pohlavia v sezóne {sezona}. Prepni rolu.</p>
-      <AgePyramid client:visible demo={demo} sezona={sezona} />
+      <AgePyramid client:visible demo={demoPreSezonu(demo, sezona)} sezona={sezona} />
     </section>
   )
 }

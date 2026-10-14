@@ -34,7 +34,10 @@ interface Props {
   priemer: number;
   spolu: number;
   zvazy: OdstupenyZvaz[];
-  kluby: OdstupenyKlub[];
+  /** Menoslov zbalený do reťazca (jeden klub na riadok, polia `|`):
+   *  `n|s|sez|z|l|p|zi|d|a|h|v` — `l` prázdne = bez dospelých, `v` 1/0. Pole objektov by
+   *  serializácia islandu nafúkla na dvojnásobok. */
+  kluby: string;
 }
 
 const CERVENA = '#ec1c24';
@@ -71,7 +74,21 @@ const STITOK: Record<string, { bg: string; fg: string }> = {
  * Zväz je ten, v ktorého súťažiach klub odohral najviac zápasov v poslednej sezóne. Prebiehajúca
  * sezóna sa nehodnotí (rozbeh súťaží je v poznámke nad sekciou Zanikanie klubov).
  */
-export default function OdstupeneKluby({ sezony, poSezonach, priemer, spolu, zvazy, kluby }: Props) {
+export default function OdstupeneKluby({ sezony, poSezonach, priemer, spolu, zvazy, kluby: klubyRaw }: Props) {
+  const kluby = useMemo<OdstupenyKlub[]>(
+    () =>
+      klubyRaw
+        ? klubyRaw.split('\n').map((r) => {
+            const p = r.split('|');
+            return {
+              n: p[0], s: p[1], sez: p[2], z: p[3], l: p[4] === '' ? null : Number(p[4]),
+              p: Number(p[5]), zi: Number(p[6]), d: Number(p[7]), a: Number(p[8]), h: Number(p[9]),
+              v: p[10] === '1',
+            };
+          })
+        : [],
+    [klubyRaw],
+  );
   const [vsetkyZvazy, setVsetkyZvazy] = useState(false);
   const [fSezona, setFSezona] = useState('');
   const [fZvaz, setFZvaz] = useState('');

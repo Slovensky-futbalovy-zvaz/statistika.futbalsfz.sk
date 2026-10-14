@@ -15,15 +15,13 @@ const ZLOZKY_NAZOV: Record<'A' | 'B' | 'C' | 'D' | 'E', string> = {
 interface Props {
   /**
    * Riadky zbalené do reťazca — jeden klub na riadok, polia oddelené `|`:
-   * `slug|nazov|index|stav|A|B|C|D|E|skupiny|deti|druzstva|sezon|podielU21`.
-   * `E` je prázdne, keď klub nemá družstvo dospelých.
+   * `slug|nazov|index|stav|A|B|C|D|E|skupiny|deti|druzstva|sezon|podielU21|zvaz`.
+   * `E` je prázdne, keď klub nemá družstvo dospelých; `zvaz` je slug zväzu (na filter).
    */
   rows: string;
   sezona: string;
   /** Mapa slug zväzu → názov, na filter. */
   zvazy?: { id: string; nazov: string }[];
-  /** Mapa slug klubu → slug zväzu. */
-  klubZvaz?: Record<string, string>;
 }
 
 interface Riadok {
@@ -34,6 +32,7 @@ interface Riadok {
   A: number; B: number; C: number; D: number; E: number | null;
   skupiny: number; deti: number; druzstva: number; sezon: number;
   u21: number | null;
+  zvaz: string;
 }
 
 const STRANA = 15;
@@ -43,7 +42,7 @@ const STRANA = 15;
  * skupiny). Nad tabuľkou stojí vysvetlenie, čo index nemeria — je to povinná
  * súčasť každého zobrazenia, nie odkaz v pätičke.
  */
-export default function IndexTabulka({ rows, sezona, zvazy, klubZvaz }: Props) {
+export default function IndexTabulka({ rows, sezona, zvazy }: Props) {
   const [hladanie, setHladanie] = useState('');
   const [zvaz, setZvaz] = useState('');
   const [strana, setStrana] = useState(0);
@@ -59,7 +58,7 @@ export default function IndexTabulka({ rows, sezona, zvazy, klubZvaz }: Props) {
         A: Number(p[4]), B: Number(p[5]), C: Number(p[6]), D: Number(p[7]),
         E: p[8] === '' ? null : Number(p[8]),
         skupiny: Number(p[9]), deti: Number(p[10]), druzstva: Number(p[11]),
-        sezon: Number(p[12]), u21: p[13] === '' ? null : Number(p[13]),
+        sezon: Number(p[12]), u21: p[13] === '' ? null : Number(p[13]), zvaz: p[14] ?? '',
       };
     });
   }, [rows]);
@@ -67,11 +66,11 @@ export default function IndexTabulka({ rows, sezona, zvazy, klubZvaz }: Props) {
   const filtrovane = useMemo(() => {
     const q = hladanie.trim().toLowerCase();
     return data.filter((r) => {
-      if (zvaz && klubZvaz?.[r.slug] !== zvaz) return false;
+      if (zvaz && r.zvaz !== zvaz) return false;
       if (q && !r.nazov.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [data, hladanie, zvaz, klubZvaz]);
+  }, [data, hladanie, zvaz]);
 
   const strán = Math.max(1, Math.ceil(filtrovane.length / STRANA));
   const s = Math.min(strana, strán - 1);
