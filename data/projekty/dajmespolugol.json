@@ -2,7 +2,7 @@
  "projekt": "dajmespolugol",
  "nazov": "Dajme spolu gól",
  "popis": "Grassroots program SFZ pre najmenších — zapájanie detí z materských a základných škôl do futbalu.",
- "generatedAt": "2026-10-07T04:12:37+02:00",
+ "generatedAt": "2026-10-14T04:15:25+02:00",
  "methodologyFlags": {
   "zdroj": "sutaze.competitions.parts[].teams[].squad.athletes[] (nie matches)",
   "poznamka": "Deti = počet athletes v súpiskách; školy = unikátne školy (orgProfileName), fallback organizácie tímov; tímy = počet družstiev/skupín. Bez zápasov."
@@ -883,15 +883,20 @@
    }
   },
   "2026/2027": {
-   "deti": 205,
-   "skoly": 25,
-   "timy": 56,
+   "deti": 312,
+   "skoly": 34,
+   "timy": 78,
    "pohlavie": {
-    "M": 113,
-    "F": 92,
+    "M": 175,
+    "F": 137,
     "N": 0
    },
    "vek": {
+    "0": {
+     "M": 0,
+     "F": 1,
+     "N": 0
+    },
     "2": {
      "M": 1,
      "F": 2,
@@ -903,28 +908,28 @@
      "N": 0
     },
     "4": {
-     "M": 17,
-     "F": 12,
+     "M": 23,
+     "F": 15,
      "N": 0
     },
     "5": {
-     "M": 42,
-     "F": 38,
+     "M": 64,
+     "F": 60,
      "N": 0
     },
     "6": {
-     "M": 26,
-     "F": 21,
+     "M": 48,
+     "F": 35,
      "N": 0
     },
     "7": {
-     "M": 16,
-     "F": 10,
+     "M": 28,
+     "F": 12,
      "N": 0
     },
     "8": {
      "M": 4,
-     "F": 0,
+     "F": 1,
      "N": 0
     },
     "9": {
@@ -937,9 +942,14 @@
      "F": 0,
      "N": 0
     },
-    "40": {
+    "35": {
      "M": 0,
      "F": 1,
+     "N": 0
+    },
+    "40": {
+     "M": 0,
+     "F": 2,
      "N": 0
     },
     "105": {
