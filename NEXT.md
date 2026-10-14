@@ -5,10 +5,10 @@
 zmeny čísel v [CHANGELOG.md](CHANGELOG.md), priebeh práce v [docs/devlog.md](docs/devlog.md).
 
 ## Čaká na zdroj (Sportnet)
-- **Vysokoškolská liga vo futsale 2026/2027** — časti súťaže nemajú `rules.category` ani
-  `rules.gender` (2025/2026 mali „Dospelí“ / „M“). Futsalový krok preto končí chybou
-  (`neznáma veková kategória NEZNAMA`) a týždenný beh je od 7. 10. „ČIASTOČNÝ“ (aj 14. 10.).
-  Nahlasuje Ján Letko v Sportnete; ETL sa neobchádza.
+- **Vysokoškolská liga vo futsale 2026/2027** — **opravené v Sportnete** (overené 14. 10.):
+  obe časti (Skupina A, B) majú `rules.category` = `ADULTS` a `rules.gender` = `M`, všetkých
+  16 zápasov odkazuje na existujúce časti. Týždenné behy 7. a 14. 10. boli kvôli tomu
+  „ČIASTOČNÉ“; overiť, že beh 21. 10. prebehne celý, potom bod zmazať.
 - **Historické zápasy bez kategórie súťaže** — 40 častí súťaží, 518 uzavretých zápasov
   (2016/2017 – 2023/2024), zoznam na nahlásenie odovzdaný 14. 10. (XLSX). 25 častí nemá
   `rules.category`, 15 častí v `competitions` už neexistuje. Najväčšie: Krajská futbalová liga
