@@ -1,5 +1,10 @@
 # Týždenná aktualizácia štatistík
 
+> **Aktuálny stav (od 8/2026):** týždenný beh produkcie beží na **Synology NAS každú stredu
+> o 03:00** (miestneho času) — postup a nastavenie v [synology-tyzdenna.md](synology-tyzdenna.md).
+> Cron v `.github/workflows/tyzdenna.yml` je vypnutý; workflow ostáva na ručné spustenie.
+> Tento dokument opisuje pôvodný variant cez GitHub Actions a lokálne odladenie.
+
 Automatická aktualizácia dát cez **GitHub Actions**. Prepočítava sa len **aktuálna
 sezóna** (historické sú nemenné); po prepočte sa zmeny commitnú a pushnú → Vercel
 automaticky nasadí.
@@ -14,8 +19,8 @@ GitHub Actions (cron, pondelok)  →  etl/tyzdenna.py  →  zmeny v data/  →  
   (`run.py`), futsal, demografiu (`demografia.py`), kluby (`kluby.py` — index sa
   prestavia skenom disku, takže história a neaktívne kluby ostávajú), a odvodené
   agregáty `porovnania.py`, `sumar.py`, `projekty.py`.
-- **Workflow:** `.github/workflows/tyzdenna.yml` — cron `0 3 * * 1` (pondelok 03:00
-  UTC) + manuálne spustenie. Beh trvá rádovo minúty (nie hodiny ako plná história).
+- **Workflow:** `.github/workflows/tyzdenna.yml` — pôvodne cron `0 3 * * 1` (pondelok 03:00
+  UTC), dnes **vypnutý**; ostáva manuálne spustenie. Beh trvá rádovo minúty (nie hodiny ako plná história).
 - **Sezóna** sa určí z dátumu (1.7.–30.6.); dá sa prepísať vstupom `sezona` pri
   manuálnom spustení.
 
@@ -34,7 +39,8 @@ GitHub Actions (cron, pondelok)  →  etl/tyzdenna.py  →  zmeny v data/  →  
 
 ## Spustenie
 
-- **Automaticky:** každý pondelok o 03:00 UTC.
+- **Automaticky:** každú stredu o 03:00 na Synology NAS ([synology-tyzdenna.md](synology-tyzdenna.md));
+  pôvodný cron GitHub Actions (pondelok 03:00 UTC) je vypnutý.
 - **Ručne:** *Actions → „Týždenná aktualizácia štatistík" → Run workflow*
   (voliteľne zadaj sezónu, napr. `2025/2026`).
 - **Lokálne (odladenie):**
