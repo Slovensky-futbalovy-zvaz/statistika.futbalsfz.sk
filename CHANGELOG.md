@@ -4,6 +4,19 @@ Zmeny portálu štatistika.futbalsfz.sk, ktoré menia **čísla alebo ich význa
 aktualizácie dát sa sem nepíšu (sú v histórii gitu ako „Tyzdenna aktualizacia statistik“).
 Formát podľa [Keep a Changelog](https://keepachangelog.com/sk/1.1.0/).
 
+## [2026-10-14] — Plán B
+
+### Pridané
+- **Unikátne osoby po vekových skupinách** (`osoby.<rola>.poSkupinach`: Dospelí, Dorast,
+  Žiaci, Prípravky) a **v mládeži spolu** (`osoby.<rola>.mladez`). Osoba, ktorá hrala súťaže
+  viacerých vekových úrovní v rámci skupiny (napr. U13 aj U15), sa v skupine ráta raz.
+  Profily zväzov, klubov a porovnanie klubov zobrazujú skupiny namiesto súčtu úrovní.
+
+### Zmenené
+- **Index klubu, zložka B „deti v mládeži“** počíta unikátne deti (`hraci.mladez`), nie súčet
+  po vekových úrovniach. 2025/2026: 168 z 1 410 klubov klesá o 3–7 bodov, ostatné bez zmeny;
+  priemer 58,8 → 58,3, medián 66 → 65. Všetky sezóny prepočítané.
+
 ## [2026-10-14]
 
 ### Opravené
