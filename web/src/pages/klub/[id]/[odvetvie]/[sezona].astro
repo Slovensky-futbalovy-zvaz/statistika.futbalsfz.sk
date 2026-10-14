@@ -41,7 +41,8 @@ const idxSez = sezony.indexOf(sezona);
 const predoslaSezona = idxSez > 0 ? sezony[idxSez - 1] : undefined;
 const predosly = predoslaSezona ? getKlubProfilOdvetvie(id!, predoslaSezona, odvetvie!) : undefined;
 
-const klubyItems = getKluby().map((k) => ({ id: k.id, nazov: k.nazov, zvazNazov: k.zvazNazov, uroven: k.uroven, sezony: k.sezony }));
+// Názov pre tlačidlo výberu klubu; zoznam všetkých klubov si KlubPicker stiahne až pri otvorení.
+const aktualnyNazov = getKluby().find((k) => k.id === id)?.nazov ?? klub.nazov;
 const zvaz = klub.zvaz ? getZvaz(klub.zvaz) : undefined;
 const demoKlub = getDemografiaKlub(id!);
 
@@ -139,7 +140,7 @@ const CS = 'background:var(--color-card); border-radius:16px; padding:18px; box-
     </div>
     <div>
       <div class="text-xs font-semibold uppercase tracking-wider text-muted mb-1 text-right">Vybrať iný klub</div>
-      <KlubPicker client:load kluby={klubyItems} aktualne={id} />
+      <KlubPicker client:load aktualne={id} aktualnyNazov={aktualnyNazov} />
     </div>
   </header>
 

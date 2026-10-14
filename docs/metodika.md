@@ -698,6 +698,8 @@ tu sa meria klub a súťažou sa len označuje. Text je uvedený priamo pod graf
 - Kategória zápasu pre rozhodcov/delegátov: `$arrayElemAt: ["$teams.ageCategory", 0]`.
 - **Dvojité počítanie:** tá istá osoba pôsobí vo viacerých kategóriách/roliach; súčet po kategóriách je vyšší než počet unikátnych osôb. Publikujú sa **oba pohľady s explicitnou poznámkou** — inak to vyzerá ako chyba.
 - Nižšie kategórie (prípravky, mladší žiaci) často nemajú rozhodcov/delegátov v systéme — reálny stav, nie chyba dát.
+- Karty a góly v prípravkách (U07–U11) sa zobrazujú bez obmedzenia a bez výhrady, hoci zápisy prípraviek
+  bývajú neúplné (rozhodnutie Ján Letko, 14. 10. 2026).
 - **Veková úroveň osôb v profile = veková úroveň SÚŤAŽE** (oprava a spresnenie 6. 10. 2026). Hráč, tréner
   a realizačný tím dostanú úroveň podľa družstva v nominácii (`nominations.teamId` → `teams.ageCategory`);
   ak ju družstvo nemá (historické sezóny pred 2024/2025, časť súťaží aj dnes), podľa časti súťaže

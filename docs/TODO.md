@@ -48,13 +48,6 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
 
 ## Dáta a ETL
 
-- [ ] **Filter neregulárnych súťaží do `etl/trendy.py` a `etl/demografia_klub.py`.**
-  `etl/kluby.py` už vylučuje súťaže mimo slovenských zväzov a neregulárne súťaže
-  (`etl/config/vylucene_sutaze.json`), ale tieto dva skripty ten filter ešte nemajú — pri
-  najbližšom behu znova vyrobia `data/vek-klub/*.json` a `data/demografia-klub/*.json` aj pre
-  vylúčené subjekty (školy, výbery zväzov, zahraničné kluby). Artefakty sú dnes odložené
-  v `data/_archiv-klubov/` (lokálne, v `.gitignore`) a `etl/index_klubu.py` má poistku, ale
-  správne riešenie je doplniť rovnaký filter do oboch skriptov.
 - [ ] **Osoby × pohlavie × veková úroveň v profiloch zväzov.** Dnes je pill filter pohlavia len
   na sunburste súťaží; pre osoby chýba, lebo pohlavie osoby sa musí odvodiť z gender časti
   súťaže. Vyžaduje re-beh histórie.
@@ -69,26 +62,20 @@ sa zapisujú do [metodiky](metodika.md) a [ADR](adr/).
 
 ## Frontend
 
-- [ ] **Payload stránok.** Úvodná stránka 628 kB HTML, `/trendy` 600 kB, profil klubu 1,17 MB
-  (gzip to zráža na desatinu, ale je čo orezávať). Dominuje `KpiTrend` a sunburst dáta starých
-  sezón. Pri `porovnania/obfz/*` (1 470 kB) dominuje `bump` payload — pomohol by rovnaký trik
-  ako v `lib/urovne.ts`: poslať matice ako reťazec s indexmi namiesto objektov s názvami metrík.
-- [ ] **Tree-shaking ECharts.** Bundluje sa celý (~1 MB) — používa ho desať komponentov, dá sa
-  prejsť na `echarts/core` a importovať len potrebné moduly.
+- [ ] **Payload stránok** (merané 14. 10. 2026, nekomprimované HTML / gzip). Profil klubu je
+  vyriešený (zoznam klubov pre výber sa sťahuje z `/data/kluby-zoznam.json`, ~1,18 MB → ~0,1 MB).
+  Ostáva: `porovnania/obfz/*` 1,71 MB / 175 kB (ostrov `PorovnanieZvazov` 1,45 MB — pomohol by
+  trik z `lib/urovne.ts`: matice ako reťazec s indexmi namiesto objektov s názvami metrík),
+  `/trendy` 0,99 MB / 165 kB (`IndexTabulka` 277 kB, `OdstupeneKluby` 258 kB), úvod 0,69 MB /
+  131 kB (`AgePyramid` 242 kB, mapa 175 kB). ECharts je už rozdelený cez `echarts/core`.
 - [ ] **SeasonPicker na Prehľade** nemení sezónu reaktívne (Prehľad je server-rendered pre
   poslednú kompletnú sezónu). Plná reaktivita alebo permalink je možné vylepšenie.
-- [ ] **Karty a góly za prípravky (U07–U11)** — pokrytie je slabé; rozhodnúť, či ich
-  nezobrazovať alebo publikovať s výhradou.
 
 ## Trendy — čo sa dá pridať
 
 Stránka `/trendy` dnes obsahuje vek hráčov v súťažiach dospelých, rebríček starnúcich klubov
 a Index klubu (graf + celoslovenská tabuľka). Ďalšie kandidátne trendy:
 
-- [ ] **Zanikanie klubov ako blok na portáli.** `etl/zanikanie.py` už publikuje
-  `data/zanikanie.json` (odchody po sezónach, miery odchodu podľa stavu mládeže, prechody
-  stavov, príchody). Dnes to je len podklad pre analýzu a sociálny post — na portáli by to
-  čitateľ mohol overiť sám.
 - [ ] Družstvá v čase
 - [ ] Návštevnosť v čase
 - [ ] Karty v čase

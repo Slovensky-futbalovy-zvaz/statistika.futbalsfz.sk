@@ -4,6 +4,17 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-10-14 — výber klubu bez zoznamu v HTML, revízia TODO
+
+- Každá stránka klubu (2 200+ klubov × sezóny) niesla v HTML celý zoznam klubov pre výber
+  (`KlubPicker`, 1,08 MB z 1,18 MB stránky). Zoznam je teraz statický `/data/kluby-zoznam.json`
+  (kompaktné riadky `[id, názov, zväz, posledná sezóna]`, ~190 kB), ktorý si výber stiahne až
+  pri otvorení (pri prejdení myšou vopred). Overené cez `astro dev` na 375 px vrátane prechodu
+  na iný klub; `astro check` 0 chýb.
+- TODO bolo zastarané: filter neregulárnych súťaží v `trendy.py`/`demografia_klub.py` je od
+  19. 8., sekcia Zánik klubov na /trendy od 15. 8., ECharts už ide cez `echarts/core`.
+  Karty a góly prípraviek sa zobrazujú bez výhrady — rozhodnutie zapísané do metodiky.
+
 ## 2026-10-14 — upratovanie vetiev
 
 Zmazané zlúčené vetvy `fix/osoby-kategorie-pokrytie` a `feat/osoby-skupiny` (lokálne aj na
