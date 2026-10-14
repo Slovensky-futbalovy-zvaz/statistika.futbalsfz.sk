@@ -2,11 +2,11 @@
   "zvaz": "ofz-orava",
   "sezona": "2016/2017",
   "sportSector": "futbal",
-  "generatedAt": "2026-10-06T11:59:35+02:00",
+  "generatedAt": "2026-10-14T10:31:06+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
-    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb.",
+    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb. poSkupinach = unikátne osoby vo vekovej kategórii (Dospelí/Dorast/Žiaci/Prípravky; v rámci kategórie raz), mladez = unikátne osoby naprieč celou mládežou (etl/config/vekove_skupiny.json).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
     "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
@@ -293,7 +293,14 @@
         "U15": 439,
         "U13": 225,
         "U11": 359
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 974,
+        "Dorast": 408,
+        "Žiaci": 594,
+        "Prípravky": 359
+      },
+      "mladez": 1253
     },
     "treneri": {
       "unikatni": 55,
@@ -303,7 +310,14 @@
         "U15": 17,
         "U13": 8,
         "U11": 12
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 30,
+        "Dorast": 10,
+        "Žiaci": 20,
+        "Prípravky": 12
+      },
+      "mladez": 36
     },
     "realizacnyTim": {
       "unikatni": 1,
@@ -313,7 +327,14 @@
         "U15": 1,
         "U13": 1,
         "U11": 1
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 1,
+        "Dorast": 1,
+        "Žiaci": 1,
+        "Prípravky": 1
+      },
+      "mladez": 1
     },
     "rozhodcovia": {
       "unikatni": 56,
@@ -323,15 +344,26 @@
         "U15": 43,
         "U13": 18,
         "U11": 30
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 53,
+        "Dorast": 43,
+        "Žiaci": 44,
+        "Prípravky": 30
+      },
+      "mladez": 49
     },
     "delegati": {
       "unikatni": 0,
-      "poKategorii": {}
+      "poKategorii": {},
+      "poSkupinach": {},
+      "mladez": 0
     },
     "personal": {
       "unikatni": 0,
-      "poKategorii": {}
+      "poKategorii": {},
+      "poSkupinach": {},
+      "mladez": 0
     }
   },
   "kluby": {
@@ -352,8 +384,8 @@
       "M": 46
     },
     "urovne": {
-      "L8": 16,
       "L4": 23,
+      "L8": 16,
       "L6": 14,
       "L7": 24,
       "L9": 8

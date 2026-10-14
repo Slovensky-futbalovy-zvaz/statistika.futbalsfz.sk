@@ -2,11 +2,11 @@
   "zvaz": "sofz-spisska-nova-ves",
   "sezona": "2020/2021",
   "sportSector": "futbal",
-  "generatedAt": "2026-10-06T12:42:54+02:00",
+  "generatedAt": "2026-10-14T11:19:07+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 0.993,
-    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb.",
+    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb. poSkupinach = unikátne osoby vo vekovej kategórii (Dospelí/Dorast/Žiaci/Prípravky; v rámci kategórie raz), mladez = unikátne osoby naprieč celou mládežou (etl/config/vekove_skupiny.json).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
     "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
@@ -228,7 +228,14 @@
         "U19": 236,
         "U15": 375,
         "U11": 42
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 620,
+        "Dorast": 236,
+        "Žiaci": 375,
+        "Prípravky": 42
+      },
+      "mladez": 635
     },
     "treneri": {
       "unikatni": 29,
@@ -237,7 +244,14 @@
         "U19": 8,
         "U15": 11,
         "U11": 2
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 24,
+        "Dorast": 8,
+        "Žiaci": 11,
+        "Prípravky": 2
+      },
+      "mladez": 15
     },
     "realizacnyTim": {
       "unikatni": 172,
@@ -246,7 +260,14 @@
         "U19": 49,
         "U15": 77,
         "U11": 5
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 122,
+        "Dorast": 49,
+        "Žiaci": 77,
+        "Prípravky": 5
+      },
+      "mladez": 107
     },
     "rozhodcovia": {
       "unikatni": 29,
@@ -255,13 +276,24 @@
         "U19": 21,
         "U15": 23,
         "U11": 1
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 26,
+        "Dorast": 21,
+        "Žiaci": 23,
+        "Prípravky": 1
+      },
+      "mladez": 25
     },
     "delegati": {
       "unikatni": 5,
       "poKategorii": {
         "ADULTS": 5
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 5
+      },
+      "mladez": 0
     },
     "personal": {
       "unikatni": 147,
@@ -270,7 +302,14 @@
         "U19": 38,
         "U15": 46,
         "U11": 4
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 111,
+        "Dorast": 38,
+        "Žiaci": 46,
+        "Prípravky": 4
+      },
+      "mladez": 71
     }
   },
   "kluby": {

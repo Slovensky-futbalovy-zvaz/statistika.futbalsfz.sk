@@ -2,11 +2,11 @@
   "zvaz": "lfz-liptov",
   "sezona": "2013/2014",
   "sportSector": "futbal",
-  "generatedAt": "2026-10-06T11:26:24+02:00",
+  "generatedAt": "2026-10-14T09:49:12+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
-    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb.",
+    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb. poSkupinach = unikátne osoby vo vekovej kategórii (Dospelí/Dorast/Žiaci/Prípravky; v rámci kategórie raz), mladez = unikátne osoby naprieč celou mládežou (etl/config/vekove_skupiny.json).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
     "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
@@ -205,7 +205,13 @@
         "ADULTS": 1240,
         "U19": 486,
         "U15": 521
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 1240,
+        "Dorast": 486,
+        "Žiaci": 521
+      },
+      "mladez": 937
     },
     "treneri": {
       "unikatni": 61,
@@ -213,7 +219,13 @@
         "ADULTS": 37,
         "U19": 22,
         "U15": 23
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 37,
+        "Dorast": 22,
+        "Žiaci": 23
+      },
+      "mladez": 38
     },
     "realizacnyTim": {
       "unikatni": 1,
@@ -221,7 +233,13 @@
         "ADULTS": 1,
         "U19": 1,
         "U15": 1
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 1,
+        "Dorast": 1,
+        "Žiaci": 1
+      },
+      "mladez": 1
     },
     "rozhodcovia": {
       "unikatni": 79,
@@ -229,7 +247,13 @@
         "ADULTS": 79,
         "U19": 67,
         "U15": 68
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 79,
+        "Dorast": 67,
+        "Žiaci": 68
+      },
+      "mladez": 73
     },
     "delegati": {
       "unikatni": 13,
@@ -237,11 +261,19 @@
         "ADULTS": 13,
         "U19": 2,
         "U15": 2
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 13,
+        "Dorast": 2,
+        "Žiaci": 2
+      },
+      "mladez": 3
     },
     "personal": {
       "unikatni": 0,
-      "poKategorii": {}
+      "poKategorii": {},
+      "poSkupinach": {},
+      "mladez": 0
     }
   },
   "kluby": {

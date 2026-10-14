@@ -2,11 +2,11 @@
   "zvaz": "ssfz",
   "sezona": "2017/2018",
   "sportSector": "futbal",
-  "generatedAt": "2026-10-06T12:06:25+02:00",
+  "generatedAt": "2026-10-14T10:36:43+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 0.997,
-    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb.",
+    "osobyPoznamka": "Osoby podľa vekovej úrovne SÚŤAŽE, v ktorej pôsobili (teams.ageCategory, inak competitions.parts[].rules.category) — nie podľa veku osoby a nie počet štartov. Osoba pôsobiaca v súťažiach viacerých vekových úrovní (napr. ostaršený hráč) sa započíta v každej z nich, preto súčet po úrovniach môže prevyšovať počet unikátnych osôb. poSkupinach = unikátne osoby vo vekovej kategórii (Dospelí/Dorast/Žiaci/Prípravky; v rámci kategórie raz), mladez = unikátne osoby naprieč celou mládežou (etl/config/vekove_skupiny.json).",
     "pohlaviePoznamka": "Pohlavie z competitions.parts[].rules.gender cez competitionPart._id; NEURCENE = časť bez vyplneného pohlavia. KPI a kategorie zostávajú súčtom všetkých pohlaví. Organizácia s mužským aj ženským družstvom sa v družstvách počíta v oboch pohlaviach.",
     "kontumovanePoznamka": "kpi.kontumovane = zápasy so statusom KONTUMOVANY (__issfMatchStatus, fallback state); kpi.odstupene = ODSTUPENE_DRUZSTVO. Ich administratívna časť (bez zápisu = bez udalostí a bez divákov) je v *Admin a JE odpočítaná z kpi.zapasy (reálne odohrané). kpi.uzatvorene = pôvodná báza closed:true.",
     "urovenPoznamka": "Úroveň súťaže z competitions.level (nenastaviteľné pole kopírované z ISSF, nižší level = vyššia súťaž). Skupiny: 1.–9. liga, „10. liga a nižšie“, „Poháre a turnaje“ (level ≥ 90) a „Neurčená úroveň“ (level nevyplnený — 2–4 % súťaží, takmer výlučne reprezentačné a školské turnaje). Základný kľúč: úroveň sa vždy vzťahuje ku konkrétnej vekovej úrovni, nie k vekovej kategórii — každá veková úroveň má vlastnú pyramídu a „1. liga“ dospelých, U19 a U13 sú tri rôzne súťaže, ktoré sa nesčítavajú. Hĺbka pyramídy sa líši podľa vekovej úrovne aj regiónu (štruktúra súťaží, nie chyba dát). Blok urovne je disjunktný (súťaž má práve jednu úroveň) a sedí na kpi.sutaze; blok sutazeUroven je rez úroveň × veková úroveň × pohlavie, kde súčet môže kpi.sutaze prevýšiť.",
@@ -403,7 +403,13 @@
         "U15": 1792,
         "U13": 1507,
         "U12": 48
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 2735,
+        "Dorast": 2788,
+        "Žiaci": 2946
+      },
+      "mladez": 5571
     },
     "treneri": {
       "unikatni": 475,
@@ -414,7 +420,13 @@
         "U15": 136,
         "U13": 130,
         "U12": 4
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 234,
+        "Dorast": 200,
+        "Žiaci": 173
+      },
+      "mladez": 326
     },
     "realizacnyTim": {
       "unikatni": 842,
@@ -425,7 +437,13 @@
         "U15": 242,
         "U13": 226,
         "U12": 2
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 492,
+        "Dorast": 427,
+        "Žiaci": 277
+      },
+      "mladez": 570
     },
     "rozhodcovia": {
       "unikatni": 292,
@@ -435,14 +453,25 @@
         "U17": 182,
         "U15": 218,
         "U13": 218
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 202,
+        "Dorast": 278,
+        "Žiaci": 218
+      },
+      "mladez": 283
     },
     "delegati": {
       "unikatni": 71,
       "poKategorii": {
         "ADULTS": 70,
         "U19": 59
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 70,
+        "Dorast": 59
+      },
+      "mladez": 59
     },
     "personal": {
       "unikatni": 835,
@@ -453,7 +482,13 @@
         "U15": 289,
         "U13": 249,
         "U12": 2
-      }
+      },
+      "poSkupinach": {
+        "Dospelí": 468,
+        "Dorast": 517,
+        "Žiaci": 307
+      },
+      "mladez": 621
     }
   },
   "kluby": {
@@ -468,16 +503,16 @@
       "ADULTS": 101,
       "U13": 64,
       "U15": 69,
-      "U17": 15,
-      "U12": 6
+      "U12": 6,
+      "U17": 15
     },
     "pohlavie": {
       "M": 147,
       "F": 17
     },
     "urovne": {
-      "L4": 76,
       "L5": 56,
+      "L4": 76,
       "L2": 43,
       "L1": 12,
       "L3": 70
