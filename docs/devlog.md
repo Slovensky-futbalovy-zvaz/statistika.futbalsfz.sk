@@ -4,6 +4,13 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-10-14 — päta: dátum poslednej aktualizácie
+
+V päte každej stránky (`web/src/layouts/Base.astro`) pribudlo „Dátum poslednej aktualizácie“
+z `data/index.json` → `generatedAt` (čas v Bratislave, formát „14. 10. 2026, 14:58“) a veta
+„Portál sa aktualizuje každú stredu ráno.“ (týždenný beh na Synology, streda 03:00).
+Overené lokálne cez `astro dev` na 375 px.
+
 ## 2026-10-14 — oprava osôb, Plán B, nahlásenie do Sportnetu, presun repa
 
 **Podnet:** týždenný výpis zo Synology (6. 10.) s anomáliami — súčet osôb po kategóriách

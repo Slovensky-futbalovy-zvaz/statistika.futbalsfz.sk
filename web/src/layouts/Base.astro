@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Header from '../components/Header.astro';
+import { getIndex } from '../lib/data';
 
 interface Props {
   title?: string;
@@ -52,6 +53,18 @@ const siteLd = {
   publisher: { '@type': 'SportsOrganization', name: 'Slovenský futbalový zväz' },
 };
 const allLd = [orgLd, siteLd, ...jsonLd];
+// Dátum poslednej aktualizácie dát (data/index.json → generatedAt), čas v Bratislave.
+const aktualizovane = (() => {
+  const d = new Date(getIndex().generatedAt);
+  if (Number.isNaN(d.getTime())) return null;
+  const c = Object.fromEntries(
+    new Intl.DateTimeFormat('sk-SK', {
+      timeZone: 'Europe/Bratislava', day: 'numeric', month: 'numeric', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+    }).formatToParts(d).map((x) => [x.type, x.value]),
+  );
+  return { text: `${c.day}. ${c.month}. ${c.year}, ${c.hour}:${c.minute}`, iso: d.toISOString() };
+})();
 ---
 
 <!doctype html>
@@ -130,7 +143,8 @@ const allLd = [orgLd, siteLd, ...jsonLd];
     <footer class="border-t border-line mt-12">
       <div class="mx-auto text-sm text-muted" style="max-width:1240px; padding:24px;">
         © Slovenský futbalový zväz · Zdroj dát: platforma <a href="https://sportnet.online" target="_blank" rel="noopener" class="text-sfz-blue hover:underline">sportnet.online</a>.<br />
-        Autor štatistík: <a href="mailto:jan.letko@futbalsfz.sk" class="text-sfz-blue hover:underline">Ján Letko</a> · 2026 · za know-how ďakujeme <a href="https://ltk.solutions" target="_blank" rel="noopener" class="text-sfz-blue hover:underline">LTK Solutions, s.r.o.</a>
+        Autor štatistík: <a href="mailto:jan.letko@futbalsfz.sk" class="text-sfz-blue hover:underline">Ján Letko</a> · 2026 · za know-how ďakujeme <a href="https://ltk.solutions" target="_blank" rel="noopener" class="text-sfz-blue hover:underline">LTK Solutions, s.r.o.</a><br />
+        {aktualizovane && <>Dátum poslednej aktualizácie: <time datetime={aktualizovane.iso}>{aktualizovane.text}</time> · </>}Portál sa aktualizuje každú stredu ráno.
       </div>
     </footer>
     <!-- Cookie consent banner (GA) -->
