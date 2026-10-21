@@ -9,7 +9,11 @@ zmeny čísel v [CHANGELOG.md](CHANGELOG.md), priebeh práce v [docs/devlog.md](
   `rules.category` = `ADULTS` a `rules.gender` = `M` (beh 21. 10. už prešiel celý), ale časti
   súťaže nemajú priradenú **úroveň súťaže**, takže ich 9 zápasov sezóny 2026/2027 spadá do
   `NEURCENE` mimo ligovej pyramídy. Tie isté zápasy zároveň nemajú vyplnených divákov a samy
-  stiahli pokrytie divákov futsalu SFZ na 76,3 %. Nahlásiť do Sportnetu doplnenie úrovne.
+  stiahli pokrytie divákov futsalu SFZ na 76,3 %. Podľa dokumentácie Súťaží je `level`
+  kopírovaný z ISSF a nedá sa nastaviť v admine, pričom táto súťaž vznikla priamo v Sportnete
+  (`ownerPPO` `futsalslovakia.sk`) — draft nahlásenia v
+  [docs/sportnet-nahlasenie-vs-liga-uroven.md](docs/sportnet-nahlasenie-vs-liga-uroven.md),
+  čaká na odoslanie.
 - **Historické zápasy bez kategórie súťaže** — 40 častí súťaží, 518 uzavretých zápasov
   (2016/2017 – 2023/2024), zoznam na nahlásenie odovzdaný 14. 10. (XLSX). 25 častí nemá
   `rules.category`, 15 častí v `competitions` už neexistuje. Pohlavie mimo číselníka nechýba nikde.
