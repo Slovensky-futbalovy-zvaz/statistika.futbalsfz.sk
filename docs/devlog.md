@@ -4,6 +4,28 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-10-21 — týždenný beh: prvý úplný beh po oprave VŠ ligy vo futsale
+
+- Automatický beh na Synology (03:00–04:01) prepočítal jedinú sezónu so zmeneným odtlačkom —
+  2026/2027 (rozdiel oproti minulému týždňu: +8 300 zápasov, +39 895 skóre, +598 786 divákov,
+  +208 kontumovaných). 43/43 zväzov OK, **0 anomálií** v dávkovom behu, commit `c77b4b3ddd`
+  pushnutý do main, Vercel deployment READY, na webe sedí dátum aktualizácie 21. 10. 2026, 03:19.
+- **Vysokoškolská liga vo futsale je vyriešená.** Behy 7. a 14. 10. boli kvôli nej „ČIASTOČNÉ“;
+  tento beh prešiel celý (`DOKONCENE bez chyb`). Do futsalu SFZ 2026/2027 pribudlo 6 zápasov
+  (32 → 38) a dva nové kluby (fakultné družstvá UK a STU).
+- Jediné upozornenie behu: futsal SFZ 2026/2027 — pokrytie divákov 76,3 % (prah 80 %).
+  Nie je to chyba ETL. Presne 29 z 38 zápasov má vyplnených divákov a tých 9 bez údaja je
+  práve 9 zápasov v úrovni `NEURCENE` — teda zápasy VŠ ligy. Oprava v Sportnete doplnila
+  `rules.category` a `rules.gender`, ale **nie úroveň súťaže**, takže VŠ liga visí mimo pyramídy
+  a zároveň si neeviduje divákov. Pri 38 zápasoch jeden protokol hýbe pokrytím o 2,6 bodu,
+  prah 80 % je kalibrovaný na plné sezóny.
+- Kontext k pokrytiu divákov vo futsale naprieč sezónami: 2014/15–2021/22 100 %, 2023/24 99,6 %,
+  2024/25 97,6 %, 2025/26 90,9 %. Medzisezónny pokles stojí za sledovanie — ak 2026/2027
+  skončí pod 90 %, osloviť futsalový úsek.
+- Lokálne repo bolo pred pullom 1 commit pozadu a nieslo 2 124 nezacommitovaných artefaktov
+  v `data/` z testovacieho behu 15. 10. (`index-klubu` 2 059, `porovnania` 45, `sumar` 15).
+  Po dohode zahodené (`git checkout -- data/`), Synology beh ich prepísal novšími.
+
 ## 2026-10-14 — menšie úvodná stránka, /trendy a profily zväzov
 
 - Veková pyramída (`AgePyramid`) dostáva v Prehľade, profile sezóny a na stránkach klubu len

@@ -1,14 +1,15 @@
 # NEXT — čo je rozrobené a čo nasleduje
 
-**Stav k 14. 10. 2026.** Krátkodobý zoznam krokov. Dlhodobé otvorené úlohy sú v
+**Stav k 21. 10. 2026.** Krátkodobý zoznam krokov. Dlhodobé otvorené úlohy sú v
 [docs/TODO.md](docs/TODO.md), rozhodnutia v [metodike](docs/metodika.md) a [ADR](docs/adr/),
 zmeny čísel v [CHANGELOG.md](CHANGELOG.md), priebeh práce v [docs/devlog.md](docs/devlog.md).
 
 ## Čaká na zdroj (Sportnet)
-- **Vysokoškolská liga vo futsale 2026/2027** — **opravené v Sportnete** (overené 14. 10.):
-  obe časti (Skupina A, B) majú `rules.category` = `ADULTS` a `rules.gender` = `M`, všetkých
-  16 zápasov odkazuje na existujúce časti. Týždenné behy 7. a 14. 10. boli kvôli tomu
-  „ČIASTOČNÉ“; overiť, že beh 21. 10. prebehne celý, potom bod zmazať.
+- **Vysokoškolská liga vo futsale — chýba úroveň súťaže.** Oprava z 14. 10. doplnila
+  `rules.category` = `ADULTS` a `rules.gender` = `M` (beh 21. 10. už prešiel celý), ale časti
+  súťaže nemajú priradenú **úroveň súťaže**, takže ich 9 zápasov sezóny 2026/2027 spadá do
+  `NEURCENE` mimo ligovej pyramídy. Tie isté zápasy zároveň nemajú vyplnených divákov a samy
+  stiahli pokrytie divákov futsalu SFZ na 76,3 %. Nahlásiť do Sportnetu doplnenie úrovne.
 - **Historické zápasy bez kategórie súťaže** — 40 častí súťaží, 518 uzavretých zápasov
   (2016/2017 – 2023/2024), zoznam na nahlásenie odovzdaný 14. 10. (XLSX). 25 častí nemá
   `rules.category`, 15 častí v `competitions` už neexistuje. Pohlavie mimo číselníka nechýba nikde.
