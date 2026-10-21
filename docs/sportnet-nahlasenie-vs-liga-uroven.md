@@ -68,7 +68,7 @@ jan.letko@futbalsfz.sk
 
 ## Stav
 
-- [ ] Odoslané (dátum):
+- [x] Odoslané: 21. 10. 2026
 - [ ] Odpoveď Sportnet:
 - [ ] `level` doplnený, overené v DB:
 - [ ] Prepočítané 2026/2027, bod zmazaný z NEXT.md:
