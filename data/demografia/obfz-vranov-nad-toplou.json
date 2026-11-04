@@ -2,7 +2,7 @@
   "zvaz": "obfz-vranov-nad-toplou",
   "sportSector": "futbal",
   "unikatne": false,
-  "generatedAt": "2026-10-28T04:38:08+02:00",
+  "generatedAt": "2026-11-04T04:27:13+02:00",
   "methodologyFlags": {
     "zdroj": "sportnet.users (birthdate, sex); osoby zo sutaze.matches (nominations + managers, len closed:true), roly z etl/config/roly.json",
     "poznamka": "Výhradne agregované počty (GDPR); bez prahu minimálnej veľkosti (O5). Osoba sa počíta raz na rolu a sezónu; tá istá osoba sa môže vyskytovať vo viacerých rolách aj sezónach. Kľúč N = pohlavie nevyplnené."
@@ -4871,14 +4871,17 @@
     },
     "2026/2027": {
       "hraci": {
-        "osoby": 735,
-        "sUdajmi": 735,
+        "osoby": 757,
+        "sUdajmi": 757,
         "bezUdajov": 0,
         "roky": {
           "1972": {
             "M": 1
           },
           "1974": {
+            "M": 1
+          },
+          "1976": {
             "M": 1
           },
           "1977": {
@@ -4989,7 +4992,7 @@
           },
           "2014": {
             "F": 1,
-            "M": 63
+            "M": 64
           },
           "2015": {
             "F": 2,
@@ -4997,18 +5000,19 @@
           },
           "2016": {
             "F": 2,
-            "M": 41
+            "M": 44
           },
           "2017": {
             "F": 4,
-            "M": 25
+            "M": 30
           },
           "2018": {
             "F": 1,
-            "M": 12
+            "M": 17
           },
           "2019": {
-            "M": 10
+            "F": 1,
+            "M": 16
           },
           "2020": {
             "M": 2
@@ -5119,8 +5123,8 @@
         }
       },
       "personal": {
-        "osoby": 65,
-        "sUdajmi": 65,
+        "osoby": 69,
+        "sUdajmi": 69,
         "bezUdajov": 0,
         "roky": {
           "1946": {
@@ -5134,6 +5138,9 @@
           },
           "1952": {
             "M": 1
+          },
+          "1955": {
+            "F": 1
           },
           "1959": {
             "M": 1
@@ -5157,13 +5164,16 @@
             "M": 1
           },
           "1970": {
-            "M": 1
+            "M": 2
           },
           "1971": {
             "F": 1
           },
           "1972": {
             "M": 2
+          },
+          "1973": {
+            "M": 1
           },
           "1974": {
             "M": 4
@@ -5181,7 +5191,7 @@
             "M": 2
           },
           "1979": {
-            "M": 2
+            "M": 3
           },
           "1980": {
             "M": 1

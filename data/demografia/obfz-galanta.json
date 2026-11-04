@@ -2,7 +2,7 @@
   "zvaz": "obfz-galanta",
   "sportSector": "futbal",
   "unikatne": false,
-  "generatedAt": "2026-10-28T04:32:01+02:00",
+  "generatedAt": "2026-11-04T04:22:51+02:00",
   "methodologyFlags": {
     "zdroj": "sportnet.users (birthdate, sex); osoby zo sutaze.matches (nominations + managers, len closed:true), roly z etl/config/roly.json",
     "poznamka": "Výhradne agregované počty (GDPR); bez prahu minimálnej veľkosti (O5). Osoba sa počíta raz na rolu a sezónu; tá istá osoba sa môže vyskytovať vo viacerých rolách aj sezónach. Kľúč N = pohlavie nevyplnené."
@@ -6091,12 +6091,15 @@
     },
     "2026/2027": {
       "hraci": {
-        "osoby": 1379,
-        "sUdajmi": 1379,
+        "osoby": 1383,
+        "sUdajmi": 1383,
         "bezUdajov": 0,
         "roky": {
           "1966": {
             "M": 2
+          },
+          "1973": {
+            "M": 1
           },
           "1974": {
             "M": 1
@@ -6150,7 +6153,7 @@
             "M": 16
           },
           "1993": {
-            "M": 8
+            "M": 9
           },
           "1994": {
             "M": 14
@@ -6171,7 +6174,7 @@
             "M": 24
           },
           "2000": {
-            "M": 27
+            "M": 28
           },
           "2001": {
             "M": 19
@@ -6212,7 +6215,7 @@
           },
           "2013": {
             "F": 5,
-            "M": 54
+            "M": 55
           },
           "2014": {
             "F": 2,
@@ -6343,8 +6346,8 @@
         }
       },
       "rozhodcovia": {
-        "osoby": 56,
-        "sUdajmi": 56,
+        "osoby": 62,
+        "sUdajmi": 62,
         "bezUdajov": 0,
         "roky": {
           "1956": {
@@ -6354,7 +6357,7 @@
             "M": 1
           },
           "1976": {
-            "M": 1
+            "M": 2
           },
           "1977": {
             "M": 1
@@ -6374,6 +6377,9 @@
           "1983": {
             "M": 1
           },
+          "1984": {
+            "M": 1
+          },
           "1985": {
             "M": 1
           },
@@ -6385,6 +6391,9 @@
           },
           "1988": {
             "M": 2
+          },
+          "1989": {
+            "M": 1
           },
           "1990": {
             "M": 2
@@ -6436,10 +6445,11 @@
             "M": 2
           },
           "2008": {
-            "M": 1
+            "M": 2
           },
           "2009": {
-            "F": 2
+            "F": 2,
+            "M": 2
           },
           "2010": {
             "M": 2
@@ -6481,8 +6491,8 @@
         }
       },
       "personal": {
-        "osoby": 105,
-        "sUdajmi": 105,
+        "osoby": 108,
+        "sUdajmi": 108,
         "bezUdajov": 0,
         "roky": {
           "1954": {
@@ -6504,7 +6514,7 @@
             "M": 2
           },
           "1964": {
-            "M": 1
+            "M": 2
           },
           "1965": {
             "F": 1,
@@ -6524,14 +6534,14 @@
             "M": 2
           },
           "1973": {
-            "M": 2
+            "M": 3
           },
           "1974": {
             "M": 4
           },
           "1975": {
             "F": 1,
-            "M": 2
+            "M": 3
           },
           "1976": {
             "M": 3
