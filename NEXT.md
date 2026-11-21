@@ -26,7 +26,7 @@ zmeny čísel v [CHANGELOG.md](CHANGELOG.md), priebeh práce v [docs/devlog.md](
 - Demografia veľkých zväzov (ZsFZ, SsFZ, VsFZ, BFZ) v historických sezónach potrebuje
   `--max-time-ms 600000` — s predvoleným limitom 2023/2024 padla na `MaxTimeMSExpired`.
   `etl/tyzdenna.py --sezona` ho nepodáva (ani `--hint` pre `beh.py`) — ručný prepočet histórie
-  preto cez vlastný spúšťač (vzor: devlog 21. 11.).
+  preto cez vlastný spúšťač — kroky a poradie v devlogu 21. 11. (dočasný spúšťač bol po behu zmazaný).
 - Spúšťače na Macu písať pre **bash 3.2**: pri `set -u` prázdne pole `"${A[@]}"` padá na
   „unbound variable“ — použiť `${A[@]+"${A[@]}"}`.
 - Push veľkých dátových commitov: `git -c http.postBuffer=1048576000 push` (inak HTTP 408).

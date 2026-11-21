@@ -4,6 +4,18 @@ Zmeny portálu štatistika.futbalsfz.sk, ktoré menia **čísla alebo ich význa
 aktualizácie dát sa sem nepíšu (sú v histórii gitu ako „Tyzdenna aktualizacia statistik“).
 Formát podľa [Keep a Changelog](https://keepachangelog.com/sk/1.1.0/).
 
+## [2026-11-21]
+
+### Zmenené
+- **Historické sezóny 2016/2017 – 2023/2024 prepočítané po opravách v Sportnete** (doplnené
+  vekové kategórie častí súťaží, obnovené zmazané skupiny). Zápasy bez vekovej kategórie
+  (`kategorie.NEZNAMA`) klesli z 518 na 256; Krajská futbalová liga VsFZ (zimná liga dospelých)
+  sa už zaraďuje medzi **Dospelých** (2019/2020: 164 zápasov, 2022/2023: 92, 2023/2024: 6).
+  Počty zápasov, gólov a klubov sa nemenia; mení sa rozpad po vekových úrovniach a celoslovenský
+  počet unikátnych družstiev (2016/2017 +7, 2019/2020 −9, 2022/2023 −39, 2023/2024 −8).
+- **Vysokoškolská liga vo futsale 2026/2027** je po doplnení úrovne v Sportnete v skupine
+  „Poháre a turnaje“ (level 90) namiesto „Neurčená úroveň“ (od týždenného behu 18. 11.).
+
 ## [2026-10-14] — Plán B
 
 ### Pridané

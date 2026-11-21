@@ -52,6 +52,9 @@ v `Claude outputs/sutaze-bez-kategorie-po-prepocte-2026-11-21.xlsx`, mimo gitu):
 3. **Vylúčené turnaje:** 43 zápasov (RT U14/U15 SFZ 2021/2022–2023/2024, `test-prihlasovanie`
    VsFZ) — časti bez kategórie v súťažiach z `vylucene_sutaze.json`; nízka priorita.
 
+Zoznam odoslaný Michalovi (Bart.sk) 21. 11. večer. Dočasné skripty `_tmp_*` a logy behu zmazané
+(so súhlasom); v `Claude outputs/` zostali len oba XLSX podklady pre Sportnet.
+
 ## 2026-11-21 — kontrola nahlásení v Sportnete: čo sa opravilo a čo zostáva
 
 Po vybavení VŠ ligy (záznam nižšie) kontrola zvyšných dvoch položiek zo sekcie „Čaká na zdroj“.
