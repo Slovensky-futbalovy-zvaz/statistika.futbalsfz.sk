@@ -10,7 +10,8 @@ zmeny čísel v [CHANGELOG.md](CHANGELOG.md), priebeh práce v [docs/devlog.md](
   má `rules.category` = `Dospelí` namiesto `ADULTS`. ETL to normalizuje (`KAT_NORMALIZACIA`
   v `etl/run.py`), na čísla to vplyv nemá — nahlásené Michalovi 21. 11. spolu s potvrdením opravy.
 - **Zápasy bez vekovej kategórie — po prepočte histórie 21. 11. zostáva 256 z 518.** Zoznam pre
-  Sportnet: `Claude outputs/sutaze-bez-kategorie-po-prepocte-2026-11-21.xlsx` (lokálne, mimo gitu).
+  Sportnet: `Claude outputs/sutaze-bez-kategorie-po-prepocte-2026-11-21.xlsx` (lokálne, mimo gitu),
+  **odoslané Michalovi (Bart.sk) 21. 11. 2026** — čaká sa na odpoveď.
   (1) **Na opravu:** `V.liga Podtatranská dospelí VsFZ` 2018/2019 — časť
   `5e300d0094f2303d560e7dfc` bez `rules.category`, 182 zápasov. (2) **Osirelé zápasy:** 31 zápasov
   v 12 častiach, ktoré v `competitions` neexistujú (LFZ U08 2022/2023 14, ObFZ LC 3+3, TFZ 3,
