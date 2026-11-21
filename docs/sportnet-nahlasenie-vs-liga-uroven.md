@@ -69,6 +69,16 @@ jan.letko@futbalsfz.sk
 ## Stav
 
 - [x] Odoslané: 21. 10. 2026
-- [ ] Odpoveď Sportnet:
-- [ ] `level` doplnený, overené v DB:
-- [ ] Prepočítané 2026/2027, bod zmazaný z NEXT.md:
+- [x] Odpoveď Sportnet: 21. 11. 2026 (Michal) — doplnený `level` 90 a `sortvalue` 100;
+      súťaž nie je z ISSF, takže synchronizácia hodnoty neprepíše
+- [x] `level` doplnený, overené v DB: 21. 11. 2026
+- [x] Prepočítané 2026/2027: týždenný beh 18. 11. (`0d1d437e0d`) — súťaž sa presunula
+      z `NEURCENE` do `POHARE`, 16 uzavretých zápasov; bod upravený v NEXT.md 21. 11.
+- [x] Diváci doplnení: všetkých 16 uzavretých zápasov má `protocol.audience`
+      (Skupina A 420, Skupina B 270, spolu 690); pokrytie futsalu SFZ 100 %
+- [x] Odpoveď odoslaná 21. 11. 2026 — potvrdenie + upozornenie, že novo pridaná tretia časť
+      „Bratislava/ Finálová časť“ má `rules.category` = `Dospelí` namiesto `ADULTS`
+
+**Poznámka k úrovni 90.** V našej metodike je level ≥ 90 skupina „Poháre a turnaje“, teda mimo
+ligovej pyramídy (`etl/pipelines.uroven_kod`); ostatné futsalové súťaže SFZ majú `level` 1.
+Ponechané tak — VŠ liga nie je postupová súťaž (rozhodnutie Ján Letko, 21. 11. 2026).

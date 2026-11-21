@@ -4,6 +4,42 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-11-21 — kontrola nahlásení v Sportnete: čo sa opravilo a čo zostáva
+
+Po vybavení VŠ ligy (záznam nižšie) kontrola zvyšných dvoch položiek zo sekcie „Čaká na zdroj“.
+Dotazy do `competitions` a `matches` 21. 11., bez prepočtu.
+
+**Krajská futbalová liga VsFZ — vyriešená, u nás čaká prepočet.** Kolega v Sportnete doplnil
+kategóriu aj obnovil zmazané skupiny vo všetkých troch sezónach:
+
+| Sezóna | Súťaž `_id` | Stav |
+|---|---|---|
+| 2019/2020 | `5dfb359da9dde0751ec88c85` | 10 častí `ADULTS`, 164 uzavretých zápasov sedí na existujúcich častiach |
+| 2022/2023 | `634d0261e0a43db9a46b3041` | 10 častí `ADULTS` vrátane 8 obnovených skupín (KFL Spišská N. Ves, Michalovce I/II, Janigová I/II, Moldava I/II), 156 uzavretých zápasov sedí |
+| 2023/2024 | `65361e86ba9790c412e33f23` | 9 častí `ADULTS` |
+
+Žiadne osirelé zápasy. **Zostáva ručne prepočítať tieto tri sezóny** (`--hint`) + kluby
+a agregáty — týždenný beh históriu neprepočítava (fingerprint), takže dáta portálu stále
+ukazujú tieto zápasy ako `NEZNAMA`.
+
+**Historické zápasy bez kategórie — z 25 častí zostali 4.** Zo zoznamu odovzdaného 14. 10.
+(40 častí / 518 uzavretých zápasov) je v `competitions` bez `rules.category` už len:
+
+- `V.liga Podtatranská dospelí VsFZ` 2018/2019 — súťaž `5e300d0032c839b23cbc45eb`, časť
+  `5e300d0094f2303d560e7dfc`, **182 uzavretých zápasov**, súťaž má jedinú časť. Jediná
+  otvorená položka s reálnym dopadom — na nahlásenie Sportnetu.
+- `MFLKNM` 2019/2020 (2 časti) a `Mestská ligy v Kysuckom Novom Meste` 2020/2021 (1 časť),
+  oboje `futsalslovakia.sk` — **0 uzavretých zápasov**, bez dopadu na čísla.
+
+Zvyšných ~73 zápasov zo 518 pripadá na časti, ktoré v `competitions` neexistujú (SFZ
+reprezentačné turnaje vo `vylucene_sutaze.json`, LFZ Liptov 2022/2023, drobnosti po ObFZ).
+Presný zoznam sa dá zostaviť až po prepočte histórie — skenovanie `matches` cez
+`competitionPart.name` bez indexu padá na timeout.
+
+**Metodická poznámka:** dáta portálu pre historické sezóny sú z posledného plného behu
+(14. 10.), takže opravy pri zdroji sa v nich objavia až po ručnom prepočte. Čísla `NEZNAMA`
+v `data/zvaz/*/*.json` (spolu 518 uzavretých) preto neodrážajú súčasný stav Sportnetu.
+
 ## 2026-11-21 — VŠ liga vo futsale: úroveň doplnená, vec uzavretá
 
 - **Zdroj opravený.** Michal (Sportnet) doplnil súťaži Vysokoškolská liga vo futsale
