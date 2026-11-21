@@ -4,6 +4,54 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-11-21 — ručný prepočet histórie po opravách v Sportnete (518 → 256 zápasov bez kategórie)
+
+**Rozsah:** 7 sezón, v ktorých boli zápasy bez vekovej kategórie (`NEZNAMA`): 2016/2017,
+2017/2018, 2018/2019, 2019/2020, 2021/2022, 2022/2023, 2023/2024 — zväzy, futsal, demografia,
+kluby, vek hráčov, demografia klubov; potom raz offline agregáty (počet klubov, Index klubu,
+zánik, porovnania, družstvá a demografia SR, súhrn, odstúpené kluby, projekty). Odtlačky sa pri
+ručnom behu nepotvrdzujú (rovnako ako `tyzdenna.py --sezona`).
+
+**Ako:** dočasný spúšťač `_tmp_prepocet_historie.sh` (v `.gitignore`) zrkadlí kroky
+`etl/tyzdenna.py`, ale pre 2021/2022+ podáva `beh.py --hint` a veľkým zväzom demografiu
+s `--max-time-ms 600000` — `tyzdenna.py --sezona` nepodáva ani jedno. Beh na Macu
+13:07–17:08 (s `caffeinate`), čistý čas ~3,5 h.
+
+**Čo nevyšlo a prečo:**
+- Demografia ZsFZ, SsFZ a VsFZ 2023/2024 padla na `MaxTimeMSExpired` (predvolený limit,
+  agregácia `pids-hraci`). Dobehnutá s limitom 600 s; 2022/2023 a staršie s ním prešli bez chyby.
+- Prvý beh spadol o 14:38 pri prechode na 2019/2020: macOS bash 3.2 pri `set -u` neznesie
+  prázdne pole `"${H[@]}"` (sezóny bez `--hint`). Opravené na `${H[@]+"${H[@]}"}`, zvyšok
+  dobehol od 15:14. Prvé tri sezóny sa neopakovali.
+
+**Výsledok — zápasy bez vekovej kategórie (uzavreté):**
+
+| | pred | po |
+|---|---|---|
+| VsFZ 2019/2020 (Krajská futbalová liga) | 165 | 1 |
+| VsFZ 2022/2023 (KFL) | 92 | 0 |
+| VsFZ 2023/2024 (KFL) | 6 | 0 |
+| VsFZ 2018/2019 (V. liga Podtatranská) | 182 | 182 |
+| ostatné (SFZ turnaje, LFZ, ObFZ) | 73 | 73 |
+| **spolu** | **518 (18 súborov)** | **256 (16 súborov)** |
+
+Počty zápasov, klubov a gólov sa nezmenili (oprava kategórie ich nemení); mení sa rozpad po
+vekových úrovniach a celoslovenský počet unikátnych družstiev (2016/2017 +7, 2019/2020 −9,
+2022/2023 −39, 2023/2024 −8 — družstvá KFL sa zlúčili s dospelými družstvami tých istých klubov).
+Zmenených 17 237 súborov v `data/`, žiadny nový ani zmazaný.
+
+**Zvyšných 256 zápasov podľa príčiny** (dotaz do DB, logika ako ETL; zoznam pre Sportnet
+v `Claude outputs/sutaze-bez-kategorie-po-prepocte-2026-11-21.xlsx`, mimo gitu):
+1. **Časť bez `rules.category` — na opravu:** `V.liga Podtatranská dospelí VsFZ` 2018/2019,
+   súťaž `5e300d0032c839b23cbc45eb`, časť `5e300d0094f2303d560e7dfc`, 182 zápasov.
+2. **Osirelé zápasy:** 31 zápasov v 12 častiach, ktoré v `competitions` neexistujú — LFZ U08
+   2022/2023 (14), ObFZ Lučenec 2017/2018 a 2022/2023 (3 + 3), TFZ U13 2018/2019 (3), ďalších
+   8 po jednom zápase. **7 z 12 častí má ObjectId zo 14.–21. 6. 2024**, hoci patria k sezónam
+   2016/2017–2021/2022 — zrejme hromadná operácia v Sportnete, pri ktorej časti vznikli a neskôr
+   zmizli. Ranný odhad „~70 osirelých“ bol nadhodnotený — zahŕňal aj bod 3.
+3. **Vylúčené turnaje:** 43 zápasov (RT U14/U15 SFZ 2021/2022–2023/2024, `test-prihlasovanie`
+   VsFZ) — časti bez kategórie v súťažiach z `vylucene_sutaze.json`; nízka priorita.
+
 ## 2026-11-21 — kontrola nahlásení v Sportnete: čo sa opravilo a čo zostáva
 
 Po vybavení VŠ ligy (záznam nižšie) kontrola zvyšných dvoch položiek zo sekcie „Čaká na zdroj“.
