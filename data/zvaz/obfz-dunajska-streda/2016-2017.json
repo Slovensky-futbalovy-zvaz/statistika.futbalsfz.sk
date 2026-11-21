@@ -2,7 +2,7 @@
   "zvaz": "obfz-dunajska-streda",
   "sezona": "2016/2017",
   "sportSector": "futbal",
-  "generatedAt": "2026-10-14T10:28:14+02:00",
+  "generatedAt": "2026-11-21T17:34:22+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -18,7 +18,7 @@
     "zapasy": 1528,
     "uzatvorene": 1606,
     "administrativne": 78,
-    "druzstva": 111,
+    "druzstva": 119,
     "goly": 6088,
     "divaci": 84434,
     "zlteKarty": 1909,
@@ -101,17 +101,34 @@
       "odstupeneAdmin": 22
     },
     "U11": {
-      "zapasy": 256,
-      "uzatvorene": 256,
+      "zapasy": 244,
+      "uzatvorene": 244,
       "administrativne": 0,
       "druzstva": 17,
-      "goly": 1136,
+      "goly": 1105,
       "zlte": 3,
       "cervene": 0,
-      "divaci": 9104,
-      "divaciPokrytych": 256,
-      "sutaze": 2,
-      "skupiny": 3,
+      "divaci": 8504,
+      "divaciPokrytych": 244,
+      "sutaze": 1,
+      "skupiny": 1,
+      "kontumovane": 0,
+      "kontumovaneAdmin": 0,
+      "odstupene": 0,
+      "odstupeneAdmin": 0
+    },
+    "U09": {
+      "zapasy": 12,
+      "uzatvorene": 12,
+      "administrativne": 0,
+      "druzstva": 8,
+      "goly": 31,
+      "zlte": 0,
+      "cervene": 0,
+      "divaci": 600,
+      "divaciPokrytych": 12,
+      "sutaze": 1,
+      "skupiny": 2,
       "kontumovane": 0,
       "kontumovaneAdmin": 0,
       "odstupene": 0,
@@ -183,7 +200,7 @@
     },
     {
       "uroven": "L4",
-      "kat": "U11",
+      "kat": "U09",
       "pohlavie": "M",
       "sutaze": 1,
       "skupiny": 2,
@@ -242,7 +259,7 @@
     "M": {
       "sutaze": 10,
       "zapasy": 1528,
-      "druzstva": 111,
+      "druzstva": 119,
       "goly": 6088,
       "divaci": 84434,
       "zlteKarty": 1909,
@@ -293,15 +310,26 @@
           "divaciPokrytych": 467
         },
         "U11": {
-          "sutaze": 2,
-          "skupiny": 3,
-          "zapasy": 256,
+          "sutaze": 1,
+          "skupiny": 1,
+          "zapasy": 244,
           "druzstva": 17,
-          "goly": 1136,
+          "goly": 1105,
           "zlte": 3,
           "cervene": 0,
-          "divaci": 9104,
-          "divaciPokrytych": 256
+          "divaci": 8504,
+          "divaciPokrytych": 244
+        },
+        "U09": {
+          "sutaze": 1,
+          "skupiny": 2,
+          "zapasy": 12,
+          "druzstva": 8,
+          "goly": 31,
+          "zlte": 0,
+          "cervene": 0,
+          "divaci": 600,
+          "divaciPokrytych": 12
         }
       }
     }
@@ -314,7 +342,8 @@
         "U19": 272,
         "U15": 344,
         "U13": 486,
-        "U11": 283
+        "U11": 283,
+        "U09": 91
       },
       "poSkupinach": {
         "Dospelí": 814,
@@ -331,7 +360,8 @@
         "U19": 19,
         "U15": 22,
         "U13": 35,
-        "U11": 18
+        "U11": 18,
+        "U09": 7
       },
       "poSkupinach": {
         "Dospelí": 43,
@@ -348,7 +378,8 @@
         "U19": 1,
         "U15": 1,
         "U13": 1,
-        "U11": 1
+        "U11": 1,
+        "U09": 1
       },
       "poSkupinach": {
         "Dospelí": 1,
@@ -402,9 +433,10 @@
     "lenMladez": 16,
     "neurcene": 0,
     "kategorie": {
+      "ADULTS": 32,
       "U13": 31,
       "U11": 17,
-      "ADULTS": 32,
+      "U09": 8,
       "U19": 13,
       "U15": 18
     },
@@ -412,9 +444,9 @@
       "M": 48
     },
     "urovne": {
+      "L3": 17,
       "L7": 22,
       "L4": 40,
-      "L3": 17,
       "L6": 25,
       "L5": 13,
       "L9": 8

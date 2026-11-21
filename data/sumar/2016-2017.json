@@ -1,6 +1,6 @@
 {
  "sezona": "2016/2017",
- "generatedAt": "2026-11-18T05:01:18+02:00",
+ "generatedAt": "2026-11-21T18:07:51+02:00",
  "pocetZvazov": 43,
  "methodologyFlags": {
   "osobyPoznamka": "Súčty unikátnych osôb po zväzoch — osoba pôsobiaca vo viacerých zväzoch sa počíta v každom z nich (dvojité pôsobenie).",
@@ -15,7 +15,7 @@
   "zapasy": 54369,
   "uzatvorene": 57109,
   "administrativne": 2740,
-  "druzstva": 4534,
+  "druzstva": 4541,
   "goly": 307296,
   "divaci": 3910800,
   "zlteKarty": 85020,
@@ -26,7 +26,7 @@
   "odstupene": 3513,
   "odstupeneAdmin": 2445,
   "odstupeneOdohrane": 1068,
-  "druzstvaSucetZvazov": 4941,
+  "druzstvaSucetZvazov": 4949,
   "kluby": 1675
  },
  "kluby": {
@@ -37,15 +37,15 @@
   "lenMladez": 72,
   "neurcene": 0,
   "kategorie": {
-   "U09": 82,
-   "U15": 916,
+   "U10": 105,
+   "U19": 813,
    "U13": 431,
+   "U09": 89,
+   "U15": 916,
+   "U12": 55,
+   "U11": 375,
    "U17": 89,
    "ADULTS": 1603,
-   "U19": 813,
-   "U11": 375,
-   "U10": 105,
-   "U12": 55,
    "U14": 34,
    "U16": 14,
    "U08": 12,
@@ -57,12 +57,12 @@
    "NEURCENE": 2
   },
   "urovne": {
-   "POHARE": 264,
-   "L7": 549,
-   "L4": 723,
-   "L2": 247,
    "L3": 537,
    "L1": 193,
+   "POHARE": 264,
+   "L2": 247,
+   "L4": 723,
+   "L7": 549,
    "L5": 481,
    "L8": 278,
    "L6": 637,
@@ -182,16 +182,16 @@
    "druzstvaSucetZvazov": 55
   },
   "U11": {
-   "sutaze": 34,
-   "skupiny": 61,
-   "zapasy": 3775,
-   "uzatvorene": 3872,
+   "sutaze": 33,
+   "skupiny": 59,
+   "zapasy": 3763,
+   "uzatvorene": 3860,
    "administrativne": 97,
    "druzstva": 375,
-   "goly": 30009,
+   "goly": 29978,
    "zlte": 44,
    "cervene": 1,
-   "divaci": 136134,
+   "divaci": 135534,
    "druzstvaSucetZvazov": 391
   },
   "U10": {
@@ -208,17 +208,17 @@
    "druzstvaSucetZvazov": 107
   },
   "U09": {
-   "sutaze": 6,
-   "skupiny": 15,
-   "zapasy": 660,
-   "uzatvorene": 669,
+   "sutaze": 7,
+   "skupiny": 17,
+   "zapasy": 672,
+   "uzatvorene": 681,
    "administrativne": 9,
-   "druzstva": 82,
-   "goly": 7217,
+   "druzstva": 89,
+   "goly": 7248,
    "zlte": 2,
    "cervene": 0,
-   "divaci": 33288,
-   "druzstvaSucetZvazov": 85
+   "divaci": 33888,
+   "druzstvaSucetZvazov": 93
   },
   "U08": {
    "sutaze": 1,
@@ -624,9 +624,17 @@
    "uroven": "L4",
    "kat": "U11",
    "pohlavie": "M",
-   "sutaze": 2,
-   "skupiny": 10,
-   "zapasy": 185
+   "sutaze": 1,
+   "skupiny": 8,
+   "zapasy": 173
+  },
+  {
+   "uroven": "L4",
+   "kat": "U09",
+   "pohlavie": "M",
+   "sutaze": 1,
+   "skupiny": 2,
+   "zapasy": 12
   },
   {
    "uroven": "L5",
@@ -926,14 +934,14 @@
      "zapasy": 2730
     },
     "U11": {
-     "sutaze": 25,
-     "skupiny": 40,
-     "zapasy": 2337
+     "sutaze": 24,
+     "skupiny": 38,
+     "zapasy": 2325
     },
     "U09": {
-     "sutaze": 2,
-     "skupiny": 2,
-     "zapasy": 48
+     "sutaze": 3,
+     "skupiny": 4,
+     "zapasy": 60
     },
     "U19": {
      "sutaze": 47,
@@ -970,7 +978,7 @@
    "U12": 1581,
    "U11": 6855,
    "U10": 1887,
-   "U09": 1425,
+   "U09": 1516,
    "U08": 182
   },
   "treneri": {
@@ -984,7 +992,7 @@
    "U12": 71,
    "U11": 317,
    "U10": 129,
-   "U09": 93,
+   "U09": 100,
    "U08": 17
   },
   "realizacnyTim": {
@@ -998,7 +1006,7 @@
    "U12": 2,
    "U11": 21,
    "U10": 6,
-   "U09": 6,
+   "U09": 7,
    "U08": 1
   },
   "rozhodcovia": {
@@ -1135,8 +1143,8 @@
     "lenMladez": 1,
     "neurcene": 0,
     "kategorie": {
-     "ADULTS": 24,
-     "U20": 9
+     "U20": 9,
+     "ADULTS": 24
     },
     "pohlavie": {
      "M": 25
@@ -2187,7 +2195,7 @@
          },
          {
           "name": "U09",
-          "value": 128
+          "value": 219
          }
         ]
        },
@@ -2224,7 +2232,7 @@
          },
          {
           "name": "U09",
-          "value": 7
+          "value": 14
          }
         ]
        },
