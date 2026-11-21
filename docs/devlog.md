@@ -4,6 +4,27 @@ Chronologický záznam práce na projekte (čo sa robilo, prečo, čo nevyšlo).
 Čísla, ktoré sa menia na webe, sú v [CHANGELOG.md](../CHANGELOG.md), krátkodobé kroky v
 [NEXT.md](../NEXT.md).
 
+## 2026-11-21 — VŠ liga vo futsale: úroveň doplnená, vec uzavretá
+
+- **Zdroj opravený.** Michal (Sportnet) doplnil súťaži Vysokoškolská liga vo futsale
+  (`6ab20c8bba18d7d790c6906b`) `level` = 90 a `sortvalue` = 100 (rovnako ako Tipos Futsal
+  Extraliga). Súťaž nie je z ISSF (`ownerPPO` `futsalslovakia.sk`), takže synchronizácia tieto
+  hodnoty neprepíše. Overené dotazom na `competitions` 21. 11.
+- **Týždenný beh 18. 11. (04:18) ju už zaradil.** Vo futsale SFZ 2026/2027 sa presunula
+  z `NEURCENE` do `POHARE`: 1 súťaž, 2 skupiny, 16 zápasov; `L1` 45 → 49 zápasov. Mimoriadny
+  prepočet netreba. Beh prešiel celý, commit `0d1d437e0d`, `generatedAt` 18. 11. 04:18.
+- **Level 90 = „Poháre a turnaje“, nie pyramída.** `etl/pipelines.uroven_kod` mapuje level ≥ 90
+  na `POHARE`; ostatné futsalové súťaže SFZ majú `level` 1 (Tipos Futsal Extraliga, Ženská
+  Futsal Liga, extraligy U15/U17/U20). Ponechané tak: VŠ liga nie je postupová súťaž, takže
+  zaradenie mimo ligovej pyramídy je vecne správne (rozhodnutie Ján Letko, 21. 11.).
+- **Diváci doplnení.** Všetkých 16 uzavretých zápasov má `protocol.audience` — Skupina A 420,
+  Skupina B 270, spolu 690 divákov. Pokrytie divákov futsalu SFZ je 100 % (ADULTS 46/46,
+  U20 19/19). Upozornenie „76,3 %“ z behu 21. 10. je tým vybavené.
+- **Zostáva drobnosť.** Súťaž má odvtedy tri časti; novo pridaná „Bratislava/ Finálová časť“
+  (4 zatiaľ neuzavreté zápasy) má `rules.category` = `Dospelí` namiesto číselníkového `ADULTS`.
+  ETL to normalizuje (`KAT_NORMALIZACIA` v `etl/run.py`), takže čísla sú v poriadku; nahlásiť
+  pri najbližšej príležitosti.
+
 ## 2026-10-21 — týždenný beh: prvý úplný beh po oprave VŠ ligy vo futsale
 
 - Automatický beh na Synology (03:00–04:01) prepočítal jedinú sezónu so zmeneným odtlačkom —
