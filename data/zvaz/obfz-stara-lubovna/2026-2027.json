@@ -2,7 +2,7 @@
   "zvaz": "obfz-stara-lubovna",
   "sezona": "2026/2027",
   "sportSector": "futbal",
-  "generatedAt": "2026-11-18T04:18:12+02:00",
+  "generatedAt": "2026-11-25T04:17:57+02:00",
   "methodologyFlags": {
     "zapasy": "closed:true BEZ administratívnych kontumácií/odstúpení bez zápisu (reálne odohrané); uzatvorene = pôvodná báza všetkých closed:true",
     "divaciPokrytie": 1.0,
@@ -15,12 +15,12 @@
   "kpi": {
     "sutaze": 7,
     "skupiny": 10,
-    "zapasy": 142,
-    "uzatvorene": 144,
+    "zapasy": 145,
+    "uzatvorene": 147,
     "administrativne": 2,
     "druzstva": 34,
-    "goly": 968,
-    "divaci": 5842,
+    "goly": 1000,
+    "divaci": 5872,
     "zlteKarty": 69,
     "cerveneKarty": 2,
     "kontumovane": 6,
@@ -101,15 +101,15 @@
       "odstupeneAdmin": 0
     },
     "U10": {
-      "zapasy": 6,
-      "uzatvorene": 6,
+      "zapasy": 9,
+      "uzatvorene": 9,
       "administrativne": 0,
       "druzstva": 6,
-      "goly": 65,
+      "goly": 97,
       "zlte": 0,
       "cervene": 0,
-      "divaci": 145,
-      "divaciPokrytych": 6,
+      "divaci": 175,
+      "divaciPokrytych": 9,
       "sutaze": 1,
       "skupiny": 2,
       "kontumovane": 0,
@@ -176,7 +176,7 @@
       "nazov": "Poháre a turnaje",
       "sutaze": 1,
       "skupiny": 2,
-      "zapasy": 6
+      "zapasy": 9
     }
   },
   "sutazeUroven": [
@@ -234,16 +234,16 @@
       "pohlavie": "M",
       "sutaze": 1,
       "skupiny": 2,
-      "zapasy": 6
+      "zapasy": 9
     }
   ],
   "pohlavie": {
     "M": {
       "sutaze": 7,
-      "zapasy": 142,
+      "zapasy": 145,
       "druzstva": 34,
-      "goly": 968,
-      "divaci": 5842,
+      "goly": 1000,
+      "divaci": 5872,
       "zlteKarty": 69,
       "cerveneKarty": 2,
       "kategorie": {
@@ -294,13 +294,13 @@
         "U10": {
           "sutaze": 1,
           "skupiny": 2,
-          "zapasy": 6,
+          "zapasy": 9,
           "druzstva": 6,
-          "goly": 65,
+          "goly": 97,
           "zlte": 0,
           "cervene": 0,
-          "divaci": 145,
-          "divaciPokrytych": 6
+          "divaci": 175,
+          "divaciPokrytych": 9
         },
         "U09": {
           "sutaze": 2,
@@ -318,21 +318,21 @@
   },
   "osoby": {
     "hraci": {
-      "unikatni": 581,
+      "unikatni": 584,
       "poKategorii": {
         "ADULTS": 182,
         "U13": 94,
         "U12": 48,
         "U11": 124,
-        "U10": 90,
+        "U10": 93,
         "U09": 181
       },
       "poSkupinach": {
         "Dospelí": 182,
         "Žiaci": 128,
-        "Prípravky": 308
+        "Prípravky": 311
       },
-      "mladez": 399
+      "mladez": 402
     },
     "treneri": {
       "unikatni": 19,
@@ -352,21 +352,21 @@
       "mladez": 15
     },
     "realizacnyTim": {
-      "unikatni": 29,
+      "unikatni": 30,
       "poKategorii": {
         "ADULTS": 14,
         "U13": 7,
         "U12": 6,
         "U11": 9,
-        "U10": 7,
+        "U10": 8,
         "U09": 12
       },
       "poSkupinach": {
         "Dospelí": 14,
         "Žiaci": 11,
-        "Prípravky": 15
+        "Prípravky": 16
       },
-      "mladez": 21
+      "mladez": 22
     },
     "rozhodcovia": {
       "unikatni": 11,
@@ -420,24 +420,24 @@
     "lenMladez": 5,
     "neurcene": 0,
     "kategorie": {
-      "U13": 5,
       "U09": 8,
+      "U13": 5,
       "U11": 6,
-      "U12": 3,
       "U10": 6,
-      "ADULTS": 6
+      "ADULTS": 6,
+      "U12": 3
     },
     "pohlavie": {
       "M": 11
     },
     "urovne": {
-      "L3": 7,
       "L4": 5,
+      "L3": 7,
       "L2": 6,
-      "L5": 3,
+      "POHARE": 6,
       "L7": 6,
       "L6": 7,
-      "POHARE": 6
+      "L5": 3
     },
     "domaci": 6,
     "poznamka": "Aktívny klub = klub s aspoň jedným reálne odohraným zápasom. Klub sa započíta v každom zväze, v ktorého súťaži hral, preto je súčet po zväzoch vyšší než celoslovenský počet klubov. Mládež = akákoľvek veková úroveň okrem dospelých. Nezapočítavajú sa účastníci neregulárnych súťaží (školské a výberové turnaje) ani súťaží mimo riadenia slovenských zväzov."
